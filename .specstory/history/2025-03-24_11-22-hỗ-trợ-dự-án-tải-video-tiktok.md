@@ -4826,6 +4826,193 @@ Ta thấy Logix của nút Select All ở Tab Downloaded video khi mà ta bỏ c
 
 _**Assistant**_
 
+Đúng rồi, hình như cái tab Downloaded Videos còn thiếu logic để cập nhật trạng thái nút Select All/Unselect All tự động dựa vào trạng thái checkbox. Tao sẽ thêm hàm tương tự như trong tab Video Info nhé.
+
+---
+
+```diff
+              checkbox = QCheckBox()
+              checkbox.setObjectName(f"select_checkbox_{i}")
++             # Kết nối sự kiện stateChanged với hàm checkbox_state_changed
++             checkbox.stateChanged.connect(self.checkbox_state_changed)
+              select_layout.addWidget(checkbox)
+              
+              self.video_details_frame.setVisible(False)
+              self.selected_video = None
++             
++             # Cập nhật trạng thái nút Select All/Unselect All
++             self.update_select_toggle_button()
+              
+              # Cập nhật thông báo trong status bar
+              if self.parent:
+                  self.parent.status_bar.showMessage(self.tr_("STATUS_ALL_VIDEOS_UNSELECTED"))
++                 
++     def update_select_toggle_button(self):
++         """Cập nhật trạng thái nút chọn tất cả dựa trên trạng thái các checkbox"""
++         # Kiểm tra xem có video nào trong bảng không
++         if self.downloads_table.rowCount() == 0:
++             return
++             
++         # Kiểm tra trạng thái của tất cả checkbox
++         all_checked = True
++         any_checked = False
++         
++         for row in range(self.downloads_table.rowCount()):
++             select_widget = self.downloads_table.cellWidget(row, 0)
++             if select_widget:
++                 checkbox = select_widget.findChild(QCheckBox)
++                 if checkbox:
++                     if checkbox.isChecked():
++                         any_checked = True
++                     else:
++                         all_checked = False
++         
++         # Cập nhật trạng thái của nút
++         if all_checked:
++             self.select_toggle_btn.setText(self.tr_("BUTTON_UNSELECT_ALL"))
++         else:
++             self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
++             
++     def checkbox_state_changed(self):
++         """Xử lý khi trạng thái checkbox thay đổi"""
++         self.update_select_toggle_button()
+  
+```
+
+---
+
+```bash
+python main.py
+```
+
+```
+PS I:\Product Apps\Tiktok Downloader_V1_Mp4> python main.py
+Loaded 3 videos from database
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+Loaded 3 videos
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7472374490387778817.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7472374490387778817.jpg, size: 540x720
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7472374490387778817.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7472374490387778817.jpg, size: 540x720
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7451848094167141650.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7451848094167141650.jpg, size: 540x960
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7476430841510497543.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7476430841510497543.jpg, size: 540x960
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7451848094167141650.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7451848094167141650.jpg, size: 540x960
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7451848094167141650.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7451848094167141650.jpg, size: 540x960
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7472374490387778817.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7472374490387778817.jpg, size: 540x720
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7451848094167141650.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7451848094167141650.jpg, size: 540x960
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7476430841510497543.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7476430841510497543.jpg, size: 540x960
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7472374490387778817.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7472374490387778817.jpg, size: 540x720
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7451848094167141650.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7451848094167141650.jpg, size: 540x960
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7476430841510497543.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7476430841510497543.jpg, size: 540x960
+PS I:\Product Apps\Tiktok Downloader_V1_Mp4>
+```
+
+---
+
+Tao đã thêm thành công chức năng tự động cập nhật trạng thái nút "Chọn Tất Cả/Bỏ Chọn Tất Cả" trong tab Downloaded Videos, tương tự như cách hoạt động trong tab Video Info.
+
+Những thay đổi chính tao đã thực hiện:
+
+1. Thêm hàm `update_select_toggle_button()` để kiểm tra trạng thái các checkbox và cập nhật nút tương ứng:
+   - Nếu tất cả checkbox đều được chọn, nút sẽ hiển thị "Bỏ Chọn Tất Cả"
+   - Nếu ít nhất một checkbox chưa được chọn, nút sẽ hiển thị "Chọn Tất Cả"
+
+2. Thêm hàm `checkbox_state_changed()` để xử lý sự kiện khi người dùng tích vào checkbox, hàm này sẽ gọi `update_select_toggle_button()` để cập nhật trạng thái nút.
+
+3. Kết nối sự kiện `stateChanged` của mỗi checkbox với hàm `checkbox_state_changed()` khi tạo checkbox trong hàm `display_videos()`.
+
+4. Cập nhật hàm `refresh_downloads()` để gọi `update_select_toggle_button()` sau khi làm mới danh sách video, đảm bảo trạng thái nút luôn được cập nhật.
+
+5. Cải tiến hàm `toggle_select_all()` để tạm thời khóa signal của các checkbox trước khi thay đổi trạng thái của chúng, sau đó mở lại signal - điều này giúp tránh gọi nhiều lần hàm `checkbox_state_changed()` khi thay đổi nhiều checkbox cùng lúc.
+
+Bây giờ khi mày sử dụng tab Downloaded Videos:
+- Nếu mày chọn tất cả các checkbox, nút sẽ tự động đổi thành "Bỏ Chọn Tất Cả"
+- Nếu mày bỏ chọn một checkbox bất kỳ, nút sẽ đổi thành "Chọn Tất Cả"
+- Khi mày nhấn vào nút, nó sẽ chọn/bỏ chọn tất cả các checkbox và cập nhật trạng thái nút một cách tương ứng
+
+---
+
+_**User**_
+
+Chúng ta thấy có một chút cần cải thiện cái UX ở đây đó là cái nút tải xuống và nút xóa tất cả mấy nút xóa nó lại ở quá gần cái nút tải xuống khi mà người dùng dùng nhiều nút tải xuống thì vẫn tỉ lệ bấm nhầm. Mày hãy cho 3 nút bỏ chọn tất cả, xóa đã chọn và xóa tất cả qua bên góc trái xem. Để một mình nút tải xuống ở bên góc phải thôi. 
+
+
+---
+
+_**Assistant**_
+
+Tao hiểu vấn đề rồi! Việc đặt nút tải xuống gần với các nút xóa có thể gây nhầm lẫn và rủi ro khi người dùng vô tình nhấn nhầm nút. Tao sẽ điều chỉnh lại bố cục để các nút xóa và bỏ chọn nằm bên trái, còn nút tải xuống sẽ đứng một mình ở góc phải, tạo khoảng cách an toàn giữa các nhóm nút.
+
+---
+
+<details>
+            <summary>Searched codebase "VideoInfoTab download button và select buttons layout" • **25** results</summary>
+        
+| File | Lines |
+|------|-------|
+| `ui/video_info_tab.py` | L139-179 |
+| `ui/video_info_tab.py` | L99-139 |
+| `ui/video_info_tab.py` | L325-352 |
+| `ui/video_info_tab.py` | L439-479 |
+| `ui/video_info_tab.py` | L947-980 |
+| `ui/video_info_tab.py` | L1048-1069 |
+| `ui/video_info_tab.py` | L51-99 |
+| `ui/video_info_tab.py` | L655-694 |
+| `ui/video_info_tab.py` | L18-51 |
+| `ui/video_info_tab.py` | L556-585 |
+| `ui/video_info_tab.py` | L352-387 |
+| `ui/video_info_tab.py` | L405-439 |
+| `ui/video_info_tab.py` | L1-18 |
+| `ui/video_info_tab.py` | L479-516 |
+| `ui/video_info_tab.py` | L179-212 |
+| `ui/video_info_tab.py` | L773-812 |
+| `ui/video_info_tab.py` | L1186-1208 |
+| `ui/video_info_tab.py` | L1069-1088 |
+| `ui/video_info_tab.py` | L853-887 |
+| `ui/video_info_tab.py` | L1322-1364 |
+| `ui/video_info_tab.py` | L287-325 |
+| `ui/video_info_tab.py` | L980-1022 |
+| `ui/video_info_tab.py` | L1486-1530 |
+| `ui/video_info_tab.py` | L516-556 |
+| `ui/video_info_tab.py` | L1257-1298 |
+
+</details>
+
+---
+
+Read file: ui/video_info_tab.py
+
+---
+
+Cancelled
+
+---
+
 
 
 ---

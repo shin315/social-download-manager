@@ -115,30 +115,35 @@ class VideoInfoTab(QWidget):
         # Phần tùy chọn và nút Download
         options_layout = QHBoxLayout()
         
-        # Checkbox Remove Watermark đã được xóa và luôn xóa watermark mặc định
-        
-        options_layout.addStretch(1)
+        # Nhóm các nút Select/Delete sang bên trái
+        left_buttons_layout = QHBoxLayout()
         
         # Nút Chọn tất cả / Bỏ chọn tất cả (gộp 2 nút thành 1)
         self.select_toggle_btn = QPushButton(self.tr_("BUTTON_SELECT_ALL"))
         self.select_toggle_btn.setFixedWidth(150)
         self.select_toggle_btn.clicked.connect(self.toggle_select_all)
         self.all_selected = False  # Trạng thái hiện tại (False: chưa chọn tất cả)
-        options_layout.addWidget(self.select_toggle_btn)
+        left_buttons_layout.addWidget(self.select_toggle_btn)
         
         # Nút Delete Selected
         self.delete_selected_btn = QPushButton(self.tr_("BUTTON_DELETE_SELECTED"))
         self.delete_selected_btn.setFixedWidth(150)
         self.delete_selected_btn.clicked.connect(self.delete_selected_videos)
-        options_layout.addWidget(self.delete_selected_btn)
+        left_buttons_layout.addWidget(self.delete_selected_btn)
         
         # Nút Delete All
         self.delete_all_btn = QPushButton(self.tr_("BUTTON_DELETE_ALL"))
         self.delete_all_btn.setFixedWidth(150)
         self.delete_all_btn.clicked.connect(self.delete_all_videos)
-        options_layout.addWidget(self.delete_all_btn)
-
-        # Nút Download
+        left_buttons_layout.addWidget(self.delete_all_btn)
+        
+        # Thêm nhóm nút bên trái vào layout
+        options_layout.addLayout(left_buttons_layout)
+        
+        # Thêm stretch để đẩy nút Download sang bên phải hoàn toàn
+        options_layout.addStretch(1)
+        
+        # Nút Download ở bên phải
         self.download_btn = QPushButton(self.tr_("BUTTON_DOWNLOAD"))
         self.download_btn.setFixedWidth(150)
         self.download_btn.clicked.connect(self.download_videos)
