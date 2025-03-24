@@ -173,7 +173,7 @@ class VideoInfoTab(QWidget):
         self.video_table.setColumnWidth(4, 100)
         
         self.video_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)  # Duration
-        self.video_table.setColumnWidth(5, 70)
+        self.video_table.setColumnWidth(5, 90)
         
         self.video_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Size
         self.video_table.setColumnWidth(6, 80)

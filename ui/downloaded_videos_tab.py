@@ -52,6 +52,13 @@ class DownloadedVideosTab(QWidget):
         # Cập nhật các nhãn thống kê
         self.update_statistics()  # Sẽ cập nhật trực tiếp các nhãn từ hàm này
         
+        # Cập nhật nút Select/Unselect All
+        current_text = self.select_toggle_btn.text()
+        if current_text == "Select All" or current_text == "Chọn Tất Cả":
+            self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
+        else:
+            self.select_toggle_btn.setText(self.tr_("BUTTON_UNSELECT_ALL"))
+        
         # Cập nhật nút Refresh và Delete Selected
         self.refresh_btn.setText(self.tr_("BUTTON_REFRESH"))
         self.delete_selected_btn.setText(self.tr_("BUTTON_DELETE_SELECTED"))
@@ -165,6 +172,11 @@ class DownloadedVideosTab(QWidget):
         # Thêm vào layout của frame
         stats_frame_layout.addLayout(stats_box)
         stats_frame_layout.addStretch(1)
+        
+        # Nút Select/Unselect All
+        self.select_toggle_btn = QPushButton(self.tr_("BUTTON_SELECT_ALL"))
+        self.select_toggle_btn.clicked.connect(self.toggle_select_all)
+        stats_frame_layout.addWidget(self.select_toggle_btn)
         
         # Nút Delete Selected
         self.delete_selected_btn = QPushButton(self.tr_("BUTTON_DELETE_SELECTED"))
@@ -522,87 +534,85 @@ class DownloadedVideosTab(QWidget):
                 self.play_icon.setText("▶️")  # Unicode play icon
                 self.play_icon.setStyleSheet("font-size: 52px; color: white; background-color: transparent;")
             
-            # Thử tải thumbnail (chỉ cho video, không áp dụng cho audio)
-            if not is_audio:
-                thumbnail_path = video[11] if len(video) > 11 and video[11] else ""
-                if thumbnail_path and os.path.exists(thumbnail_path):
-                    try:
-                        print(f"Loading thumbnail from: {thumbnail_path}")
-                        pixmap = QPixmap(thumbnail_path)
-                        if not pixmap.isNull():
-                            print(f"Successfully loaded thumbnail: {thumbnail_path}, size: {pixmap.width()}x{pixmap.height()}")
-                            pixmap = pixmap.scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio)
-                            self.thumbnail_label.setPixmap(pixmap)
-                            # Khi thumbnail load thành công, xóa background color
-                            self.thumbnail_label.setStyleSheet("background-color: transparent; border-radius: 8px;")
-                            # Ẩn play icon khi có thumbnail
-                            self.play_icon.setVisible(False)
-                        else:
-                            print(f"Failed to load thumbnail: pixmap is null for {thumbnail_path}")
-                            self.play_icon.setVisible(True)
-                    except Exception as e:
-                        print(f"Error loading thumbnail: {e} for {thumbnail_path}")
+            # Thử tải thumbnail cho cả file mp3 và mp4
+            thumbnail_path = video[11] if len(video) > 11 and video[11] else ""
+            if thumbnail_path and os.path.exists(thumbnail_path):
+                try:
+                    print(f"Loading thumbnail from: {thumbnail_path}")
+                    pixmap = QPixmap(thumbnail_path)
+                    if not pixmap.isNull():
+                        print(f"Successfully loaded thumbnail: {thumbnail_path}, size: {pixmap.width()}x{pixmap.height()}")
+                        pixmap = pixmap.scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio)
+                        self.thumbnail_label.setPixmap(pixmap)
+                        # Khi thumbnail load thành công, xóa background color
+                        self.thumbnail_label.setStyleSheet("background-color: transparent; border-radius: 8px;")
+                        # Ẩn play icon khi có thumbnail
+                        self.play_icon.setVisible(False)
+                    else:
+                        print(f"Failed to load thumbnail: pixmap is null for {thumbnail_path}")
                         self.play_icon.setVisible(True)
-                else:
-                    print(f"No thumbnail or file doesn't exist: {thumbnail_path}")
+                except Exception as e:
+                    print(f"Error loading thumbnail: {e} for {thumbnail_path}")
                     self.play_icon.setVisible(True)
-                    
-                    # Thử tạo lại thumbnail nếu có đường dẫn video hoặc từ thông tin URL (chỉ cho video)
-                    video_id = ""
-                    if len(self.selected_video) > 0:
-                        db_manager = DatabaseManager()
-                        video_info = db_manager.get_download_by_title(self.selected_video[0])
-                        if video_info and 'url' in video_info:
+            else:
+                print(f"No thumbnail or file doesn't exist: {thumbnail_path}")
+                self.play_icon.setVisible(True)
+                
+                # Thử tạo lại thumbnail nếu có đường dẫn video hoặc từ thông tin URL
+                video_id = ""
+                if len(self.selected_video) > 0:
+                    db_manager = DatabaseManager()
+                    video_info = db_manager.get_download_by_title(self.selected_video[0])
+                    if video_info and 'url' in video_info:
+                        try:
+                            video_id = video_info['url'].split('/')[-1].split('?')[0]
+                        except Exception as e:
+                            print(f"Error extracting video ID: {e}")
+                
+                if video_id:
+                    # Tạo thư mục thumbnails nếu chưa có
+                    output_folder = video[8] if len(video) > 8 and video[8] else ""
+                    if output_folder:
+                        thumbnails_dir = os.path.join(output_folder, "thumbnails")
+                        if not os.path.exists(thumbnails_dir):
                             try:
-                                video_id = video_info['url'].split('/')[-1].split('?')[0]
+                                os.makedirs(thumbnails_dir)
                             except Exception as e:
-                                print(f"Error extracting video ID: {e}")
-                    
-                    if video_id:
-                        # Tạo thư mục thumbnails nếu chưa có
-                        output_folder = video[8] if len(video) > 8 and video[8] else ""
-                        if output_folder:
-                            thumbnails_dir = os.path.join(output_folder, "thumbnails")
-                            if not os.path.exists(thumbnails_dir):
-                                try:
-                                    os.makedirs(thumbnails_dir)
-                                except Exception as e:
-                                    print(f"Error creating thumbnails directory: {e}")
-                                    return
-                            
-                            # Đặt đường dẫn thumbnail mới
-                            new_thumbnail_path = os.path.join(thumbnails_dir, f"{video_id}.jpg")
-                            
-                            # Cập nhật đường dẫn thumbnail trong database
-                            if video_info:
-                                try:
-                                    # Lấy thông tin hiện tại
-                                    metadata_str = video_info.get('metadata', '{}')
-                                    metadata = json.loads(metadata_str) if metadata_str else {}
-                                    metadata['thumbnail'] = new_thumbnail_path
-                                    
-                                    # Cập nhật vào database
-                                    conn = sqlite3.connect(db_manager.db_path)
-                                    cursor = conn.cursor()
-                                    cursor.execute(
-                                        "UPDATE downloads SET metadata = ? WHERE title = ?", 
-                                        (json.dumps(metadata), video[0])
-                                    )
-                                    conn.commit()
-                                    conn.close()
-                                    
-                                    print(f"Updated thumbnail path for {video[0]}")
-                                    
-                                    # Tạo thumbnail nếu chưa tồn tại
-                                    if not os.path.exists(new_thumbnail_path):
-                                        # Trong trường hợp thực tế, ở đây sẽ tạo thumbnail từ video
-                                        # Nhưng do giới hạn về thời gian, chỉ ghi đường dẫn để làm gốc cho lần tải sau
-                                        pass
-                                except Exception as e:
-                                    print(f"Error updating thumbnail in database: {e}")
-                            else:
-                                print(f"Video info not found for title: {video[0]}")
-            # Nếu là file audio, đã thiết lập icon âm nhạc ở trên
+                                print(f"Error creating thumbnails directory: {e}")
+                                return
+                        
+                        # Đặt đường dẫn thumbnail mới
+                        new_thumbnail_path = os.path.join(thumbnails_dir, f"{video_id}.jpg")
+                        
+                        # Cập nhật đường dẫn thumbnail trong database
+                        if video_info:
+                            try:
+                                # Lấy thông tin hiện tại
+                                metadata_str = video_info.get('metadata', '{}')
+                                metadata = json.loads(metadata_str) if metadata_str else {}
+                                metadata['thumbnail'] = new_thumbnail_path
+                                
+                                # Cập nhật vào database
+                                conn = sqlite3.connect(db_manager.db_path)
+                                cursor = conn.cursor()
+                                cursor.execute(
+                                    "UPDATE downloads SET metadata = ? WHERE title = ?", 
+                                    (json.dumps(metadata), video[0])
+                                )
+                                conn.commit()
+                                conn.close()
+                                
+                                print(f"Updated thumbnail path for {video[0]}")
+                                
+                                # Tạo thumbnail nếu chưa tồn tại
+                                if not os.path.exists(new_thumbnail_path):
+                                    # Trong trường hợp thực tế, ở đây sẽ tạo thumbnail từ video
+                                    # Nhưng do giới hạn về thời gian, chỉ ghi đường dẫn để làm gốc cho lần tải sau
+                                    pass
+                            except Exception as e:
+                                print(f"Error updating thumbnail in database: {e}")
+                        else:
+                            print(f"Video info not found for title: {video[0]}")
         else:
             # Không tìm thấy video trong danh sách
             self.video_details_frame.setVisible(False)
@@ -1717,3 +1727,39 @@ class DownloadedVideosTab(QWidget):
             # Hiển thị thông báo
             if self.parent:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_DELETED").format(deleted_count))
+
+    def toggle_select_all(self):
+        """Chọn hoặc bỏ chọn tất cả video"""
+        # Lấy trạng thái nút hiện tại
+        is_select_all = self.select_toggle_btn.text() == self.tr_("BUTTON_SELECT_ALL")
+        
+        # Lấy danh sách tất cả checkbox
+        checkboxes = []
+        for row in range(self.downloads_table.rowCount()):
+            select_widget = self.downloads_table.cellWidget(row, 0)
+            if select_widget:
+                checkbox = select_widget.findChild(QCheckBox)
+                if checkbox:
+                    checkboxes.append(checkbox)
+        
+        # Tạm thời ngắt kết nối signals để tránh gọi nhiều lần
+        for checkbox in checkboxes:
+            checkbox.blockSignals(True)
+        
+        # Thiết lập trạng thái mới cho tất cả checkbox
+        for checkbox in checkboxes:
+            checkbox.setChecked(is_select_all)
+        
+        # Kết nối lại signals sau khi cập nhật xong
+        for checkbox in checkboxes:
+            checkbox.blockSignals(False)
+        
+        # Cập nhật nút dựa trên hành động đã thực hiện
+        if is_select_all:
+            self.select_toggle_btn.setText(self.tr_("BUTTON_UNSELECT_ALL"))
+            if self.parent:
+                self.parent.status_bar.showMessage(self.tr_("STATUS_ALL_VIDEOS_SELECTED"))
+        else:
+            self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
+            if self.parent:
+                self.parent.status_bar.showMessage(self.tr_("STATUS_ALL_VIDEOS_UNSELECTED"))
