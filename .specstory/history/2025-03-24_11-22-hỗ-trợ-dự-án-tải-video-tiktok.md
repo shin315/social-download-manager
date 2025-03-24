@@ -4470,6 +4470,362 @@ Và ta muốn có thêm một nút chọn tất cả và bỏ chọn tất cả 
 
 _**Assistant**_
 
+Tao sẽ giúp mày sửa cả hai vấn đề này ngay. Đầu tiên, tao sẽ tìm hiểu về tab Video Info để sửa lỗi hiển thị cột thời lượng, sau đó thêm nút chọn/bỏ chọn tất cả trong tab Downloaded Videos.
+
+---
+
+<details>
+            <summary>Searched codebase "tab Video Info header thời lượng duration language Vietnamese" • **25** results</summary>
+        
+| File | Lines |
+|------|-------|
+| `ui/video_info_tab.py` | L655-694 |
+| `ui/video_info_tab.py` | L853-887 |
+| `ui/video_info_tab.py` | L1069-1088 |
+| `ui/downloaded_videos_tab.py` | L431-471 |
+| `ui/video_info_tab.py` | L139-179 |
+| `ui/downloaded_videos_tab.py` | L471-508 |
+| `ui/video_info_tab.py` | L18-51 |
+| `ui/video_info_tab.py` | L1208-1257 |
+| `ui/downloaded_videos_tab.py` | L76-106 |
+| `ui/downloaded_videos_tab.py` | L1131-1156 |
+| `ui/downloaded_videos_tab.py` | L1-44 |
+| `ui/video_info_tab.py` | L887-923 |
+| `ui/video_info_tab.py` | L923-947 |
+| `ui/downloaded_videos_tab.py` | L786-819 |
+| `ui/downloaded_videos_tab.py` | L309-362 |
+| `ui/downloaded_videos_tab.py` | L44-76 |
+| `ui/video_info_tab.py` | L1048-1069 |
+| `ui/video_info_tab.py` | L1388-1431 |
+| `ui/downloaded_videos_tab.py` | L362-411 |
+| `ui/downloaded_videos_tab.py` | L106-158 |
+| `ui/downloaded_videos_tab.py` | L703-739 |
+| `ui/video_info_tab.py` | L479-516 |
+| `ui/video_info_tab.py` | L812-853 |
+| `ui/downloaded_videos_tab.py` | L1076-1102 |
+| `ui/downloaded_videos_tab.py` | L1325-1365 |
+
+</details>
+
+---
+
+<details>
+            <summary>Searched codebase "VideoInfoTab table column widths thời lượng width" • **25** results</summary>
+        
+| File | Lines |
+|------|-------|
+| `ui/video_info_tab.py` | L139-179 |
+| `ui/video_info_tab.py` | L853-887 |
+| `ui/video_info_tab.py` | L812-853 |
+| `ui/video_info_tab.py` | L887-923 |
+| `ui/video_info_tab.py` | L179-212 |
+| `ui/video_info_tab.py` | L51-99 |
+| `ui/video_info_tab.py` | L1388-1431 |
+| `ui/video_info_tab.py` | L1208-1257 |
+| `ui/video_info_tab.py` | L773-812 |
+| `ui/video_info_tab.py` | L1431-1486 |
+| `ui/video_info_tab.py` | L923-947 |
+| `ui/video_info_tab.py` | L1048-1069 |
+| `ui/video_info_tab.py` | L1322-1364 |
+| `ui/video_info_tab.py` | L99-139 |
+| `ui/video_info_tab.py` | L1364-1388 |
+| `ui/video_info_tab.py` | L1069-1088 |
+| `ui/video_info_tab.py` | L1257-1298 |
+| `ui/video_info_tab.py` | L980-1022 |
+| `ui/video_info_tab.py` | L287-325 |
+| `ui/video_info_tab.py` | L585-608 |
+| `ui/video_info_tab.py` | L608-655 |
+| `ui/video_info_tab.py` | L655-694 |
+| `ui/video_info_tab.py` | L18-51 |
+| `ui/video_info_tab.py` | L737-773 |
+| `ui/video_info_tab.py` | L352-387 |
+
+</details>
+
+---
+
+<details>
+            <summary>Searched codebase "DownloadedVideosTab select all videos checkbox" • **25** results</summary>
+        
+| File | Lines |
+|------|-------|
+| `ui/downloaded_videos_tab.py` | L739-786 |
+| `ui/downloaded_videos_tab.py` | L1648-1678 |
+| `ui/downloaded_videos_tab.py` | L1-44 |
+| `ui/downloaded_videos_tab.py` | L1678-1717 |
+| `ui/downloaded_videos_tab.py` | L948-969 |
+| `ui/downloaded_videos_tab.py` | L215-241 |
+| `ui/downloaded_videos_tab.py` | L1076-1102 |
+| `ui/downloaded_videos_tab.py` | L855-895 |
+| `ui/downloaded_videos_tab.py` | L431-471 |
+| `ui/downloaded_videos_tab.py` | L158-184 |
+| `ui/downloaded_videos_tab.py` | L607-632 |
+| `ui/downloaded_videos_tab.py` | L786-819 |
+| `ui/downloaded_videos_tab.py` | L918-948 |
+| `ui/downloaded_videos_tab.py` | L411-431 |
+| `ui/downloaded_videos_tab.py` | L703-739 |
+| `ui/downloaded_videos_tab.py` | L1365-1404 |
+| `ui/downloaded_videos_tab.py` | L895-918 |
+| `ui/downloaded_videos_tab.py` | L1102-1131 |
+| `ui/downloaded_videos_tab.py` | L184-215 |
+| `ui/downloaded_videos_tab.py` | L632-673 |
+| `ui/downloaded_videos_tab.py` | L1131-1156 |
+| `ui/downloaded_videos_tab.py` | L1518-1548 |
+| `ui/downloaded_videos_tab.py` | L819-855 |
+| `ui/downloaded_videos_tab.py` | L969-1010 |
+| `ui/downloaded_videos_tab.py` | L1404-1425 |
+
+</details>
+
+---
+
+Read file: localization/vietnamese.py
+
+---
+
+Read file: localization/english.py
+
+---
+
+Bây giờ tao sẽ thực hiện 2 tác vụ:
+
+1. Tăng độ rộng cột thời lượng trong tab Video Info
+2. Thêm nút "Chọn Tất Cả/Bỏ Chọn Tất Cả" trong tab Downloaded Videos
+
+---
+
+```diff
+          
+          self.video_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)  # Duration
+-         self.video_table.setColumnWidth(5, 70)
++         self.video_table.setColumnWidth(5, 90)
+          
+          self.video_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Size
+```
+
+---
+
+```diff
+          stats_frame_layout.addLayout(stats_box)
+          stats_frame_layout.addStretch(1)
++         
++         # Nút Select/Unselect All
++         self.select_toggle_btn = QPushButton(self.tr_("BUTTON_SELECT_ALL"))
++         self.select_toggle_btn.clicked.connect(self.toggle_select_all)
++         stats_frame_layout.addWidget(self.select_toggle_btn)
+          
+          # Nút Delete Selected
+              if self.parent:
+                  self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_DELETED").format(deleted_count))
++ 
++     def toggle_select_all(self):
++         """Chọn hoặc bỏ chọn tất cả video"""
++         # Lấy trạng thái nút hiện tại
++         is_select_all = self.select_toggle_btn.text() == self.tr_("BUTTON_SELECT_ALL")
++         
++         # Lấy danh sách tất cả checkbox
++         checkboxes = []
++         for row in range(self.downloads_table.rowCount()):
++             select_widget = self.downloads_table.cellWidget(row, 0)
++             if select_widget:
++                 checkbox = select_widget.findChild(QCheckBox)
++                 if checkbox:
++                     checkboxes.append(checkbox)
++         
++         # Tạm thời ngắt kết nối signals để tránh gọi nhiều lần
++         for checkbox in checkboxes:
++             checkbox.blockSignals(True)
++         
++         # Thiết lập trạng thái mới cho tất cả checkbox
++         for checkbox in checkboxes:
++             checkbox.setChecked(is_select_all)
++         
++         # Kết nối lại signals sau khi cập nhật xong
++         for checkbox in checkboxes:
++             checkbox.blockSignals(False)
++         
++         # Cập nhật nút dựa trên hành động đã thực hiện
++         if is_select_all:
++             self.select_toggle_btn.setText(self.tr_("BUTTON_UNSELECT_ALL"))
++             if self.parent:
++                 self.parent.status_bar.showMessage(self.tr_("STATUS_ALL_VIDEOS_SELECTED"))
++         else:
++             self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
++             if self.parent:
++                 self.parent.status_bar.showMessage(self.tr_("STATUS_ALL_VIDEOS_UNSELECTED"))
+  
+```
+
+---
+
+```diff
+          self.update_statistics()  # Sẽ cập nhật trực tiếp các nhãn từ hàm này
+          
++         # Cập nhật nút Select/Unselect All
++         current_text = self.select_toggle_btn.text()
++         if current_text == "Select All" or current_text == "Chọn Tất Cả":
++             self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
++         else:
++             self.select_toggle_btn.setText(self.tr_("BUTTON_UNSELECT_ALL"))
++         
+          # Cập nhật nút Refresh và Delete Selected
+          self.refresh_btn.setText(self.tr_("BUTTON_REFRESH"))
+```
+
+---
+
+```bash
+python main.py
+```
+
+```
+PS I:\Product Apps\Tiktok Downloader_V1_Mp4> python main.py
+PS I:\Product Apps\Tiktok Downloader_V1_Mp4> python main.py
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Loaded 3 videos from database
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+Loaded 3 videos
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Checking TikTok URL: https://www.tiktok.com/@quocdung833/video/74723744903877788
+17?is_from_webapp=1&sender_d
+evice=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@quocdung833/video/747237449038
+7778817?is_from_webapp=1&sen
+der_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: TikTok video #7472374490387778817
+Duration: 10
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@quocdung833/video/7472374490387
+778817?is_from_webapp=1&send
+er_device=pc
+                            Sending info copy: VideoInfo(title='TikTok video #74
+72374490387778817', url='https://www.tiktok.com/@quocdun
+g833/video/7472374490387778817?is_from_webapp=1&sender_device=pc', duration=10,
+formats_count=8)            Received video info for URL: https://www.tiktok.com/
+@quocdung833/video/7472374490387778817?is_from_webapp=1&
+sender_device=pc, title: TikTok video #7472374490387778817
+                            Checking TikTok URL: https://www.tiktok.com/@bamibre
+adhanoi/video/7451848094167141650?is_from_webapp=1&sende
+r_device=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@bamibreadhanoi/video/745184809
+4167141650?is_from_webapp=1&
+sender_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: Ủa có hơn thua gì đâu a ơi 😅 #bamibread #banhmihoian #banhmihanoi #ph...
+Duration: 84
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@bamibreadhanoi/video/7451848094
+167141650?is_from_webapp=1&s
+ender_device=pc
+                            Sending info copy: VideoInfo(title='Ủa có hơn thua g
+ì đâu a ơi 😅 #bamibread #banhmihoian #banhmihanoi #ph..
+.', url='https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_fro
+m_webapp=1&sender_device=pc', duration=84, formats_count=8)
+                                                        Received video info for
+URL: https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_we
+bapp
+=1&sender_device=pc, title: Ủa có hơn thua gì đâu a ơi 😅 #bamibread #banhmihoia
+n #banhmihanoi #ph...       Checking TikTok URL: https://www.tiktok.com/@_ttquee
+n/video/7476430841510497543?is_from_webapp=1&sender_devi
+ce=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@_ttqueen/video/747643084151049
+7543?is_from_webapp=1&sender
+_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: vitamin trái cây 🍎🍓🍍🥭🍏                       #mukbang #asmr
+Duration: 117
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@_ttqueen/video/7476430841510497
+543?is_from_webapp=1&sender_
+device=pc
+                            Sending info copy: VideoInfo(title='vitamin trái cây
+ 🍎🍓🍍🥭🍏                       #mukbang #asmr ', url=
+'https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sen
+der_device=pc', duration=117, formats_count=8)
+                                                        Received video info for
+URL: https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1
+&sen
+der_device=pc, title: vitamin trái cây 🍎🍓🍍🥭🍏                       #mukbang
+ #asmr                      
+```
+
+---
+
+Đã hoàn thành hai yêu cầu của mày:
+
+1. Đã tăng độ rộng cột "Thời Lượng" trong tab Video Info từ 70px lên 90px để hiển thị đầy đủ text tiếng Việt.
+
+2. Đã thêm nút "Chọn Tất Cả/Bỏ Chọn Tất Cả" vào tab Downloaded Videos:
+   - Thêm nút vào phần giao diện cạnh nút "Xóa Đã Chọn" và nút "Làm Mới"
+   - Thêm hàm `toggle_select_all()` xử lý logic khi click vào nút
+   - Tối ưu hóa bằng cách tạm thời ngắt kết nối signals khi thực hiện thay đổi nhiều checkbox cùng lúc
+   - Cập nhật hàm `update_language()` để đảm bảo nút hiển thị đúng ngôn ngữ khi chuyển đổi
+
+Nút "Chọn Tất Cả/Bỏ Chọn Tất Cả" sẽ tự động thay đổi trạng thái dựa vào hành động người dùng. Khi nhấn "Chọn Tất Cả", tất cả các video được chọn và nút chuyển thành "Bỏ Chọn Tất Cả". Khi nhấn "Bỏ Chọn Tất Cả", tất cả các checkbox bị bỏ chọn và nút chuyển lại thành "Chọn Tất Cả".
+
+Mày có cần giải thích thêm gì không?
+
+---
+
+_**User**_
+
+Ta thấy Logix của nút Select All ở Tab Downloaded video khi mà ta bỏ chọn hết thì nó cũng không nhảy thành Select All mà khi ta chọn hết thì nó cũng không tự động nhảy thành Unselect All mà.
+
+---
+
+_**Assistant**_
+
 
 
 ---

@@ -772,6 +772,8 @@ class DownloadedVideosTab(QWidget):
             
             checkbox = QCheckBox()
             checkbox.setObjectName(f"select_checkbox_{i}")
+            # Kết nối sự kiện stateChanged với hàm checkbox_state_changed
+            checkbox.stateChanged.connect(self.checkbox_state_changed)
             select_layout.addWidget(checkbox)
             
             self.downloads_table.setCellWidget(row, 0, select_widget)
@@ -971,6 +973,9 @@ class DownloadedVideosTab(QWidget):
             # Ẩn khu vực chi tiết video nếu không có video nào được chọn
             self.video_details_frame.setVisible(False)
             self.selected_video = None
+            
+            # Cập nhật trạng thái nút Select All/Unselect All
+            self.update_select_toggle_button()
             
             # Cập nhật thông báo trong status bar
             if self.parent:
@@ -1763,3 +1768,33 @@ class DownloadedVideosTab(QWidget):
             self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
             if self.parent:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_ALL_VIDEOS_UNSELECTED"))
+                
+    def update_select_toggle_button(self):
+        """Cập nhật trạng thái nút chọn tất cả dựa trên trạng thái các checkbox"""
+        # Kiểm tra xem có video nào trong bảng không
+        if self.downloads_table.rowCount() == 0:
+            return
+            
+        # Kiểm tra trạng thái của tất cả checkbox
+        all_checked = True
+        any_checked = False
+        
+        for row in range(self.downloads_table.rowCount()):
+            select_widget = self.downloads_table.cellWidget(row, 0)
+            if select_widget:
+                checkbox = select_widget.findChild(QCheckBox)
+                if checkbox:
+                    if checkbox.isChecked():
+                        any_checked = True
+                    else:
+                        all_checked = False
+        
+        # Cập nhật trạng thái của nút
+        if all_checked:
+            self.select_toggle_btn.setText(self.tr_("BUTTON_UNSELECT_ALL"))
+        else:
+            self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
+            
+    def checkbox_state_changed(self):
+        """Xử lý khi trạng thái checkbox thay đổi"""
+        self.update_select_toggle_button()
