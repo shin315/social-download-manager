@@ -1429,10 +1429,10 @@ class DownloadedVideosTab(QWidget):
             if column == 2:  # Quality
                 # Chuyển đổi quality thành số để sắp xếp
                 quality_order = {
-                    "1080p": 4,
-                    "720p": 3,
-                    "480p": 2,
-                    "360p": 1,
+                    "1080p": 10,
+                    "720p": 9,
+                    "480p": 8,
+                    "360p": 7,
                     "320kbps": 3,  # Audio quality
                     "192kbps": 2,
                     "128kbps": 1,
