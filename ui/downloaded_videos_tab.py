@@ -1465,25 +1465,18 @@ class DownloadedVideosTab(QWidget):
             video = self.filtered_videos[row]
             
             if column == 1:  # Title
-                # Ưu tiên sử dụng title từ index 0 (tiêu đề ngắn gọn)
                 title = video[0] if len(video) > 0 else ""
+                full_title = video[9] if len(video) > 9 and video[9] else title
                 
                 # Loại bỏ hashtags khỏi title
                 # Xóa tất cả các đoạn text bắt đầu bằng # và kết thúc bằng khoảng trắng
-                cleaned_title = re.sub(r'#\S+\s*', '', title).strip()
+                cleaned_full_title = re.sub(r'#\S+\s*', '', full_title).strip()
                 # Xóa nhiều dấu cách thành một dấu cách
-                cleaned_title = re.sub(r'\s+', ' ', cleaned_title).strip()
-                full_text = cleaned_title
+                cleaned_full_title = re.sub(r'\s+', ' ', cleaned_full_title).strip()
                 
-                # Nếu có full title ở index 9, cũng loại bỏ hashtags và thêm vào
-                if len(video) > 9 and video[9] and video[9] != title:
-                    full_title = video[9]
-                    cleaned_full_title = re.sub(r'#\S+\s*', '', full_title).strip()
-                    cleaned_full_title = re.sub(r'\s+', ' ', cleaned_full_title).strip()
-                    
-                    # Chỉ thêm full title nếu nó khác với title đã làm sạch
-                    if cleaned_full_title != cleaned_title:
-                        full_text += "\n\nFull title:\n" + cleaned_full_title
+                # Chỉ hiển thị full title đã làm sạch, không hiển thị title ngắn ở trên nữa
+                full_text = cleaned_full_title
+                
             elif column == 2:  # Creator
                 full_text = video[1] if len(video) > 1 else ""
             elif column == 8:  # Hashtags
