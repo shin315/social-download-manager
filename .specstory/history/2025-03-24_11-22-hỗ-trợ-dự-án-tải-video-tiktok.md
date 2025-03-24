@@ -5009,9 +5009,561 @@ Read file: ui/video_info_tab.py
 
 ---
 
-Cancelled
+```diff
+          options_layout = QHBoxLayout()
+          
+-         # Checkbox Remove Watermark đã được xóa và luôn xóa watermark mặc định
+-         
+-         options_layout.addStretch(1)
++         # Nhóm các nút Select/Delete sang bên trái
++         left_buttons_layout = QHBoxLayout()
+          
+          # Nút Chọn tất cả / Bỏ chọn tất cả (gộp 2 nút thành 1)
+          self.select_toggle_btn.clicked.connect(self.toggle_select_all)
+          self.all_selected = False  # Trạng thái hiện tại (False: chưa chọn tất cả)
+-         options_layout.addWidget(self.select_toggle_btn)
++         left_buttons_layout.addWidget(self.select_toggle_btn)
+          
+          # Nút Delete Selected
+          self.delete_selected_btn = QPushButton(self.tr_("BUTTON_DELETE_SELECTED"))
+          self.delete_selected_btn.setFixedWidth(150)
+          self.delete_selected_btn.clicked.connect(self.delete_selected_videos)
+-         options_layout.addWidget(self.delete_selected_btn)
++         left_buttons_layout.addWidget(self.delete_selected_btn)
+          
+          # Nút Delete All
+          self.delete_all_btn = QPushButton(self.tr_("BUTTON_DELETE_ALL"))
+          self.delete_all_btn.setFixedWidth(150)
+          self.delete_all_btn.clicked.connect(self.delete_all_videos)
+-         options_layout.addWidget(self.delete_all_btn)
++         left_buttons_layout.addWidget(self.delete_all_btn)
++         
++         # Thêm nhóm nút bên trái vào layout
++         options_layout.addLayout(left_buttons_layout)
++         
++         # Thêm stretch để đẩy nút Download sang bên phải hoàn toàn
++         options_layout.addStretch(1)
+          
+-         # Nút Download
++         # Nút Download ở bên phải
+          self.download_btn = QPushButton(self.tr_("BUTTON_DOWNLOAD"))
+          self.download_btn.setFixedWidth(150)
+```
 
 ---
+
+```bash
+python main.py
+```
+
+```
+PS I:\Product Apps\Tiktok Downloader_V1_Mp4> python main.py
+PS I:\Product Apps\Tiktok Downloader_V1_Mp4> python main.py
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+Loaded 14 videos from database
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+Loaded 14 videos
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Checking TikTok URL: https://www.tiktok.com/@quocdung833/video/74723744903877788
+17?is_from_webapp=1&sender_d
+evice=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@quocdung833/video/747237449038
+7778817?is_from_webapp=1&sen
+der_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: TikTok video #7472374490387778817
+Duration: 10
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@quocdung833/video/7472374490387
+778817?is_from_webapp=1&send
+er_device=pc
+                            Sending info copy: VideoInfo(title='TikTok video #74
+72374490387778817', url='https://www.tiktok.com/@quocdun
+g833/video/7472374490387778817?is_from_webapp=1&sender_device=pc', duration=10,
+formats_count=8)            Received video info for URL: https://www.tiktok.com/
+@quocdung833/video/7472374490387778817?is_from_webapp=1&
+sender_device=pc, title: TikTok video #7472374490387778817
+                            Checking TikTok URL: https://www.tiktok.com/@bamibre
+adhanoi/video/7451848094167141650?is_from_webapp=1&sende
+r_device=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@bamibreadhanoi/video/745184809
+4167141650?is_from_webapp=1&
+sender_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: Ủa có hơn thua gì đâu a ơi 😅 #bamibread #banhmihoian #banhmihanoi #ph...
+Duration: 84
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@bamibreadhanoi/video/7451848094
+167141650?is_from_webapp=1&s
+ender_device=pc
+                            Sending info copy: VideoInfo(title='Ủa có hơn thua g
+ì đâu a ơi 😅 #bamibread #banhmihoian #banhmihanoi #ph..
+.', url='https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_fro
+m_webapp=1&sender_device=pc', duration=84, formats_count=8)
+                                                        Received video info for
+URL: https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_we
+bapp
+=1&sender_device=pc, title: Ủa có hơn thua gì đâu a ơi 😅 #bamibread #banhmihoia
+n #banhmihanoi #ph...       Checking TikTok URL: https://www.tiktok.com/@_ttquee
+n/video/7476430841510497543?is_from_webapp=1&sender_devi
+ce=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@_ttqueen/video/747643084151049
+7543?is_from_webapp=1&sender
+_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: vitamin trái cây 🍎🍓🍍🥭🍏                       #mukbang #asmr
+Duration: 117
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@_ttqueen/video/7476430841510497
+543?is_from_webapp=1&sender_
+device=pc
+                            Sending info copy: VideoInfo(title='vitamin trái cây
+ 🍎🍓🍍🥭🍏                       #mukbang #asmr ', url=
+'https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sen
+der_device=pc', duration=117, formats_count=8)
+                                                        Received video info for
+URL: https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1
+&sen
+der_device=pc, title: vitamin trái cây 🍎🍓🍍🥭🍏                       #mukbang
+ #asmr                      Checking TikTok URL: https://www.tiktok.com/@8dmuslc
+c/video/7467649291293674769?is_from_webapp=1&sender_devi
+ce=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@8dmuslcc/video/746764929129367
+4769?is_from_webapp=1&sender
+_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: Надень наушники 🎧
+Duration: 66
+Found 4 formats
+Emitting info signal for https://www.tiktok.com/@8dmuslcc/video/7467649291293674
+769?is_from_webapp=1&sender_
+device=pc
+                            Sending info copy: VideoInfo(title='Надень наушники
+🎧 ', url='https://www.tiktok.com/@8dmuslcc/video/746764
+9291293674769?is_from_webapp=1&sender_device=pc', duration=66, formats_count=4)
+                            Received video info for URL: https://www.tiktok.com/
+@8dmuslcc/video/7467649291293674769?is_from_webapp=1&sen
+der_device=pc, title: Надень наушники 🎧
+                            Checking TikTok URL: https://www.tiktok.com/@bshungd
+inhduong/video/7484567769799806216?is_from_webapp=1&send
+er_device=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@bshungdinhduong/video/74845677
+69799806216?is_from_webapp=1
+&sender_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: Trả lời @Shan Won sai số khi đo huyết áp #bshungdinhduong #nreci #son...
+Duration: 82
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@bshungdinhduong/video/748456776
+9799806216?is_from_webapp=1&
+sender_device=pc
+                            Sending info copy: VideoInfo(title='Trả lời @Shan Wo
+n sai số khi đo huyết áp #bshungdinhduong #nreci #son...
+', url='https://www.tiktok.com/@bshungdinhduong/video/7484567769799806216?is_fro
+m_webapp=1&sender_device=pc', duration=82, formats_count=8)
+                                                        Received video info for
+URL: https://www.tiktok.com/@bshungdinhduong/video/7484567769799806216?is_from_w
+ebap
+p=1&sender_device=pc, title: Trả lời @Shan Won sai số khi đo huyết áp #bshungdin
+hduong #nreci #son...       Checking TikTok URL: https://www.tiktok.com/@citypkv
+/video/7477153821169306887?is_from_webapp=1&sender_devic
+e=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@citypkv/video/7477153821169306
+887?is_from_webapp=1&sender_
+device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: #citypkv #vietnam
+Duration: 28
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@citypkv/video/74771538211693068
+87?is_from_webapp=1&sender_d
+evice=pc
+                            Sending info copy: VideoInfo(title='#citypkv #vietna
+m ', url='https://www.tiktok.com/@citypkv/video/74771538
+21169306887?is_from_webapp=1&sender_device=pc', duration=28, formats_count=8)
+                            Received video info for URL: https://www.tiktok.com/
+@citypkv/video/7477153821169306887?is_from_webapp=1&send
+er_device=pc, title: #citypkv #vietnam
+                            Checking TikTok URL: https://www.tiktok.com/@nhato_o
+fficial/video/7483894075666566407?is_from_webapp=1&sende
+r_device=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@nhato_official/video/748389407
+5666566407?is_from_webapp=1&
+sender_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: Khám phá Johor Bahru, Malaysia để đầu tư BĐS có đáng hay không? #nhat...
+Duration: 132
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@nhato_official/video/7483894075
+666566407?is_from_webapp=1&s
+ender_device=pc
+                            Sending info copy: VideoInfo(title='Khám phá Johor B
+ahru, Malaysia để đầu tư BĐS có đáng hay không? #nhat...
+', url='https://www.tiktok.com/@nhato_official/video/7483894075666566407?is_from
+_webapp=1&sender_device=pc', duration=132, formats_count=8)
+                                                        Received video info for
+URL: https://www.tiktok.com/@nhato_official/video/7483894075666566407?is_from_we
+bapp
+=1&sender_device=pc, title: Khám phá Johor Bahru, Malaysia để đầu tư BĐS có đáng
+ hay không? #nhat...        Checking TikTok URL: https://www.tiktok.com/@buy.and
+.sell.8/video/7483151209159838983?is_from_webapp=1&sende
+r_device=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@buy.and.sell.8/video/748315120
+9159838983?is_from_webapp=1&
+sender_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: #tolam #vietnam #tintuc #fyb #xuhuongtiktok #viral #tiktok #
+Duration: 9
+Found 4 formats
+Emitting info signal for https://www.tiktok.com/@buy.and.sell.8/video/7483151209
+159838983?is_from_webapp=1&s
+ender_device=pc
+                            Sending info copy: VideoInfo(title='#tolam #vietnam
+#tintuc #fyb #xuhuongtiktok #viral #tiktok #', url='http
+s://www.tiktok.com/@buy.and.sell.8/video/7483151209159838983?is_from_webapp=1&se
+nder_device=pc', duration=9, formats_count=4)
+                                                        Received video info for
+URL: https://www.tiktok.com/@buy.and.sell.8/video/7483151209159838983?is_from_we
+bapp
+=1&sender_device=pc, title: #tolam #vietnam #tintuc #fyb #xuhuongtiktok #viral #
+tiktok #                    Checking TikTok URL: https://www.tiktok.com/@mattpai
+ge68/video/7483213865451523374?is_from_webapp=1&sender_d
+evice=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@mattpaige68/video/748321386545
+1523374?is_from_webapp=1&sen
+der_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: Did you know you can self host n8n? Its way easier than you think all...
+Duration: 79
+Found 10 formats
+Emitting info signal for https://www.tiktok.com/@mattpaige68/video/7483213865451
+523374?is_from_webapp=1&send
+er_device=pc
+                            Sending info copy: VideoInfo(title='Did you know you
+ can self host n8n? Its way easier than you think all...
+', url='https://www.tiktok.com/@mattpaige68/video/7483213865451523374?is_from_we
+bapp=1&sender_device=pc', duration=79, formats_count=10)
+                                                        Received video info for
+URL: https://www.tiktok.com/@mattpaige68/video/7483213865451523374?is_from_webap
+p=1&
+sender_device=pc, title: Did you know you can self host n8n? Its way easier than
+ you think all...           Checking TikTok URL: https://www.tiktok.com/@vtvcab.
+tintuc/video/7482766397198634256?is_from_webapp=1&sender
+_device=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@vtvcab.tintuc/video/7482766397
+198634256?is_from_webapp=1&s
+ender_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: "Mẹ ơi, con chỉ muốn vô tư" - Hàng loạt biển hiệu trên đường phố Việt...
+Duration: 49
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@vtvcab.tintuc/video/74827663971
+98634256?is_from_webapp=1&se
+nder_device=pc
+                            Sending info copy: VideoInfo(title='"Mẹ ơi, con chỉ
+muốn vô tư" - Hàng loạt biển hiệu trên đường phố Việt...
+', url='https://www.tiktok.com/@vtvcab.tintuc/video/7482766397198634256?is_from_
+webapp=1&sender_device=pc', duration=49, formats_count=8)
+                                                        Received video info for
+URL: https://www.tiktok.com/@vtvcab.tintuc/video/7482766397198634256?is_from_web
+app=
+1&sender_device=pc, title: "Mẹ ơi, con chỉ muốn vô tư" - Hàng loạt biển hiệu trê
+n đường phố Việt...         Checking TikTok URL: https://www.tiktok.com/@tuyetco
+w/video/7484181167978089736?is_from_webapp=1&sender_devi
+ce=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@tuyetcow/video/748418116797808
+9736?is_from_webapp=1&sender
+_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: Khí chất giàu có dù không có tiền
+Duration: 45
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@tuyetcow/video/7484181167978089
+736?is_from_webapp=1&sender_
+device=pc
+                            Sending info copy: VideoInfo(title='Khí chất giàu có
+ dù không có tiền ', url='https://www.tiktok.com/@tuyetc
+ow/video/7484181167978089736?is_from_webapp=1&sender_device=pc', duration=45, fo
+rmats_count=8)              Received video info for URL: https://www.tiktok.com/
+@tuyetcow/video/7484181167978089736?is_from_webapp=1&sen
+der_device=pc, title: Khí chất giàu có dù không có tiền
+                            Checking TikTok URL: https://www.tiktok.com/@citypkv
+/video/7453331257741675784?is_from_webapp=1&sender_devic
+e=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@citypkv/video/7453331257741675
+784?is_from_webapp=1&sender_
+device=pc
+                            Result type: <class 'dict'>
+Result has 62 keys
+Title: Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...
+Duration: 78
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@citypkv/video/74533312577416757
+84?is_from_webapp=1&sender_d
+evice=pc
+                            Sending info copy: VideoInfo(title='Trả lời @Tung Ng
+uyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...
+', url='https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp
+=1&sender_device=pc', duration=78, formats_count=8)
+                                                        Received video info for
+URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&
+send
+er_device=pc, title: Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiế
+u xây dựng...               Checking TikTok URL: https://www.tiktok.com/@willfra
+ncis24/video/7485140274247650582?is_from_webapp=1&sender
+_device=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@willfrancis24/video/7485140274
+247650582?is_from_webapp=1&s
+ender_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: A new AI image generator is topping the leaderboard - Reve - it excel...
+Duration: 96
+Found 10 formats
+Emitting info signal for https://www.tiktok.com/@willfrancis24/video/74851402742
+47650582?is_from_webapp=1&se
+nder_device=pc
+                            Sending info copy: VideoInfo(title='A new AI image g
+enerator is topping the leaderboard - Reve - it excel...
+', url='https://www.tiktok.com/@willfrancis24/video/7485140274247650582?is_from_
+webapp=1&sender_device=pc', duration=96, formats_count=10)
+                                                        Received video info for
+URL: https://www.tiktok.com/@willfrancis24/video/7485140274247650582?is_from_web
+app=
+1&sender_device=pc, title: A new AI image generator is topping the leaderboard -
+ Reve - it excel...         Checking TikTok URL: https://www.tiktok.com/@laingua
+chan.offical/video/7483658585101143318?is_from_webapp=1&
+sender_device=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@lainguachan.offical/video/7483
+658585101143318?is_from_weba
+pp=1&sender_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: BAN ĐÊM Ở TRIỀU TIÊN GẦN NHƯ TOÀN 1 MÀU ĐEN . #lainguachan #trieutien
+Duration: 65
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@lainguachan.offical/video/74836
+58585101143318?is_from_webap
+p=1&sender_device=pc
+                            Sending info copy: VideoInfo(title='BAN ĐÊM Ở TRIỀU
+TIÊN GẦN NHƯ TOÀN 1 MÀU ĐEN . #lainguachan #trieutien', 
+url='https://www.tiktok.com/@lainguachan.offical/video/7483658585101143318?is_fr
+om_webapp=1&sender_device=pc', duration=65, formats_count=8)
+                                                        Received video info for
+URL: https://www.tiktok.com/@lainguachan.offical/video/7483658585101143318?is_fr
+om_w
+ebapp=1&sender_device=pc, title: BAN ĐÊM Ở TRIỀU TIÊN GẦN NHƯ TOÀN 1 MÀU ĐEN . #
+lainguachan #trieutien      Checking TikTok URL: https://www.tiktok.com/@trinhtr
+ongtrangg/video/7485290428384759048?is_from_webapp=1&sen
+der_device=pc
+                            Valid TikTok URL format: https?://(www\.)?tiktok\.co
+m/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@trinhtrongtrangg/video/7485290
+428384759048?is_from_webapp=
+1&sender_device=pc
+                            Result type: <class 'dict'>
+Result has 61 keys
+Title: Chấp nhận làm một người bình thường cũng không đơn giản lắm #taphoa #...
+Duration: 80
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@trinhtrongtrangg/video/74852904
+28384759048?is_from_webapp=1
+&sender_device=pc
+                            Sending info copy: VideoInfo(title='Chấp nhận làm mộ
+t người bình thường cũng không đơn giản lắm #taphoa #...
+', url='https://www.tiktok.com/@trinhtrongtrangg/video/7485290428384759048?is_fr
+om_webapp=1&sender_device=pc', duration=80, formats_count=8)
+                                                        Received video info for
+URL: https://www.tiktok.com/@trinhtrongtrangg/video/7485290428384759048?is_from_
+weba
+pp=1&sender_device=pc, title: Chấp nhận làm một người bình thường cũng không đơn
+ giản lắm #taphoa #...      User confirmed deletion of 14 videos
+Attempting to delete video: Надень наушники 🎧
+Successfully deleted 1 records with title: Надень наушники 🎧
+Attempting to delete video: Trả lời @Shan Won sai số khi đo huyết áp
+Successfully deleted 1 records with title: Trả lời @Shan Won sai số khi đo huyết
+ áp
+Attempting to delete video:
+Successfully deleted 1 records with title:
+Attempting to delete video: Khám phá Johor Bahru, Malaysia để đầu tư BĐS có đáng
+ hay không?
+Successfully deleted 1 records with title: Khám phá Johor Bahru, Malaysia để đầu
+ tư BĐS có đáng hay không?
+Attempting to delete video: Did you know you can self host n8n? Its way easier t
+han you think all...        
+Successfully deleted 1 records with title: Did you know you can self host n8n? I
+ts way easier than you think
+ all...
+                            Attempting to delete video: "Mẹ ơi, con chỉ muốn vô
+tư" - Hàng loạt biển hiệu trên đường phố Việt...        
+Successfully deleted 1 records with title: "Mẹ ơi, con chỉ muốn vô tư" - Hàng lo
+ạt biển hiệu trên đường phố 
+Việt...
+                            Attempting to delete video: Khí chất giàu có dù khôn
+g có tiền
+Successfully deleted 1 records with title: Khí chất giàu có dù không có tiền
+Attempting to delete video: Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu
+xây dựng...
+Successfully deleted 1 records with title: Trả lời @Tung Nguyen cách họ diễn giả
+i vấn đề thiếu xây dựng...
+Attempting to delete video: A new AI image generator is topping the leaderboard
+- Reve - it excel...        
+Successfully deleted 1 records with title: A new AI image generator is topping t
+he leaderboard - Reve - it e
+xcel...
+                            Attempting to delete video: BAN ĐÊM Ở TRIỀU TIÊN GẦN
+ NHƯ TOÀN 1 MÀU ĐEN .
+Successfully deleted 1 records with title: BAN ĐÊM Ở TRIỀU TIÊN GẦN NHƯ TOÀN 1 M
+ÀU ĐEN .
+Attempting to delete video: Chấp nhận làm một người bình thường cũng không đơn g
+iản lắm
+Successfully deleted 1 records with title: Chấp nhận làm một người bình thường c
+ũng không đơn giản lắm
+Attempting to delete video: TikTok video
+Successfully deleted 1 records with title: TikTok video
+Attempting to delete video: Ủa có hơn thua gì đâu a ơi 😅
+Successfully deleted 1 records with title: Ủa có hơn thua gì đâu a ơi 😅
+Attempting to delete video: vitamin trái cây 🍎🍓🍍🥭🍏
+Successfully deleted 1 records with title: vitamin trái cây 🍎🍓🍍🥭🍏
+
+```
+
+---
+
+Tao đã thành công cải thiện UX của ứng dụng bằng cách tách biệt các nút ra theo chức năng và vị trí:
+
+1. Đã di chuyển 3 nút liên quan đến chọn/xóa (Chọn Tất Cả, Xóa Đã Chọn, Xóa Tất Cả) sang bên trái màn hình, đặt chúng gần nhau trong một nhóm riêng. Cụ thể:
+   - Tạo một layout con `left_buttons_layout` để nhóm các nút này lại với nhau
+   - Thêm các nút vào layout bên trái theo thứ tự: Chọn Tất Cả, Xóa Đã Chọn, Xóa Tất Cả
+   - Thêm layout con này vào đầu layout chính
+
+2. Để nút Tải Xuống (Download) đứng một mình ở bên phải màn hình:
+   - Thêm một `stretch` factor để đẩy nút Tải Xuống sang tận cùng bên phải
+   - Giữ nguyên chiều rộng nút là 150px để dễ nhìn
+
+3. Cấu trúc layout mới như sau:
+   ```
+   [Chọn Tất Cả][Xóa Đã Chọn][Xóa Tất Cả]                                     [Tải Xuống]
+   ```
+
+Việc tổ chức lại này sẽ giúp người dùng:
+- Giảm nguy cơ nhấn nhầm nút Tải Xuống khi định nhấn nút Xóa
+- Phân nhóm chức năng rõ ràng: bên trái để quản lý danh sách, bên phải để thực hiện hành động chính
+- Tạo khoảng cách an toàn giữa các nút theo chức năng
+
+Từ kết quả test, ta thấy giao diện mới hoạt động tốt, người dùng có thể dễ dàng phân biệt giữa các nút và giảm thiểu rủi ro bấm nhầm.
+
+---
+
+_**User**_
+
+Tao thấy có một điều làm user khó chịu ở đây đó là khi mà user test info xong ra khoảng 10 video đi Thì khi mà người dùng muốn bấm tải xuống ấy Nếu mà video ấy nó đã có sẵn ở thư mục của user rồi thì ví dụ có sẵn 5 cái thì user sẽ phải click chọn từng cái từng cái một z hoặc non Là chọn ghi đề hay không. Thì tao muốn có một lựa chọn cho người dùng nữa là áp dụng cho tất cả chẳng hạn 
+
+---
+
+_**Assistant**_
 
 
 

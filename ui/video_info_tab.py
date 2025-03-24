@@ -356,6 +356,9 @@ class VideoInfoTab(QWidget):
         videos_already_exist = []
         selected_count = 0
         
+        # Biến lưu lựa chọn của người dùng cho tất cả file đã tồn tại
+        overwrite_all = None  # None = chưa chọn, True = ghi đè tất cả, False = bỏ qua tất cả
+        
         # Duyệt qua từng dòng trong bảng
         for row in range(self.video_table.rowCount()):
             checkbox_cell = self.video_table.cellWidget(row, 0)
@@ -414,34 +417,68 @@ class VideoInfoTab(QWidget):
                         videos_already_exist.append(title)
                     elif file_exists:
                         # File tồn tại trên ổ đĩa nhưng không có trong CSDL
-                        # Hiển thị thông báo hỏi người dùng có muốn ghi đè không
-                        msg = self.tr_("DIALOG_FILE_EXISTS_MESSAGE").format(f"{clean_title}.{ext}")
-                        reply = QMessageBox.question(
-                            self, 
-                            self.tr_("DIALOG_FILE_EXISTS"),
-                            msg,
-                            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel,
-                            QMessageBox.StandardButton.No
-                        )
                         
-                        if reply == QMessageBox.StandardButton.Cancel:
-                            # Người dùng chọn hủy, dừng tất cả việc tải xuống
-                            if self.parent:
-                                self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOAD_CANCELLED"))
-                            return
-                        
-                        elif reply == QMessageBox.StandardButton.No:
-                            # Người dùng chọn không ghi đè, bỏ qua video này
-                            continue
-                        
-                        # Nếu chọn Yes, tiếp tục thêm vào hàng đợi tải xuống
-                        download_queue.append({
-                            'url': url,
-                            'title': title,
-                            'format_id': format_id,
-                            'clean_title': clean_title,
-                            'ext': ext
-                        })
+                        # Nếu người dùng đã chọn "Áp dụng cho tất cả", sử dụng lựa chọn đó
+                        if overwrite_all is not None:
+                            if overwrite_all:
+                                # Người dùng đã chọn ghi đè tất cả
+                                download_queue.append({
+                                    'url': url,
+                                    'title': title,
+                                    'format_id': format_id,
+                                    'clean_title': clean_title,
+                                    'ext': ext
+                                })
+                            else:
+                                # Người dùng đã chọn bỏ qua tất cả
+                                continue
+                        else:
+                            # Hiển thị thông báo hỏi người dùng có muốn ghi đè không
+                            # và thêm lựa chọn "Áp dụng cho tất cả"
+                            msg = self.tr_("DIALOG_FILE_EXISTS_MESSAGE").format(f"{clean_title}.{ext}")
+                            apply_all_checkbox = QCheckBox(self.tr_("DIALOG_APPLY_TO_ALL"))
+                            
+                            # Tạo message box tùy chỉnh để thêm checkbox
+                            msg_box = QMessageBox(
+                                QMessageBox.Icon.Question,
+                                self.tr_("DIALOG_FILE_EXISTS"),
+                                msg,
+                                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel,
+                                self
+                            )
+                            
+                            # Thêm checkbox vào message box
+                            layout = msg_box.layout()
+                            layout.addWidget(apply_all_checkbox, 1, 1, 1, layout.columnCount(), Qt.AlignmentFlag.AlignLeft)
+                            
+                            # Hiển thị message box
+                            reply = msg_box.exec()
+                            
+                            if reply == QMessageBox.StandardButton.Cancel:
+                                # Người dùng chọn hủy, dừng tất cả việc tải xuống
+                                if self.parent:
+                                    self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOAD_CANCELLED"))
+                                return
+                            
+                            elif reply == QMessageBox.StandardButton.No:
+                                # Người dùng chọn không ghi đè
+                                if apply_all_checkbox.isChecked():
+                                    overwrite_all = False  # Áp dụng "không ghi đè" cho tất cả
+                                continue
+                            
+                            elif reply == QMessageBox.StandardButton.Yes:
+                                # Người dùng chọn ghi đè
+                                if apply_all_checkbox.isChecked():
+                                    overwrite_all = True  # Áp dụng "ghi đè" cho tất cả
+                                
+                                # Thêm vào hàng đợi tải xuống
+                                download_queue.append({
+                                    'url': url,
+                                    'title': title,
+                                    'format_id': format_id,
+                                    'clean_title': clean_title,
+                                    'ext': ext
+                                })
                     else:
                         # Video chưa tồn tại, thêm vào hàng đợi tải xuống
                         download_queue.append({

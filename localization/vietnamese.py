@@ -160,6 +160,7 @@ DIALOG_VIDEOS_EXIST = "Video đã tồn tại"
 DIALOG_VIDEOS_ALREADY_EXIST = "Các video sau đã tồn tại và sẽ không được tải lại:"
 DIALOG_FILE_EXISTS = "File đã tồn tại"
 DIALOG_FILE_EXISTS_MESSAGE = "File '{}' đã tồn tại trong thư mục lưu.\nBạn có muốn ghi đè lên không?"
+DIALOG_APPLY_TO_ALL = "Áp dụng cho tất cả"
 
 # About dialog
 ABOUT_TITLE = "Giới Thiệu SoDownloader"

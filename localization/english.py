@@ -159,6 +159,7 @@ DIALOG_VIDEOS_EXIST = "Videos Already Exist"
 DIALOG_VIDEOS_ALREADY_EXIST = "The following videos already exist and will not be downloaded again:"
 DIALOG_FILE_EXISTS = "File Already Exists"
 DIALOG_FILE_EXISTS_MESSAGE = "The file '{}' already exists in the output folder.\nDo you want to overwrite it?"
+DIALOG_APPLY_TO_ALL = "Apply to all"
 
 # About dialog
 ABOUT_TITLE = "About SoDownloader"
