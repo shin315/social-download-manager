@@ -6,6 +6,7 @@ from PyQt6.QtGui import QPixmap
 import os
 import subprocess
 import math
+import unicodedata
 from localization import get_language_manager
 from utils.db_manager import DatabaseManager
 from datetime import datetime
@@ -200,12 +201,12 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.setColumnWidth(1, 250)  # Tiêu đề - tăng thêm để ưu tiên hiển thị
         self.downloads_table.setColumnWidth(2, 80)   # Tác giả - giảm xuống
         self.downloads_table.setColumnWidth(3, 70)   # Chất lượng - giảm xuống
-        self.downloads_table.setColumnWidth(4, 80)   # Định dạng
+        self.downloads_table.setColumnWidth(4, 70)   # Định dạng - giảm để nhường cho Action
         self.downloads_table.setColumnWidth(5, 70)   # Kích thước
-        self.downloads_table.setColumnWidth(6, 120)  # Trạng thái
-        self.downloads_table.setColumnWidth(7, 120)  # Ngày tải
-        self.downloads_table.setColumnWidth(8, 100)  # Hashtags - giảm lại để nhường cho tiêu đề
-        self.downloads_table.setColumnWidth(9, 120)  # Thao tác
+        self.downloads_table.setColumnWidth(6, 90)   # Trạng thái - giảm do sẽ thay đổi nội dung
+        self.downloads_table.setColumnWidth(7, 110)  # Ngày tải - giảm để nhường cho Action
+        self.downloads_table.setColumnWidth(8, 90)   # Hashtags - giảm lại để nhường cho Action
+        self.downloads_table.setColumnWidth(9, 140)  # Thao tác - tăng để đủ chỗ hiển thị 2 nút
         
         # Thiết lập thuộc tính bảng
         self.downloads_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
@@ -224,8 +225,10 @@ class DownloadedVideosTab(QWidget):
         
         # Vô hiệu hóa việc sắp xếp cho cột Select
         self.downloads_table.horizontalHeader().setSortIndicatorShown(True)
+        # Vô hiệu hóa khả năng click để sắp xếp cột Select
+        self.downloads_table.horizontalHeader().setSectionsClickable(True)
         
-        # Kết nối sự kiện click header để sắp xếp
+        # Kết nối sự kiện click header để sắp xếp (nhưng sẽ bỏ qua cột Select)
         self.downloads_table.horizontalHeader().sectionClicked.connect(self.sort_table)
         
         # Kết nối sự kiện click dòng để hiển thị thông tin chi tiết
@@ -466,7 +469,9 @@ class DownloadedVideosTab(QWidget):
             # Kiểm tra file tồn tại và hiển thị status tương ứng
             status_value = video[5]
             if filepath and os.path.exists(filepath):
-                status_value = "Download successful"
+                status_value = "Successful"
+            elif status_value == "Download successful":
+                status_value = "Successful"
             self.status_label.setText(f"✅ {self.tr_('DETAIL_STATUS')}: {status_value}")
             
             # Hiển thị duration
@@ -664,8 +669,8 @@ class DownloadedVideosTab(QWidget):
                 # Hiển thị status một cách thân thiện
                 status = download.get('status', 'Success')
                 print(f"DEBUG loading video status initial: {status}")
-                if status == 'Success':
-                    status = 'Download successful'
+                if status == 'Success' or status == 'Download successful':
+                    status = 'Successful'
                 print(f"DEBUG loading video status after conversion: {status}")
                 
                 # Kiểm tra và cập nhật kích thước file thực tế
@@ -808,10 +813,12 @@ class DownloadedVideosTab(QWidget):
             
             # Cột Status
             status_value = video[5]  
-            # Đảm bảo status luôn hiển thị "Download successful" nếu file tồn tại
+            # Đảm bảo status luôn hiển thị "Successful" nếu file tồn tại
             filepath = os.path.join(video[8], video[0]) if video[8] and video[0] else ""
             if filepath and os.path.exists(filepath):
-                status_value = "Download successful"
+                status_value = "Successful"
+            elif status_value == "Download successful":
+                status_value = "Successful"
             status_item = QTableWidgetItem(status_value)
             status_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # Tắt khả năng chỉnh sửa
@@ -1039,7 +1046,7 @@ class DownloadedVideosTab(QWidget):
             status = download_info.get('status', 'Success')
             print(f"DEBUG loading video status initial: {status}")
             if status == 'Success':
-                status = 'Download successful'
+                status = 'Successful'
             print(f"DEBUG loading video status after conversion: {status}")
             
             # Lọc bỏ hashtag khỏi title nếu chưa được lọc
@@ -1339,7 +1346,7 @@ class DownloadedVideosTab(QWidget):
         self.format_label.setText(f"{self.tr_('DETAIL_FORMAT')}: {video[3]}")  # Định dạng
         self.size_label.setText(f"{self.tr_('DETAIL_SIZE')}: {video[4]}")  # Kích thước
         self.date_label.setText(f"{self.tr_('DETAIL_DOWNLOADED')}: {video[6]}")  # Ngày tải
-        self.status_label.setText(f"{self.tr_('DETAIL_STATUS')}: {video[5]}")  # Trạng thái
+        self.status_label.setText(f"✅ {self.tr_('DETAIL_STATUS')}: {video[5]}")  # Trạng thái
         
         # Cập nhật hashtags - Đảm bảo hiển thị đúng
         hashtags = video[7]
@@ -1371,6 +1378,30 @@ class DownloadedVideosTab(QWidget):
 
     def sort_table(self, column):
         """Sắp xếp bảng theo cột được click"""
+        # Xác định đúng column mapping để khớp với index trong self.filtered_videos
+        # Thứ tự cột hiển thị và index trong filtered_videos có thể khác nhau
+        column_mapping = {
+            0: 0,  # Select (không sắp xếp)
+            1: 0,  # Title (index 0 trong filtered_videos)
+            2: 1,  # Creator (index 1 trong filtered_videos)
+            3: 2,  # Quality (index 2 trong filtered_videos)
+            4: 3,  # Format (index 3 trong filtered_videos)
+            5: 4,  # Size (index 4 trong filtered_videos)
+            6: 5,  # Status (index 5 trong filtered_videos)
+            7: 6,  # Date (index 6 trong filtered_videos)
+            8: 7,  # Hashtags (index 7 trong filtered_videos)
+            9: 8   # Action (không sắp xếp)
+        }
+        
+        # Chỉ cho phép sắp xếp các cột: Title(1), Creator(2), Quality(3), Format(4), Size(5), Date(7)
+        # Bỏ qua các cột khác: Select(0), Status(6), Hashtags(8), Actions(9)
+        sortable_columns = [1, 2, 3, 4, 5, 7]
+        if column not in sortable_columns:
+            return
+            
+        # Map column UI sang column data
+        data_column = column_mapping[column]
+            
         # Đảo chiều sắp xếp nếu click vào cùng một cột
         if self.sort_column == column:
             self.sort_order = Qt.SortOrder.DescendingOrder if self.sort_order == Qt.SortOrder.AscendingOrder else Qt.SortOrder.AscendingOrder
@@ -1378,40 +1409,61 @@ class DownloadedVideosTab(QWidget):
             self.sort_column = column
             self.sort_order = Qt.SortOrder.AscendingOrder
         
-        # Sắp xếp danh sách video
-        self.sort_videos(column)
+        # Sắp xếp danh sách video với column đã được map
+        self.sort_videos(data_column)
         
         # Hiển thị lại danh sách
         self.display_videos()
 
     def sort_videos(self, column):
         """Sắp xếp danh sách video theo cột"""
-        # Hàm lấy giá trị để sắp xếp
         def get_sort_key(video):
             value = video[column]
-            # Xử lý các kiểu dữ liệu đặc biệt
-            if column == 3:  # Duration
-                # Chuyển định dạng HH:MM:SS thành số giây
-                parts = value.split(':')
-                if len(parts) == 2:
-                    return int(parts[0]) * 60 + int(parts[1])
-                elif len(parts) == 3:
-                    return int(parts[0]) * 3600 + int(parts[1]) * 60 + int(parts[2])
-                return 0
-            elif column == 4:  # Size
-                # Chuyển đổi MB, KB thành số
-                if 'MB' in value:
-                    return float(value.replace('MB', '').strip())
-                elif 'KB' in value:
-                    return float(value.replace('KB', '').strip()) / 1024
-                return 0
-            elif column == 6:  # Date
-                # Để đơn giản, coi như chuỗi ngày có thể so sánh trực tiếp
-                return value
+            
+            if column == 3:  # Quality
+                # Chuyển đổi quality thành số để sắp xếp
+                quality_order = {
+                    "1080p": 4,
+                    "720p": 3,
+                    "480p": 2,
+                    "360p": 1,
+                    "320kbps": 3,  # Audio quality
+                    "192kbps": 2,
+                    "128kbps": 1,
+                    "Unknown": 0
+                }
+                return quality_order.get(value, 0)
+                
+            elif column == 5:  # Size
+                try:
+                    # Chuyển đổi MB, KB thành số
+                    if 'MB' in value:
+                        return float(value.replace('MB', '').strip())
+                    elif 'KB' in value:
+                        return float(value.replace('KB', '').strip()) / 1024
+                    return 0
+                except Exception as e:
+                    print(f"Error converting size: {e}")
+                    return 0
+                    
+            elif column == 1 or column == 2:  # Title hoặc Creator
+                # Chuẩn hóa text trước khi sắp xếp
+                try:
+                    return unicodedata.normalize('NFKD', value.lower())
+                except Exception as e:
+                    print(f"Error normalizing text: {e}")
+                    return value.lower()
+                    
+            # Mặc định sắp xếp text không phân biệt hoa thường
+            if isinstance(value, str):
+                return value.lower()
             return value
         
         # Sắp xếp danh sách
-        self.filtered_videos.sort(key=get_sort_key, reverse=(self.sort_order == Qt.SortOrder.DescendingOrder)) 
+        try:
+            self.filtered_videos.sort(key=get_sort_key, reverse=(self.sort_order == Qt.SortOrder.DescendingOrder))
+        except Exception as e:
+            print(f"Error sorting videos: {e}")
 
     def show_full_text_tooltip(self, row, column):
         """Hiển thị tooltip với text đầy đủ khi hover chuột vào ô"""

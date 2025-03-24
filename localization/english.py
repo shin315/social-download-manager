@@ -102,7 +102,7 @@ FORMAT_AUDIO_MP3 = "Audio (mp3)"
 # Status messages
 STATUS_READY = "Ready"
 STATUS_FOLDER_SET = "Save folder set to: {}"
-STATUS_DOWNLOAD_SUCCESS = "Download successful"
+STATUS_DOWNLOAD_SUCCESS = "Successful"
 STATUS_DOWNLOAD_SUCCESS_WITH_FILENAME = "Downloaded: {}"
 STATUS_DOWNLOAD_FAILED = "Download failed"
 STATUS_VIDEO_INFO = "Video information retrieved successfully"
@@ -132,6 +132,9 @@ STATUS_ALL_VIDEOS_SELECTED = "All videos selected"
 STATUS_ALL_VIDEOS_UNSELECTED = "All videos unselected"
 STATUS_NO_VIDEOS_SELECTED = "No videos selected"
 STATUS_VIDEOS_DELETED = "{} videos deleted successfully"
+STATUS_DOWNLOADED_VIDEOS_LOADED = "Loaded {} videos from database"
+STATUS_NO_DOWNLOADS = "No downloads found in database"
+STATUS_NO_NEW_URLS = "All URLs already exist in the list"
 
 # Dialogs
 DIALOG_CONFIRM_DELETION = "Confirm Deletion"

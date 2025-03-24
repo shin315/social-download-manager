@@ -133,6 +133,9 @@ STATUS_ALL_VIDEOS_SELECTED = "Đã chọn tất cả video"
 STATUS_ALL_VIDEOS_UNSELECTED = "Đã bỏ chọn tất cả video"
 STATUS_NO_VIDEOS_SELECTED = "Chưa chọn video nào"
 STATUS_VIDEOS_DELETED = "Đã xóa thành công {} video"
+STATUS_DOWNLOADED_VIDEOS_LOADED = "Đã tải {} video từ cơ sở dữ liệu"
+STATUS_NO_DOWNLOADS = "Không tìm thấy video nào đã tải xuống"
+STATUS_NO_NEW_URLS = "Tất cả URL đã tồn tại trong danh sách"
 
 # Dialogs
 DIALOG_CONFIRM_DELETION = "Xác Nhận Xóa"

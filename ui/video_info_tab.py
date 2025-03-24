@@ -119,17 +119,12 @@ class VideoInfoTab(QWidget):
         
         options_layout.addStretch(1)
         
-        # Nút Chọn tất cả
-        self.select_all_btn = QPushButton(self.tr_("BUTTON_SELECT_ALL"))
-        self.select_all_btn.setFixedWidth(120)
-        self.select_all_btn.clicked.connect(self.select_all_videos)
-        options_layout.addWidget(self.select_all_btn)
-        
-        # Nút Bỏ chọn tất cả
-        self.unselect_all_btn = QPushButton(self.tr_("BUTTON_UNSELECT_ALL"))
-        self.unselect_all_btn.setFixedWidth(120)
-        self.unselect_all_btn.clicked.connect(self.unselect_all_videos)
-        options_layout.addWidget(self.unselect_all_btn)
+        # Nút Chọn tất cả / Bỏ chọn tất cả (gộp 2 nút thành 1)
+        self.select_toggle_btn = QPushButton(self.tr_("BUTTON_SELECT_ALL"))
+        self.select_toggle_btn.setFixedWidth(150)
+        self.select_toggle_btn.clicked.connect(self.toggle_select_all)
+        self.all_selected = False  # Trạng thái hiện tại (False: chưa chọn tất cả)
+        options_layout.addWidget(self.select_toggle_btn)
         
         # Nút Delete Selected
         self.delete_selected_btn = QPushButton(self.tr_("BUTTON_DELETE_SELECTED"))
@@ -250,25 +245,41 @@ class VideoInfoTab(QWidget):
 
     def get_video_info(self):
         """Lấy thông tin video từ URL"""
-        url = self.url_input.text().strip()
-        if not url:
+        url_input = self.url_input.text().strip()
+        if not url_input:
             QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("DIALOG_NO_VIDEOS"))
             return
 
-        # Xóa dữ liệu cũ trong bảng và dict
-        self.video_table.setRowCount(0)
-        self.video_info_dict.clear()
-        
         # Kiểm tra xem đã thiết lập thư mục đầu ra chưa
         if not self.output_folder_display.text():
             QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("DIALOG_NO_OUTPUT_FOLDER"))
             return
         
         # Xử lý nhiều URL (ngăn cách bằng khoảng trắng)
-        urls = url.split()
+        new_urls = url_input.split()
         
+        # Tạo danh sách URL hiện có trong bảng
+        existing_urls = []
+        for video_info in self.video_info_dict.values():
+            existing_urls.append(video_info.url)
+        
+        # Lọc ra các URL mới chưa tồn tại trong bảng
+        urls_to_process = []
+        for url in new_urls:
+            if url not in existing_urls:
+                urls_to_process.append(url)
+            else:
+                # Thông báo URL đã tồn tại
+                print(f"URL already exists in table: {url}")
+        
+        # Nếu không có URL mới nào cần xử lý
+        if not urls_to_process:
+            if self.parent:
+                self.parent.status_bar.showMessage(self.tr_("STATUS_NO_NEW_URLS"))
+            return
+            
         # Đặt lại biến đếm
-        self.processing_count = len(urls)
+        self.processing_count = len(urls_to_process)
         
         # Disable button Get Info khi đang lấy thông tin
         self.get_info_btn.setEnabled(False)
@@ -278,16 +289,16 @@ class VideoInfoTab(QWidget):
         # Cập nhật trạng thái
         if self.parent:
             # Hiển thị thông báo rõ ràng trên status bar
-            if len(urls) > 1:
-                self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO_MULTIPLE").format(len(urls)))
+            if len(urls_to_process) > 1:
+                self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO_MULTIPLE").format(len(urls_to_process)))
             else:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO_SHORT"))
         
         # Yêu cầu cập nhật giao diện ngay lập tức để hiển thị thông báo
         QApplication.processEvents()
         
-        # Bắt đầu lấy thông tin video từ TikTokDownloader
-        for url in urls:
+        # Bắt đầu lấy thông tin video từ TikTokDownloader cho các URL mới
+        for url in urls_to_process:
             # Gọi phương thức get_video_info của TikTokDownloader
             # Kết quả sẽ được xử lý bởi on_video_info_received thông qua signal
             self.downloader.get_video_info(url)
@@ -656,8 +667,7 @@ class VideoInfoTab(QWidget):
         # Cập nhật các nút
         self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
         self.choose_folder_btn.setText(self.tr_("BUTTON_CHOOSE_FOLDER"))
-        self.select_all_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
-        self.unselect_all_btn.setText(self.tr_("BUTTON_UNSELECT_ALL"))
+        self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
         self.delete_selected_btn.setText(self.tr_("BUTTON_DELETE_SELECTED"))
         self.delete_all_btn.setText(self.tr_("BUTTON_DELETE_ALL"))
         self.download_btn.setText(self.tr_("BUTTON_DOWNLOAD"))
@@ -729,7 +739,7 @@ class VideoInfoTab(QWidget):
     # ===== Các phương thức xử lý signals từ TikTokDownloader =====
     
     def on_video_info_received(self, url, video_info):
-        """Xử lý khi nhận được thông tin video"""
+        """Xử lý thông tin video khi nhận được"""
         try:
             print(f"Received video info for URL: {url}, title: {video_info.title}")
             
@@ -945,6 +955,10 @@ class VideoInfoTab(QWidget):
                     
                 # Cập nhật UI ngay lập tức
                 QApplication.processEvents()
+            
+            # Reset trạng thái chọn tất cả
+            self.all_selected = False
+            self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
         except Exception as e:
             print(f"Critical error in on_video_info_received: {e}")
             # Đảm bảo giảm biến đếm
@@ -1061,7 +1075,7 @@ class VideoInfoTab(QWidget):
                     'download_date': datetime.now().strftime("%Y/%m/%d %H:%M"),
                     'hashtags': [],
                     'description': video_info.caption if hasattr(video_info, 'caption') else "",
-                    'status': "Download successful"
+                    'status': "Successful"
                 }
                 
                 # Trích xuất hashtags từ tiêu đề video gốc và caption
@@ -1481,30 +1495,28 @@ class VideoInfoTab(QWidget):
         if self.parent:
             self.parent.status_bar.showMessage(self.tr_("STATUS_COPIED")) 
 
-    # Thêm phương thức mới để chọn tất cả các video
-    def select_all_videos(self):
-        """Chọn tất cả video trong bảng"""
+    # Thêm phương thức mới để chọn hoặc bỏ chọn tất cả video trong bảng
+    def toggle_select_all(self):
+        """Chọn hoặc bỏ chọn tất cả video trong bảng"""
+        self.all_selected = not self.all_selected
+        
+        # Cập nhật nhãn của nút dựa trên trạng thái mới
+        if self.all_selected:
+            self.select_toggle_btn.setText(self.tr_("BUTTON_UNSELECT_ALL"))
+        else:
+            self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
+            
+        # Cập nhật trạng thái checkbox
         for row in range(self.video_table.rowCount()):
             checkbox_cell = self.video_table.cellWidget(row, 0)
             if checkbox_cell:
                 checkbox = checkbox_cell.findChild(QCheckBox)
                 if checkbox:
-                    checkbox.setChecked(True)
+                    checkbox.setChecked(self.all_selected)
         
         # Hiển thị thông báo trên status bar
         if self.parent and self.parent.status_bar:
-            self.parent.status_bar.showMessage(self.tr_("STATUS_ALL_VIDEOS_SELECTED"))
-
-    # Thêm phương thức mới để bỏ chọn tất cả các video
-    def unselect_all_videos(self):
-        """Bỏ chọn tất cả video trong bảng"""
-        for row in range(self.video_table.rowCount()):
-            checkbox_cell = self.video_table.cellWidget(row, 0)
-            if checkbox_cell:
-                checkbox = checkbox_cell.findChild(QCheckBox)
-                if checkbox:
-                    checkbox.setChecked(False)
-        
-        # Hiển thị thông báo trên status bar
-        if self.parent and self.parent.status_bar:
-            self.parent.status_bar.showMessage(self.tr_("STATUS_ALL_VIDEOS_UNSELECTED")) 
+            if self.all_selected:
+                self.parent.status_bar.showMessage(self.tr_("STATUS_ALL_VIDEOS_SELECTED"))
+            else:
+                self.parent.status_bar.showMessage(self.tr_("STATUS_ALL_VIDEOS_UNSELECTED")) 

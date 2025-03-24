@@ -1,0 +1,78 @@
+# TÓM TẮT DỰ ÁN SOCIAL DOWNLOAD MANAGER
+
+## TỔNG QUAN
+Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desktop được phát triển bằng Python và PyQt6, cho phép người dùng tải video từ TikTok (và dự kiến sẽ mở rộng sang các nền tảng mạng xã hội khác) mà không có watermark. Ứng dụng có giao diện thân thiện, hỗ trợ đa ngôn ngữ (hiện tại là tiếng Anh và tiếng Việt), và nhiều tính năng hữu ích cho người dùng.
+
+## TÍNH NĂNG CHÍNH
+- Tải video TikTok không watermark
+- Hỗ trợ tải nhiều video cùng lúc (batch download)
+- Cho phép nhập nhiều URL một lúc
+- Tính năng "Select All" và "Unselect All" để dễ dàng chọn/bỏ chọn video
+- Lựa chọn chất lượng video (360p, 480p, 720p, 1080p)
+- Quản lý lịch sử tải xuống với chức năng tìm kiếm và sắp xếp
+- Sao chép thông tin video (tiêu đề, tác giả, hashtags)
+- Xem preview thông tin video trước khi tải
+- Hiển thị thumbnail của video
+- Hỗ trợ đa ngôn ngữ (Tiếng Anh, Tiếng Việt)
+- Cơ sở dữ liệu SQLite để lưu thông tin video đã tải
+
+## CẤU TRÚC DỰ ÁN
+- `main.py`: Điểm khởi đầu của ứng dụng
+- `ui/`: Thư mục chứa các file liên quan đến giao diện
+  - `main_window.py`: Cửa sổ chính của ứng dụng
+  - `video_info_tab.py`: Tab hiển thị thông tin video và tải xuống
+  - `downloaded_videos_tab.py`: Tab quản lý video đã tải xuống
+  - `donate_tab.py`: Tab cho phần quyên góp
+- `utils/`: Thư mục chứa các tiện ích
+  - `downloader.py`: Xử lý tải video
+  - `db_manager.py`: Quản lý cơ sở dữ liệu SQLite
+  - `download_thread.py`: Xử lý tải xuống bất đồng bộ
+- `localization/`: Thư mục chứa các file ngôn ngữ
+  - `english.py`: Chuỗi tiếng Anh
+  - `vietnamese.py`: Chuỗi tiếng Việt
+  - `language_manager.py`: Quản lý ngôn ngữ
+- `assets/`: Thư mục chứa tài nguyên (logo, hình ảnh)
+- `config.json`: File cấu hình ứng dụng
+
+## CẬP NHẬT GẦN ĐÂY
+1. Đã thêm tính năng chọn nhiều video để tải xuống cùng lúc
+2. Đã thêm chức năng "Select All" và "Unselect All"
+3. Đã tối ưu giao diện tab "Downloaded Videos":
+   - Điều chỉnh độ rộng cột, ưu tiên hiển thị cột Title (tăng từ 150px lên 250px)
+   - Cố định kích thước các cột ngoại trừ Title để ngăn tự động co giãn
+   - Cột Title được thiết lập ở chế độ Stretch để mở rộng khi có thêm không gian
+   - Đã vô hiệu hóa sắp xếp cho cột Select
+4. Đã cải thiện dialog copy:
+   - Chỉ hiển thị nội dung full title đã loại bỏ hashtags để dễ dàng copy
+   - Thêm định dạng cho các hashtags khi hiển thị riêng
+5. Đã sửa lỗi trong hàm `delete_selected_videos` và `on_download_finished`
+6. Đã cải thiện cách hiển thị tooltip khi hover chuột vào các cột Title, Creator và Hashtags
+7. Đã cải thiện xử lý lỗi khi gặp video chỉ chứa hình ảnh và âm thanh (không có video)
+
+## CÔNG NGHỆ SỬ DỤNG
+- Python 3.8+
+- PyQt6 cho giao diện người dùng
+- SQLite cho cơ sở dữ liệu
+- Requests và BeautifulSoup4 cho việc tải và phân tích dữ liệu
+- Git cho quản lý mã nguồn
+
+## HƯỚNG PHÁT TRIỂN
+- Mở rộng hỗ trợ tải xuống từ các nền tảng khác như YouTube, Instagram, Facebook
+- Cải thiện hiệu suất tải xuống
+- Cải thiện khả năng tổ chức dữ liệu để có thể đáp ứng được nhu cầu của user khi quản lý số lượng lớn các file đã tải xuống.
+- Hỗ trợ thêm các ngôn ngữ khác
+
+## LƯU Ý KỸ THUẬT
+- Ứng dụng sử dụng kiến trúc MVC (Model-View-Controller)
+- Tải xuống được xử lý bất đồng bộ thông qua QThread
+- Dữ liệu được lưu trữ trong cơ sở dữ liệu SQLite
+- Giao diện được thiết kế để dễ sử dụng và đáp ứng
+- Hỗ trợ đa ngôn ngữ thông qua cơ chế chuyển đổi chuỗi động
+
+## NHỮNG VẤN ĐỀ ĐÃ GIẢI QUYẾT
+1. Đã xử lý lỗi khi hiển thị tiêu đề video và tác giả
+2. Đã khắc phục sự cố khi xóa video đã chọn khỏi cơ sở dữ liệu
+3. Đã sửa lỗi hiển thị trạng thái tải xuống không đúng
+4. Đã cải thiện cách hiển thị trên tab "Downloaded Videos"
+5. Đã xử lý lỗi khi tải nội dung không được hỗ trợ (như video chỉ chứa hình ảnh)
+6. Đã khắc phục vấn đề về hiển thị hashtags trong tiêu đề khi copy 
