@@ -136,6 +136,7 @@ STATUS_VIDEOS_DELETED = "Đã xóa thành công {} video"
 STATUS_DOWNLOADED_VIDEOS_LOADED = "Đã tải {} video từ cơ sở dữ liệu"
 STATUS_NO_DOWNLOADS = "Không tìm thấy video nào đã tải xuống"
 STATUS_NO_NEW_URLS = "Tất cả URL đã tồn tại trong danh sách"
+STATUS_RENAMED_VIDEO = "Đã đổi tên video thành: {}"
 
 # Dialogs
 DIALOG_CONFIRM_DELETION = "Xác Nhận Xóa"
@@ -161,6 +162,9 @@ DIALOG_VIDEOS_ALREADY_EXIST = "Các video sau đã tồn tại và sẽ không �
 DIALOG_FILE_EXISTS = "File đã tồn tại"
 DIALOG_FILE_EXISTS_MESSAGE = "File '{}' đã tồn tại trong thư mục lưu.\nBạn có muốn ghi đè lên không?"
 DIALOG_APPLY_TO_ALL = "Áp dụng cho tất cả"
+DIALOG_RENAME_TITLE = "Đổi tên video"
+DIALOG_ENTER_NEW_NAME = "Nhập tên mới cho video:"
+DIALOG_INVALID_NAME = "Tên không hợp lệ. Vui lòng nhập tên hợp lệ."
 
 # About dialog
 ABOUT_TITLE = "Giới Thiệu SoDownloader"
@@ -185,6 +189,7 @@ CONTEXT_FILE_NOT_FOUND = "Không tìm thấy file video"
 CONTEXT_CANNOT_PLAY = "Không thể phát video"
 CONTEXT_NEED_DOWNLOAD = "Video chưa được tải xuống.\nVui lòng tải xuống video trước."
 CONTEXT_PLAYING = "Đang phát"
+CONTEXT_RENAME_VIDEO = "Đổi tên video"
 
 # Donate area
 DONATE_TITLE = "Ủng hộ tác giả"

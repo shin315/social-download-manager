@@ -9141,6 +9141,686 @@ ta muốn có thêm một cải thiện của người dùng một tí đó là 
 
 _**Assistant**_
 
+Chắc tao hiểu rồi. Mày muốn khi bấm "Open File Location" thì nó không chỉ mở thư mục chứa file mà còn bôi đen (select) luôn file đó trong Windows Explorer để người dùng dễ thấy đúng không?
+
+Cái này cần dùng phương thức `os.system` để gọi lệnh `explorer /select,"đường_dẫn_file"` trong Windows. Hãy sửa lại method `open_folder` trong file `ui/downloaded_videos_tab.py`:
+
+---
+
+Read file: ui/downloaded_videos_tab.py
+
+---
+
+Hãy sửa phương thức `open_folder` để nó hỗ trợ việc chọn (select) file trong thư mục:
+
+---
+
+```diff
+              self.selected_video = None
+  
+-     def open_folder(self, folder_path):
+-         """Mở thư mục chứa video đã tải"""
++     def open_folder(self, path):
++         """
++         Mở thư mục chứa video đã tải
++         Nếu path là thư mục: mở thư mục đó
++         Nếu path là file: mở thư mục chứa file và bôi đen (select) file đó
++         """
++         print(f"DEBUG - Opening path: '{path}'")
++         
++         # Xác định xem path là file hay folder
++         is_file = os.path.isfile(path)
++         folder_path = os.path.dirname(path) if is_file else path
++         
+          # Kiểm tra thư mục tồn tại
+          if not os.path.exists(folder_path):
+              return
+              
+-         # Mở thư mục (cross-platform)
++         # Mở thư mục và chọn file (nếu là file)
+          try:
+              if os.name == 'nt':  # Windows
++                 if is_file and os.path.exists(path):
++                     # Mở Explorer và chọn file
++                     path = path.replace('/', '\\')  # Đảm bảo đường dẫn đúng định dạng Windows
++                     print(f"DEBUG - Using explorer /select,{path}")
++                     os.system(f'explorer /select,"{path}"')
++                 else:
++                     # Chỉ mở thư mục
+                      os.startfile(folder_path)
+-             elif os.name == 'posix':  # macOS, Linux
++             elif os.name == 'darwin':  # macOS
++                 if is_file and os.path.exists(path):
++                     # Mở Finder và chọn file
++                     subprocess.run(['open', '-R', path], check=True)
++                 else:
++                     # Chỉ mở thư mục
++                     subprocess.run(['open', folder_path], check=True)
++             else:  # Linux và các hệ điều hành khác
++                 # Thử sử dụng các file manager phổ biến trên Linux
++                 if is_file and os.path.exists(path):
++                     # Thử với nautilus (GNOME)
++                     try:
++                         subprocess.run(['nautilus', '--select', path], check=True)
++                     except:
++                         try:
++                             # Thử với dolphin (KDE)
++                             subprocess.run(['dolphin', '--select', path], check=True)
++                         except:
++                             try:
++                                 # Thử với thunar (XFCE)
++                                 subprocess.run(['thunar', path], check=True)
++                             except:
++                                 # Nếu không có file manager nào hoạt động, mở thư mục
+                                  subprocess.run(['xdg-open', folder_path], check=True)
++                 else:
++                     # Chỉ mở thư mục
++                     subprocess.run(['xdg-open', folder_path], check=True)
++                     
+          except Exception as e:
++             print(f"DEBUG - Error opening folder: {str(e)}")
+              QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), 
+                                 self.tr_("DIALOG_CANNOT_OPEN_FOLDER").format(str(e)))
+```
+
+---
+
+Bây giờ chúng ta cần sửa code trong context menu để khi người dùng click vào "Open File Location", nó sẽ trỏ đến file cụ thể thay vì chỉ mở thư mục:
+
+---
+
+Read file: ui/downloaded_videos_tab.py
+
+---
+
+Read file: ui/downloaded_videos_tab.py
+
+---
+
+Hãy sửa đoạn code trong phương thức `show_context_menu` để khi người dùng click vào "Open File Location", nó sẽ mở Windows Explorer và chọn file thay vì chỉ mở thư mục:
+
+---
+
+```diff
+              # Action: Open File Location
+              if directory_path or filepath:
+-                 folder_path = directory_path if directory_path else os.path.dirname(filepath)
++                 # Xác định đường dẫn đầy đủ của file
++                 full_filepath = ""
++                 
++                 if filepath and os.path.exists(filepath):
++                     # Nếu đã có đường dẫn đầy đủ và file tồn tại
++                     full_filepath = filepath
++                 elif title and directory_path:
++                     # Nếu chỉ có title và directory, tạo đường dẫn file
++                     if isinstance(video, list):
++                         # Xác định đuôi file từ format_str
++                         ext = "mp3" if format_str == "MP3" or "mp3" in format_str.lower() else "mp4"
++                         
++                         # Tạo đường dẫn file
++                         possible_filepath = os.path.join(directory_path, f"{title}.{ext}")
++                         
++                         # Kiểm tra file có tồn tại không
++                         if os.path.exists(possible_filepath):
++                             full_filepath = possible_filepath
++                         else:
++                             # Nếu file không tồn tại, thử tìm file tương tự
++                             print(f"DEBUG - File not found: '{possible_filepath}', searching for similar files...")
++                             try:
++                                 # Tìm file có tên tương tự trong thư mục
++                                 files = os.listdir(directory_path)
++                                 best_match = None
++                                 
++                                 # Xóa bỏ các ký tự đặc biệt và dấu câu từ tên file để so sánh
++                                 clean_title = title.replace('?', '').replace('!', '').replace(':', '').strip()
++                                 
++                                 for file in files:
++                                     # Chỉ kiểm tra các file MP3 hoặc MP4
++                                     if file.endswith('.mp3') or file.endswith('.mp4'):
++                                         # So sánh tên file (không có phần mở rộng) với title
++                                         file_name = os.path.splitext(file)[0]
++                                         
++                                         # Nếu tên file chứa title hoặc ngược lại
++                                         if clean_title in file_name or file_name in clean_title:
++                                             best_match = file
++                                             break
++                                 
++                                 if best_match:
++                                     full_filepath = os.path.join(directory_path, best_match)
++                                     print(f"DEBUG - Found matching file: '{full_filepath}'")
++                                 else:
++                                     # Nếu không tìm thấy file nào, sử dụng thư mục
++                                     full_filepath = directory_path
++                             except Exception as e:
++                                 print(f"DEBUG - Error searching for file: {str(e)}")
++                                 full_filepath = directory_path
++                     else:
++                         # Mặc định sử dụng thư mục nếu không xác định được file
++                         full_filepath = directory_path
++                 else:
++                     # Nếu không có đủ thông tin, sử dụng thư mục
++                     full_filepath = directory_path or os.path.dirname(filepath) if filepath else ""
++                 
++                 # Nếu vẫn không tìm thấy file, sử dụng thư mục
++                 if not full_filepath or not os.path.exists(full_filepath):
++                     full_filepath = directory_path
++                 
++                 # Tạo action và kết nối với sự kiện
+                  open_folder_action = QAction(self.tr_("CONTEXT_OPEN_LOCATION"), self)
+-                 open_folder_action.triggered.connect(lambda: self.open_folder(folder_path))
++                 open_folder_action.triggered.connect(lambda: self.open_folder(full_filepath))
+                  context_menu.addAction(open_folder_action)
+              
+```
+
+---
+
+Bây giờ chúng ta cần cung cấp logic tương tự cho nút "Open" trên giao diện chính. Đây là những nút "Open" xanh ở mỗi hàng trong bảng:
+
+---
+
+Read file: ui/downloaded_videos_tab.py
+
+---
+
+```diff
+              action_layout.setContentsMargins(0, 0, 0, 0)
+              
+-             # Nút Open
++             # Nút Open - mở file thay vì chỉ mở thư mục
+              open_btn = QPushButton(self.tr_("BUTTON_OPEN"))
+-             open_btn.clicked.connect(lambda checked, path=video[8]: self.open_folder(path))
++             
++             # Xác định đường dẫn đầy đủ của file
++             directory_path = video[8]
++             title = video[0]
++             format_str = video[3]
++             
++             # Xác định đuôi file từ format_str
++             ext = "mp3" if format_str == "MP3" or "mp3" in format_str.lower() else "mp4"
++             
++             # Tạo đường dẫn đầy đủ
++             full_filepath = ""
++             if directory_path and title:
++                 # Tạo đường dẫn file
++                 possible_filepath = os.path.join(directory_path, f"{title}.{ext}")
++                 
++                 # Kiểm tra file có tồn tại không
++                 if os.path.exists(possible_filepath):
++                     full_filepath = possible_filepath
++                 else:
++                     # Nếu file không tồn tại, thử tìm file có tên gần giống
++                     try:
++                         files = os.listdir(directory_path)
++                         best_match = None
++                         
++                         # Loại bỏ ký tự đặc biệt từ title để so sánh
++                         clean_title = title.replace('?', '').replace('!', '').replace(':', '').strip()
++                         
++                         for file in files:
++                             # Chỉ kiểm tra các file MP3 hoặc MP4
++                             if file.endswith('.mp3') or file.endswith('.mp4'):
++                                 file_name = os.path.splitext(file)[0]
++                                 
++                                 # Kiểm tra xem title có trong tên file không
++                                 if clean_title in file_name or file_name in clean_title:
++                                     best_match = file
++                                     break
++                         
++                         if best_match:
++                             full_filepath = os.path.join(directory_path, best_match)
++                         else:
++                             # Nếu không tìm thấy file, sử dụng thư mục
++                             full_filepath = directory_path
++                     except Exception as e:
++                         print(f"DEBUG - Error finding file for Open button: {str(e)}")
++                         full_filepath = directory_path
++             else:
++                 # Nếu không có đủ thông tin, sử dụng thư mục
++                 full_filepath = directory_path
++                 
++             # Lưu trữ đường dẫn cho lambda
++             final_path = full_filepath if full_filepath else directory_path
++             
++             # Kết nối nút Open với phương thức open_folder
++             open_btn.clicked.connect(lambda checked, path=final_path: self.open_folder(path))
+              action_layout.addWidget(open_btn)
+              
+```
+
+---
+
+Bây giờ hãy chạy ứng dụng để kiểm tra cả hai tính năng: Open Button và Open File Location từ menu chuột phải:
+
+---
+
+```bash
+python main.py
+```
+
+```
+                                             python main.py
+No downloads found in database
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Checking TikTok URL: https://www.tiktok.com/@quocdung833/video/7472374490387778817?is_from_webapp=1&sender_d
+evice=pc
+Valid TikTok URL format: https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@quocdung833/video/7472374490387778817?is_from_webapp=1&sen
+der_device=pc
+Result type: <class 'dict'>
+Result has 61 keys
+Title: TikTok video #7472374490387778817
+Duration: 10
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@quocdung833/video/7472374490387778817?is_from_webapp=1&send
+er_device=pc
+Sending info copy: VideoInfo(title='TikTok video #7472374490387778817', url='https://www.tiktok.com/@quocdun
+g833/video/7472374490387778817?is_from_webapp=1&sender_device=pc', duration=10, formats_count=8)
+Received video info for URL: https://www.tiktok.com/@quocdung833/video/7472374490387778817?is_from_webapp=1&
+sender_device=pc, title: TikTok video #7472374490387778817
+Checking TikTok URL: https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_webapp=1&sende
+r_device=pc
+Valid TikTok URL format: https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_webapp=1&
+sender_device=pc
+Result type: <class 'dict'>
+Result has 61 keys
+Title: Ủa có hơn thua gì đâu a ơi 😅 #bamibread #banhmihoian #banhmihanoi #ph...
+Duration: 84
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_webapp=1&s
+ender_device=pc
+Sending info copy: VideoInfo(title='Ủa có hơn thua gì đâu a ơi 😅 #bamibread #banhmihoian #banhmihanoi #ph..
+.', url='https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_webapp=1&sender_device=pc'
+, duration=84, formats_count=8)
+Received video info for URL: https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_webapp
+=1&sender_device=pc, title: Ủa có hơn thua gì đâu a ơi 😅 #bamibread #banhmihoian #banhmihanoi #ph...
+Checking TikTok URL: https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sender_devi
+ce=pc
+Valid TikTok URL format: https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sender
+_device=pc
+Result type: <class 'dict'>
+Result has 61 keys
+Title: vitamin trái cây 🍎🍓🍍🥭🍏                       #mukbang #asmr
+Duration: 117
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sender_
+device=pc
+Sending info copy: VideoInfo(title='vitamin trái cây 🍎🍓🍍🥭🍏                       #mukbang #asmr ', url=
+'https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sender_device=pc', duration=117
+, formats_count=8)
+Received video info for URL: https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sen
+der_device=pc, title: vitamin trái cây 🍎🍓🍍🥭🍏                       #mukbang #asmr
+Downloading with format: no-watermark/bytevc1_1080p_714392-0
+[TikTok] Extracting URL: https://www.tiktok.com/@quocdung833/video/7472374490387778817?is_from_webapp=1&send
+er_device=pc
+[TikTok] 7472374490387778817: Downloading webpage
+[info] 7472374490387778817: Downloading 1 format(s): bytevc1_1080p_714392-0 
+[download] Destination: I:\Product Apps\Test Zone\TikTok video.mp4 
+[download] 100% of  876.86KiB in 00:00:00 at 5.70MiB/s
+DEBUG - on_download_finished called with URL: https://www.tiktok.com/@quocdung833/video/7472374490387778817?
+is_from_webapp=1&sender_device=pc, success: True, file_path: I:/Product Apps/Test Zone\TikTok video.mp4
+DEBUG - Found matching video at row 0: TikTok video
+DEBUG - Row to remove: 0, Found video info: VideoInfo(title='TikTok video', url='https://www.tiktok.com/@quo
+cdung833/video/7472374490387778817?is_from_webapp=1&sender_device=pc', duration=10, formats_count=8)
+DEBUG - Success download! File: TikTok video.mp4
+DEBUG - Adding video to Downloaded Videos tab: TikTok video
+DEBUG - Combined hashtags: ['7472374490387778817']
+DEBUG - Title: TikTok video
+DEBUG - Quality: 1080p, Format: MP4
+DEBUG - Hashtags: ['7472374490387778817']
+DEBUG - Thumbnail: I:/Product Apps/Test Zone\thumbnails\7472374490387778817.jpg
+DEBUG - Status: Successful
+DEBUG adding video: Title=TikTok video
+DEBUG quality=1080p, format=MP4
+DEBUG hashtags=#7472374490387778817
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+Updated file size for I:/Product Apps/Test Zone\TikTok video.mp4: 0.86 MB
+DEBUG - Video added to Downloaded Videos tab
+DEBUG - Downloaded Videos tab display updated
+DEBUG - Removing row 0 from video table
+DEBUG - Removed row 0 from video_info_dict
+DEBUG - Reindexing video_info_dict after deletion, current keys: [1, 2]
+DEBUG - Updated video_info_dict after deletion, new size: 2, new keys: [0, 1]
+Downloading with format: no-watermark/bytevc1_720p_837627-0
+[TikTok] Extracting URL: https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_webapp=1&s
+ender_device=pc
+[TikTok] 7451848094167141650: Downloading webpage 
+[info] 7451848094167141650: Downloading 1 format(s): bytevc1_720p_837627-0 
+[download] Destination: I:\Product Apps\Test Zone\Ủa có hơn thua gì đâu a ơi 😅.mp4 
+[download] 100% of    8.41MiB in 00:00:00 at 36.19MiB/s
+DEBUG - on_download_finished called with URL: https://www.tiktok.com/@bamibreadhanoi/video/74518480941671416
+50?is_from_webapp=1&sender_device=pc, success: True, file_path: I:/Product Apps/Test Zone\Ủa có hơn thua gì
+đâu a ơi 😅.mp4
+DEBUG - Found matching video at row 0: Ủa có hơn thua gì đâu a ơi 😅
+DEBUG - Row to remove: 0, Found video info: VideoInfo(title='Ủa có hơn thua gì đâu a ơi 😅', url='https://ww
+w.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_webapp=1&sender_device=pc', duration=84, form
+ats_count=8)
+DEBUG - Success download! File: Ủa có hơn thua gì đâu a ơi 😅.mp4
+DEBUG - Adding video to Downloaded Videos tab: Ủa có hơn thua gì đâu a ơi 😅
+DEBUG - Combined hashtags: ['hanoi', 'banhmihoian', 'phucsyno', 'bamibread', 'bamibreadbanhmihoian', 'ph', '
+banhmihanoi']
+DEBUG - Title: Ủa có hơn thua gì đâu a ơi 😅
+DEBUG - Quality: 1080p, Format: MP4
+DEBUG - Hashtags: ['hanoi', 'banhmihoian', 'phucsyno', 'bamibread', 'bamibreadbanhmihoian', 'ph', 'banhmihan
+oi']
+DEBUG - Thumbnail: I:/Product Apps/Test Zone\thumbnails\7451848094167141650.jpg
+DEBUG - Status: Successful
+DEBUG adding video: Title=Ủa có hơn thua gì đâu a ơi 😅
+DEBUG quality=1080p, format=MP4
+DEBUG hashtags=#hanoi #banhmihoian #phucsyno #bamibread #bamibreadbanhmihoian #ph #banhmihanoi
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+Updated file size for I:/Product Apps/Test Zone\Ủa có hơn thua gì đâu a ơi 😅.mp4: 8.41 MB
+DEBUG - Video added to Downloaded Videos tab
+DEBUG - Downloaded Videos tab display updated
+DEBUG - Removing row 0 from video table
+DEBUG - Removed row 0 from video_info_dict
+DEBUG - Reindexing video_info_dict after deletion, current keys: [1]
+DEBUG - Updated video_info_dict after deletion, new size: 1, new keys: [0]
+Downloading with format: no-watermark/bytevc1_720p_570541-0
+[TikTok] Extracting URL: https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sender_
+device=pc
+[TikTok] 7476430841510497543: Downloading webpage 
+[info] 7476430841510497543: Downloading 1 format(s): bytevc1_720p_570541-0 
+[download] Destination: I:\Product Apps\Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp4 
+[download] 100% of    7.99MiB in 00:00:00 at 33.75MiB/s
+DEBUG - on_download_finished called with URL: https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_
+from_webapp=1&sender_device=pc, success: True, file_path: I:/Product Apps/Test Zone\vitamin trái cây 🍎🍓🍍
+🥭🍏.mp4
+DEBUG - Found matching video at row 0: vitamin trái cây 🍎🍓🍍🥭🍏
+DEBUG - Row to remove: 0, Found video info: VideoInfo(title='vitamin trái cây 🍎🍓🍍🥭🍏', url='https://www.
+tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sender_device=pc', duration=117, formats_cou
+nt=8)
+DEBUG - Success download! File: vitamin trái cây 🍎🍓🍍🥭🍏.mp4
+DEBUG - Adding video to Downloaded Videos tab: vitamin trái cây 🍎🍓🍍🥭🍏
+DEBUG - Combined hashtags: ['mukbang', 'asmr']
+DEBUG - Title: vitamin trái cây 🍎🍓🍍🥭🍏
+DEBUG - Quality: 1080p, Format: MP4
+DEBUG - Hashtags: ['mukbang', 'asmr']
+DEBUG - Thumbnail: I:/Product Apps/Test Zone\thumbnails\7476430841510497543.jpg
+DEBUG - Status: Successful
+DEBUG adding video: Title=vitamin trái cây 🍎🍓🍍🥭🍏
+DEBUG quality=1080p, format=MP4
+DEBUG hashtags=#mukbang #asmr
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+Updated file size for I:/Product Apps/Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp4: 7.99 MB
+DEBUG - Video added to Downloaded Videos tab
+DEBUG - Downloaded Videos tab display updated
+DEBUG - Removing row 0 from video table
+DEBUG - Removed row 0 from video_info_dict
+DEBUG - Reindexing video_info_dict after deletion, current keys: []
+DEBUG - Updated video_info_dict after deletion, new size: 0, new keys: []
+DEBUG - All downloads finished, reset download button
+DEBUG - All downloads finished, reset download button
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7476430841510497543.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7476430841510497543.jpg, size: 540x960
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7451848094167141650.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7451848094167141650.jpg, size: 540x960
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7472374490387778817.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7472374490387778817.jpg, size: 540x720
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7476430841510497543.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7476430841510497543.jpg, size: 540x960
+DEBUG - Attempting to play video at row 0
+DEBUG - Video data: title='vitamin trái cây 🍎🍓🍍🥭🍏', format='MP4', directory='I:/Product Apps/Test Zone'
+DEBUG - Generated filepath: 'I:\Product Apps\Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp4'
+DEBUG - Playing file: 'I:\Product Apps\Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp4'
+DEBUG - Opening path: 'I:/Product Apps/Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp4'
+DEBUG - Using explorer /select,I:\Product Apps\Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp4
+DEBUG - Opening path: 'I:/Product Apps/Test Zone\Ủa có hơn thua gì đâu a ơi 😅.mp4'
+DEBUG - Using explorer /select,I:\Product Apps\Test Zone\Ủa có hơn thua gì đâu a ơi 😅.mp4
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7476430841510497543.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7476430841510497543.jpg, size: 540x960
+DEBUG - Opening path: 'I:/Product Apps/Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp4'
+DEBUG - Using explorer /select,I:\Product Apps\Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp4
+Delete video called with index: 0
+Current filtered_videos length: 3
+Attempting to delete video: vitamin trái cây 🍎🍓🍍🥭🍏
+User confirmed deletion
+Successfully deleted 1 records with title: vitamin trái cây 🍎🍓🍍🥭🍏
+
+```
+
+---
+
+Tuyệt vời! Tôi thấy cả hai tính năng đều hoạt động đúng như mong đợi:
+
+1. **Nút "Open" và chức năng "Open File Location" từ menu chuột phải:**
+
+Trong log, tôi thấy nhiều lần ứng dụng thực hiện các lệnh sau:
+```
+DEBUG - Opening path: 'I:/Product Apps/Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp4'
+DEBUG - Using explorer /select,I:\Product Apps\Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp4
+```
+
+Điều này chứng tỏ rằng ứng dụng đang sử dụng lệnh `explorer /select,` để mở thư mục Windows Explorer và chọn file cụ thể, đúng như chúng ta mong muốn. Đây là minh chứng cho việc khi người dùng nhấp vào nút "Open" hoặc "Open File Location" từ menu chuột phải, ứng dụng không chỉ mở thư mục chung mà còn trỏ tới đúng file video.
+
+2. **Phát video:**
+```
+DEBUG - Attempting to play video at row 0
+DEBUG - Video data: title='vitamin trái cây 🍎🍓🍍🥭🍏', format='MP4', directory='I:/Product Apps/Test Zone'
+DEBUG - Generated filepath: 'I:\Product Apps\Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp4'
+DEBUG - Playing file: 'I:\Product Apps\Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp4'
+```
+
+Tính năng phát video cũng hoạt động tốt, tạo đúng đường dẫn file và gọi ứng dụng mặc định để phát nó.
+
+Cả hai cải tiến này đã hoạt động tốt:
+
+1. **Nút "Open" (đèn xanh)** bây giờ sẽ mở Windows Explorer và chọn chính xác file video, thay vì chỉ mở thư mục.
+2. **Chức năng "Open File Location" từ menu chuột phải** cũng làm tương tự, giúp người dùng nhanh chóng tìm thấy file trong Explorer.
+
+Điều này cải thiện đáng kể trải nghiệm người dùng bởi vì:
+- Người dùng sẽ thấy ngay file video mà không cần phải tìm kiếm trong thư mục
+- Thao tác nhanh hơn, đặc biệt trong trường hợp thư mục có nhiều file
+- UI nhất quán giữa nút "Open" và chức năng menu chuột phải
+
+Việc sử dụng lệnh `/select` của Windows Explorer là cách phù hợp để thực hiện tính năng này, đúng như chúng ta đã triển khai.
+
+---
+
+_**User**_
+
+đang có một lỗi logic ở Tab Video info khi mà chưa download thì làm sao mà có play video được đúng không cho nên bỏ cái tính năng play video ở Tab video info đi và thêm cho tao một tính năng đó là rename người dùng có thể đổi tên trước khi tải về 
+
+---
+
+_**Assistant**_
+
+Đúng rồi, bỏ cái tính năng Play Video ở Tab Video Info là hợp lý vì chưa download thì làm gì có file mà play. Giờ tao sẽ làm 2 việc:
+
+1. Bỏ chức năng Play Video ở Tab Video Info
+2. Thêm chức năng Rename để người dùng đổi tên trước khi tải về
+
+Đầu tiên, tao sẽ xem code hiện tại:
+
+---
+
+Read file: ui/video_info_tab.py
+
+---
+
+Bây giờ tao sẽ sửa code để:
+1. Xóa phần Play Video trong context menu 
+2. Thêm Rename vào context menu
+3. Tạo hàm rename_video để đổi tên file trước khi tải
+
+---
+
+```diff
+                               QLineEdit, QPushButton, QTableWidget, QComboBox,
+                               QFileDialog, QCheckBox, QHeaderView, QMessageBox,
+-                              QTableWidgetItem, QProgressBar, QApplication, QDialog, QTextEdit, QMenu)
++                              QTableWidgetItem, QProgressBar, QApplication, QDialog, QTextEdit, QMenu, QInputDialog)
+  from PyQt6.QtCore import Qt, pyqtSignal, QSize
+  import os
+                  has_error = video_info.title.startswith("Error:")
+              
+-             # Chỉ hiển thị Play nếu video không có lỗi và đã chọn thư mục đầu ra
++             # Chỉ hiển thị Rename nếu video không có lỗi và đã chọn thư mục đầu ra
+              if not has_error and has_output_folder and hasattr(video_info, 'url') and hasattr(video_info, 'title'):
+-                 # Action Open/Play Video - Mở video bằng trình phát mặc định
+-                 play_action = QAction(self.tr_("CONTEXT_PLAY_VIDEO"), self)
+-                 play_action.triggered.connect(lambda: self.play_video(row))
+-                 context_menu.addAction(play_action)
++                 # Action Rename Video - Cho phép đổi tên video trước khi tải
++                 rename_action = QAction(self.tr_("CONTEXT_RENAME_VIDEO"), self)
++                 rename_action.triggered.connect(lambda: self.rename_video(row))
++                 context_menu.addAction(rename_action)
+                  
+                  # Thêm separator
+              context_menu.exec(QCursor.pos())
+  
+-     def play_video(self, row):
+-         """Phát video bằng trình phát mặc định của hệ thống"""
+-         # Kiểm tra thư mục đầu ra đã được thiết lập
+-         if not self.output_folder_display.text():
+-             QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("DIALOG_NO_OUTPUT_FOLDER"))
+-             return
+-         
++     def rename_video(self, row):
++         """Cho phép người dùng đổi tên video trước khi tải xuống"""
+          # Kiểm tra video_info có tồn tại
+          if row not in self.video_info_dict:
+          video_info = self.video_info_dict[row]
+          
+-         # Log để debug
+-         print(f"DEBUG - Attempting to play video at row {row}")
+-         
+-         # Lấy tiêu đề và URL
+-         title = video_info.title if hasattr(video_info, 'title') else ""
+-         url = video_info.url if hasattr(video_info, 'url') else ""
++         # Lấy tiêu đề hiện tại
++         current_title = video_info.title if hasattr(video_info, 'title') else ""
+          
+-         if not title or not url:
++         if not current_title:
+              return
+              
+-         # Làm sạch tên file
++         # Hiển thị dialog để nhập tên mới
++         new_title, ok = QInputDialog.getText(
++             self, 
++             self.tr_("DIALOG_RENAME_TITLE"),
++             self.tr_("DIALOG_ENTER_NEW_NAME"), 
++             QLineEdit.EchoMode.Normal, 
++             current_title
++         )
++         
++         # Kiểm tra người dùng đã nhấn OK và tên mới khác rỗng
++         if ok and new_title:
++             # Làm sạch tên file để tránh ký tự không hợp lệ
+              import re
+-         clean_title = re.sub(r'#\S+', '', title).strip()
+-         clean_title = re.sub(r'[\\/*?:"<>|]', '', clean_title).strip()
+-         
+-         print(f"DEBUG - Clean title: '{clean_title}'")
+-         
+-         # Kiểm tra định dạng được chọn: MP3 hay MP4
+-         format_cell = self.video_table.cellWidget(row, 4)
+-         format_str = format_cell.findChild(QComboBox).currentText() if format_cell else self.tr_("FORMAT_VIDEO_MP4")
++             clean_title = re.sub(r'[\\/*?:"<>|]', '', new_title).strip()
++             
++             if clean_title:
++                 # Lưu tên gốc vào biến original_title nếu chưa có
++                 if not hasattr(video_info, 'original_title'):
++                     setattr(video_info, 'original_title', current_title)
+                      
+-         # Xác định phần mở rộng file dựa trên định dạng
+-         is_audio = format_str == self.tr_("FORMAT_AUDIO_MP3")
+-         ext = "mp3" if is_audio else "mp4"
+-         
+-         print(f"DEBUG - Format: '{format_str}', Extension: '{ext}'")
++                 # Cập nhật tên mới
++                 setattr(video_info, 'title', clean_title)
+                  
+-         # Chuẩn hóa đường dẫn thư mục
+-         output_dir = os.path.normpath(self.output_folder_display.text())
+-         
+-         # Tạo đường dẫn file
+-         output_file = os.path.join(output_dir, f"{clean_title}.{ext}")
+-         output_file = os.path.normpath(output_file)
+-         
+-         print(f"DEBUG - Generated filepath: '{output_file}'")
++                 # Cập nhật UI - cột title trong bảng
++                 title_cell = self.video_table.item(row, 1)
++                 if title_cell:
++                     title_cell.setText(clean_title)
++                     title_cell.setToolTip(clean_title)
+                  
+-         # Kiểm tra file có tồn tại không
+-         if not os.path.exists(output_file):
+-             print(f"DEBUG - File not found at '{output_file}', checking for any matching files...")
+-             
+-             # Thử tìm file bắt đầu bằng tên đã làm sạch
+-             potential_files = [f for f in os.listdir(output_dir) 
+-                              if f.startswith(clean_title) and (f.endswith('.mp4') or f.endswith('.mp3'))]
+-             
+-             if potential_files:
+-                 output_file = os.path.join(output_dir, potential_files[0])
+-                 print(f"DEBUG - Found alternative file: '{output_file}'")
++                 # Hiển thị thông báo thành công
++                 if self.parent and self.parent.status_bar:
++                     self.parent.status_bar.showMessage(self.tr_("STATUS_RENAMED_VIDEO").format(clean_title))
++                     
++                 print(f"DEBUG - Renamed video from '{current_title}' to '{clean_title}'")
+              else:
+-                 # Nếu file chưa tồn tại, hiển thị thông báo
+-                 print(f"DEBUG - No matching files found, video needs to be downloaded first")
+-                 QMessageBox.information(
+-                     self, 
+-                     self.tr_("CONTEXT_PLAY_VIDEO"), 
+-                     f"{self.tr_('CONTEXT_NEED_DOWNLOAD')}"
+-                 )
+-                 return
+-             
+-         # Phát file bằng trình phát mặc định
+-         try:
+-             print(f"DEBUG - Playing file: '{output_file}'")
+-             if os.name == 'nt':  # Windows
+-                 os.startfile(output_file)
+-             elif os.name == 'posix':  # macOS, Linux
+-                 import subprocess
+-                 subprocess.Popen(['xdg-open', output_file])
+-                 
+-             # Hiển thị thông báo trong status bar
+-             if self.parent and self.parent.status_bar:
+-                 self.parent.status_bar.showMessage(f"{self.tr_('CONTEXT_PLAYING')}: {os.path.basename(output_file)}")
+-         except Exception as e:
+-             error_msg = f"{self.tr_('CONTEXT_CANNOT_PLAY')}: {str(e)}"
+-             print(f"DEBUG - Error playing file: {error_msg}")
++                 # Hiển thị thông báo lỗi nếu tên mới không hợp lệ
+                  QMessageBox.warning(
+                      self, 
+                      self.tr_("DIALOG_ERROR"), 
+-                 error_msg
++                     self.tr_("DIALOG_INVALID_NAME")
+                  )
+  
+```
+
+---
+
+Bây giờ tôi cần thêm các chuỗi ngôn ngữ mới cho tính năng Rename:
+
+---
+
+Cancelled
+
+---
+
 
 
 ---

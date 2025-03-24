@@ -135,6 +135,7 @@ STATUS_VIDEOS_DELETED = "{} videos deleted successfully"
 STATUS_DOWNLOADED_VIDEOS_LOADED = "Loaded {} videos from database"
 STATUS_NO_DOWNLOADS = "No downloads found in database"
 STATUS_NO_NEW_URLS = "All URLs already exist in the list"
+STATUS_RENAMED_VIDEO = "Renamed video to: {}"
 
 # Dialogs
 DIALOG_CONFIRM_DELETION = "Confirm Deletion"
@@ -160,6 +161,9 @@ DIALOG_VIDEOS_ALREADY_EXIST = "The following videos already exist and will not b
 DIALOG_FILE_EXISTS = "File Already Exists"
 DIALOG_FILE_EXISTS_MESSAGE = "The file '{}' already exists in the output folder.\nDo you want to overwrite it?"
 DIALOG_APPLY_TO_ALL = "Apply to all"
+DIALOG_RENAME_TITLE = "Rename Video"
+DIALOG_ENTER_NEW_NAME = "Enter new name for the video:"
+DIALOG_INVALID_NAME = "Invalid name. Please enter a valid name."
 
 # About dialog
 ABOUT_TITLE = "About SoDownloader"
@@ -184,6 +188,7 @@ CONTEXT_FILE_NOT_FOUND = "Video file not found"
 CONTEXT_CANNOT_PLAY = "Cannot play video"
 CONTEXT_NEED_DOWNLOAD = "The video has not been downloaded yet.\nPlease download the video first."
 CONTEXT_PLAYING = "Playing"
+CONTEXT_RENAME_VIDEO = "Rename Video"
 
 # Donate area
 DONATE_TITLE = "Support Me"

@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QLineEdit, QPushButton, QTableWidget, QComboBox,
                              QFileDialog, QCheckBox, QHeaderView, QMessageBox,
-                             QTableWidgetItem, QProgressBar, QApplication, QDialog, QTextEdit, QMenu)
+                             QTableWidgetItem, QProgressBar, QApplication, QDialog, QTextEdit, QMenu, QInputDialog)
 from PyQt6.QtCore import Qt, pyqtSignal, QSize
 import os
 import json
@@ -218,12 +218,12 @@ class VideoInfoTab(QWidget):
             if hasattr(video_info, 'title'):
                 has_error = video_info.title.startswith("Error:")
             
-            # Chỉ hiển thị Play nếu video không có lỗi và đã chọn thư mục đầu ra
+            # Chỉ hiển thị Rename nếu video không có lỗi và đã chọn thư mục đầu ra
             if not has_error and has_output_folder and hasattr(video_info, 'url') and hasattr(video_info, 'title'):
-                # Action Open/Play Video - Mở video bằng trình phát mặc định
-                play_action = QAction(self.tr_("CONTEXT_PLAY_VIDEO"), self)
-                play_action.triggered.connect(lambda: self.play_video(row))
-                context_menu.addAction(play_action)
+                # Action Rename Video - Cho phép đổi tên video trước khi tải
+                rename_action = QAction(self.tr_("CONTEXT_RENAME_VIDEO"), self)
+                rename_action.triggered.connect(lambda: self.rename_video(row))
+                context_menu.addAction(rename_action)
                 
                 # Thêm separator
                 context_menu.addSeparator()
@@ -237,96 +237,61 @@ class VideoInfoTab(QWidget):
         if not context_menu.isEmpty():
             context_menu.exec(QCursor.pos())
 
-    def play_video(self, row):
-        """Phát video bằng trình phát mặc định của hệ thống"""
-        # Kiểm tra thư mục đầu ra đã được thiết lập
-        if not self.output_folder_display.text():
-            QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("DIALOG_NO_OUTPUT_FOLDER"))
-            return
-        
+    def rename_video(self, row):
+        """Cho phép người dùng đổi tên video trước khi tải xuống"""
         # Kiểm tra video_info có tồn tại
         if row not in self.video_info_dict:
             return
             
         video_info = self.video_info_dict[row]
         
-        # Log để debug
-        print(f"DEBUG - Attempting to play video at row {row}")
+        # Lấy tiêu đề hiện tại
+        current_title = video_info.title if hasattr(video_info, 'title') else ""
         
-        # Lấy tiêu đề và URL
-        title = video_info.title if hasattr(video_info, 'title') else ""
-        url = video_info.url if hasattr(video_info, 'url') else ""
-        
-        if not title or not url:
+        if not current_title:
             return
             
-        # Làm sạch tên file
-        import re
-        clean_title = re.sub(r'#\S+', '', title).strip()
-        clean_title = re.sub(r'[\\/*?:"<>|]', '', clean_title).strip()
+        # Hiển thị dialog để nhập tên mới
+        new_title, ok = QInputDialog.getText(
+            self, 
+            self.tr_("DIALOG_RENAME_TITLE"),
+            self.tr_("DIALOG_ENTER_NEW_NAME"), 
+            QLineEdit.EchoMode.Normal, 
+            current_title
+        )
         
-        print(f"DEBUG - Clean title: '{clean_title}'")
-        
-        # Kiểm tra định dạng được chọn: MP3 hay MP4
-        format_cell = self.video_table.cellWidget(row, 4)
-        format_str = format_cell.findChild(QComboBox).currentText() if format_cell else self.tr_("FORMAT_VIDEO_MP4")
-        
-        # Xác định phần mở rộng file dựa trên định dạng
-        is_audio = format_str == self.tr_("FORMAT_AUDIO_MP3")
-        ext = "mp3" if is_audio else "mp4"
-        
-        print(f"DEBUG - Format: '{format_str}', Extension: '{ext}'")
-        
-        # Chuẩn hóa đường dẫn thư mục
-        output_dir = os.path.normpath(self.output_folder_display.text())
-        
-        # Tạo đường dẫn file
-        output_file = os.path.join(output_dir, f"{clean_title}.{ext}")
-        output_file = os.path.normpath(output_file)
-        
-        print(f"DEBUG - Generated filepath: '{output_file}'")
-        
-        # Kiểm tra file có tồn tại không
-        if not os.path.exists(output_file):
-            print(f"DEBUG - File not found at '{output_file}', checking for any matching files...")
+        # Kiểm tra người dùng đã nhấn OK và tên mới khác rỗng
+        if ok and new_title:
+            # Làm sạch tên file để tránh ký tự không hợp lệ
+            import re
+            clean_title = re.sub(r'[\\/*?:"<>|]', '', new_title).strip()
             
-            # Thử tìm file bắt đầu bằng tên đã làm sạch
-            potential_files = [f for f in os.listdir(output_dir) 
-                             if f.startswith(clean_title) and (f.endswith('.mp4') or f.endswith('.mp3'))]
-            
-            if potential_files:
-                output_file = os.path.join(output_dir, potential_files[0])
-                print(f"DEBUG - Found alternative file: '{output_file}'")
-            else:
-                # Nếu file chưa tồn tại, hiển thị thông báo
-                print(f"DEBUG - No matching files found, video needs to be downloaded first")
-                QMessageBox.information(
-                    self, 
-                    self.tr_("CONTEXT_PLAY_VIDEO"), 
-                    f"{self.tr_('CONTEXT_NEED_DOWNLOAD')}"
-                )
-                return
-            
-        # Phát file bằng trình phát mặc định
-        try:
-            print(f"DEBUG - Playing file: '{output_file}'")
-            if os.name == 'nt':  # Windows
-                os.startfile(output_file)
-            elif os.name == 'posix':  # macOS, Linux
-                import subprocess
-                subprocess.Popen(['xdg-open', output_file])
+            if clean_title:
+                # Lưu tên gốc vào biến original_title nếu chưa có
+                if not hasattr(video_info, 'original_title'):
+                    setattr(video_info, 'original_title', current_title)
+                    
+                # Cập nhật tên mới
+                setattr(video_info, 'title', clean_title)
                 
-            # Hiển thị thông báo trong status bar
-            if self.parent and self.parent.status_bar:
-                self.parent.status_bar.showMessage(f"{self.tr_('CONTEXT_PLAYING')}: {os.path.basename(output_file)}")
-        except Exception as e:
-            error_msg = f"{self.tr_('CONTEXT_CANNOT_PLAY')}: {str(e)}"
-            print(f"DEBUG - Error playing file: {error_msg}")
-            QMessageBox.warning(
-                self, 
-                self.tr_("DIALOG_ERROR"), 
-                error_msg
-            )
+                # Cập nhật UI - cột title trong bảng
+                title_cell = self.video_table.item(row, 1)
+                if title_cell:
+                    title_cell.setText(clean_title)
+                    title_cell.setToolTip(clean_title)
+                
+                # Hiển thị thông báo thành công
+                if self.parent and self.parent.status_bar:
+                    self.parent.status_bar.showMessage(self.tr_("STATUS_RENAMED_VIDEO").format(clean_title))
+                    
+                print(f"DEBUG - Renamed video from '{current_title}' to '{clean_title}'")
+            else:
+                # Hiển thị thông báo lỗi nếu tên mới không hợp lệ
+                QMessageBox.warning(
+                    self, 
+                    self.tr_("DIALOG_ERROR"), 
+                    self.tr_("DIALOG_INVALID_NAME")
+                )
 
     def create_video_table(self):
         """Tạo bảng hiển thị thông tin video"""
