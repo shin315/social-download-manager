@@ -163,6 +163,7 @@ DIALOG_FILE_EXISTS_MESSAGE = "The file '{}' already exists in the output folder.
 DIALOG_APPLY_TO_ALL = "Apply to all"
 DIALOG_RENAME_TITLE = "Rename Video"
 DIALOG_ENTER_NEW_NAME = "Enter new name for the video:"
+DIALOG_ENTER_NAME_REQUIRED = "This video has no title. You must enter a name before downloading:"
 DIALOG_INVALID_NAME = "Invalid name. Please enter a valid name."
 
 # About dialog

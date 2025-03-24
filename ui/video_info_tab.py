@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QLineEdit, QPushButton, QTableWidget, QComboBox,
                              QFileDialog, QCheckBox, QHeaderView, QMessageBox,
-                             QTableWidgetItem, QProgressBar, QApplication, QDialog, QTextEdit, QMenu, QInputDialog)
+                             QTableWidgetItem, QProgressBar, QApplication, QDialog, QTextEdit, QMenu, QInputDialog, QSpacerItem, QSizePolicy, QDialogButtonBox)
 from PyQt6.QtCore import Qt, pyqtSignal, QSize
 import os
 import json
@@ -575,12 +575,15 @@ class VideoInfoTab(QWidget):
                                 # Người dùng đã chọn bỏ qua tất cả
                                 continue
                         else:
-                            # Hiển thị thông báo hỏi người dùng có muốn ghi đè không
-                            # và thêm lựa chọn "Áp dụng cho tất cả"
-                            msg = self.tr_("DIALOG_FILE_EXISTS_MESSAGE").format(f"{clean_title}.{ext}")
-                            apply_all_checkbox = QCheckBox(self.tr_("DIALOG_APPLY_TO_ALL"))
+                            # Đếm số lượng file sẽ cần download
+                            remaining_files = len([v for v in download_queue if v not in videos_already_exist])
+                            file_count = selected_count - len(videos_already_exist)
                             
-                            # Tạo message box tùy chỉnh để thêm checkbox
+                            # Hiển thị thông báo hỏi người dùng có muốn ghi đè không
+                            # và thêm lựa chọn "Áp dụng cho tất cả" (chỉ khi có nhiều file)
+                            msg = self.tr_("DIALOG_FILE_EXISTS_MESSAGE").format(f"{clean_title}.{ext}")
+                            
+                            # Tạo message box tùy chỉnh
                             msg_box = QMessageBox(
                                 QMessageBox.Icon.Question,
                                 self.tr_("DIALOG_FILE_EXISTS"),
@@ -589,9 +592,20 @@ class VideoInfoTab(QWidget):
                                 self
                             )
                             
-                            # Thêm checkbox vào message box
-                            layout = msg_box.layout()
-                            layout.addWidget(apply_all_checkbox, 1, 1, 1, layout.columnCount(), Qt.AlignmentFlag.AlignLeft)
+                            # Chỉ thêm checkbox "Apply to all" nếu có nhiều hơn 1 file cần xử lý
+                            apply_all_checkbox = None
+                            if file_count > 1:
+                                apply_all_checkbox = QCheckBox(self.tr_("DIALOG_APPLY_TO_ALL"))
+                                # Thêm checkbox vào button box (cùng hàng với các nút)
+                                button_box = msg_box.findChild(QDialogButtonBox)
+                                if button_box:
+                                    # Đưa checkbox vào bên trái của button box
+                                    button_layout = button_box.layout()
+                                    button_layout.insertWidget(0, apply_all_checkbox, 0, Qt.AlignmentFlag.AlignLeft)
+                                    # Thêm khoảng cách lớn hơn giữa checkbox và các nút
+                                    button_layout.insertSpacing(1, 100)
+                                    # Tùy chỉnh checkbox để dễ nhìn hơn 
+                                    apply_all_checkbox.setStyleSheet("QCheckBox { margin-right: 15px; font-weight: bold; }")
                             
                             # Hiển thị message box
                             reply = msg_box.exec()
@@ -604,13 +618,13 @@ class VideoInfoTab(QWidget):
                             
                             elif reply == QMessageBox.StandardButton.No:
                                 # Người dùng chọn không ghi đè
-                                if apply_all_checkbox.isChecked():
+                                if apply_all_checkbox and apply_all_checkbox.isChecked():
                                     overwrite_all = False  # Áp dụng "không ghi đè" cho tất cả
                                 continue
                             
                             elif reply == QMessageBox.StandardButton.Yes:
                                 # Người dùng chọn ghi đè
-                                if apply_all_checkbox.isChecked():
+                                if apply_all_checkbox and apply_all_checkbox.isChecked():
                                     overwrite_all = True  # Áp dụng "ghi đè" cho tất cả
                                 
                                 # Thêm vào hàng đợi tải xuống
@@ -695,6 +709,45 @@ class VideoInfoTab(QWidget):
                 # Xác định phần mở rộng file dựa trên định dạng
                 is_audio = "audio" in video_info['format_id'].lower() or "bestaudio" in video_info['format_id'].lower()
                 ext = "mp3" if is_audio else "mp4"
+                
+            # Kiểm tra xem tiêu đề có rỗng không
+            if not clean_title.strip():
+                # Hiển thị dialog để nhập tên mới cho video
+                default_name = f"Video_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                new_title, ok = QInputDialog.getText(
+                    self, 
+                    self.tr_("DIALOG_RENAME_TITLE"),
+                    self.tr_("DIALOG_ENTER_NAME_REQUIRED"), 
+                    QLineEdit.EchoMode.Normal, 
+                    default_name
+                )
+                
+                if not ok or not new_title.strip():
+                    # Người dùng hủy hoặc không nhập tên, bỏ qua video này
+                    print(f"DEBUG - User cancelled entering required name for video without title")
+                    self.downloading_count -= 1
+                    continue
+                
+                # Làm sạch tên file để tránh ký tự không hợp lệ
+                import re
+                clean_title = re.sub(r'[\\/*?:"<>|]', '', new_title).strip()
+                
+                # Cập nhật title trong video_info
+                video_info['title'] = new_title
+                video_info['clean_title'] = clean_title
+                
+                # Đặt thuộc tính custom_title vào đối tượng VideoInfo trong video_info_dict
+                for row_idx, video_obj in self.video_info_dict.items():
+                    if video_obj and video_obj.url == url:
+                        # Thêm thuộc tính custom_title nếu chưa có
+                        if not hasattr(video_obj, 'custom_title'):
+                            video_obj.custom_title = new_title
+                        else:
+                            video_obj.custom_title = new_title
+                        print(f"DEBUG - Added custom_title to VideoInfo object for row {row_idx}")
+                        break
+                
+                print(f"DEBUG - New title set for video without title: '{clean_title}'")
                 
             # Thiết lập template đầu ra với tên đã được làm sạch
             output_dir = self.output_folder_display.text()
@@ -1252,10 +1305,20 @@ class VideoInfoTab(QWidget):
                     if format_str == self.tr_("FORMAT_AUDIO_MP3"):
                         format_str = self.tr_("FORMAT_VIDEO_MP4")
                 
+                # Kiểm tra nếu đây là video không có tiêu đề đã được đặt tên mới
+                display_title = video_info.title
+                if hasattr(video_info, 'custom_title') and video_info.custom_title:
+                    display_title = video_info.custom_title
+                
+                # Nếu tên file khác với tên video ban đầu, có thể đã được đổi tên
+                filename_without_ext = os.path.splitext(os.path.basename(file_path))[0]
+                if filename_without_ext and filename_without_ext != video_info.title:
+                    display_title = filename_without_ext
+                
                 # Tạo thông tin tải xuống để thêm vào tab Downloaded Videos
                 download_info = {
                     'url': url,
-                    'title': video_info.title,  # Đã lọc bỏ hashtag
+                    'title': display_title,  # Sử dụng tên đã được đặt
                     'creator': video_info.creator if hasattr(video_info, 'creator') else "",
                     'quality': quality,
                     'format': format_str,

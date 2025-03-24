@@ -162,8 +162,9 @@ DIALOG_VIDEOS_ALREADY_EXIST = "Các video sau đã tồn tại và sẽ không �
 DIALOG_FILE_EXISTS = "File đã tồn tại"
 DIALOG_FILE_EXISTS_MESSAGE = "File '{}' đã tồn tại trong thư mục lưu.\nBạn có muốn ghi đè lên không?"
 DIALOG_APPLY_TO_ALL = "Áp dụng cho tất cả"
-DIALOG_RENAME_TITLE = "Đổi tên video"
+DIALOG_RENAME_TITLE = "Đổi tên Video"
 DIALOG_ENTER_NEW_NAME = "Nhập tên mới cho video:"
+DIALOG_ENTER_NAME_REQUIRED = "Video này không có tiêu đề. Bạn phải nhập tên trước khi tải xuống:"
 DIALOG_INVALID_NAME = "Tên không hợp lệ. Vui lòng nhập tên hợp lệ."
 
 # About dialog
