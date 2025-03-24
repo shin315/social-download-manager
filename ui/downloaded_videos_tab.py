@@ -456,13 +456,14 @@ class DownloadedVideosTab(QWidget):
                 self.quality_label.setText(f"🔷 {self.tr_('DETAIL_QUALITY')}: {video[2]}")
             
             # Đảm bảo hiển thị định dạng đúng
+            format_value = ""
             if is_mp3:
                 format_value = self.tr_("FORMAT_AUDIO_MP3")
             else:
                 format_value = video[3]
-                if format_value == "1080p" or format_value == "720p" or format_value == "480p" or format_value == "360p":
+                if format_value == "1080p" or format_value == "720p" or format_value == "480p" or format_value == "360p" or format_value == "Video (mp4)":
                     format_value = self.tr_("FORMAT_VIDEO_MP4")
-                elif format_value == "320kbps" or format_value == "192kbps" or format_value == "128kbps":
+                elif format_value == "320kbps" or format_value == "192kbps" or format_value == "128kbps" or format_value == "Audio (mp3)":
                     format_value = self.tr_("FORMAT_AUDIO_MP3")
             self.format_label.setText(f"🎬 {self.tr_('DETAIL_FORMAT')}: {format_value}")
             
@@ -508,97 +509,100 @@ class DownloadedVideosTab(QWidget):
             self.thumbnail_label.setPixmap(default_pixmap)
             
             # Thiết lập style mặc định dựa trên loại file
-            is_audio = "Audio" in video[3]
+            is_audio = is_mp3 or "MP3" in format_value or "Audio" in video[3] or "mp3" in format_value.lower()
             if is_audio:
                 # Nếu là file audio, dùng icon âm nhạc làm mặc định
                 self.thumbnail_label.setStyleSheet(f"background-color: {self.theme_colors['audio_background']}; border-radius: 8px;")
                 self.play_icon.setText("🎵")  # Unicode music icon
                 self.play_icon.setStyleSheet("font-size: 52px; color: white; background-color: transparent;")
+                self.play_icon.setVisible(True)  # Luôn hiển thị icon âm nhạc cho file MP3
             else:
                 # Nếu là video, dùng icon play làm mặc định
                 self.thumbnail_label.setStyleSheet(f"background-color: {self.theme_colors['background']}; border-radius: 8px;")
                 self.play_icon.setText("▶️")  # Unicode play icon
                 self.play_icon.setStyleSheet("font-size: 52px; color: white; background-color: transparent;")
             
-            # Thử tải thumbnail cho cả file mp3 và mp4
-            thumbnail_path = video[11] if len(video) > 11 and video[11] else ""
-            if thumbnail_path and os.path.exists(thumbnail_path):
-                try:
-                    print(f"Loading thumbnail from: {thumbnail_path}")
-                    pixmap = QPixmap(thumbnail_path)
-                    if not pixmap.isNull():
-                        print(f"Successfully loaded thumbnail: {thumbnail_path}, size: {pixmap.width()}x{pixmap.height()}")
-                        pixmap = pixmap.scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio)
-                        self.thumbnail_label.setPixmap(pixmap)
-                        # Khi thumbnail load thành công, xóa background color
-                        self.thumbnail_label.setStyleSheet("background-color: transparent; border-radius: 8px;")
-                        # Ẩn play icon khi có thumbnail
-                        self.play_icon.setVisible(False)
-                    else:
-                        print(f"Failed to load thumbnail: pixmap is null for {thumbnail_path}")
-                        self.play_icon.setVisible(True)
-                except Exception as e:
-                    print(f"Error loading thumbnail: {e} for {thumbnail_path}")
-                    self.play_icon.setVisible(True)
-            else:
-                print(f"No thumbnail or file doesn't exist: {thumbnail_path}")
-                self.play_icon.setVisible(True)
-                
-                # Thử tạo lại thumbnail nếu có đường dẫn video hoặc từ thông tin URL
-                video_id = ""
-                if len(self.selected_video) > 0:
-                    db_manager = DatabaseManager()
-                    video_info = db_manager.get_download_by_title(self.selected_video[0])
-                    if video_info and 'url' in video_info:
-                        try:
-                            video_id = video_info['url'].split('/')[-1].split('?')[0]
-                        except Exception as e:
-                            print(f"Error extracting video ID: {e}")
-                
-                if video_id:
-                    # Tạo thư mục thumbnails nếu chưa có
-                    output_folder = video[8] if len(video) > 8 and video[8] else ""
-                    if output_folder:
-                        thumbnails_dir = os.path.join(output_folder, "thumbnails")
-                        if not os.path.exists(thumbnails_dir):
-                            try:
-                                os.makedirs(thumbnails_dir)
-                            except Exception as e:
-                                print(f"Error creating thumbnails directory: {e}")
-                                return
-                        
-                        # Đặt đường dẫn thumbnail mới
-                        new_thumbnail_path = os.path.join(thumbnails_dir, f"{video_id}.jpg")
-                        
-                        # Cập nhật đường dẫn thumbnail trong database
-                        if video_info:
-                            try:
-                                # Lấy thông tin hiện tại
-                                metadata_str = video_info.get('metadata', '{}')
-                                metadata = json.loads(metadata_str) if metadata_str else {}
-                                metadata['thumbnail'] = new_thumbnail_path
-                                
-                                # Cập nhật vào database
-                                conn = sqlite3.connect(db_manager.db_path)
-                                cursor = conn.cursor()
-                                cursor.execute(
-                                    "UPDATE downloads SET metadata = ? WHERE title = ?", 
-                                    (json.dumps(metadata), video[0])
-                                )
-                                conn.commit()
-                                conn.close()
-                                
-                                print(f"Updated thumbnail path for {video[0]}")
-                                
-                                # Tạo thumbnail nếu chưa tồn tại
-                                if not os.path.exists(new_thumbnail_path):
-                                    # Trong trường hợp thực tế, ở đây sẽ tạo thumbnail từ video
-                                    # Nhưng do giới hạn về thời gian, chỉ ghi đường dẫn để làm gốc cho lần tải sau
-                                    pass
-                            except Exception as e:
-                                print(f"Error updating thumbnail in database: {e}")
+            # Thử tải thumbnail (chỉ cho video, không áp dụng cho audio)
+            if not is_audio:
+                thumbnail_path = video[11] if len(video) > 11 and video[11] else ""
+                if thumbnail_path and os.path.exists(thumbnail_path):
+                    try:
+                        print(f"Loading thumbnail from: {thumbnail_path}")
+                        pixmap = QPixmap(thumbnail_path)
+                        if not pixmap.isNull():
+                            print(f"Successfully loaded thumbnail: {thumbnail_path}, size: {pixmap.width()}x{pixmap.height()}")
+                            pixmap = pixmap.scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio)
+                            self.thumbnail_label.setPixmap(pixmap)
+                            # Khi thumbnail load thành công, xóa background color
+                            self.thumbnail_label.setStyleSheet("background-color: transparent; border-radius: 8px;")
+                            # Ẩn play icon khi có thumbnail
+                            self.play_icon.setVisible(False)
                         else:
-                            print(f"Video info not found for title: {video[0]}")
+                            print(f"Failed to load thumbnail: pixmap is null for {thumbnail_path}")
+                            self.play_icon.setVisible(True)
+                    except Exception as e:
+                        print(f"Error loading thumbnail: {e} for {thumbnail_path}")
+                        self.play_icon.setVisible(True)
+                else:
+                    print(f"No thumbnail or file doesn't exist: {thumbnail_path}")
+                    self.play_icon.setVisible(True)
+                    
+                    # Thử tạo lại thumbnail nếu có đường dẫn video hoặc từ thông tin URL (chỉ cho video)
+                    video_id = ""
+                    if len(self.selected_video) > 0:
+                        db_manager = DatabaseManager()
+                        video_info = db_manager.get_download_by_title(self.selected_video[0])
+                        if video_info and 'url' in video_info:
+                            try:
+                                video_id = video_info['url'].split('/')[-1].split('?')[0]
+                            except Exception as e:
+                                print(f"Error extracting video ID: {e}")
+                    
+                    if video_id:
+                        # Tạo thư mục thumbnails nếu chưa có
+                        output_folder = video[8] if len(video) > 8 and video[8] else ""
+                        if output_folder:
+                            thumbnails_dir = os.path.join(output_folder, "thumbnails")
+                            if not os.path.exists(thumbnails_dir):
+                                try:
+                                    os.makedirs(thumbnails_dir)
+                                except Exception as e:
+                                    print(f"Error creating thumbnails directory: {e}")
+                                    return
+                            
+                            # Đặt đường dẫn thumbnail mới
+                            new_thumbnail_path = os.path.join(thumbnails_dir, f"{video_id}.jpg")
+                            
+                            # Cập nhật đường dẫn thumbnail trong database
+                            if video_info:
+                                try:
+                                    # Lấy thông tin hiện tại
+                                    metadata_str = video_info.get('metadata', '{}')
+                                    metadata = json.loads(metadata_str) if metadata_str else {}
+                                    metadata['thumbnail'] = new_thumbnail_path
+                                    
+                                    # Cập nhật vào database
+                                    conn = sqlite3.connect(db_manager.db_path)
+                                    cursor = conn.cursor()
+                                    cursor.execute(
+                                        "UPDATE downloads SET metadata = ? WHERE title = ?", 
+                                        (json.dumps(metadata), video[0])
+                                    )
+                                    conn.commit()
+                                    conn.close()
+                                    
+                                    print(f"Updated thumbnail path for {video[0]}")
+                                    
+                                    # Tạo thumbnail nếu chưa tồn tại
+                                    if not os.path.exists(new_thumbnail_path):
+                                        # Trong trường hợp thực tế, ở đây sẽ tạo thumbnail từ video
+                                        # Nhưng do giới hạn về thời gian, chỉ ghi đường dẫn để làm gốc cho lần tải sau
+                                        pass
+                                except Exception as e:
+                                    print(f"Error updating thumbnail in database: {e}")
+                            else:
+                                print(f"Video info not found for title: {video[0]}")
+            # Nếu là file audio, đã thiết lập icon âm nhạc ở trên
         else:
             # Không tìm thấy video trong danh sách
             self.video_details_frame.setVisible(False)
@@ -789,10 +793,10 @@ class DownloadedVideosTab(QWidget):
             
             # Cột Format
             format_value = video[3]
-            # Đảm bảo hiển thị định dạng dưới dạng text đúng (Video (mp4) hoặc Âm thanh (mp3))
-            if format_value == "1080p" or format_value == "720p" or format_value == "480p" or format_value == "360p":
+            # Đảm bảo hiển thị định dạng dưới dạng text đúng (MP4 hoặc MP3)
+            if format_value == "1080p" or format_value == "720p" or format_value == "480p" or format_value == "360p" or format_value == "Video (mp4)":
                 format_value = self.tr_("FORMAT_VIDEO_MP4")
-            elif format_value == "320kbps" or format_value == "192kbps" or format_value == "128kbps":
+            elif format_value == "320kbps" or format_value == "192kbps" or format_value == "128kbps" or format_value == "Audio (mp3)":
                 format_value = self.tr_("FORMAT_AUDIO_MP3")
             # Nếu là file MP3 nhưng định dạng không đúng, sửa lại
             filepath = os.path.join(video[8], video[0]) if video[8] and video[0] else ""
@@ -1045,7 +1049,7 @@ class DownloadedVideosTab(QWidget):
             # Hiển thị status một cách thân thiện
             status = download_info.get('status', 'Success')
             print(f"DEBUG loading video status initial: {status}")
-            if status == 'Success':
+            if status == 'Success' or status == 'Download successful':
                 status = 'Successful'
             print(f"DEBUG loading video status after conversion: {status}")
             
@@ -1089,7 +1093,8 @@ class DownloadedVideosTab(QWidget):
                 download_info.get('thumbnail', '')               # 11 - Thumbnail
             ]
             
-            self.all_videos.append(video_info)
+            # Thêm video mới vào đầu danh sách thay vì cuối danh sách
+            self.all_videos.insert(0, video_info)
             
             # Thêm video mới vào cơ sở dữ liệu
             try:
@@ -1104,10 +1109,11 @@ class DownloadedVideosTab(QWidget):
                 search_text = self.search_input.text().lower()
                 title = download_info.get('title', '').lower()
                 if search_text in title or search_text in hashtags_str.lower():
-                    self.filtered_videos.append(video_info)
+                    # Thêm vào đầu danh sách
+                    self.filtered_videos.insert(0, video_info)
             else:
-                # Nếu không có từ khóa tìm kiếm, thêm trực tiếp
-                self.filtered_videos.append(video_info)
+                # Nếu không có từ khóa tìm kiếm, thêm trực tiếp vào đầu danh sách
+                self.filtered_videos.insert(0, video_info)
             
             # Hiển thị lại danh sách
             self.display_videos()
@@ -1420,7 +1426,7 @@ class DownloadedVideosTab(QWidget):
         def get_sort_key(video):
             value = video[column]
             
-            if column == 3:  # Quality
+            if column == 2:  # Quality
                 # Chuyển đổi quality thành số để sắp xếp
                 quality_order = {
                     "1080p": 4,
@@ -1433,8 +1439,19 @@ class DownloadedVideosTab(QWidget):
                     "Unknown": 0
                 }
                 return quality_order.get(value, 0)
+            
+            elif column == 3:  # Format
+                # Sắp xếp format (MP4 trước, MP3 sau)
+                format_order = {
+                    "MP4": 1,
+                    "MP3": 2,
+                    "Video (mp4)": 1,  # Cho tương thích ngược
+                    "Audio (mp3)": 2,  # Cho tương thích ngược
+                    "Unknown": 3
+                }
+                return format_order.get(value, 3)
                 
-            elif column == 5:  # Size
+            elif column == 4:  # Size
                 try:
                     # Chuyển đổi MB, KB thành số
                     if 'MB' in value:
@@ -1446,7 +1463,7 @@ class DownloadedVideosTab(QWidget):
                     print(f"Error converting size: {e}")
                     return 0
                     
-            elif column == 1 or column == 2:  # Title hoặc Creator
+            elif column == 0 or column == 1:  # Title hoặc Creator
                 # Chuẩn hóa text trước khi sắp xếp
                 try:
                     return unicodedata.normalize('NFKD', value.lower())

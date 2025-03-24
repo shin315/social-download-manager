@@ -97,8 +97,8 @@ QUALITY_192KBPS = "192kbps"
 QUALITY_128KBPS = "128kbps"
 
 # Format options
-FORMAT_VIDEO_MP4 = "Video (mp4)"
-FORMAT_AUDIO_MP3 = "Âm thanh (mp3)"
+FORMAT_VIDEO_MP4 = "MP4"
+FORMAT_AUDIO_MP3 = "MP3"
 
 # Status messages
 STATUS_READY = "Sẵn sàng"
