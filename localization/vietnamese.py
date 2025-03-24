@@ -174,6 +174,18 @@ DETAIL_SIZE = "Kích thước"
 DETAIL_DOWNLOADED = "Đã tải lúc"
 DETAIL_STATUS = "Trạng thái"
 
+# Context menu
+CONTEXT_COPY_TITLE = "Sao chép tiêu đề"
+CONTEXT_COPY_CREATOR = "Sao chép tên tác giả"
+CONTEXT_COPY_HASHTAGS = "Sao chép hashtags"
+CONTEXT_PLAY_VIDEO = "Phát video"
+CONTEXT_OPEN_LOCATION = "Mở thư mục chứa file"
+CONTEXT_DELETE = "Xóa"
+CONTEXT_FILE_NOT_FOUND = "Không tìm thấy file video"
+CONTEXT_CANNOT_PLAY = "Không thể phát video"
+CONTEXT_NEED_DOWNLOAD = "Video chưa được tải xuống.\nVui lòng tải xuống video trước."
+CONTEXT_PLAYING = "Đang phát"
+
 # Donate area
 DONATE_TITLE = "Ủng hộ tác giả"
 DONATE_DESC = "Tool này hoàn toàn miễn phí, nhưng nếu bạn thấy nó hữu ích, hãy ủng hộ tác giả 1 ly cafe nhé."

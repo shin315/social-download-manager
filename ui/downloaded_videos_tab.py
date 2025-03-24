@@ -1,8 +1,9 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QLineEdit, QPushButton, QTableWidget, QHeaderView,
-                             QTableWidgetItem, QMessageBox, QFrame, QScrollArea, QApplication, QDialog, QTextEdit, QCheckBox)
+                             QTableWidgetItem, QMessageBox, QFrame, QScrollArea, QApplication, QDialog, QTextEdit, QCheckBox,
+                             QMenu)
 from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QPixmap
+from PyQt6.QtGui import QPixmap, QCursor, QAction
 import os
 import subprocess
 import math
@@ -194,6 +195,10 @@ class DownloadedVideosTab(QWidget):
         
         # Kết nối sự kiện click ra ngoài
         self.downloads_table.viewport().installEventFilter(self)
+        
+        # Thiết lập context menu cho bảng video đã tải
+        self.downloads_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.downloads_table.customContextMenuRequested.connect(self.show_context_menu)
 
     def create_downloads_table(self):
         """Tạo bảng hiển thị video đã tải xuống"""
@@ -870,9 +875,62 @@ class DownloadedVideosTab(QWidget):
             action_layout = QHBoxLayout(action_widget)
             action_layout.setContentsMargins(0, 0, 0, 0)
             
-            # Nút Open
+            # Nút Open - mở file thay vì chỉ mở thư mục
             open_btn = QPushButton(self.tr_("BUTTON_OPEN"))
-            open_btn.clicked.connect(lambda checked, path=video[8]: self.open_folder(path))
+            
+            # Xác định đường dẫn đầy đủ của file
+            directory_path = video[8]
+            title = video[0]
+            format_str = video[3]
+            
+            # Xác định đuôi file từ format_str
+            ext = "mp3" if format_str == "MP3" or "mp3" in format_str.lower() else "mp4"
+            
+            # Tạo đường dẫn đầy đủ
+            full_filepath = ""
+            if directory_path and title:
+                # Tạo đường dẫn file
+                possible_filepath = os.path.join(directory_path, f"{title}.{ext}")
+                
+                # Kiểm tra file có tồn tại không
+                if os.path.exists(possible_filepath):
+                    full_filepath = possible_filepath
+                else:
+                    # Nếu file không tồn tại, thử tìm file có tên gần giống
+                    try:
+                        files = os.listdir(directory_path)
+                        best_match = None
+                        
+                        # Loại bỏ ký tự đặc biệt từ title để so sánh
+                        clean_title = title.replace('?', '').replace('!', '').replace(':', '').strip()
+                        
+                        for file in files:
+                            # Chỉ kiểm tra các file MP3 hoặc MP4
+                            if file.endswith('.mp3') or file.endswith('.mp4'):
+                                file_name = os.path.splitext(file)[0]
+                                
+                                # Kiểm tra xem title có trong tên file không
+                                if clean_title in file_name or file_name in clean_title:
+                                    best_match = file
+                                    break
+                        
+                        if best_match:
+                            full_filepath = os.path.join(directory_path, best_match)
+                        else:
+                            # Nếu không tìm thấy file, sử dụng thư mục
+                            full_filepath = directory_path
+                    except Exception as e:
+                        print(f"DEBUG - Error finding file for Open button: {str(e)}")
+                        full_filepath = directory_path
+            else:
+                # Nếu không có đủ thông tin, sử dụng thư mục
+                full_filepath = directory_path
+                
+            # Lưu trữ đường dẫn cho lambda
+            final_path = full_filepath if full_filepath else directory_path
+            
+            # Kết nối nút Open với phương thức open_folder
+            open_btn.clicked.connect(lambda checked, path=final_path: self.open_folder(path))
             action_layout.addWidget(open_btn)
             
             # Nút Delete
@@ -890,21 +948,65 @@ class DownloadedVideosTab(QWidget):
             self.video_details_frame.setVisible(False)
             self.selected_video = None
 
-    def open_folder(self, folder_path):
-        """Mở thư mục chứa video đã tải"""
+    def open_folder(self, path):
+        """
+        Mở thư mục chứa video đã tải
+        Nếu path là thư mục: mở thư mục đó
+        Nếu path là file: mở thư mục chứa file và bôi đen (select) file đó
+        """
+        print(f"DEBUG - Opening path: '{path}'")
+        
+        # Xác định xem path là file hay folder
+        is_file = os.path.isfile(path)
+        folder_path = os.path.dirname(path) if is_file else path
+        
         # Kiểm tra thư mục tồn tại
         if not os.path.exists(folder_path):
             QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), 
                                self.tr_("DIALOG_FOLDER_NOT_FOUND").format(folder_path))
             return
             
-        # Mở thư mục (cross-platform)
+        # Mở thư mục và chọn file (nếu là file)
         try:
             if os.name == 'nt':  # Windows
-                os.startfile(folder_path)
-            elif os.name == 'posix':  # macOS, Linux
-                subprocess.run(['xdg-open', folder_path], check=True)
+                if is_file and os.path.exists(path):
+                    # Mở Explorer và chọn file
+                    path = path.replace('/', '\\')  # Đảm bảo đường dẫn đúng định dạng Windows
+                    print(f"DEBUG - Using explorer /select,{path}")
+                    os.system(f'explorer /select,"{path}"')
+                else:
+                    # Chỉ mở thư mục
+                    os.startfile(folder_path)
+            elif os.name == 'darwin':  # macOS
+                if is_file and os.path.exists(path):
+                    # Mở Finder và chọn file
+                    subprocess.run(['open', '-R', path], check=True)
+                else:
+                    # Chỉ mở thư mục
+                    subprocess.run(['open', folder_path], check=True)
+            else:  # Linux và các hệ điều hành khác
+                # Thử sử dụng các file manager phổ biến trên Linux
+                if is_file and os.path.exists(path):
+                    # Thử với nautilus (GNOME)
+                    try:
+                        subprocess.run(['nautilus', '--select', path], check=True)
+                    except:
+                        try:
+                            # Thử với dolphin (KDE)
+                            subprocess.run(['dolphin', '--select', path], check=True)
+                        except:
+                            try:
+                                # Thử với thunar (XFCE)
+                                subprocess.run(['thunar', path], check=True)
+                            except:
+                                # Nếu không có file manager nào hoạt động, mở thư mục
+                                subprocess.run(['xdg-open', folder_path], check=True)
+                else:
+                    # Chỉ mở thư mục
+                    subprocess.run(['xdg-open', folder_path], check=True)
+                    
         except Exception as e:
+            print(f"DEBUG - Error opening folder: {str(e)}")
             QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), 
                                self.tr_("DIALOG_CANNOT_OPEN_FOLDER").format(str(e)))
 
@@ -1798,3 +1900,328 @@ class DownloadedVideosTab(QWidget):
     def checkbox_state_changed(self):
         """Xử lý khi trạng thái checkbox thay đổi"""
         self.update_select_toggle_button()
+
+    def show_context_menu(self, position):
+        """Hiển thị menu chuột phải cho bảng video đã tải"""
+        # Lấy vị trí dòng và cột hiện tại
+        index = self.downloads_table.indexAt(position)
+        if not index.isValid():
+            return
+            
+        row = index.row()
+        column = index.column()
+        
+        if row < 0 or row >= self.downloads_table.rowCount():
+            return
+        
+        # Tạo context menu
+        context_menu = QMenu(self)
+        
+        # Lấy chi tiết video từ filtered_videos
+        if row < len(self.filtered_videos):
+            video = self.filtered_videos[row]
+            
+            # Xác định cách truy cập dữ liệu dựa trên kiểu của video
+            if isinstance(video, list):
+                # Nếu là list, truy cập theo index dựa vào schema [title, creator, quality, format, size, status, date, hashtags, directory, orig_title, duration, thumbnail]
+                title = video[0] if len(video) > 0 else ""
+                creator = video[1] if len(video) > 1 else ""
+                format_str = video[3] if len(video) > 3 else "MP4"  # Default to MP4
+                hashtags_raw = video[7] if len(video) > 7 else ""
+                directory_path = video[8] if len(video) > 8 else ""
+                
+                # Xác định filepath dựa vào title và format
+                if title and directory_path:
+                    ext = "mp3" if format_str == "MP3" else "mp4"
+                    filepath = os.path.join(directory_path, f"{title}.{ext}")
+                else:
+                    filepath = ""
+            elif isinstance(video, dict):
+                title = video.get('title', '')
+                creator = video.get('creator', '')
+                hashtags_raw = video.get('hashtags', [])
+                filepath = video.get('filepath', '')
+            else:
+                title = getattr(video, 'title', '')
+                creator = getattr(video, 'creator', '')
+                hashtags_raw = getattr(video, 'hashtags', [])
+                filepath = getattr(video, 'filepath', '')
+            
+            # Xác định loại dữ liệu dựa vào cột
+            if column == 1:  # Title
+                # Thêm action Copy Title
+                copy_action = QAction(self.tr_("CONTEXT_COPY_TITLE"), self)
+                copy_action.triggered.connect(lambda: self.copy_to_clipboard(title))
+                context_menu.addAction(copy_action)
+            
+            elif column == 2:  # Creator
+                # Thêm action Copy Creator
+                copy_action = QAction(self.tr_("CONTEXT_COPY_CREATOR"), self)
+                copy_action.triggered.connect(lambda: self.copy_to_clipboard(creator))
+                context_menu.addAction(copy_action)
+            
+            elif column == 8:  # Hashtags
+                # Xử lý hashtags
+                hashtags_str = ""
+                if isinstance(hashtags_raw, list):
+                    hashtags_str = ' '.join([f"#{tag}" for tag in hashtags_raw])
+                else:
+                    # Nếu là string, giả sử rằng hashtags là một chuỗi đã được định dạng sẵn
+                    hashtags_str = hashtags_raw
+                
+                # Thêm action Copy Hashtags
+                copy_action = QAction(self.tr_("CONTEXT_COPY_HASHTAGS"), self)
+                copy_action.triggered.connect(lambda: self.copy_to_clipboard(hashtags_str))
+                context_menu.addAction(copy_action)
+                
+            # Chức năng chung cho tất cả các cột
+            # Thêm separator nếu có action trước đó
+            if not context_menu.isEmpty():
+                context_menu.addSeparator()
+            
+            # Action: Play Video
+            play_action = QAction(self.tr_("CONTEXT_PLAY_VIDEO"), self)
+            play_action.triggered.connect(lambda: self.play_video(row))
+            context_menu.addAction(play_action)
+            
+            # Action: Open File Location
+            if directory_path or filepath:
+                # Xác định đường dẫn đầy đủ của file
+                full_filepath = ""
+                
+                if filepath and os.path.exists(filepath):
+                    # Nếu đã có đường dẫn đầy đủ và file tồn tại
+                    full_filepath = filepath
+                elif title and directory_path:
+                    # Nếu chỉ có title và directory, tạo đường dẫn file
+                    if isinstance(video, list):
+                        # Xác định đuôi file từ format_str
+                        ext = "mp3" if format_str == "MP3" or "mp3" in format_str.lower() else "mp4"
+                        
+                        # Tạo đường dẫn file
+                        possible_filepath = os.path.join(directory_path, f"{title}.{ext}")
+                        
+                        # Kiểm tra file có tồn tại không
+                        if os.path.exists(possible_filepath):
+                            full_filepath = possible_filepath
+                        else:
+                            # Nếu file không tồn tại, thử tìm file tương tự
+                            print(f"DEBUG - File not found: '{possible_filepath}', searching for similar files...")
+                            try:
+                                # Tìm file có tên tương tự trong thư mục
+                                files = os.listdir(directory_path)
+                                best_match = None
+                                
+                                # Xóa bỏ các ký tự đặc biệt và dấu câu từ tên file để so sánh
+                                clean_title = title.replace('?', '').replace('!', '').replace(':', '').strip()
+                                
+                                for file in files:
+                                    # Chỉ kiểm tra các file MP3 hoặc MP4
+                                    if file.endswith('.mp3') or file.endswith('.mp4'):
+                                        # So sánh tên file (không có phần mở rộng) với title
+                                        file_name = os.path.splitext(file)[0]
+                                        
+                                        # Nếu tên file chứa title hoặc ngược lại
+                                        if clean_title in file_name or file_name in clean_title:
+                                            best_match = file
+                                            break
+                                
+                                if best_match:
+                                    full_filepath = os.path.join(directory_path, best_match)
+                                    print(f"DEBUG - Found matching file: '{full_filepath}'")
+                                else:
+                                    # Nếu không tìm thấy file nào, sử dụng thư mục
+                                    full_filepath = directory_path
+                            except Exception as e:
+                                print(f"DEBUG - Error searching for file: {str(e)}")
+                                full_filepath = directory_path
+                    else:
+                        # Mặc định sử dụng thư mục nếu không xác định được file
+                        full_filepath = directory_path
+                else:
+                    # Nếu không có đủ thông tin, sử dụng thư mục
+                    full_filepath = directory_path or os.path.dirname(filepath) if filepath else ""
+                
+                # Nếu vẫn không tìm thấy file, sử dụng thư mục
+                if not full_filepath or not os.path.exists(full_filepath):
+                    full_filepath = directory_path
+                
+                # Tạo action và kết nối với sự kiện
+                open_folder_action = QAction(self.tr_("CONTEXT_OPEN_LOCATION"), self)
+                open_folder_action.triggered.connect(lambda: self.open_folder(full_filepath))
+                context_menu.addAction(open_folder_action)
+            
+            # Thêm separator
+            context_menu.addSeparator()
+            
+            # Action: Delete Video
+            delete_action = QAction(self.tr_("CONTEXT_DELETE"), self)
+            delete_action.triggered.connect(lambda: self.delete_video(row))
+            context_menu.addAction(delete_action)
+        
+        # Hiển thị menu nếu có action
+        if not context_menu.isEmpty():
+            context_menu.exec(QCursor.pos())
+            
+    def play_video(self, row):
+        """Phát video đã tải bằng trình phát mặc định của hệ thống"""
+        if row < 0 or row >= len(self.filtered_videos):
+            return
+            
+        video = self.filtered_videos[row]
+        
+        # Log để debug
+        print(f"DEBUG - Attempting to play video at row {row}")
+        
+        # Xác định cách truy cập đường dẫn file dựa trên kiểu của video
+        filepath = ""
+        title = ""
+        directory_path = ""
+        
+        if isinstance(video, list):
+            # Nếu là list, lấy title, format và directory để tạo đường dẫn đầy đủ
+            title = video[0] if len(video) > 0 else ""
+            format_str = video[3] if len(video) > 3 else "MP4"  # Default to MP4
+            directory_path = video[8] if len(video) > 8 else ""
+            
+            print(f"DEBUG - Video data: title='{title}', format='{format_str}', directory='{directory_path}'")
+        elif isinstance(video, dict):
+            filepath = video.get('filepath', '')
+            title = video.get('title', '')
+            directory_path = video.get('directory', '')
+            print(f"DEBUG - Dict filepath: '{filepath}'")
+        else:
+            filepath = getattr(video, 'filepath', '')
+            title = getattr(video, 'title', '')
+            directory_path = getattr(video, 'directory', '')
+            print(f"DEBUG - Object filepath: '{filepath}'")
+        
+        # Nếu có sẵn filepath đầy đủ
+        if filepath and os.path.exists(filepath):
+            output_file = filepath
+        else:
+            # Nếu chưa có filepath, tạo từ directory và title
+            if title and directory_path:
+                # Chuẩn hóa đường dẫn thư mục
+                directory_path = os.path.normpath(directory_path)
+                
+                # Xử lý tên file để tránh ký tự không hợp lệ trong hệ thống tệp
+                safe_title = title.replace('/', '_').replace('\\', '_').replace('?', '')
+                
+                # Xử lý các trường hợp đuôi file
+                ext = ""
+                if isinstance(video, list):
+                    format_str = video[3] if len(video) > 3 else "MP4"
+                    ext = "mp3" if format_str == "MP3" or "mp3" in format_str.lower() else "mp4"
+                else:
+                    # Dựa vào định dạng của filepath nếu có
+                    if filepath and filepath.lower().endswith('.mp3'):
+                        ext = "mp3"
+                    else:
+                        ext = "mp4"  # Mặc định là mp4
+                
+                # Tạo đường dẫn đầy đủ
+                output_file = os.path.join(directory_path, f"{safe_title}.{ext}")
+                output_file = os.path.normpath(output_file)
+                
+                print(f"DEBUG - Generated filepath: '{output_file}'")
+            else:
+                print(f"DEBUG - Not enough data to generate filepath")
+                QMessageBox.warning(
+                    self, 
+                    self.tr_("DIALOG_ERROR"), 
+                    self.tr_("CONTEXT_FILE_NOT_FOUND")
+                )
+                return
+        
+        # Kiểm tra file có tồn tại không
+        if not os.path.exists(output_file):
+            print(f"DEBUG - File not found at '{output_file}', checking for similar files...")
+            found_file = False
+            
+            # Thực hiện tìm kiếm file trong thư mục dựa trên title
+            if directory_path and os.path.exists(directory_path):
+                try:
+                    # Loại bỏ thêm các ký tự không mong muốn để tìm kiếm file dễ hơn
+                    search_title = title.replace('?', '').replace('!', '').replace(':', '').strip()
+                    
+                    # Tạo các biến thể của title để tìm kiếm
+                    title_variants = [
+                        search_title,
+                        search_title.split('#')[0].strip(),  # Bỏ hashtag nếu có
+                        ' '.join(search_title.split()[:5]) if len(search_title.split()) > 5 else search_title,  # 5 từ đầu tiên
+                        search_title.replace(' ', '_')  # Thay khoảng trắng bằng gạch dưới
+                    ]
+                    
+                    print(f"DEBUG - Searching for title variants: {title_variants}")
+                    
+                    # Lấy danh sách file trong thư mục
+                    files = os.listdir(directory_path)
+                    
+                    # Tìm file phù hợp nhất
+                    best_match = None
+                    highest_score = 0
+                    
+                    for file in files:
+                        # Chỉ xét các file mp4 hoặc mp3
+                        if file.endswith('.mp4') or file.endswith('.mp3'):
+                            file_without_ext = os.path.splitext(file)[0]
+                            
+                            # Tính điểm tương đồng
+                            score = 0
+                            for variant in title_variants:
+                                if variant in file_without_ext or file_without_ext in variant:
+                                    # Nếu chuỗi này nằm trong tên file hoặc ngược lại
+                                    score = max(score, len(variant) / max(len(variant), len(file_without_ext)))
+                                    if score > 0.8:  # Nếu độ tương đồng > 80%
+                                        break
+                            
+                            if score > highest_score:
+                                highest_score = score
+                                best_match = file
+                    
+                    # Nếu tìm được file phù hợp
+                    if best_match and highest_score > 0.5:  # Đặt ngưỡng 50% tương đồng
+                        output_file = os.path.join(directory_path, best_match)
+                        found_file = True
+                        print(f"DEBUG - Found matching file with score {highest_score}: '{output_file}'")
+                    else:
+                        print(f"DEBUG - No good match found. Best match: {best_match} with score {highest_score}")
+                        
+                    # Nếu không tìm được file phù hợp, thử tìm file bắt đầu bằng một phần của title
+                    if not found_file:
+                        # Lấy 3 từ đầu tiên của title
+                        first_few_words = ' '.join(search_title.split()[:3]) if len(search_title.split()) > 3 else search_title
+                        
+                        for file in files:
+                            if (file.endswith('.mp4') or file.endswith('.mp3')) and file.startswith(first_few_words):
+                                output_file = os.path.join(directory_path, file)
+                                found_file = True
+                                print(f"DEBUG - Found file starting with first few words: '{output_file}'")
+                                break
+                                
+                except Exception as e:
+                    print(f"DEBUG - Error while searching for files: {str(e)}")
+            
+            # Nếu không tìm thấy file nào phù hợp
+            if not found_file:
+                error_msg = f"{self.tr_('CONTEXT_FILE_NOT_FOUND')}: {title}"
+                print(f"DEBUG - {error_msg}")
+                QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), error_msg)
+                return
+        
+        # Phát file bằng trình phát mặc định
+        try:
+            print(f"DEBUG - Playing file: '{output_file}'")
+            if os.name == 'nt':  # Windows
+                os.startfile(output_file)
+            elif os.name == 'posix':  # macOS, Linux
+                subprocess.Popen(['xdg-open', output_file])
+                
+            # Hiển thị thông báo trong status bar
+            if self.parent and self.parent.status_bar:
+                self.parent.status_bar.showMessage(f"{self.tr_('CONTEXT_PLAYING')}: {os.path.basename(output_file)}")
+        except Exception as e:
+            error_msg = f"{self.tr_('CONTEXT_CANNOT_PLAY')}: {str(e)}"
+            print(f"DEBUG - Error playing file: {error_msg}")
+            QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), error_msg)

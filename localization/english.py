@@ -173,6 +173,18 @@ DETAIL_SIZE = "Size"
 DETAIL_DOWNLOADED = "Downloaded"
 DETAIL_STATUS = "Status"
 
+# Context menu
+CONTEXT_COPY_TITLE = "Copy Title"
+CONTEXT_COPY_CREATOR = "Copy Creator"
+CONTEXT_COPY_HASHTAGS = "Copy Hashtags"
+CONTEXT_PLAY_VIDEO = "Play Video"
+CONTEXT_OPEN_LOCATION = "Open File Location"
+CONTEXT_DELETE = "Delete"
+CONTEXT_FILE_NOT_FOUND = "Video file not found"
+CONTEXT_CANNOT_PLAY = "Cannot play video"
+CONTEXT_NEED_DOWNLOAD = "The video has not been downloaded yet.\nPlease download the video first."
+CONTEXT_PLAYING = "Playing"
+
 # Donate area
 DONATE_TITLE = "Support Me"
 DONATE_DESC = "This tool is completely free, but if you find it useful, please consider buying me a coffee!"
