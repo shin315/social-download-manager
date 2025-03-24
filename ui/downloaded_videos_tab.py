@@ -196,24 +196,31 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.horizontalHeader().setFont(header_font)
         
         # Thiết lập độ rộng cho các cột
-        self.downloads_table.setColumnWidth(0, 50)   # Select
-        self.downloads_table.setColumnWidth(1, 150)  # Tiêu đề - tăng lên cho rộng hơn
-        self.downloads_table.setColumnWidth(2, 100)  # Tác giả
-        self.downloads_table.setColumnWidth(3, 80)   # Chất lượng
+        self.downloads_table.setColumnWidth(0, 30)   # Select - giảm xuống
+        self.downloads_table.setColumnWidth(1, 250)  # Tiêu đề - tăng thêm để ưu tiên hiển thị
+        self.downloads_table.setColumnWidth(2, 80)   # Tác giả - giảm xuống
+        self.downloads_table.setColumnWidth(3, 70)   # Chất lượng - giảm xuống
         self.downloads_table.setColumnWidth(4, 80)   # Định dạng
         self.downloads_table.setColumnWidth(5, 70)   # Kích thước
         self.downloads_table.setColumnWidth(6, 120)  # Trạng thái
         self.downloads_table.setColumnWidth(7, 120)  # Ngày tải
-        self.downloads_table.setColumnWidth(8, 150)  # Hashtags - giảm lại để nhường cho tiêu đề
+        self.downloads_table.setColumnWidth(8, 100)  # Hashtags - giảm lại để nhường cho tiêu đề
         self.downloads_table.setColumnWidth(9, 120)  # Thao tác
         
         # Thiết lập thuộc tính bảng
         self.downloads_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
-        self.downloads_table.horizontalHeader().setSectionResizeMode(QHeaderView.ResizeMode.ResizeToContents)
-        # Cột tiêu đề ưu tiên co giãn nhiều nhất
-        self.downloads_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)
-        # Hashtag chế độ Interactive để người dùng có thể tự điều chỉnh nếu muốn
-        self.downloads_table.horizontalHeader().setSectionResizeMode(8, QHeaderView.ResizeMode.Interactive)
+        
+        # Chuyển từ ResizeToContents sang Fixed cho hầu hết các cột
+        self.downloads_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)  # Select
+        self.downloads_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)  # Title - Stretch
+        self.downloads_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)  # Creator
+        self.downloads_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)  # Quality
+        self.downloads_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)  # Format
+        self.downloads_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)  # Size
+        self.downloads_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Status
+        self.downloads_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Fixed)  # Date
+        self.downloads_table.horizontalHeader().setSectionResizeMode(8, QHeaderView.ResizeMode.Fixed)  # Hashtags
+        self.downloads_table.horizontalHeader().setSectionResizeMode(9, QHeaderView.ResizeMode.Fixed)  # Actions
         
         # Vô hiệu hóa việc sắp xếp cho cột Select
         self.downloads_table.horizontalHeader().setSortIndicatorShown(True)
@@ -1411,19 +1418,37 @@ class DownloadedVideosTab(QWidget):
         # Chỉ hiển thị tooltip với các cột có văn bản
         if column in [1, 2, 8]:  # Title, Creator, Hashtags columns
             item = self.downloads_table.item(row, column)
-            if item:
-                # Nếu đây là cột Title và có full title ở filtered_videos
-                if column == 1 and 0 <= row < len(self.filtered_videos):
-                    video = self.filtered_videos[row]
+            if item and 0 <= row < len(self.filtered_videos):
+                video = self.filtered_videos[row]
+                
+                # Xử lý tooltip tùy theo loại cột
+                if column == 1:  # Title
+                    # Nếu có full title thì hiển thị full title, ngược lại hiển thị title ngắn
                     if len(video) > 9 and video[9]:
-                        self.downloads_table.setToolTip(video[9])  # Hiển thị full title
-                        return
-                # Các trường hợp khác, hiển thị text của item
-                self.downloads_table.setToolTip(item.text())
+                        self.downloads_table.setToolTip(video[9])
+                    else:
+                        self.downloads_table.setToolTip(video[0])
+                elif column == 2:  # Creator
+                    # Hiển thị tên creator đầy đủ
+                    self.downloads_table.setToolTip(f"Creator: {video[1]}")
+                elif column == 8:  # Hashtags
+                    # Hiển thị hashtags đầy đủ với format hợp lý
+                    if video[7]:
+                        # Làm sạch dữ liệu hashtags để hiển thị tốt hơn
+                        hashtags = video[7]
+                        # Chuyển thành dạng danh sách hashtags để dễ đọc
+                        if ' ' in hashtags and not all(tag.startswith('#') for tag in hashtags.split()):
+                            formatted_hashtags = ' '.join(['#' + tag.strip() if not tag.strip().startswith('#') else tag.strip() 
+                                                          for tag in hashtags.split()])
+                            self.downloads_table.setToolTip(formatted_hashtags)
+                        else:
+                            self.downloads_table.setToolTip(hashtags)
+                    else:
+                        self.downloads_table.setToolTip("No hashtags")
             else:
                 self.downloads_table.setToolTip("")
         else:
-            self.downloads_table.setToolTip("") 
+            self.downloads_table.setToolTip("")
 
     def show_copy_dialog(self, item):
         """Hiển thị dialog cho phép copy text khi double-click vào ô trong bảng"""
@@ -1434,41 +1459,29 @@ class DownloadedVideosTab(QWidget):
         if column not in [1, 2, 8]:
             return
         
-        print(f"DEBUG - Double-clicked on row {row}, column {column}")
-        
-        # Debug để hiểu cấu trúc dữ liệu
-        if 0 <= row < len(self.filtered_videos):
-            video = self.filtered_videos[row]
-            print(f"DEBUG - filtered_videos[{row}] type: {type(video)}")
-            print(f"DEBUG - filtered_videos[{row}] length: {len(video)}")
-            if len(video) > 0:
-                print(f"DEBUG - Title (index 0): {video[0]}")
-            if len(video) > 9:
-                print(f"DEBUG - Full title (index 9): {video[9]}")
-        
-        # Lấy thông tin video đầy đủ từ filtered_videos để có nội dung đầy đủ
+        # Lấy thông tin video đầy đủ từ filtered_videos
         full_text = ""
         if 0 <= row < len(self.filtered_videos):
             video = self.filtered_videos[row]
             
-            # Từ debug logs, chúng ta biết video là một list
-            # Truy cập đúng index trong list dựa vào cột hiện tại
             if column == 1:  # Title
-                # Ưu tiên sử dụng full title ở index 9 nếu có
-                if len(video) > 9 and video[9]:
-                    full_text = video[9]
-                else:
-                    # Fallback sử dụng title ở index 0
-                    full_text = video[0] if len(video) > 0 else ""
+                # Ưu tiên sử dụng title từ index 0 (tiêu đề ngắn gọn)
+                full_text = video[0] if len(video) > 0 else ""
+                # Nếu có full title ở index 9, thêm vào bên dưới để người dùng có thể copy cả hai
+                if len(video) > 9 and video[9] and video[9] != video[0]:
+                    full_text += "\n\nFull title:\n" + video[9]
             elif column == 2:  # Creator
                 full_text = video[1] if len(video) > 1 else ""
             elif column == 8:  # Hashtags
-                # Nếu hashtags là một chuỗi đã định dạng sẵn
+                # Format hashtags để dễ đọc và copy
                 if len(video) > 7 and video[7]:
-                    full_text = video[7]
-                # Nếu hashtags là một list (có thể ở index khác)
-                elif len(video) > 8 and isinstance(video[8], list):
-                    full_text = ' '.join(f"#{tag}" for tag in video[8])
+                    hashtags = video[7]
+                    # Đảm bảo mỗi hashtag có dấu #
+                    if ' ' in hashtags and not all(tag.startswith('#') for tag in hashtags.split()):
+                        full_text = ' '.join(['#' + tag.strip() if not tag.strip().startswith('#') else tag.strip() 
+                                              for tag in hashtags.split()])
+                    else:
+                        full_text = hashtags
         else:
             full_text = item.text()  # Fallback to cell text
             
