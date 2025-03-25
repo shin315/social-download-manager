@@ -486,31 +486,22 @@ class VideoInfoTab(QWidget):
                 self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_REFRESHED"))
 
     def download_videos(self):
-        """Tải xuống các video được chọn"""
-        # Kiểm tra đã chọn thư mục lưu chưa
-        if not self.output_folder_display.text():
-            QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("DIALOG_NO_OUTPUT_FOLDER"))
+        """Tải xuống các video đã chọn"""
+        if not self.check_output_folder():
             return
-            
-        # Kiểm tra thư mục tồn tại
-        output_folder = self.output_folder_display.text()
-        if not os.path.exists(output_folder):
-            try:
-                os.makedirs(output_folder)
-            except Exception as e:
-                QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), 
-                        self.tr_("DIALOG_FOLDER_NOT_FOUND").format(output_folder))
-                return
-                
-        # Kiểm tra video đã được thêm vào bảng chưa
-        if self.video_table.rowCount() == 0:
-            QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("DIALOG_NO_VIDEOS"))
-            return
-            
+        
         # Tạo danh sách thông tin chi tiết để tải xuống
         download_queue = []
         videos_already_exist = []
         selected_count = 0
+        
+        # Đếm tổng số video được chọn trước
+        for row in range(self.video_table.rowCount()):
+            checkbox_cell = self.video_table.cellWidget(row, 0)
+            if checkbox_cell:
+                checkbox = checkbox_cell.findChild(QCheckBox)
+                if checkbox and checkbox.isChecked():
+                    selected_count += 1
         
         # Biến lưu lựa chọn của người dùng cho tất cả file đã tồn tại
         overwrite_all = None  # None = chưa chọn, True = ghi đè tất cả, False = bỏ qua tất cả
@@ -521,7 +512,6 @@ class VideoInfoTab(QWidget):
             if checkbox_cell:
                 checkbox = checkbox_cell.findChild(QCheckBox)
                 if checkbox and checkbox.isChecked():
-                    selected_count += 1
                     # Thu thập tất cả thông tin cần thiết
                     # Kiểm tra nếu row tồn tại trong video_info_dict
                     if row not in self.video_info_dict:
@@ -620,26 +610,65 @@ class VideoInfoTab(QWidget):
                                 # Người dùng đã chọn bỏ qua tất cả
                                 continue
                         else:
-                            # Đếm số lượng file sẽ cần download
-                            remaining_files = len([v for v in download_queue if v not in videos_already_exist])
-                            file_count = selected_count - len(videos_already_exist)
-                            
                             # Hiển thị thông báo hỏi người dùng có muốn ghi đè không
                             # và thêm lựa chọn "Áp dụng cho tất cả" (chỉ khi có nhiều file)
                             msg = self.tr_("DIALOG_FILE_EXISTS_MESSAGE").format(f"{clean_title}.{ext}")
                             
                             # Tạo message box tùy chỉnh
-                            msg_box = QMessageBox(
-                                QMessageBox.Icon.Question,
-                                self.tr_("DIALOG_FILE_EXISTS"),
-                                msg,
-                                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No | QMessageBox.StandardButton.Cancel,
-                                self
-                            )
+                            msg_box = QMessageBox(self)
+                            msg_box.setWindowTitle(self.tr_("DIALOG_FILE_EXISTS"))
+                            msg_box.setText(msg)
+                            msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+                            msg_box.setDefaultButton(QMessageBox.StandardButton.No)
+                            msg_box.setIcon(QMessageBox.Icon.Question)
                             
-                            # Chỉ thêm checkbox "Apply to all" nếu có nhiều hơn 1 file cần xử lý
+                            # Thiết lập kích thước tối thiểu
+                            msg_box.setMinimumWidth(500)
+                            msg_box.setMinimumHeight(200)
+                            
+                            # Style cho message box để trông đẹp hơn
+                            msg_box.setStyleSheet("""
+                                QMessageBox {
+                                    background-color: #2d2d2d;
+                                    color: #e0e0e0;
+                                }
+                                QMessageBox QLabel {
+                                    color: #e0e0e0;
+                                    font-size: 13px;
+                                    min-height: 100px;
+                                }
+                                QPushButton {
+                                    background-color: #0078d7;
+                                    color: white;
+                                    border: none;
+                                    padding: 6px 20px;
+                                    margin: 6px;
+                                    border-radius: 4px;
+                                    min-width: 60px;
+                                }
+                                QPushButton:hover {
+                                    background-color: #1084d9;
+                                }
+                                QPushButton:pressed {
+                                    background-color: #0063b1;
+                                }
+                                QPushButton:default {
+                                    background-color: #0078d7;
+                                    border: 1px solid #80ccff;
+                                }
+                                QCheckBox {
+                                    color: #e0e0e0;
+                                    spacing: 8px;
+                                }
+                                QCheckBox::indicator {
+                                    width: 16px;
+                                    height: 16px;
+                                }
+                            """)
+                            
+                            # Thêm checkbox "Apply to all" nếu tổng số video được chọn > 1
                             apply_all_checkbox = None
-                            if file_count > 1:
+                            if selected_count > 1:
                                 apply_all_checkbox = QCheckBox(self.tr_("DIALOG_APPLY_TO_ALL"))
                                 # Thêm checkbox vào button box (cùng hàng với các nút)
                                 button_box = msg_box.findChild(QDialogButtonBox)
@@ -648,20 +677,14 @@ class VideoInfoTab(QWidget):
                                     button_layout = button_box.layout()
                                     button_layout.insertWidget(0, apply_all_checkbox, 0, Qt.AlignmentFlag.AlignLeft)
                                     # Thêm khoảng cách lớn hơn giữa checkbox và các nút
-                                    button_layout.insertSpacing(1, 100)
-                                    # Tùy chỉnh checkbox để dễ nhìn hơn 
-                                    apply_all_checkbox.setStyleSheet("QCheckBox { margin-right: 15px; font-weight: bold; }")
+                                    button_layout.insertSpacing(1, 50)
+                                    # Tùy chỉnh checkbox để dễ nhìn hơn (không dùng font-weight: bold)
+                                    apply_all_checkbox.setStyleSheet("QCheckBox { margin-right: 15px; }")
                             
                             # Hiển thị message box
                             reply = msg_box.exec()
                             
-                            if reply == QMessageBox.StandardButton.Cancel:
-                                # Người dùng chọn hủy, dừng tất cả việc tải xuống
-                                if self.parent:
-                                    self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOAD_CANCELLED"))
-                                return
-                            
-                            elif reply == QMessageBox.StandardButton.No:
+                            if reply == QMessageBox.StandardButton.No:
                                 # Người dùng chọn không ghi đè
                                 if apply_all_checkbox and apply_all_checkbox.isChecked():
                                     overwrite_all = False  # Áp dụng "không ghi đè" cho tất cả
@@ -829,6 +852,24 @@ class VideoInfoTab(QWidget):
             # Reset status bar khi tất cả đã tải xong
             if self.parent and self.parent.status_bar:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOAD_SUCCESS"))
+
+    def check_output_folder(self):
+        """Kiểm tra xem thư mục đầu ra có tồn tại không"""
+        if not self.output_folder_display.text():
+            QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("DIALOG_NO_OUTPUT_FOLDER"))
+            return False
+        
+        # Kiểm tra thư mục tồn tại
+        output_folder = self.output_folder_display.text()
+        if not os.path.exists(output_folder):
+            try:
+                os.makedirs(output_folder)
+            except Exception as e:
+                QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), 
+                        self.tr_("DIALOG_FOLDER_NOT_FOUND").format(output_folder))
+                return False
+        
+        return True
 
     def get_format_id(self, url, quality, format_str):
         """Lấy format_id dựa trên chất lượng và định dạng"""

@@ -60,6 +60,7 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
    - Chỉ hiển thị "Apply to all" khi có từ 2 file trở lên cần xử lý
    - Cải thiện vị trí của checkbox "Apply to all" sang cùng hàng với các nút Yes/No/Cancel
    - Thêm spacing và style để giao diện trông chuyên nghiệp và cân đối hơn
+   - Sửa lỗi không hiển thị "Apply to all" ở thông báo file đã tồn tại đầu tiên
 
 5. **Cải tiến lưu và hiển thị thông tin video**:
    - Tên tùy chỉnh sẽ được lưu vào cả video_info và VideoInfo object
@@ -81,12 +82,14 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
    - Cải thiện giao diện người dùng với vị trí checkbox phù hợp và dễ sử dụng
    - Tự động xóa file thumbnail khi người dùng chọn xóa file video
    - Kiểm tra sự tồn tại của thumbnail trước khi xóa để tránh lỗi
+   - Cải thiện kích thước dialog xóa video trong tab Downloaded Videos để phù hợp với kiểu dialog khác
 
 8. **Đã sửa các lỗi logic**:
    - Sửa lỗi hiển thị "Apply to all" khi chỉ có 1 file cần xử lý
    - Cải thiện việc tải xuống video không có tiêu đề
    - Sửa lỗi khi phát video có ký tự đặc biệt trong tên file như dấu ngoặc kép
    - Xử lý trường hợp video không có tiêu đề, tìm kiếm trong thư mục theo định dạng
+   - Sửa lỗi nút Select All/Unselect All không cập nhật đúng khi chuyển tab từ Info sang Downloaded Videos
 
 9. **Đã tối ưu giao diện tab "Downloaded Videos"**:
    - Điều chỉnh độ rộng cột, ưu tiên hiển thị cột Title (tăng từ 150px lên 250px)
@@ -185,6 +188,41 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
 - Thêm kiểm tra file đầu ra đã được tạo thành công
 - Bổ sung nhật ký chi tiết để dễ dàng gỡ lỗi
 - Xử lý đúng đắn tên tệp đặc biệt và ký tự không hợp lệ trong tên file đầu ra 
+
+## CHI TIẾT TÍNH NĂNG XÓA FILE TỪ Ổ ĐĨA
+- Thêm checkbox "Delete file from disk" trong dialog xóa video đơn lẻ
+- Thêm checkbox "Delete files from disk" trong dialog xóa nhiều video
+- Chỉ kích hoạt checkbox khi file thực sự tồn tại
+- Thêm tùy chọn "Apply to all" cho xóa nhiều file (chỉ hiện khi có từ 2 file trở lên)
+- Hiển thị hộp thoại xác nhận cho từng file khi không chọn "Apply to all"
+- Cập nhật thông báo trạng thái cho biết số lượng file đã xóa
+- Kiểm tra quyền truy cập và xử lý lỗi khi không thể xóa file
+- Vị trí checkbox trực quan (bên trái, cùng hàng với các nút)
+- Tự động xóa file thumbnail khi người dùng chọn xóa file video
+- Kiểm tra tồn tại của thumbnail trước khi xóa 
+
+## 2025-03-25: Cải tiến UI dialog xác nhận
+1. **Đã sửa lỗi hiển thị dialog xác nhận xóa video**:
+   - Khắc phục lỗi hiển thị mã translation key trực tiếp trong dialog (DIALOG_CONFIRM_DELETE_SELECTED_VIDEOS)
+   - Thêm phương thức tr() vào lớp LanguageManager để hỗ trợ dịch key một cách linh hoạt hơn
+   - Cải thiện hàm tr_() trong DownloadedVideosTab để xử lý trường hợp không có language manager
+
+2. **Cải thiện giao diện dialog xác nhận xóa**:
+   - Tăng kích thước dialog rộng hơn (500px) và cao hơn (200px) để hiển thị rõ ràng hơn
+   - Hiển thị danh sách các video bị xóa (tối đa 5 video) khi xóa nhiều video cùng lúc
+   - Loại bỏ các emoji không cần thiết và thông tin file chi tiết, làm giao diện đơn giản và chuyên nghiệp hơn
+
+3. **Cải thiện giao diện dialog File Already Exists**:
+   - Áp dụng thiết kế và style giống như dialog xác nhận xóa
+   - Áp dụng stylesheet đẹp hơn với nút xanh, màu nền tối và font dễ đọc
+   - Loại bỏ style in đậm cho checkbox "Apply to all" để thống nhất giao diện
+   - Loại bỏ nút Cancel, chỉ giữ lại nút Yes và No để giao diện đơn giản và tập trung hơn
+   - Người dùng vẫn có thể đóng dialog bằng nút X ở góc trên bên phải nếu muốn hủy thao tác
+
+4. **Nâng cấp các thành phần UI**:
+   - Tất cả các dialog xác nhận giờ đây có layout nhất quán
+   - Các nút Yes/No được thiết kế với hover effect và màu sắc rõ ràng hơn
+   - Khoảng cách giữa các phần tử được điều chỉnh để dễ nhìn hơn
 
 ## CHI TIẾT TÍNH NĂNG XÓA FILE TỪ Ổ ĐĨA
 - Thêm checkbox "Delete file from disk" trong dialog xóa video đơn lẻ

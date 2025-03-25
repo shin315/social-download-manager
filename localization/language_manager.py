@@ -74,6 +74,10 @@ class LanguageManager:
         # Return the key itself if not found in any language
         return key
     
+    def tr(self, key):
+        """Alias cho get_text để dịch key theo ngôn ngữ hiện tại"""
+        return self.get_text(key)
+    
     def get_available_languages(self):
         """Lấy danh sách các ngôn ngữ có sẵn"""
         return {code: module.LANGUAGE_NAME for code, module in self.languages.items()}
