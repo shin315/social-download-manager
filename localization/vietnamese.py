@@ -165,12 +165,13 @@ DIALOG_UNSUPPORTED_CONTENT = "Nội dung không được hỗ trợ. Chỉ hỗ 
 DIALOG_VIDEOS_EXIST = "Video đã tồn tại"
 DIALOG_VIDEOS_ALREADY_EXIST = "Các video sau đã tồn tại và sẽ không được tải lại:"
 DIALOG_FILE_EXISTS = "File đã tồn tại"
-DIALOG_FILE_EXISTS_MESSAGE = "File '{}' đã tồn tại trong thư mục lưu.\nBạn có muốn ghi đè lên không?"
+DIALOG_FILE_EXISTS_MESSAGE = "Những file sau đã tồn tại trong thư mục đầu ra. Bạn có muốn ghi đè lên không?"
 DIALOG_CANNOT_DELETE_FILE = "Không thể xóa file từ ổ đĩa:\n{}"
 DIALOG_RENAME_TITLE = "Đổi tên Video"
 DIALOG_ENTER_NEW_NAME = "Nhập tên mới cho video:"
 DIALOG_ENTER_NAME_REQUIRED = "Video này không có tiêu đề. Bạn phải nhập tên trước khi tải xuống:"
 DIALOG_INVALID_NAME = "Tên không hợp lệ. Vui lòng nhập tên hợp lệ."
+DIALOG_INFO = "Thông tin"
 
 # About dialog
 ABOUT_TITLE = "Giới Thiệu SoDownloader"

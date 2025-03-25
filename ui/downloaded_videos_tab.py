@@ -758,32 +758,27 @@ class DownloadedVideosTab(QWidget):
                 self.parent.status_bar.showMessage(self.tr_("STATUS_ERROR").format(str(e)))
 
     def display_videos(self):
-        """Hiển thị danh sách video"""
-        # Xác định số lượng video cần hiển thị
-        videos_to_display = self.filtered_videos
-        
-        # Xóa bảng cũ
+        """Hiển thị danh sách video đã lọc"""
+        # Xóa dữ liệu hiện tại trong bảng
+        self.downloads_table.clearContents()
         self.downloads_table.setRowCount(0)
         
-        # Đặt số dòng của bảng
-        self.downloads_table.setRowCount(len(videos_to_display))
-        
-        for i, video in enumerate(videos_to_display):
-            row = i  # Sử dụng index trong filtered_videos làm row
+        # Thêm hàng mới cho mỗi video
+        for idx, video in enumerate(self.filtered_videos):
+            self.downloads_table.insertRow(idx)
             
-            # Cột Select
+            # Thêm checkbox vào cột Select
             select_widget = QWidget()
-            select_layout = QHBoxLayout(select_widget)
-            select_layout.setContentsMargins(0, 0, 0, 0)
-            select_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+            layout = QHBoxLayout(select_widget)
+            layout.setContentsMargins(0, 0, 0, 0)
+            layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
             
             checkbox = QCheckBox()
-            checkbox.setObjectName(f"select_checkbox_{i}")
-            # Kết nối sự kiện stateChanged với hàm checkbox_state_changed
+            checkbox.setChecked(False)  # Mặc định là không được chọn
             checkbox.stateChanged.connect(self.checkbox_state_changed)
-            select_layout.addWidget(checkbox)
+            layout.addWidget(checkbox)
             
-            self.downloads_table.setCellWidget(row, 0, select_widget)
+            self.downloads_table.setCellWidget(idx, 0, select_widget)
             
             # Cột Title
             title_item = QTableWidgetItem(video[0])
@@ -794,21 +789,21 @@ class DownloadedVideosTab(QWidget):
                 title_item.setToolTip(video[0])  # Fallback với title ngắn
             # Tắt khả năng chỉnh sửa
             title_item.setFlags(title_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(row, 1, title_item)
+            self.downloads_table.setItem(idx, 1, title_item)
             
             # Cột Creator
             creator_item = QTableWidgetItem(video[1])
             creator_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # Tắt khả năng chỉnh sửa
             creator_item.setFlags(creator_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(row, 2, creator_item)
+            self.downloads_table.setItem(idx, 2, creator_item)
             
             # Cột Quality
             quality_item = QTableWidgetItem(video[2])
             quality_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # Tắt khả năng chỉnh sửa
             quality_item.setFlags(quality_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(row, 3, quality_item)
+            self.downloads_table.setItem(idx, 3, quality_item)
             
             # Cột Format
             format_value = video[3]
@@ -825,14 +820,14 @@ class DownloadedVideosTab(QWidget):
             format_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # Tắt khả năng chỉnh sửa
             format_item.setFlags(format_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(row, 4, format_item)
+            self.downloads_table.setItem(idx, 4, format_item)
             
             # Cột Size
             size_item = QTableWidgetItem(video[4])
             size_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # Tắt khả năng chỉnh sửa
             size_item.setFlags(size_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(row, 5, size_item)
+            self.downloads_table.setItem(idx, 5, size_item)
             
             # Cột Status
             status_value = video[5]  
@@ -846,14 +841,14 @@ class DownloadedVideosTab(QWidget):
             status_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # Tắt khả năng chỉnh sửa
             status_item.setFlags(status_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(row, 6, status_item)
+            self.downloads_table.setItem(idx, 6, status_item)
             
             # Cột Date
             date_item = QTableWidgetItem(video[6])
             date_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # Tắt khả năng chỉnh sửa
             date_item.setFlags(date_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(row, 7, date_item)
+            self.downloads_table.setItem(idx, 7, date_item)
             
             # Cột Hashtags - đảm bảo có dấu #
             hashtags = video[7]
@@ -868,7 +863,7 @@ class DownloadedVideosTab(QWidget):
             hashtags_item.setTextAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
             # Đặt chế độ word wrap để văn bản dài có thể xuống dòng nếu cần
             hashtags_item.setFlags(hashtags_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(row, 8, hashtags_item)
+            self.downloads_table.setItem(idx, 8, hashtags_item)
             
             # Bỏ cột Saved Folder (index 8)
             
@@ -937,18 +932,21 @@ class DownloadedVideosTab(QWidget):
             
             # Nút Delete
             delete_btn = QPushButton(self.tr_("BUTTON_DELETE"))
-            delete_btn.clicked.connect(lambda checked, idx=i: self.delete_video(idx))
+            delete_btn.clicked.connect(lambda checked, idx=idx: self.delete_video(idx))
             action_layout.addWidget(delete_btn)
             
-            self.downloads_table.setCellWidget(row, 9, action_widget)
+            self.downloads_table.setCellWidget(idx, 9, action_widget)
         
         # Cập nhật tổng số video hiển thị (chỉ hiển thị tổng số video)
         self.total_videos_label.setText(self.tr_("LABEL_TOTAL_VIDEOS").format(len(self.all_videos)))
         
         # Ẩn khu vực chi tiết video nếu không có video nào được chọn
-        if len(videos_to_display) == 0:
+        if len(self.filtered_videos) == 0:
             self.video_details_frame.setVisible(False)
             self.selected_video = None
+
+        # Cập nhật trạng thái của nút Select All/Unselect All
+        self.update_select_toggle_button()
 
     def open_folder(self, path):
         """
@@ -1908,7 +1906,12 @@ class DownloadedVideosTab(QWidget):
         msg_box.setWindowTitle(self.tr_("DIALOG_CONFIRM_DELETION"))
         
         # Thiết lập text chi tiết
-        confirmation_text = self.tr_("DIALOG_CONFIRM_DELETE_SELECTED_VIDEOS").format(len(selected_videos))
+        if self.lang_manager:
+            # Sử dụng trực tiếp ngôn ngữ hiện tại để lấy văn bản đã dịch
+            confirmation_text = self.lang_manager.tr("DIALOG_CONFIRM_DELETE_SELECTED").format(len(selected_videos))
+        else:
+            # Fallback nếu không có language manager
+            confirmation_text = f"Are you sure you want to delete {len(selected_videos)} selected videos?"
         
         # Nếu có nhiều video, thêm danh sách video sẽ bị xóa
         if len(selected_videos) > 1:

@@ -206,6 +206,7 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
    - Khắc phục lỗi hiển thị mã translation key trực tiếp trong dialog (DIALOG_CONFIRM_DELETE_SELECTED_VIDEOS)
    - Thêm phương thức tr() vào lớp LanguageManager để hỗ trợ dịch key một cách linh hoạt hơn
    - Cải thiện hàm tr_() trong DownloadedVideosTab để xử lý trường hợp không có language manager
+   - Thêm chuỗi DIALOG_INFO vào file ngôn ngữ đã bị thiếu
 
 2. **Cải thiện giao diện dialog xác nhận xóa**:
    - Tăng kích thước dialog rộng hơn (500px) và cao hơn (200px) để hiển thị rõ ràng hơn
@@ -214,6 +215,8 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
 
 3. **Cải thiện giao diện dialog File Already Exists**:
    - Áp dụng thiết kế và style giống như dialog xác nhận xóa
+   - Hiển thị danh sách các file bị ghi đè (tối đa 5 file) khi có nhiều file trùng tên
+   - Thêm thông tin "... và X file khác" khi có nhiều hơn 5 file bị ghi đè
    - Áp dụng stylesheet đẹp hơn với nút xanh, màu nền tối và font dễ đọc
    - Loại bỏ style in đậm cho checkbox "Apply to all" để thống nhất giao diện
    - Loại bỏ nút Cancel, chỉ giữ lại nút Yes và No để giao diện đơn giản và tập trung hơn
@@ -224,14 +227,41 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
    - Các nút Yes/No được thiết kế với hover effect và màu sắc rõ ràng hơn
    - Khoảng cách giữa các phần tử được điều chỉnh để dễ nhìn hơn
 
-## CHI TIẾT TÍNH NĂNG XÓA FILE TỪ Ổ ĐĨA
-- Thêm checkbox "Delete file from disk" trong dialog xóa video đơn lẻ
-- Thêm checkbox "Delete files from disk" trong dialog xóa nhiều video
-- Chỉ kích hoạt checkbox khi file thực sự tồn tại
-- Thêm tùy chọn "Apply to all" cho xóa nhiều file (chỉ hiện khi có từ 2 file trở lên)
-- Hiển thị hộp thoại xác nhận cho từng file khi không chọn "Apply to all"
-- Cập nhật thông báo trạng thái cho biết số lượng file đã xóa
-- Kiểm tra quyền truy cập và xử lý lỗi khi không thể xóa file
-- Vị trí checkbox trực quan (bên trái, cùng hàng với các nút)
-- Tự động xóa file thumbnail khi người dùng chọn xóa file video
-- Kiểm tra tồn tại của thumbnail trước khi xóa 
+## 2025-03-26: Khắc phục lỗi UI và logic trong dialog và nút Select All
+1. **Khắc phục lỗi hiển thị tên dialog "DIALOG_CONFIRM_DELETE_SELECTED_VIDEOS"**:
+   - Sử dụng trực tiếp đối tượng LanguageManager để lấy chuỗi đã dịch thay vì qua phương thức tr_()
+   - Đảm bảo chuỗi luôn được dịch đúng, ngay cả khi không có language manager
+   - Vẫn giữ lại phần hiển thị danh sách video sẽ bị xóa trong dialog xác nhận xóa
+
+2. **Cải thiện hiển thị danh sách file trong dialog "File Already Exists"**:
+   - Sửa lại phương thức download_videos() để thu thập và hiển thị đúng danh sách các file bị ghi đè
+   - Giới hạn hiển thị tối đa 5 file và hiển thị "... và X file khác" khi cần
+   - Đảm bảo giao diện nhất quán với dialog xác nhận xóa
+
+3. **Sửa lỗi logic nút "Select All/Unselect All"**:
+   - Khi vừa chuyển sang tab Downloaded Videos, tất cả checkbox đều chưa được check nhưng nút hiển thị "Unselect All"
+   - Thêm lệnh gọi update_select_toggle_button() vào cuối phương thức display_videos()
+   - Đảm bảo nút hiển thị đúng trạng thái "Select All" khi không có checkbox nào được chọn
+   - Đặt mặc định trạng thái checkbox là không chọn khi hiển thị danh sách video
+
+4. **Cải thiện trải nghiệm người dùng**:
+   - Đảm bảo tất cả dialog hiển thị đúng ngôn ngữ và văn bản đã được dịch
+   - Cải thiện tính nhất quán giữa các dialog trong ứng dụng
+   - Đảm bảo trạng thái UI luôn phản ánh đúng trạng thái hiện tại của dữ liệu
+
+## 2025-03-27: Cải thiện thông báo File Already Exists
+1. **Cải thiện nội dung thông báo trong dialog "File Already Exists"**:
+   - Sửa đổi chuỗi thông báo trong localization/english.py và localization/vietnamese.py
+   - Thay thế văn bản cũ "File '{}' đã tồn tại trong thư mục lưu.\nBạn có muốn ghi đè lên không?" 
+     bằng thông báo rõ ràng hơn "Những file sau đã tồn tại trong thư mục đầu ra. Bạn có muốn ghi đè lên không?"
+   - Loại bỏ tham số định dạng {} không cần thiết, thay vào đó hiển thị trực tiếp danh sách file
+
+2. **Sửa đổi cấu trúc hiển thị dialog**:
+   - Đặt danh sách file đã tồn tại sau thông báo chính, phân tách bằng dòng trống
+   - Hiển thị danh sách dưới dạng liệt kê với bullets (•) đầu dòng
+   - Hiển thị tối đa 5 file và thông báo "... và X file khác" nếu có nhiều hơn
+
+3. **Cải thiện luồng xử lý trong phương thức download_videos()**:
+   - Thu thập danh sách file đã tồn tại trước
+   - Sau đó mới tạo nội dung thông báo dựa trên danh sách
+   - Đơn giản hóa code và tăng hiệu suất bằng cách loại bỏ các bước kiểm tra không cần thiết

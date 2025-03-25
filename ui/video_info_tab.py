@@ -349,6 +349,17 @@ class VideoInfoTab(QWidget):
         
         # Kết nối sự kiện double-click để hiển thị dialog copy text
         self.video_table.itemDoubleClicked.connect(self.show_copy_dialog)
+        
+        # Thiết lập sự kiện hover để hiển thị tooltip với text đầy đủ
+        self.video_table.setMouseTracking(True)
+        self.video_table.cellEntered.connect(self.show_full_text_tooltip)
+        
+        # Thiết lập style của bảng với hiệu ứng hover
+        self.video_table.setStyleSheet("""
+            QTableWidget::item:hover {
+                background-color: rgba(0, 120, 215, 0.1);
+            }
+        """)
 
     def update_output_folder(self, folder):
         """Cập nhật đường dẫn thư mục đầu ra"""
@@ -612,12 +623,73 @@ class VideoInfoTab(QWidget):
                         else:
                             # Hiển thị thông báo hỏi người dùng có muốn ghi đè không
                             # và thêm lựa chọn "Áp dụng cho tất cả" (chỉ khi có nhiều file)
-                            msg = self.tr_("DIALOG_FILE_EXISTS_MESSAGE").format(f"{clean_title}.{ext}")
                             
                             # Tạo message box tùy chỉnh
                             msg_box = QMessageBox(self)
                             msg_box.setWindowTitle(self.tr_("DIALOG_FILE_EXISTS"))
-                            msg_box.setText(msg)
+                            
+                            # Thu thập danh sách các file đã tồn tại
+                            file_name = f"{clean_title}.{ext}"
+                            file_exists_list = [file_name]
+                            remaining_files = 0
+                            
+                            # Nếu có nhiều file được chọn, thu thập danh sách các file đã tồn tại để hiển thị
+                            if selected_count > 1:
+                                # Duyệt qua các dòng khác để kiểm tra file đã tồn tại
+                                for check_row in range(self.video_table.rowCount()):
+                                    # Bỏ qua row hiện tại vì đã được thêm vào danh sách
+                                    if check_row == row:
+                                        continue
+                                        
+                                    check_checkbox_cell = self.video_table.cellWidget(check_row, 0)
+                                    if check_checkbox_cell:
+                                        check_checkbox = check_checkbox_cell.findChild(QCheckBox)
+                                        if check_checkbox and check_checkbox.isChecked():
+                                            # Chỉ kiểm tra nếu row tồn tại trong video_info_dict
+                                            if check_row not in self.video_info_dict:
+                                                continue
+                                                
+                                            # Lấy thông tin video
+                                            check_title = self.video_info_dict[check_row].title
+                                            
+                                            # Lấy định dạng được chọn
+                                            check_format_cell = self.video_table.cellWidget(check_row, 4)
+                                            check_format_str = check_format_cell.findChild(QComboBox).currentText() if check_format_cell else self.tr_("FORMAT_VIDEO_MP4")
+                                            
+                                            # Xác định phần mở rộng file
+                                            check_is_audio = check_format_str == self.tr_("FORMAT_AUDIO_MP3")
+                                            check_ext = "mp3" if check_is_audio else "mp4"
+                                            
+                                            # Làm sạch tên file
+                                            import re
+                                            check_clean_title = re.sub(r'#\S+', '', check_title).strip()
+                                            check_clean_title = re.sub(r'[\\/*?:"<>|]', '', check_clean_title).strip()
+                                            
+                                            # Tạo đường dẫn file đầy đủ
+                                            check_output_file = os.path.join(output_dir, f"{check_clean_title}.{check_ext}")
+                                            
+                                            # Kiểm tra xem file đã tồn tại chưa
+                                            if os.path.exists(check_output_file):
+                                                # Nếu đã có 5 file trong danh sách, chỉ đếm số lượng
+                                                if len(file_exists_list) < 5:
+                                                    file_exists_list.append(f"{check_clean_title}.{check_ext}")
+                                                else:
+                                                    remaining_files += 1
+                            
+                            # Tạo nội dung thông báo
+                            confirmation_text = self.tr_("DIALOG_FILE_EXISTS_MESSAGE")
+                            
+                            # Thêm danh sách các file đã tồn tại
+                            files_list = "\n".join([f"• {f}" for f in file_exists_list])
+                            # Nếu có file còn lại, thêm thông tin
+                            if remaining_files > 0:
+                                files_list += f"\n• ... và {remaining_files} file khác"
+                            
+                            confirmation_text += f"\n\n{files_list}"
+                            
+                            msg_box = QMessageBox(self)
+                            msg_box.setWindowTitle(self.tr_("DIALOG_FILE_EXISTS"))
+                            msg_box.setText(confirmation_text)
                             msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
                             msg_box.setDefaultButton(QMessageBox.StandardButton.No)
                             msg_box.setIcon(QMessageBox.Icon.Question)
@@ -990,11 +1062,82 @@ class VideoInfoTab(QWidget):
             url_placeholder_color = "#8a8a8a"
             url_text_color = "#ffffff"
             folder_text_color = "#cccccc"
+            
+            # Style cho bảng trong dark mode
+            table_style = """
+                QTableWidget::item:hover {
+                    background-color: rgba(80, 140, 255, 0.15);
+                }
+            """
+            
+            # Style cho thanh cuộn trong dark mode
+            scrollbar_style = """
+                QScrollBar:vertical {
+                    border: none;
+                    background: rgba(80, 80, 80, 0.2);
+                    width: 8px;
+                    margin: 0px;
+                    border-radius: 4px;
+                }
+                QScrollBar::handle:vertical {
+                    background: rgba(180, 180, 180, 0.5);
+                    min-height: 20px;
+                    border-radius: 4px;
+                }
+                QScrollBar::handle:vertical:hover {
+                    background: rgba(180, 180, 180, 0.7);
+                }
+                QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                    height: 0px;
+                }
+                QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+                    background: none;
+                }
+            """
         else:
             # Màu sắc cho light mode
             url_placeholder_color = "#888888"
             url_text_color = "#333333"
             folder_text_color = "#555555"
+            
+            # Style cho bảng trong light mode
+            table_style = """
+                QTableWidget::item:hover {
+                    background-color: rgba(0, 120, 215, 0.1);
+                }
+            """
+            
+            # Style cho thanh cuộn trong light mode
+            scrollbar_style = """
+                QScrollBar:vertical {
+                    border: none;
+                    background: rgba(0, 0, 0, 0.05);
+                    width: 8px;
+                    margin: 0px;
+                    border-radius: 4px;
+                }
+                QScrollBar::handle:vertical {
+                    background: rgba(0, 0, 0, 0.2);
+                    min-height: 20px;
+                    border-radius: 4px;
+                }
+                QScrollBar::handle:vertical:hover {
+                    background: rgba(0, 0, 0, 0.3);
+                }
+                QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
+                    height: 0px;
+                }
+                QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
+                    background: none;
+                }
+            """
+        
+        # Áp dụng style cho bảng
+        if hasattr(self, 'video_table'):
+            self.video_table.setStyleSheet(table_style)
+            
+        # Áp dụng style cho thanh cuộn
+        self.setStyleSheet(scrollbar_style)
         
         # Áp dụng màu sắc cho các thành phần
         if hasattr(self, 'url_input'):
@@ -1893,4 +2036,40 @@ class VideoInfoTab(QWidget):
     # Phương thức xử lý sự kiện checkbox thay đổi
     def checkbox_state_changed(self):
         """Xử lý khi trạng thái checkbox thay đổi"""
-        self.update_select_toggle_button() 
+        self.update_select_toggle_button()
+
+    def show_full_text_tooltip(self, row, column):
+        """Hiển thị tooltip với text đầy đủ khi hover chuột vào ô"""
+        # Chỉ hiển thị tooltip với các cột có văn bản dài
+        if column in [1, 2, 7]:  # Title, Creator, Hashtags columns
+            item = self.video_table.item(row, column)
+            if item and row < len(self.video_info_dict):
+                # Lấy thông tin video từ dictionary
+                url = ""
+                for i in range(self.video_table.rowCount()):
+                    cell_widget = self.video_table.cellWidget(i, 0)
+                    if cell_widget and i == row:
+                        # Lấy URL từ property của checkbox
+                        checkbox = cell_widget.findChild(QCheckBox)
+                        if checkbox:
+                            url = checkbox.property("url")
+                            break
+                
+                if url and url in self.video_info_dict:
+                    video_info = self.video_info_dict[url]
+                    
+                    # Xử lý tooltip tùy theo loại cột
+                    if column == 1:  # Title
+                        self.video_table.setToolTip(video_info.title)
+                    elif column == 2:  # Creator
+                        self.video_table.setToolTip(f"Creator: {video_info.creator}")
+                    elif column == 7:  # Hashtags
+                        hashtags_str = " ".join([f"#{tag}" for tag in video_info.hashtags]) if video_info.hashtags else ""
+                        self.video_table.setToolTip(hashtags_str)
+                else:
+                    # Nếu không tìm thấy thông tin video, hiển thị nội dung của ô
+                    self.video_table.setToolTip(item.text())
+            else:
+                self.video_table.setToolTip("")
+        else:
+            self.video_table.setToolTip("")
