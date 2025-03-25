@@ -1021,20 +1021,61 @@ class DownloadedVideosTab(QWidget):
         # Lấy thông tin video cần xóa
         video = self.filtered_videos[video_idx]
         title = video[0]
+        file_path = video[8] + '/' + title + ('.' + ('mp3' if video[3] == 'MP3' else 'mp4'))
+        file_exists = os.path.exists(file_path)
+        
+        # Lấy thông tin thumbnail
+        thumbnail_path = video[11] if len(video) > 11 and video[11] else ""
+        thumbnail_exists = thumbnail_path and os.path.exists(thumbnail_path)
         
         print(f"Attempting to delete video: {title}")
         
-        # Hiển thị hộp thoại xác nhận xóa
-        reply = QMessageBox.question(
-            self, 
-            self.tr_("DIALOG_CONFIRM_DELETION"), 
-            self.tr_("DIALOG_CONFIRM_DELETE_VIDEO").format(title),
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-            QMessageBox.StandardButton.No
-        )
+        # Tạo message box tùy chỉnh với checkbox xóa file
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle(self.tr_("DIALOG_CONFIRM_DELETION"))
+        msg_box.setText(self.tr_("DIALOG_CONFIRM_DELETE_VIDEO").format(title))
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        msg_box.setDefaultButton(QMessageBox.StandardButton.No)
+        msg_box.setIcon(QMessageBox.Icon.Question)
+        
+        # Thêm checkbox xóa file từ ổ đĩa
+        delete_file_checkbox = QCheckBox(self.tr_("DIALOG_DELETE_FILE_FROM_DISK"))
+        delete_file_checkbox.setEnabled(file_exists)  # Chỉ bật checkbox nếu file thực sự tồn tại
+        
+        # Tạo widget chứa checkbox và thêm vào layout
+        checkbox_container = QWidget()
+        layout = QHBoxLayout(checkbox_container)
+        layout.setContentsMargins(25, 0, 0, 0)
+        layout.addWidget(delete_file_checkbox)
+        layout.addStretch()
+        
+        # Thêm widget chứa checkbox vào message box
+        msg_box.layout().addWidget(checkbox_container, 1, 2)
+        
+        # Hiển thị message box và xử lý phản hồi
+        reply = msg_box.exec()
         
         if reply == QMessageBox.StandardButton.Yes:
             print("User confirmed deletion")
+            
+            # Xóa file từ ổ đĩa nếu checkbox được chọn
+            if delete_file_checkbox.isChecked() and file_exists:
+                try:
+                    os.remove(file_path)
+                    print(f"File deleted from disk: {file_path}")
+                    
+                    # Xóa thumbnail nếu tồn tại
+                    if thumbnail_exists:
+                        try:
+                            os.remove(thumbnail_path)
+                            print(f"Thumbnail deleted from disk: {thumbnail_path}")
+                        except Exception as e:
+                            print(f"Error deleting thumbnail from disk: {e}")
+                    
+                except Exception as e:
+                    print(f"Error deleting file from disk: {e}")
+                    QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), 
+                                      self.tr_("DIALOG_CANNOT_DELETE_FILE").format(str(e)))
             
             # Xóa khỏi cơ sở dữ liệu
             try:
@@ -1786,20 +1827,50 @@ class DownloadedVideosTab(QWidget):
                 self.parent.status_bar.showMessage(self.tr_("STATUS_NO_VIDEOS_SELECTED"))
             return
         
-        # Hiển thị hộp thoại xác nhận trước khi xóa
+        # Kiểm tra số lượng video được chọn
         count = len(selected_indices)
-        reply = QMessageBox.question(
-            self, 
-            self.tr_("DIALOG_CONFIRM_DELETION"),
-            self.tr_("DIALOG_CONFIRM_DELETE_SELECTED").format(count),
-            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-            QMessageBox.StandardButton.No
-        )
+        has_multiple_files = count > 1
+        
+        # Tạo message box tùy chỉnh
+        msg_box = QMessageBox(self)
+        msg_box.setWindowTitle(self.tr_("DIALOG_CONFIRM_DELETION"))
+        msg_box.setText(self.tr_("DIALOG_CONFIRM_DELETE_SELECTED").format(count))
+        msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
+        msg_box.setDefaultButton(QMessageBox.StandardButton.No)
+        msg_box.setIcon(QMessageBox.Icon.Question)
+        
+        # Tạo widget container cho checkboxes
+        checkbox_container = QWidget()
+        layout = QVBoxLayout(checkbox_container)
+        layout.setContentsMargins(25, 0, 0, 0)
+        
+        # Thêm checkbox xóa file từ ổ đĩa
+        delete_file_checkbox = QCheckBox(self.tr_("DIALOG_DELETE_FILES_FROM_DISK"))
+        layout.addWidget(delete_file_checkbox)
+        
+        # Thêm checkbox Apply to all nếu có nhiều file
+        apply_to_all_checkbox = None
+        if has_multiple_files:
+            apply_to_all_checkbox = QCheckBox(self.tr_("DIALOG_APPLY_TO_ALL"))
+            layout.addWidget(apply_to_all_checkbox)
+        
+        layout.addStretch()
+        
+        # Thêm widget chứa checkboxes vào message box
+        msg_box.layout().addWidget(checkbox_container, 1, 2)
+        
+        # Hiển thị message box và xử lý phản hồi
+        reply = msg_box.exec()
         
         if reply == QMessageBox.StandardButton.Yes:
             print(f"User confirmed deletion of {count} videos")
+            delete_files = delete_file_checkbox.isChecked()
+            apply_to_all = apply_to_all_checkbox.isChecked() if apply_to_all_checkbox else False
+            
             db_manager = DatabaseManager()
             deleted_count = 0
+            deleted_files_count = 0
+            deleted_thumbnails_count = 0
             
             # Tạo danh sách các videos cần xóa (để tránh vấn đề index shift khi xóa)
             videos_to_delete = [self.filtered_videos[idx] for idx in selected_indices]
@@ -1808,6 +1879,48 @@ class DownloadedVideosTab(QWidget):
             for video in videos_to_delete:
                 title = video[0]
                 print(f"Attempting to delete video: {title}")
+                
+                # Xóa file từ ổ đĩa nếu được chọn
+                if delete_files:
+                    file_path = video[8] + '/' + title + ('.' + ('mp3' if video[3] == 'MP3' else 'mp4'))
+                    file_exists = os.path.exists(file_path)
+                    
+                    # Lấy thông tin thumbnail
+                    thumbnail_path = video[11] if len(video) > 11 and video[11] else ""
+                    thumbnail_exists = thumbnail_path and os.path.exists(thumbnail_path)
+                    
+                    if file_exists:
+                        # Nếu không phải apply to all, hỏi người dùng cho từng file
+                        proceed_with_file_deletion = True
+                        if not apply_to_all and has_multiple_files:
+                            file_reply = QMessageBox.question(
+                                self,
+                                self.tr_("DIALOG_CONFIRM_DELETION"),
+                                self.tr_("DIALOG_CONFIRM_DELETE_FILE").format(os.path.basename(file_path)),
+                                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                                QMessageBox.StandardButton.No
+                            )
+                            proceed_with_file_deletion = file_reply == QMessageBox.StandardButton.Yes
+                        
+                        if proceed_with_file_deletion:
+                            try:
+                                os.remove(file_path)
+                                print(f"File deleted from disk: {file_path}")
+                                deleted_files_count += 1
+                                
+                                # Xóa thumbnail nếu tồn tại
+                                if thumbnail_exists:
+                                    try:
+                                        os.remove(thumbnail_path)
+                                        print(f"Thumbnail deleted from disk: {thumbnail_path}")
+                                        deleted_thumbnails_count += 1
+                                    except Exception as e:
+                                        print(f"Error deleting thumbnail from disk: {e}")
+                                
+                            except Exception as e:
+                                print(f"Error deleting file from disk: {e}")
+                                QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), 
+                                                  self.tr_("DIALOG_CANNOT_DELETE_FILE").format(str(e)))
                 
                 # Xóa khỏi cơ sở dữ liệu
                 try:
@@ -1833,7 +1946,11 @@ class DownloadedVideosTab(QWidget):
             
             # Hiển thị thông báo
             if self.parent:
-                self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_DELETED").format(deleted_count))
+                if deleted_files_count > 0:
+                    self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_AND_FILES_DELETED").format(deleted_count, deleted_files_count))
+                    print(f"Deleted {deleted_count} videos, {deleted_files_count} video files, and {deleted_thumbnails_count} thumbnails")
+                else:
+                    self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_DELETED").format(deleted_count))
 
     def toggle_select_all(self):
         """Chọn hoặc bỏ chọn tất cả video"""

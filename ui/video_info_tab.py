@@ -1663,7 +1663,17 @@ class VideoInfoTab(QWidget):
                     # Sử dụng title hiện tại nếu không có các thông tin khác
                     full_text = video_info.title if hasattr(video_info, 'title') else item.text()
                 
-                print(f"DEBUG - Selected full_text for dialog: '{full_text}'")
+                # Loại bỏ các hashtag khỏi tiêu đề khi hiển thị
+                if full_text:
+                    # Loại bỏ các hashtag ở dạng #xxx
+                    import re
+                    full_text = re.sub(r'#\w+', '', full_text)
+                    # Loại bỏ các hashtag ở dạng #xxx với khoảng trắng trước
+                    full_text = re.sub(r'\s+#\w+', '', full_text)
+                    # Loại bỏ khoảng trắng thừa và dấu cách cuối cùng
+                    full_text = re.sub(r'\s+', ' ', full_text).strip()
+                
+                print(f"DEBUG - Selected full_text for dialog (after removing hashtags): '{full_text}'")
             elif column == 2:  # Creator
                 full_text = video_info.creator if hasattr(video_info, 'creator') else item.text()
             elif column == 7:  # Hashtags

@@ -12838,9 +12838,1346 @@ Read file: utils/downloader.py
 
 ---
 
-Cancelled
+```diff
+              video_info = self.video_info_dict[row]
+              if column == 1:  # Title
+-                 # Ưu tiên lấy title gốc nếu có
++                 # Thử lấy tiêu đề đầy đủ từ các nguồn khác nhau
+                  if hasattr(video_info, 'original_title') and video_info.original_title:
++                     # Ưu tiên lấy tiêu đề gốc (trước khi rename) nếu có
+                      full_text = video_info.original_title
++                 elif hasattr(video_info, 'caption') and video_info.caption and len(video_info.caption) > len(video_info.title):
++                     # Nếu caption dài hơn và có vẻ đầy đủ hơn title
++                     full_text = video_info.caption
+                  else:
++                     # Sử dụng title hiện tại nếu không có các thông tin khác
+                      full_text = video_info.title if hasattr(video_info, 'title') else item.text()
++                 
++                 # Kiểm tra xem title có dấu hiệu bị cắt không ("...")
++                 if full_text.endswith('...'):
++                     # Nếu có caption và caption dài hơn, ưu tiên sử dụng caption
++                     if hasattr(video_info, 'caption') and video_info.caption and len(video_info.caption) > len(full_text):
++                         full_text = video_info.caption
+              elif column == 2:  # Creator
+                  full_text = video_info.creator if hasattr(video_info, 'creator') else item.text()
+```
 
 ---
+
+```bash
+python main.py
+```
+
+```
+PS I:\Product Apps\Tiktok Downloader_V1_Mp4> python main.py
+No downloads found in database
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Checking TikTok URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_devic
+e=pc
+Valid TikTok URL format: https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_
+device=pc
+Result has 62 keys
+Title: Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...
+Duration: 78
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_d
+evice=pc
+Sending info copy: VideoInfo(title='Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...
+', url='https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_device=pc', durati
+on=78, formats_count=8)
+Received video info for URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&send
+er_device=pc, title: Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...
+DEBUG - video_info_dict type: <class 'dict'>
+DEBUG - Double-clicked on row 0, column 1
+DEBUG - video_info at row 0 type: <class 'utils.downloader.VideoInfo'>
+DEBUG - video_info attributes: ['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__f
+ormat__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__
+', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__seta
+ttr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'caption', 'copy', 'creator', 'duration'
+, 'formats', 'hashtags', 'like_count', 'original_title', 'thumbnail', 'title', 'url']
+DEBUG - video_info_dict type: <class 'dict'>
+DEBUG - Double-clicked on row 0, column 1
+DEBUG - video_info at row 0 type: <class 'utils.downloader.VideoInfo'>
+DEBUG - video_info attributes: ['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__f
+ormat__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__
+', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__seta
+ttr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'caption', 'copy', 'creator', 'duration'
+, 'formats', 'hashtags', 'like_count', 'original_title', 'thumbnail', 'title', 'url']
+PS I:\Product Apps\Tiktok Downloader_V1_Mp4>
+```
+
+---
+
+```diff
+              video_info = self.video_info_dict[row]
+              if column == 1:  # Title
++                 # In thông tin debug để xem nội dung
++                 if hasattr(video_info, 'title'):
++                     print(f"DEBUG - Title: '{video_info.title}'")
++                 if hasattr(video_info, 'caption'):
++                     print(f"DEBUG - Caption: '{video_info.caption}'")
++                 if hasattr(video_info, 'original_title'):
++                     print(f"DEBUG - Original title: '{video_info.original_title}'")
++                 
+                  # Thử lấy tiêu đề đầy đủ từ các nguồn khác nhau
+                  if hasattr(video_info, 'original_title') and video_info.original_title:
+                      if hasattr(video_info, 'caption') and video_info.caption and len(video_info.caption) > len(full_text):
+                          full_text = video_info.caption
++                         
++                 print(f"DEBUG - Selected full_text for dialog: '{full_text}'")
+              elif column == 2:  # Creator
+                  full_text = video_info.creator if hasattr(video_info, 'creator') else item.text()
+```
+
+---
+
+```bash
+python main.py
+```
+
+```
+PS I:\Product Apps\Tiktok Downloader_V1_Mp4> python main.py
+No downloads found in database
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Checking TikTok URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_devic
+e=pc
+Valid TikTok URL format: https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_
+device=pc
+Result has 62 keys
+Title: Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...
+Duration: 78
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_d
+evice=pc
+Sending info copy: VideoInfo(title='Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...
+', url='https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_device=pc', durati
+on=78, formats_count=8)
+Received video info for URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&send
+er_device=pc, title: Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...
+DEBUG - video_info_dict type: <class 'dict'>
+DEBUG - Double-clicked on row 0, column 1
+DEBUG - video_info at row 0 type: <class 'utils.downloader.VideoInfo'>
+DEBUG - video_info attributes: ['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__f
+ormat__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__
+', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__seta
+ttr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'caption', 'copy', 'creator', 'duration'
+, 'formats', 'hashtags', 'like_count', 'original_title', 'thumbnail', 'title', 'url']
+DEBUG - Title: 'Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...'
+DEBUG - Caption: 'Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng, chỉ xoáy sâu vào kh
+uyết điểm, thậm chí phóng đại hoặc méo mó thực tế, NHƯ CÁI CÁCH MỘT KẺ TỰ NHỤC NÓI RẰNg “ Hạ tầng VN thua mã
+ lai 50 năm” rồi họ lặng mất tiêu , chỉ nói để “xả cảm xúc MỘT CÁCH THÁI QUÁ”, không thực sự mong muốn đối t
+hoại xây dựng. họ không thực sự quan tâm đến sự thật mà chỉ cố chê bai.'
+DEBUG - Original title: 'Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...'
+DEBUG - Selected full_text for dialog: 'Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựn
+g, chỉ xoáy sâu vào khuyết điểm, thậm chí phóng đại hoặc méo mó thực tế, NHƯ CÁI CÁCH MỘT KẺ TỰ NHỤC NÓI RẰN
+g “ Hạ tầng VN thua mã lai 50 năm” rồi họ lặng mất tiêu , chỉ nói để “xả cảm xúc MỘT CÁCH THÁI QUÁ”, không t
+hực sự mong muốn đối thoại xây dựng. họ không thực sự quan tâm đến sự thật mà chỉ cố chê bai.'
+Downloading with format: no-watermark/bytevc1_720p_488539-0
+[TikTok] Extracting URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_d
+evice=pc
+[TikTok] 7453331257741675784: Downloading webpage 
+[info] 7453331257741675784: Downloading 1 format(s): bytevc1_720p_488539-0 
+[download] Destination: I:\Product Apps\Test Zone\Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dự
+ng....mp4
+[download] 100% of    4.58MiB in 00:00:00 at 6.25MiB/s
+DEBUG - on_download_finished called with URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_f
+rom_webapp=1&sender_device=pc, success: True, file_path: I:/Product Apps/Test Zone\Trả lời @Tung Nguyen cách
+ họ diễn giải vấn đề thiếu xây dựng....mp4
+DEBUG - Found matching video at row 0: Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...
+
+DEBUG - Row to remove: 0, Found video info: VideoInfo(title='Trả lời @Tung Nguyen cách họ diễn giải vấn đề t
+hiếu xây dựng...', url='https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_de
+vice=pc', duration=78, formats_count=8)
+DEBUG - Success download! File: Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng....mp4
+DEBUG - Adding video to Downloaded Videos tab: Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng.
+..
+DEBUG - Combined hashtags: ['citypkv']
+DEBUG - Title: Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...
+DEBUG - Quality: 1080p, Format: MP4
+DEBUG - Hashtags: ['citypkv']
+DEBUG - Thumbnail: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg
+DEBUG - Status: Successful
+DEBUG adding video: Title=Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...
+DEBUG quality=1080p, format=MP4
+DEBUG hashtags=#citypkv
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+Updated file size for I:/Product Apps/Test Zone\Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng
+....mp4: 4.58 MB
+DEBUG - Video added to Downloaded Videos tab
+DEBUG - Downloaded Videos tab display updated
+DEBUG - Removing row 0 from video table
+DEBUG - Removed row 0 from video_info_dict
+DEBUG - Reindexing video_info_dict after deletion, current keys: []
+DEBUG - Updated video_info_dict after deletion, new size: 0, new keys: []
+DEBUG - All downloads finished, reset download button
+DEBUG - All downloads finished, reset download button
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg, size: 540x960
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg, size: 540x960
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg, size: 540x960
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg, size: 540x960
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg, size: 540x960
+DEBUG - Attempting to play video at row 0
+DEBUG - Video data: title='Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...', format='MP4', d
+irectory='I:/Product Apps/Test Zone'
+DEBUG - Generated filepath: 'I:\Product Apps\Test Zone\Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu x
+ây dựng....mp4'
+DEBUG - Playing file: 'I:\Product Apps\Test Zone\Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựn
+g....mp4'
+
+```
+
+---
+
+```diff
+                      print(f"DEBUG - Original title: '{video_info.original_title}'")
+                  
+-                 # Thử lấy tiêu đề đầy đủ từ các nguồn khác nhau
+-                 if hasattr(video_info, 'original_title') and video_info.original_title:
+-                     # Ưu tiên lấy tiêu đề gốc (trước khi rename) nếu có
+-                     full_text = video_info.original_title
+-                 elif hasattr(video_info, 'caption') and video_info.caption and len(video_info.caption) > len(video_info.title):
+-                     # Nếu caption dài hơn và có vẻ đầy đủ hơn title
++                 # Ưu tiên lấy caption làm nguồn dữ liệu chính vì thường chứa nội dung đầy đủ nhất
++                 if hasattr(video_info, 'caption') and video_info.caption:
+                      full_text = video_info.caption
++                 elif hasattr(video_info, 'original_title') and video_info.original_title:
++                     # Lấy tiêu đề gốc nếu không có caption
++                     full_text = video_info.original_title
+                  else:
+                      # Sử dụng title hiện tại nếu không có các thông tin khác
+                      full_text = video_info.title if hasattr(video_info, 'title') else item.text()
+-                 
+-                 # Kiểm tra xem title có dấu hiệu bị cắt không ("...")
+-                 if full_text.endswith('...'):
+-                     # Nếu có caption và caption dài hơn, ưu tiên sử dụng caption
+-                     if hasattr(video_info, 'caption') and video_info.caption and len(video_info.caption) > len(full_text):
+-                         full_text = video_info.caption
+                  
+                  print(f"DEBUG - Selected full_text for dialog: '{full_text}'")
+```
+
+---
+
+```diff
+  12. Đã cải thiện thuật toán đặt tên file khi chuyển đổi định dạng
+  13. Đã sửa lỗi tự động tải xuống video MP3 không có tiêu đề mà không hỏi người dùng
++ 14. Đã sửa lỗi hiển thị không đầy đủ tiêu đề khi double-click để copy ở tab Video Info
+  
+  ## CHI TIẾT TÍNH NĂNG "RENAME VIDEO"
+```
+
+---
+
+```bash
+python main.py
+```
+
+```
+PS I:\Product Apps\Tiktok Downloader_V1_Mp4> python main.py
+Loaded 1 videos from database
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Checking TikTok URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_devic
+e=pc
+Valid TikTok URL format: https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_
+device=pc
+Result type: <class 'dict'>
+Result has 62 keys
+Title: Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...
+Duration: 78
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_d
+evice=pc
+Sending info copy: VideoInfo(title='Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...
+', url='https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_device=pc', durati
+on=78, formats_count=8)
+Received video info for URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&send
+er_device=pc, title: Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...
+DEBUG - video_info_dict type: <class 'dict'>
+DEBUG - Double-clicked on row 0, column 1
+DEBUG - video_info at row 0 type: <class 'utils.downloader.VideoInfo'>
+DEBUG - video_info attributes: ['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__f
+ormat__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__
+', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__seta
+ttr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'caption', 'copy', 'creator', 'duration'
+, 'formats', 'hashtags', 'like_count', 'original_title', 'thumbnail', 'title', 'url']
+DEBUG - Title: 'Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...'
+DEBUG - Caption: 'Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng, chỉ xoáy sâu vào kh
+uyết điểm, thậm chí phóng đại hoặc méo mó thực tế, NHƯ CÁI CÁCH MỘT KẺ TỰ NHỤC NÓI RẰNg “ Hạ tầng VN thua mã
+ lai 50 năm” rồi họ lặng mất tiêu , chỉ nói để “xả cảm xúc MỘT CÁCH THÁI QUÁ”, không thực sự mong muốn đối t
+hoại xây dựng. họ không thực sự quan tâm đến sự thật mà chỉ cố chê bai.'
+DEBUG - Original title: 'Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...'
+DEBUG - Selected full_text for dialog: 'Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựn
+g, chỉ xoáy sâu vào khuyết điểm, thậm chí phóng đại hoặc méo mó thực tế, NHƯ CÁI CÁCH MỘT KẺ TỰ NHỤC NÓI RẰN
+g “ Hạ tầng VN thua mã lai 50 năm” rồi họ lặng mất tiêu , chỉ nói để “xả cảm xúc MỘT CÁCH THÁI QUÁ”, không t
+hực sự mong muốn đối thoại xây dựng. họ không thực sự quan tâm đến sự thật mà chỉ cố chê bai.'
+Delete video called with index: 0
+Current filtered_videos length: 1
+Attempting to delete video: Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...
+User confirmed deletion
+Successfully deleted 1 records with title: Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...
+DEBUG - video_info_dict type: <class 'dict'>
+DEBUG - Double-clicked on row 0, column 1
+DEBUG - video_info at row 0 type: <class 'utils.downloader.VideoInfo'>
+DEBUG - video_info attributes: ['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__f
+ormat__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__
+', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__seta
+ttr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'caption', 'copy', 'creator', 'duration'
+, 'formats', 'hashtags', 'like_count', 'original_title', 'thumbnail', 'title', 'url']
+DEBUG - Title: 'Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...'
+DEBUG - Caption: 'Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng, chỉ xoáy sâu vào kh
+uyết điểm, thậm chí phóng đại hoặc méo mó thực tế, NHƯ CÁI CÁCH MỘT KẺ TỰ NHỤC NÓI RẰNg “ Hạ tầng VN thua mã
+ lai 50 năm” rồi họ lặng mất tiêu , chỉ nói để “xả cảm xúc MỘT CÁCH THÁI QUÁ”, không thực sự mong muốn đối t
+hoại xây dựng. họ không thực sự quan tâm đến sự thật mà chỉ cố chê bai.'
+DEBUG - Original title: 'Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...'
+DEBUG - Selected full_text for dialog: 'Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựn
+g, chỉ xoáy sâu vào khuyết điểm, thậm chí phóng đại hoặc méo mó thực tế, NHƯ CÁI CÁCH MỘT KẺ TỰ NHỤC NÓI RẰN
+g “ Hạ tầng VN thua mã lai 50 năm” rồi họ lặng mất tiêu , chỉ nói để “xả cảm xúc MỘT CÁCH THÁI QUÁ”, không t
+hực sự mong muốn đối thoại xây dựng. họ không thực sự quan tâm đến sự thật mà chỉ cố chê bai.'
+Removed existing file: I:/Product Apps/Test Zone\Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựn
+g....mp4
+Downloading with format: no-watermark/bytevc1_720p_488539-0
+[TikTok] Extracting URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_d
+evice=pc
+[TikTok] 7453331257741675784: Downloading webpage 
+[info] 7453331257741675784: Downloading 1 format(s): bytevc1_720p_488539-0 
+[download] Destination: I:\Product Apps\Test Zone\Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dự
+ng....mp4
+[download] 100% of    4.58MiB in 00:00:00 at 17.32MiB/s
+DEBUG - on_download_finished called with URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_f
+rom_webapp=1&sender_device=pc, success: True, file_path: I:/Product Apps/Test Zone\Trả lời @Tung Nguyen cách
+ họ diễn giải vấn đề thiếu xây dựng....mp4
+DEBUG - Found matching video at row 0: Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...
+
+DEBUG - Row to remove: 0, Found video info: VideoInfo(title='Trả lời @Tung Nguyen cách họ diễn giải vấn đề t
+hiếu xây dựng...', url='https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_de
+vice=pc', duration=78, formats_count=8)
+DEBUG - Success download! File: Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng....mp4
+DEBUG - Adding video to Downloaded Videos tab: Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng.
+..
+DEBUG - Combined hashtags: ['citypkv']
+DEBUG - Title: Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...
+DEBUG - Quality: 1080p, Format: MP4
+DEBUG - Hashtags: ['citypkv']
+DEBUG - Thumbnail: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg
+DEBUG - Status: Successful
+DEBUG adding video: Title=Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...
+DEBUG quality=1080p, format=MP4
+DEBUG hashtags=#citypkv
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+Updated file size for I:/Product Apps/Test Zone\Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng
+....mp4: 4.58 MB
+DEBUG - Video added to Downloaded Videos tab
+DEBUG - Downloaded Videos tab display updated
+DEBUG - Removing row 0 from video table
+DEBUG - Removed row 0 from video_info_dict
+DEBUG - Reindexing video_info_dict after deletion, current keys: []
+DEBUG - Updated video_info_dict after deletion, new size: 0, new keys: []
+DEBUG - All downloads finished, reset download button
+DEBUG - All downloads finished, reset download button
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg, size: 540x960
+Delete video called with index: 0
+Current filtered_videos length: 1
+Attempting to delete video: Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...
+User cancelled deletion
+Delete video called with index: 0
+Current filtered_videos length: 1
+Attempting to delete video: Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...
+User confirmed deletion
+Successfully deleted 1 records with title: Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...
+
+```
+
+---
+
+Tuyệt vời! Đã khắc phục hoàn toàn lỗi này. Tao đã thấy trong log:
+
+1. Khi double-click vào tiêu đề, bây giờ hệ thống đã hiển thị đầy đủ nội dung tiêu đề từ `caption` thay vì chỉ lấy `title` bị cắt ngắn:
+```
+DEBUG - Title: 'Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...'
+DEBUG - Caption: 'Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng, chỉ xoáy sâu vào khuyết điểm...'
+```
+
+2. Hệ thống đã ưu tiên sử dụng `caption` làm nguồn dữ liệu chính vì thường chứa nội dung đầy đủ nhất:
+```
+DEBUG - Selected full_text for dialog: 'Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng, chỉ xoáy sâu vào khuyết điểm...'
+```
+
+3. Đã cập nhật file `sumerize.txt` để ghi nhận vấn đề đã được giải quyết.
+
+Tóm tắt thay đổi:
+1. Tao đã cập nhật logic trong hàm `show_copy_dialog` để ưu tiên sử dụng caption làm nguồn dữ liệu chính khi hiển thị tiêu đề video, vì caption thường chứa nội dung đầy đủ nhất
+2. Đặc biệt là đối với những video có tiêu đề bị cắt ngắn (kết thúc bằng "..."), tao đã đảm bảo sử dụng caption để hiển thị nội dung đầy đủ
+3. Tao đã thêm các thông tin debug chi tiết để xác định nguồn dữ liệu đang được sử dụng
+
+Giờ đây, khi user double-click vào tiêu đề trong tab Video Info, họ sẽ luôn nhìn thấy nội dung đầy đủ thay vì bị cắt ngắn.
+
+---
+
+_**User**_
+
+Ở trong tab video info khi double click vào file để ghi lên dialog title thì trong dialog nó vẫn còn hashtag. Tao muốn mày hãy bỏ hashtag đi. Mình có cột hashtag riêng rồi mà. 
+
+---
+
+_**Assistant**_
+
+Tao hiểu rồi. Vấn đề là khi double-click vào tiêu đề trong tab Video Info, dialog hiển thị nội dung cả hashtag dù đã có cột Hashtags riêng. Tao sẽ sửa ngay:
+
+---
+
+Read file: ui/video_info_tab.py
+
+---
+
+```diff
+                      full_text = video_info.title if hasattr(video_info, 'title') else item.text()
+                  
+-                 print(f"DEBUG - Selected full_text for dialog: '{full_text}'")
++                 # Loại bỏ các hashtag khỏi tiêu đề khi hiển thị
++                 if full_text:
++                     # Loại bỏ các hashtag ở dạng #xxx
++                     import re
++                     full_text = re.sub(r'#\w+', '', full_text)
++                     # Loại bỏ các hashtag ở dạng #xxx với khoảng trắng trước
++                     full_text = re.sub(r'\s+#\w+', '', full_text)
++                     # Loại bỏ khoảng trắng thừa và dấu cách cuối cùng
++                     full_text = re.sub(r'\s+', ' ', full_text).strip()
++                 
++                 print(f"DEBUG - Selected full_text for dialog (after removing hashtags): '{full_text}'")
+              elif column == 2:  # Creator
+                  full_text = video_info.creator if hasattr(video_info, 'creator') else item.text()
+```
+
+---
+
+```bash
+python main.py
+```
+
+```
+PS I:\Product Apps\Tiktok Downloader_V1_Mp4> python main.py
+Loaded 15 videos from database
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+DEBUG loading video status initial: Successful
+Loaded 15 videos
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Checking TikTok URL: https://www.tiktok.com/@bshungdinhduong/video/7484567769799806216?is_from_webapp=1&send
+er_device=pc
+Valid TikTok URL format: https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@bshungdinhduong/video/7484567769799806216?is_from_webapp=1
+&sender_device=pc
+Result type: <class 'dict'>
+Result has 61 keys
+Title: Trả lời @Shan Won sai số khi đo huyết áp #bshungdinhduong #nreci #son...
+Duration: 82
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@bshungdinhduong/video/7484567769799806216?is_from_webapp=1&
+sender_device=pc
+Sending info copy: VideoInfo(title='Trả lời @Shan Won sai số khi đo huyết áp #bshungdinhduong #nreci #son...
+', url='https://www.tiktok.com/@bshungdinhduong/video/7484567769799806216?is_from_webapp=1&sender_device=pc'
+, duration=82, formats_count=8)
+Received video info for URL: https://www.tiktok.com/@bshungdinhduong/video/7484567769799806216?is_from_webap
+p=1&sender_device=pc, title: Trả lời @Shan Won sai số khi đo huyết áp #bshungdinhduong #nreci #son...
+Checking TikTok URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_devic
+e=pc
+Valid TikTok URL format: https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_
+device=pc
+Result type: <class 'dict'>
+Result has 62 keys
+Title: Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...
+Duration: 78
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_d
+evice=pc
+Sending info copy: VideoInfo(title='Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...
+', url='https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&sender_device=pc', durati
+on=78, formats_count=8)
+Received video info for URL: https://www.tiktok.com/@citypkv/video/7453331257741675784?is_from_webapp=1&send
+er_device=pc, title: Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...
+Checking TikTok URL: https://www.tiktok.com/@citypkv/video/7477153821169306887?is_from_webapp=1&sender_devic
+e=pc
+Valid TikTok URL format: https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@citypkv/video/7477153821169306887?is_from_webapp=1&sender_
+device=pc
+Result type: <class 'dict'>
+Result has 61 keys
+Title: #citypkv #vietnam
+Duration: 28
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@citypkv/video/7477153821169306887?is_from_webapp=1&sender_d
+evice=pc
+Sending info copy: VideoInfo(title='#citypkv #vietnam ', url='https://www.tiktok.com/@citypkv/video/74771538
+21169306887?is_from_webapp=1&sender_device=pc', duration=28, formats_count=8)
+Received video info for URL: https://www.tiktok.com/@citypkv/video/7477153821169306887?is_from_webapp=1&send
+er_device=pc, title: #citypkv #vietnam
+Checking TikTok URL: https://www.tiktok.com/@buy.and.sell.8/video/7483151209159838983?is_from_webapp=1&sende
+r_device=pc
+Valid TikTok URL format: https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@buy.and.sell.8/video/7483151209159838983?is_from_webapp=1&
+sender_device=pc
+Result type: <class 'dict'>
+Result has 61 keys
+Title: #tolam #vietnam #tintuc #fyb #xuhuongtiktok #viral #tiktok #
+Duration: 9
+Found 4 formats
+Emitting info signal for https://www.tiktok.com/@buy.and.sell.8/video/7483151209159838983?is_from_webapp=1&s
+ender_device=pc
+Sending info copy: VideoInfo(title='#tolam #vietnam #tintuc #fyb #xuhuongtiktok #viral #tiktok #', url='http
+s://www.tiktok.com/@buy.and.sell.8/video/7483151209159838983?is_from_webapp=1&sender_device=pc', duration=9,
+ formats_count=4)
+Received video info for URL: https://www.tiktok.com/@buy.and.sell.8/video/7483151209159838983?is_from_webapp
+=1&sender_device=pc, title: #tolam #vietnam #tintuc #fyb #xuhuongtiktok #viral #tiktok #
+Checking TikTok URL: https://www.tiktok.com/@nhato_official/video/7483894075666566407?is_from_webapp=1&sende
+r_device=pc
+Valid TikTok URL format: https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@nhato_official/video/7483894075666566407?is_from_webapp=1&
+sender_device=pc
+Result type: <class 'dict'>
+Result has 61 keys
+Title: Khám phá Johor Bahru, Malaysia để đầu tư BĐS có đáng hay không? #nhat...
+Duration: 132
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@nhato_official/video/7483894075666566407?is_from_webapp=1&s
+ender_device=pc
+Sending info copy: VideoInfo(title='Khám phá Johor Bahru, Malaysia để đầu tư BĐS có đáng hay không? #nhat...
+', url='https://www.tiktok.com/@nhato_official/video/7483894075666566407?is_from_webapp=1&sender_device=pc',
+ duration=132, formats_count=8)
+Received video info for URL: https://www.tiktok.com/@nhato_official/video/7483894075666566407?is_from_webapp
+=1&sender_device=pc, title: Khám phá Johor Bahru, Malaysia để đầu tư BĐS có đáng hay không? #nhat...
+DEBUG - video_info_dict type: <class 'dict'>
+DEBUG - Double-clicked on row 0, column 1
+DEBUG - video_info at row 0 type: <class 'utils.downloader.VideoInfo'>
+DEBUG - video_info attributes: ['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__f
+ormat__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__
+', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__seta
+ttr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'caption', 'copy', 'creator', 'duration'
+, 'formats', 'hashtags', 'like_count', 'original_title', 'thumbnail', 'title', 'url']
+DEBUG - Title: 'Trả lời @Shan Won sai số khi đo huyết áp'
+DEBUG - Caption: 'Trả lời @Shan Won sai số khi đo huyết áp #bshungdinhduong #nreci #songkhoe247 '
+DEBUG - Original title: 'Trả lời @Shan Won sai số khi đo huyết áp #bshungdinhduong #nreci #son...'
+DEBUG - Selected full_text for dialog (after removing hashtags): 'Trả lời @Shan Won sai số khi đo huyết áp' 
+DEBUG - video_info_dict type: <class 'dict'>
+DEBUG - Double-clicked on row 1, column 1
+DEBUG - video_info at row 1 type: <class 'utils.downloader.VideoInfo'>
+DEBUG - video_info attributes: ['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__f
+ormat__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__
+', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__seta
+ttr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'caption', 'copy', 'creator', 'duration'
+, 'formats', 'hashtags', 'like_count', 'original_title', 'thumbnail', 'title', 'url']
+DEBUG - Title: 'Trả lời @Tung Nguyen cách họ diễn giải vấn đề thiếu xây dựng...'
+DEBUG - Caption: 'Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng, chỉ xoáy sâu vào kh
+uyết điểm, thậm chí phóng đại hoặc méo mó thực tế, NHƯ CÁI CÁCH MỘT KẺ TỰ NHỤC NÓI RẰNg “ Hạ tầng VN thua mã
+ lai 50 năm” rồi họ lặng mất tiêu , chỉ nói để “xả cảm xúc MỘT CÁCH THÁI QUÁ”, không thực sự mong muốn đối t
+hoại xây dựng. họ không thực sự quan tâm đến sự thật mà chỉ cố chê bai.'
+DEBUG - Original title: 'Trả lời @Tung Nguyen #citypkv cách họ diễn giải vấn đề thiếu xây dựng...'
+DEBUG - Selected full_text for dialog (after removing hashtags): 'Trả lời @Tung Nguyen cách họ diễn giải vấn
+ đề thiếu xây dựng, chỉ xoáy sâu vào khuyết điểm, thậm chí phóng đại hoặc méo mó thực tế, NHƯ CÁI CÁCH MỘT K
+Ẻ TỰ NHỤC NÓI RẰNg “ Hạ tầng VN thua mã lai 50 năm” rồi họ lặng mất tiêu , chỉ nói để “xả cảm xúc MỘT CÁCH T
+HÁI QUÁ”, không thực sự mong muốn đối thoại xây dựng. họ không thực sự quan tâm đến sự thật mà chỉ cố chê ba
+i.'
+DEBUG - video_info_dict type: <class 'dict'>
+DEBUG - Double-clicked on row 4, column 1
+DEBUG - video_info at row 4 type: <class 'utils.downloader.VideoInfo'>
+DEBUG - video_info attributes: ['__class__', '__delattr__', '__dict__', '__dir__', '__doc__', '__eq__', '__f
+ormat__', '__ge__', '__getattribute__', '__getstate__', '__gt__', '__hash__', '__init__', '__init_subclass__
+', '__le__', '__lt__', '__module__', '__ne__', '__new__', '__reduce__', '__reduce_ex__', '__repr__', '__seta
+ttr__', '__sizeof__', '__str__', '__subclasshook__', '__weakref__', 'caption', 'copy', 'creator', 'duration'
+, 'formats', 'hashtags', 'like_count', 'original_title', 'thumbnail', 'title', 'url']
+DEBUG - Title: 'Khám phá Johor Bahru, Malaysia để đầu tư BĐS có đáng hay không?'
+DEBUG - Caption: 'Khám phá Johor Bahru, Malaysia để đầu tư BĐS có đáng hay không? #nhato #malaysia #johor #b
+atdongsan #dautu '
+DEBUG - Original title: 'Khám phá Johor Bahru, Malaysia để đầu tư BĐS có đáng hay không? #nhat...'
+DEBUG - Selected full_text for dialog (after removing hashtags): 'Khám phá Johor Bahru, Malaysia để đầu tư B
+ĐS có đáng hay không?'
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7453331257741675784.jpg, size: 540x960
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7467649291293674769.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7467649291293674769.jpg, size: 540x960
+Loading thumbnail from: I:/Product Apps/Test Zone\thumbnails\7485140274247650582.jpg
+Successfully loaded thumbnail: I:/Product Apps/Test Zone\thumbnails\7485140274247650582.jpg, size: 540x960
+
+```
+
+---
+
+```diff
+  13. Đã sửa lỗi tự động tải xuống video MP3 không có tiêu đề mà không hỏi người dùng
+  14. Đã sửa lỗi hiển thị không đầy đủ tiêu đề khi double-click để copy ở tab Video Info
++ 15. Đã loại bỏ các hashtag trong tiêu đề khi hiển thị trong dialog copy
+  
+  ## CHI TIẾT TÍNH NĂNG "RENAME VIDEO"
+```
+
+---
+
+Tuyệt vời! Đã sửa xong lỗi hiển thị hashtag trong dialog khi double-click vào tiêu đề. Bây giờ khi double-click vào cột Title trong tab Video Info, dialog sẽ hiển thị tiêu đề đã được loại bỏ tất cả các hashtag.
+
+Tao đã thấy trong log debug việc loại bỏ hashtag đã hoạt động tốt:
+```
+DEBUG - Title: 'Trả lời @Shan Won sai số khi đo huyết áp'
+DEBUG - Caption: 'Trả lời @Shan Won sai số khi đo huyết áp #bshungdinhduong #nreci #songkhoe247 '
+DEBUG - Original title: 'Trả lời @Shan Won sai số khi đo huyết áp #bshungdinhduong #nreci #son...'
+DEBUG - Selected full_text for dialog (after removing hashtags): 'Trả lời @Shan Won sai số khi đo huyết áp'
+```
+
+Và cũng với một video khác:
+```
+DEBUG - Title: 'Khám phá Johor Bahru, Malaysia để đầu tư BĐS có đáng hay không?'
+DEBUG - Caption: 'Khám phá Johor Bahru, Malaysia để đầu tư BĐS có đáng hay không? #nhato #malaysia #johor #batdongsan #dautu '
+DEBUG - Original title: 'Khám phá Johor Bahru, Malaysia để đầu tư BĐS có đáng hay không? #nhat...'
+DEBUG - Selected full_text for dialog (after removing hashtags): 'Khám phá Johor Bahru, Malaysia để đầu tư BĐS có đáng hay không?'
+```
+
+Tao đã cập nhật file sumerize.txt với thay đổi mới. Giờ đây, khi người dùng double-click vào tiêu đề video trong tab Video Info, họ sẽ thấy nội dung tiêu đề sạch sẽ hơn, không còn các hashtag gây nhiễu nữa.
+
+Thay đổi này làm cho trải nghiệm người dùng tốt hơn vì:
+1. Tiêu đề hiển thị gọn gàng, chỉ chứa nội dung chính
+2. Các hashtag đã được hiển thị riêng ở cột Hashtags, nên không cần hiển thị chúng trong tiêu đề
+3. Việc sao chép tiêu đề giờ đây sẽ thuận tiện hơn mà không cần phải xóa thủ công các hashtag
+
+---
+
+_**User**_
+
+Tao muốn thêm một tính năng đó là ở tab Downloaded Videos khi mà user chọn Delete thì sẽ có một Checkbox nằm cùng hàng với lại nút yes no và nằm bên góc trái hỏi user có muốn xóa file ở trong máy luôn không? Nếu có thêm logic là khi mà user chọn một file thì sao? Và khi chọn nhiều file thì sẽ có thêm apply for all nữa.
+
+---
+
+_**Assistant**_
+
+Ok, tao hiểu yêu cầu rồi. Mày muốn thêm một checkbox vào dialog xóa video ở tab Downloaded Videos để hỏi người dùng có muốn xóa cả file vật lý trên máy không, và thêm tùy chọn "Apply for all" khi xóa nhiều file. Tao sẽ làm ngay.
+
+Đầu tiên tao phải tìm phần code xử lý việc xóa video trong tab Downloaded Videos:
+
+---
+
+Read file: ui/downloaded_videos_tab.py
+
+---
+
+Tao cần xem đoạn code xử lý việc xóa video, cùng với hàm tạo messagebox hỏi người dùng:
+
+---
+
+Read file: ui/downloaded_videos_tab.py
+
+---
+
+Bây giờ tao cần xem hàm `delete_selected_videos` để xem logic xóa nhiều video cùng lúc:
+
+---
+
+Read file: ui/downloaded_videos_tab.py
+
+---
+
+Tao đã hiểu rõ cả 2 phần code xóa video trong tab Downloaded Videos. Bây giờ tao sẽ sửa cả 2 hàm `delete_video` và `delete_selected_videos` để thêm checkbox hỏi người dùng có muốn xóa cả file vật lý trên máy tính không, và thêm tùy chọn "Apply for all" khi xóa nhiều file.
+
+---
+
+```diff
+          video = self.filtered_videos[video_idx]
+          title = video[0]
++         file_path = video[8] + '/' + title + ('.' + ('mp3' if video[3] == 'MP3' else 'mp4'))
++         file_exists = os.path.exists(file_path)
+          
+          print(f"Attempting to delete video: {title}")
+          
+-         # Hiển thị hộp thoại xác nhận xóa
+-         reply = QMessageBox.question(
+-             self, 
+-             self.tr_("DIALOG_CONFIRM_DELETION"), 
+-             self.tr_("DIALOG_CONFIRM_DELETE_VIDEO").format(title),
+-             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+-             QMessageBox.StandardButton.No
+-         )
++         # Tạo message box tùy chỉnh với checkbox xóa file
++         msg_box = QMessageBox(self)
++         msg_box.setWindowTitle(self.tr_("DIALOG_CONFIRM_DELETION"))
++         msg_box.setText(self.tr_("DIALOG_CONFIRM_DELETE_VIDEO").format(title))
++         msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
++         msg_box.setDefaultButton(QMessageBox.StandardButton.No)
++         msg_box.setIcon(QMessageBox.Icon.Question)
++         
++         # Thêm checkbox xóa file từ ổ đĩa
++         delete_file_checkbox = QCheckBox(self.tr_("DIALOG_DELETE_FILE_FROM_DISK"))
++         delete_file_checkbox.setEnabled(file_exists)  # Chỉ bật checkbox nếu file thực sự tồn tại
++         
++         # Tạo widget chứa checkbox và thêm vào layout
++         checkbox_container = QWidget()
++         layout = QHBoxLayout(checkbox_container)
++         layout.setContentsMargins(25, 0, 0, 0)
++         layout.addWidget(delete_file_checkbox)
++         layout.addStretch()
++         
++         # Thêm widget chứa checkbox vào message box
++         msg_box.layout().addWidget(checkbox_container, 1, 2)
++         
++         # Hiển thị message box và xử lý phản hồi
++         reply = msg_box.exec()
+          
+          if reply == QMessageBox.StandardButton.Yes:
+              print("User confirmed deletion")
+              
++             # Xóa file từ ổ đĩa nếu checkbox được chọn
++             if delete_file_checkbox.isChecked() and file_exists:
++                 try:
++                     os.remove(file_path)
++                     print(f"File deleted from disk: {file_path}")
++                 except Exception as e:
++                     print(f"Error deleting file from disk: {e}")
++                     QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), 
++                                       self.tr_("DIALOG_CANNOT_DELETE_FILE").format(str(e)))
++             
+              # Xóa khỏi cơ sở dữ liệu
+              try:
+```
+
+---
+
+Bây giờ tao sẽ cập nhật hàm `delete_selected_videos` để thêm checkbox "Delete files from disk" và "Apply to all" khi xóa nhiều file:
+
+---
+
+```diff
+              return
+          
+-         # Hiển thị hộp thoại xác nhận trước khi xóa
++         # Kiểm tra số lượng video được chọn
+          count = len(selected_indices)
+-         reply = QMessageBox.question(
+-             self, 
+-             self.tr_("DIALOG_CONFIRM_DELETION"),
+-             self.tr_("DIALOG_CONFIRM_DELETE_SELECTED").format(count),
+-             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+-             QMessageBox.StandardButton.No
+-         )
++         has_multiple_files = count > 1
++         
++         # Tạo message box tùy chỉnh
++         msg_box = QMessageBox(self)
++         msg_box.setWindowTitle(self.tr_("DIALOG_CONFIRM_DELETION"))
++         msg_box.setText(self.tr_("DIALOG_CONFIRM_DELETE_SELECTED").format(count))
++         msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
++         msg_box.setDefaultButton(QMessageBox.StandardButton.No)
++         msg_box.setIcon(QMessageBox.Icon.Question)
++         
++         # Tạo widget container cho checkboxes
++         checkbox_container = QWidget()
++         layout = QVBoxLayout(checkbox_container)
++         layout.setContentsMargins(25, 0, 0, 0)
++         
++         # Thêm checkbox xóa file từ ổ đĩa
++         delete_file_checkbox = QCheckBox(self.tr_("DIALOG_DELETE_FILES_FROM_DISK"))
++         layout.addWidget(delete_file_checkbox)
++         
++         # Thêm checkbox Apply to all nếu có nhiều file
++         apply_to_all_checkbox = None
++         if has_multiple_files:
++             apply_to_all_checkbox = QCheckBox(self.tr_("DIALOG_APPLY_TO_ALL"))
++             layout.addWidget(apply_to_all_checkbox)
++         
++         layout.addStretch()
++         
++         # Thêm widget chứa checkboxes vào message box
++         msg_box.layout().addWidget(checkbox_container, 1, 2)
++         
++         # Hiển thị message box và xử lý phản hồi
++         reply = msg_box.exec()
+          
+          if reply == QMessageBox.StandardButton.Yes:
+              print(f"User confirmed deletion of {count} videos")
++             delete_files = delete_file_checkbox.isChecked()
++             apply_to_all = apply_to_all_checkbox.isChecked() if apply_to_all_checkbox else False
++             
+              db_manager = DatabaseManager()
+              deleted_count = 0
++             deleted_files_count = 0
+              
+              # Tạo danh sách các videos cần xóa (để tránh vấn đề index shift khi xóa)
+                  print(f"Attempting to delete video: {title}")
+                  
++                 # Xóa file từ ổ đĩa nếu được chọn
++                 if delete_files:
++                     file_path = video[8] + '/' + title + ('.' + ('mp3' if video[3] == 'MP3' else 'mp4'))
++                     file_exists = os.path.exists(file_path)
++                     
++                     if file_exists:
++                         # Nếu không phải apply to all, hỏi người dùng cho từng file
++                         proceed_with_file_deletion = True
++                         if not apply_to_all and has_multiple_files:
++                             file_reply = QMessageBox.question(
++                                 self,
++                                 self.tr_("DIALOG_CONFIRM_DELETION"),
++                                 self.tr_("DIALOG_CONFIRM_DELETE_FILE").format(os.path.basename(file_path)),
++                                 QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
++                                 QMessageBox.StandardButton.No
++                             )
++                             proceed_with_file_deletion = file_reply == QMessageBox.StandardButton.Yes
++                         
++                         if proceed_with_file_deletion:
++                             try:
++                                 os.remove(file_path)
++                                 print(f"File deleted from disk: {file_path}")
++                                 deleted_files_count += 1
++                             except Exception as e:
++                                 print(f"Error deleting file from disk: {e}")
++                                 QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), 
++                                                   self.tr_("DIALOG_CANNOT_DELETE_FILE").format(str(e)))
++                 
+                  # Xóa khỏi cơ sở dữ liệu
+                  try:
+              # Hiển thị thông báo
+              if self.parent:
++                 if deleted_files_count > 0:
++                     self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_AND_FILES_DELETED").format(deleted_count, deleted_files_count))
++                 else:
+                      self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_DELETED").format(deleted_count))
+  
+```
+
+---
+
+Giờ tao cần thêm các chuỗi dịch mới vào file localization cho tiếng Việt và tiếng Anh. Đầu tiên tao sẽ kiểm tra file ngôn ngữ tiếng Việt:
+
+---
+
+Read file: localization/vietnamese.py
+
+---
+
+Bây giờ tao sẽ thêm các chuỗi dịch mới vào file tiếng Việt và tiếng Anh:
+
+---
+
+```diff
+  STATUS_NO_VIDEOS_SELECTED = "Chưa chọn video nào"
+  STATUS_VIDEOS_DELETED = "Đã xóa thành công {} video"
++ STATUS_VIDEOS_AND_FILES_DELETED = "Đã xóa thành công {} video và {} file từ ổ đĩa"
+  STATUS_DOWNLOADED_VIDEOS_LOADED = "Đã tải {} video từ cơ sở dữ liệu"
+  STATUS_NO_DOWNLOADS = "Không tìm thấy video nào đã tải xuống"
+  DIALOG_CONFIRM_DELETE_VIDEO = "Bạn có chắc chắn muốn xóa video:\n'{}'"
+  DIALOG_CONFIRM_DELETE_SELECTED = "Bạn có chắc chắn muốn xóa {} video đã chọn?"
++ DIALOG_CONFIRM_DELETE_FILE = "Bạn có chắc chắn muốn xóa file:\n'{}'"
++ DIALOG_DELETE_FILE_FROM_DISK = "Xóa file từ ổ đĩa"
++ DIALOG_DELETE_FILES_FROM_DISK = "Xóa các file từ ổ đĩa"
++ DIALOG_APPLY_TO_ALL = "Áp dụng cho tất cả"
+  DIALOG_ERROR = "Lỗi"
+  DIALOG_NO_VIDEOS = "Không có video để tải xuống"
+  DIALOG_FILE_EXISTS = "File đã tồn tại"
+  DIALOG_FILE_EXISTS_MESSAGE = "File '{}' đã tồn tại trong thư mục lưu.\nBạn có muốn ghi đè lên không?"
+- DIALOG_APPLY_TO_ALL = "Áp dụng cho tất cả"
+- DIALOG_RENAME_TITLE = "Đổi tên Video"
+- DIALOG_ENTER_NEW_NAME = "Nhập tên mới cho video:"
+- DIALOG_ENTER_NAME_REQUIRED = "Video này không có tiêu đề. Bạn phải nhập tên trước khi tải xuống:"
+- DIALOG_INVALID_NAME = "Tên không hợp lệ. Vui lòng nhập tên hợp lệ."
++ DIALOG_CANNOT_DELETE_FILE = "Không thể xóa file từ ổ đĩa:\n{}"
+  
+  # About dialog
+```
+
+---
+
+Oops, có vẻ như một số chuỗi dịch đã bị xóa. Tao sẽ khôi phục lại chúng:
+
+---
+
+```diff
+  DIALOG_FILE_EXISTS_MESSAGE = "File '{}' đã tồn tại trong thư mục lưu.\nBạn có muốn ghi đè lên không?"
+  DIALOG_CANNOT_DELETE_FILE = "Không thể xóa file từ ổ đĩa:\n{}"
++ DIALOG_RENAME_TITLE = "Đổi tên Video"
++ DIALOG_ENTER_NEW_NAME = "Nhập tên mới cho video:"
++ DIALOG_ENTER_NAME_REQUIRED = "Video này không có tiêu đề. Bạn phải nhập tên trước khi tải xuống:"
++ DIALOG_INVALID_NAME = "Tên không hợp lệ. Vui lòng nhập tên hợp lệ."
+  
+  # About dialog
+```
+
+---
+
+Bây giờ tao sẽ cập nhật file tiếng Anh:
+
+---
+
+Read file: localization/english.py
+
+---
+
+```diff
+  STATUS_NO_VIDEOS_SELECTED = "No videos selected"
+  STATUS_VIDEOS_DELETED = "{} videos deleted successfully"
++ STATUS_VIDEOS_AND_FILES_DELETED = "{} videos and {} files deleted successfully"
+  STATUS_DOWNLOADED_VIDEOS_LOADED = "Loaded {} videos from database"
+  STATUS_NO_DOWNLOADS = "No downloads found in database"
+  DIALOG_CONFIRM_DELETE_VIDEO = "Are you sure you want to delete the video:\n'{}'"
+  DIALOG_CONFIRM_DELETE_SELECTED = "Are you sure you want to delete {} selected videos?"
++ DIALOG_CONFIRM_DELETE_FILE = "Are you sure you want to delete the file:\n'{}'"
++ DIALOG_DELETE_FILE_FROM_DISK = "Delete file from disk"
++ DIALOG_DELETE_FILES_FROM_DISK = "Delete files from disk"
++ DIALOG_CANNOT_DELETE_FILE = "Cannot delete file from disk:\n{}"
+  DIALOG_ERROR = "Error"
+  DIALOG_NO_VIDEOS = "No videos to download"
+```
+
+---
+
+Bây giờ tao cần cập nhật file `sumerize.txt` để ghi lại thông tin về tính năng mới:
+
+---
+
+Read file: sumerize.txt
+
+---
+
+
+
+---
+
+Tại sao không có thay đổi? Tao sẽ thử lại với phạm vi nhỏ hơn:
+
+---
+
+Read file: sumerize.txt
+
+---
+
+```diff
+     - Xử lý đúng đắn tên tệp đặc biệt và ký tự không hợp lệ trong tên file đầu ra
+  
+- 7. **Đã sửa các lỗi logic**:
++ 7. **Đã thêm tính năng xóa file vật lý khi xóa record video**:
++    - Thêm checkbox "Delete file from disk" trong dialog xác nhận xóa
++    - Kiểm tra sự tồn tại của file trước khi cho phép xóa
++    - Hỗ trợ xóa nhiều file cùng lúc với tùy chọn "Apply to all"
++    - Hiển thị thông báo cụ thể về số lượng file đã xóa
++    - Cải thiện giao diện người dùng với vị trí checkbox phù hợp và dễ sử dụng
++ 
++ 8. **Đã sửa các lỗi logic**:
+     - Sửa lỗi hiển thị "Apply to all" khi chỉ có 1 file cần xử lý
+     - Cải thiện việc tải xuống video không có tiêu đề
+     - Sửa lỗi khi phát video có ký tự đặc biệt trong tên file như dấu ngoặc kép
+     - Xử lý trường hợp video không có tiêu đề, tìm kiếm trong thư mục theo định dạng
+  
+- 8. **Đã tối ưu giao diện tab "Downloaded Videos"**:
++ 9. **Đã tối ưu giao diện tab "Downloaded Videos"**:
+     - Điều chỉnh độ rộng cột, ưu tiên hiển thị cột Title (tăng từ 150px lên 250px)
+     - Cố định kích thước các cột ngoại trừ Title để ngăn tự động co giãn
+     - Cột Title được thiết lập ở chế độ Stretch để mở rộng khi có thêm không gian
+     - Đã vô hiệu hóa sắp xếp cho cột Select
+  
+- 9. **Đã cải thiện dialog copy**:
++ 10. **Đã cải thiện dialog copy**:
+     - Chỉ hiển thị nội dung full title đã loại bỏ hashtags để dễ dàng copy
+     - Thêm định dạng cho các hashtags khi hiển thị riêng
+  
+- 10. **Đã sửa lỗi trong hàm `delete_selected_videos` và `on_download_finished`**
++ 11. **Đã sửa lỗi trong hàm `delete_selected_videos` và `on_download_finished`**
+  
+- 11. **Đã cải thiện cách hiển thị tooltip khi hover chuột vào các cột Title, Creator và Hashtags**
++ 12. **Đã cải thiện cách hiển thị tooltip khi hover chuột vào các cột Title, Creator và Hashtags**
+  
+- 12. **Đã cải thiện xử lý lỗi khi gặp video chỉ chứa hình ảnh và âm thanh (không có video)**
++ 13. **Đã cải thiện xử lý lỗi khi gặp video chỉ chứa hình ảnh và âm thanh (không có video)**
+  
+  ## CÔNG NGHỆ SỬ DỤNG
+```
+
+---
+
+```diff
+  
+  13. **Đã cải thiện xử lý lỗi khi gặp video chỉ chứa hình ảnh và âm thanh (không có video)**
++ 
++ 14. **Đã sửa lỗi tự động tải xuống video MP3 không có tiêu đề mà không hỏi người dùng**
++ 
++ 15. **Đã sửa lỗi hiển thị không đầy đủ tiêu đề khi double-click để copy ở tab Video Info**
++ 
++ 16. **Đã loại bỏ các hashtag trong tiêu đề khi hiển thị trong dialog copy**
++ 
++ 17. **Đã thêm tính năng xóa file vật lý khi xóa video từ danh sách**
+  
+  ## CÔNG NGHỆ SỬ DỤNG
+  14. Đã sửa lỗi hiển thị không đầy đủ tiêu đề khi double-click để copy ở tab Video Info
+  15. Đã loại bỏ các hashtag trong tiêu đề khi hiển thị trong dialog copy
++ 16. Đã thêm tính năng xóa file vật lý khi xóa video từ danh sách
+  
+  ## CHI TIẾT TÍNH NĂNG "RENAME VIDEO"
+```
+
+---
+
+Bây giờ tao sẽ thêm một phần mới để mô tả chi tiết tính năng xóa file:
+
+---
+
+```diff
+  - Bổ sung nhật ký chi tiết để dễ dàng gỡ lỗi
+  - Xử lý đúng đắn tên tệp đặc biệt và ký tự không hợp lệ trong tên file đầu ra 
++ 
++ ## CHI TIẾT TÍNH NĂNG XÓA FILE TỪ Ổ ĐĨA
++ - Thêm checkbox "Delete file from disk" trong dialog xóa video đơn lẻ
++ - Thêm checkbox "Delete files from disk" trong dialog xóa nhiều video
++ - Chỉ kích hoạt checkbox khi file thực sự tồn tại
++ - Thêm tùy chọn "Apply to all" cho xóa nhiều file (chỉ hiện khi có từ 2 file trở lên)
++ - Hiển thị hộp thoại xác nhận cho từng file khi không chọn "Apply to all"
++ - Cập nhật thông báo trạng thái cho biết số lượng file đã xóa
++ - Kiểm tra quyền truy cập và xử lý lỗi khi không thể xóa file
++ - Vị trí checkbox trực quan (bên trái, cùng hàng với các nút) 
+```
+
+---
+
+Cuối cùng, tao sẽ chạy ứng dụng để kiểm tra tính năng mới:
+
+---
+
+```bash
+python main.py
+```
+
+```
+PS I:\Product Apps\Tiktok Downloader_V1_Mp4> python main.py
+No downloads found in database
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Unknown property box-shadow
+Checking TikTok URL: https://www.tiktok.com/@quocdung833/video/7472374490387778817?is_from_webapp=1&sender_d
+evice=pc
+Valid TikTok URL format: https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@quocdung833/video/7472374490387778817?is_from_webapp=1&sen
+der_device=pc
+Title: TikTok video #7472374490387778817
+Duration: 10
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@quocdung833/video/7472374490387778817?is_from_webapp=1&send
+er_device=pc
+Sending info copy: VideoInfo(title='TikTok video #7472374490387778817', url='https://www.tiktok.com/@quocdun
+g833/video/7472374490387778817?is_from_webapp=1&sender_device=pc', duration=10, formats_count=8)
+Received video info for URL: https://www.tiktok.com/@quocdung833/video/7472374490387778817?is_from_webapp=1&
+sender_device=pc, title: TikTok video #7472374490387778817
+Checking TikTok URL: https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_webapp=1&sende
+r_device=pc
+Valid TikTok URL format: https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_webapp=1&
+sender_device=pc
+Result type: <class 'dict'>
+Result has 61 keys
+Title: Ủa có hơn thua gì đâu a ơi 😅 #bamibread #banhmihoian #banhmihanoi #ph...
+Duration: 84
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_webapp=1&s
+ender_device=pc
+Sending info copy: VideoInfo(title='Ủa có hơn thua gì đâu a ơi 😅 #bamibread #banhmihoian #banhmihanoi #ph..
+.', url='https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_webapp=1&sender_device=pc'
+, duration=84, formats_count=8)
+Received video info for URL: https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_webapp
+=1&sender_device=pc, title: Ủa có hơn thua gì đâu a ơi 😅 #bamibread #banhmihoian #banhmihanoi #ph...
+Checking TikTok URL: https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sender_devi
+ce=pc
+Valid TikTok URL format: https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sender
+_device=pc
+Result type: <class 'dict'>
+Result has 61 keys
+Title: vitamin trái cây 🍎🍓🍍🥭🍏                       #mukbang #asmr
+Duration: 117
+Found 8 formats
+Emitting info signal for https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sender_
+device=pc
+Sending info copy: VideoInfo(title='vitamin trái cây 🍎🍓🍍🥭🍏                       #mukbang #asmr ', url=
+'https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sender_device=pc', duration=117
+, formats_count=8)
+Received video info for URL: https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sen
+der_device=pc, title: vitamin trái cây 🍎🍓🍍🥭🍏                       #mukbang #asmr
+Checking TikTok URL: https://www.tiktok.com/@8dmuslcc/video/7467649291293674769?is_from_webapp=1&sender_devi
+ce=pc
+Valid TikTok URL format: https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+
+Extracting info from URL: https://www.tiktok.com/@8dmuslcc/video/7467649291293674769?is_from_webapp=1&sender
+_device=pc
+Result type: <class 'dict'>
+Result has 61 keys
+Title: Надень наушники 🎧
+Duration: 66
+Found 4 formats
+Emitting info signal for https://www.tiktok.com/@8dmuslcc/video/7467649291293674769?is_from_webapp=1&sender_
+device=pc
+Sending info copy: VideoInfo(title='Надень наушники 🎧 ', url='https://www.tiktok.com/@8dmuslcc/video/746764
+9291293674769?is_from_webapp=1&sender_device=pc', duration=66, formats_count=4)
+Received video info for URL: https://www.tiktok.com/@8dmuslcc/video/7467649291293674769?is_from_webapp=1&sen
+der_device=pc, title: Надень наушники 🎧
+Downloading with format: no-watermark/bytevc1_1080p_714392-0
+[TikTok] Extracting URL: https://www.tiktok.com/@quocdung833/video/7472374490387778817?is_from_webapp=1&send
+er_device=pc
+[TikTok] 7472374490387778817: Downloading webpage 
+[info] 7472374490387778817: Downloading 1 format(s): bytevc1_1080p_714392-0 
+[download] Destination: I:\Product Apps\Test Zone\TikTok video.mp4 
+[download] 100% of  876.86KiB in 00:00:00 at 4.60MiB/s
+DEBUG - on_download_finished called with URL: https://www.tiktok.com/@quocdung833/video/7472374490387778817?
+is_from_webapp=1&sender_device=pc, success: True, file_path: I:/Product Apps/Test Zone\TikTok video.mp4
+DEBUG - Found matching video at row 0: TikTok video
+DEBUG - Row to remove: 0, Found video info: VideoInfo(title='TikTok video', url='https://www.tiktok.com/@quo
+cdung833/video/7472374490387778817?is_from_webapp=1&sender_device=pc', duration=10, formats_count=8)
+DEBUG - Success download! File: TikTok video.mp4
+DEBUG - Adding video to Downloaded Videos tab: TikTok video
+DEBUG - Combined hashtags: ['7472374490387778817']
+DEBUG - Title: TikTok video
+DEBUG - Quality: 1080p, Format: MP4
+DEBUG - Hashtags: ['7472374490387778817']
+DEBUG - Thumbnail: I:/Product Apps/Test Zone\thumbnails\7472374490387778817.jpg
+DEBUG - Status: Successful
+DEBUG adding video: Title=TikTok video
+DEBUG quality=1080p, format=MP4
+DEBUG hashtags=#7472374490387778817
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+Updated file size for I:/Product Apps/Test Zone\TikTok video.mp4: 0.86 MB
+DEBUG - Video added to Downloaded Videos tab
+DEBUG - Downloaded Videos tab display updated
+DEBUG - Removing row 0 from video table
+DEBUG - Removed row 0 from video_info_dict
+DEBUG - Reindexing video_info_dict after deletion, current keys: [1, 2, 3]
+DEBUG - Updated video_info_dict after deletion, new size: 3, new keys: [0, 1, 2]
+Downloading with format: best
+[TikTok] Extracting URL: https://www.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_webapp=1&s
+ender_device=pc
+[TikTok] 7451848094167141650: Downloading webpage
+[info] 7451848094167141650: Downloading 1 format(s): bytevc1_1080p_2127918-1 
+[download] Destination: I:\Product Apps\Test Zone\Ủa có hơn thua gì đâu a ơi 😅.mp4 
+[download] 100% of   21.35MiB in 00:00:00 at 21.72MiB/s
+Converting to MP3: ffmpeg -i I:/Product Apps/Test Zone\Ủa có hơn thua gì đâu a ơi 😅.mp4 -vn -acodec libmp3l
+ame -q:a 2 I:/Product Apps/Test Zone\Ủa có hơn thua gì đâu a ơi 😅.mp3 -y
+Successfully converted to MP3: I:/Product Apps/Test Zone\Ủa có hơn thua gì đâu a ơi 😅.mp3
+DEBUG - on_download_finished called with URL: https://www.tiktok.com/@bamibreadhanoi/video/74518480941671416
+50?is_from_webapp=1&sender_device=pc, success: True, file_path: I:/Product Apps/Test Zone\Ủa có hơn thua gì
+đâu a ơi 😅.mp3
+DEBUG - Found matching video at row 0: Ủa có hơn thua gì đâu a ơi 😅
+DEBUG - Row to remove: 0, Found video info: VideoInfo(title='Ủa có hơn thua gì đâu a ơi 😅', url='https://ww
+w.tiktok.com/@bamibreadhanoi/video/7451848094167141650?is_from_webapp=1&sender_device=pc', duration=84, form
+ats_count=8)
+DEBUG - Success download! File: Ủa có hơn thua gì đâu a ơi 😅.mp3
+DEBUG - Adding video to Downloaded Videos tab: Ủa có hơn thua gì đâu a ơi 😅
+DEBUG - Combined hashtags: ['bamibread', 'banhmihanoi', 'ph', 'banhmihoian', 'phucsyno', 'bamibreadbanhmihoi
+an', 'hanoi']
+DEBUG - Title: Ủa có hơn thua gì đâu a ơi 😅
+DEBUG - Quality: 320kbps, Format: MP3
+DEBUG - Hashtags: ['bamibread', 'banhmihanoi', 'ph', 'banhmihoian', 'phucsyno', 'bamibreadbanhmihoian', 'han
+oi']
+DEBUG - Thumbnail: I:/Product Apps/Test Zone\thumbnails\7451848094167141650.jpg
+DEBUG - Status: Successful
+DEBUG adding video: Title=Ủa có hơn thua gì đâu a ơi 😅
+DEBUG quality=320kbps, format=MP3
+DEBUG hashtags=#bamibread #banhmihanoi #ph #banhmihoian #phucsyno #bamibreadbanhmihoian #hanoi
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+Updated file size for I:/Product Apps/Test Zone\Ủa có hơn thua gì đâu a ơi 😅.mp3: 1.10 MB
+DEBUG - Video added to Downloaded Videos tab
+DEBUG - Downloaded Videos tab display updated
+DEBUG - Removing row 0 from video table
+DEBUG - Removed row 0 from video_info_dict
+DEBUG - Reindexing video_info_dict after deletion, current keys: [1, 2]
+DEBUG - Updated video_info_dict after deletion, new size: 2, new keys: [0, 1]
+Downloading with format: best
+[TikTok] Extracting URL: https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sender_
+device=pc
+[TikTok] 7476430841510497543: Downloading webpage 
+[info] 7476430841510497543: Downloading 1 format(s): bytevc1_1080p_991696-1 
+[download] Destination: I:\Product Apps\Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp4 
+[download] 100% of   13.89MiB in 00:00:00 at 16.07MiB/s
+Converting to MP3: ffmpeg -i I:/Product Apps/Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp4 -vn -acodec libmp3lam
+e -q:a 2 I:/Product Apps/Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp3 -y
+Successfully converted to MP3: I:/Product Apps/Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp3
+DEBUG - on_download_finished called with URL: https://www.tiktok.com/@_ttqueen/video/7476430841510497543?is_
+from_webapp=1&sender_device=pc, success: True, file_path: I:/Product Apps/Test Zone\vitamin trái cây 🍎🍓🍍
+🥭🍏.mp3
+DEBUG - Found matching video at row 0: vitamin trái cây 🍎🍓🍍🥭🍏
+DEBUG - Row to remove: 0, Found video info: VideoInfo(title='vitamin trái cây 🍎🍓🍍🥭🍏', url='https://www.
+tiktok.com/@_ttqueen/video/7476430841510497543?is_from_webapp=1&sender_device=pc', duration=117, formats_cou
+nt=8)
+DEBUG - Success download! File: vitamin trái cây 🍎🍓🍍🥭🍏.mp3
+DEBUG - Adding video to Downloaded Videos tab: vitamin trái cây 🍎🍓🍍🥭🍏
+DEBUG - Combined hashtags: ['mukbang', 'asmr']
+DEBUG - Title: vitamin trái cây 🍎🍓🍍🥭🍏
+DEBUG - Quality: 320kbps, Format: MP3
+DEBUG - Hashtags: ['mukbang', 'asmr']
+DEBUG - Thumbnail: I:/Product Apps/Test Zone\thumbnails\7476430841510497543.jpg
+DEBUG - Status: Successful
+DEBUG adding video: Title=vitamin trái cây 🍎🍓🍍🥭🍏
+DEBUG quality=320kbps, format=MP3
+DEBUG hashtags=#mukbang #asmr
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+Updated file size for I:/Product Apps/Test Zone\vitamin trái cây 🍎🍓🍍🥭🍏.mp3: 2.33 MB
+DEBUG - Video added to Downloaded Videos tab
+DEBUG - Downloaded Videos tab display updated
+DEBUG - Removing row 0 from video table
+DEBUG - Removed row 0 from video_info_dict
+DEBUG - Reindexing video_info_dict after deletion, current keys: [1]
+DEBUG - Updated video_info_dict after deletion, new size: 1, new keys: [0]
+Downloading with format: no-watermark/h264_540p_353813-0
+[TikTok] Extracting URL: https://www.tiktok.com/@8dmuslcc/video/7467649291293674769?is_from_webapp=1&sender_
+device=pc
+[TikTok] 7467649291293674769: Downloading webpage 
+[info] 7467649291293674769: Downloading 1 format(s): h264_540p_353813-0 
+[download] Destination: I:\Product Apps\Test Zone\Надень наушники 🎧.mp4 
+[download] 100% of    2.79MiB in 00:00:00 at 14.73MiB/s
+DEBUG - on_download_finished called with URL: https://www.tiktok.com/@8dmuslcc/video/7467649291293674769?is_
+from_webapp=1&sender_device=pc, success: True, file_path: I:/Product Apps/Test Zone\Надень наушники 🎧.mp4
+DEBUG - Found matching video at row 0: Надень наушники 🎧
+DEBUG - Row to remove: 0, Found video info: VideoInfo(title='Надень наушники 🎧', url='https://www.tiktok.co
+m/@8dmuslcc/video/7467649291293674769?is_from_webapp=1&sender_device=pc', duration=66, formats_count=4)
+DEBUG - Success download! File: Надень наушники 🎧.mp4
+DEBUG - Adding video to Downloaded Videos tab: Надень наушники 🎧
+DEBUG - Combined hashtags: []
+DEBUG - Title: Надень наушники 🎧
+DEBUG - Quality: 720p, Format: MP4
+DEBUG - Hashtags: []
+DEBUG - Thumbnail: I:/Product Apps/Test Zone\thumbnails\7467649291293674769.jpg
+DEBUG - Status: Successful
+DEBUG adding video: Title=Надень наушники 🎧
+DEBUG quality=720p, format=MP4
+DEBUG hashtags=
+DEBUG loading video status initial: Successful
+DEBUG loading video status after conversion: Successful
+Updated file size for I:/Product Apps/Test Zone\Надень наушники 🎧.mp4: 2.79 MB
+DEBUG - Video added to Downloaded Videos tab
+DEBUG - Downloaded Videos tab display updated
+DEBUG - Removing row 0 from video table
+DEBUG - Removed row 0 from video_info_dict
+DEBUG - Reindexing video_info_dict after deletion, current keys: []
+DEBUG - Updated video_info_dict after deletion, new size: 0, new keys: []
+DEBUG - All downloads finished, reset download button
+DEBUG - All downloads finished, reset download button
+Delete video called with index: 0
+Current filtered_videos length: 4
+Attempting to delete video: Надень наушники 🎧
+User cancelled deletion
+Delete video called with index: 0
+Current filtered_videos length: 4
+Attempting to delete video: Надень наушники 🎧
+User cancelled deletion
+Delete video called with index: 0
+Current filtered_videos length: 4
+Attempting to delete video: Надень наушники 🎧
+User cancelled deletion
+User confirmed deletion of 4 videos
+Attempting to delete video: Надень наушники 🎧
+File deleted from disk: I:/Product Apps/Test Zone/Надень наушники 🎧.mp4
+Successfully deleted 1 records with title: Надень наушники 🎧
+Attempting to delete video: vitamin trái cây 🍎🍓🍍🥭🍏
+File deleted from disk: I:/Product Apps/Test Zone/vitamin trái cây 🍎🍓🍍🥭🍏.mp3
+Successfully deleted 1 records with title: vitamin trái cây 🍎🍓🍍🥭🍏
+Attempting to delete video: Ủa có hơn thua gì đâu a ơi 😅
+File deleted from disk: I:/Product Apps/Test Zone/Ủa có hơn thua gì đâu a ơi 😅.mp3
+Successfully deleted 1 records with title: Ủa có hơn thua gì đâu a ơi 😅
+Attempting to delete video: TikTok video
+File deleted from disk: I:/Product Apps/Test Zone/TikTok video.mp4
+Successfully deleted 1 records with title: TikTok video
+
+```
+
+---
+
+Tuyệt vời! Tính năng xóa file vật lý khi xóa video từ database đã hoạt động tốt. Bây giờ tao sẽ tổng kết lại các thay đổi đã làm:
+
+1. Đã thêm checkbox "Delete file from disk" trong dialog xóa video đơn lẻ:
+   - Kiểm tra sự tồn tại của file trước khi bật checkbox
+   - Định vị checkbox ở vị trí dễ nhìn (góc trái, cùng hàng với các nút)
+
+2. Đã thêm checkbox "Delete files from disk" và "Apply to all" trong dialog xóa nhiều video:
+   - Checkbox "Apply to all" chỉ hiển thị khi có từ 2 file trở lên
+   - Nếu "Apply to all" không được chọn, sẽ hỏi xác nhận cho từng file
+
+3. Đã thêm thông báo chi tiết về số lượng file đã xóa:
+   - Hiển thị số video và số file đã xóa thành công
+   - Thông báo cụ thể cho mỗi file đã xóa trong debug log
+
+4. Đã cập nhật file localization để hỗ trợ đa ngôn ngữ:
+   - Thêm các chuỗi mới cho tiếng Việt và tiếng Anh
+   - Đồng bộ nội dung giữa các file ngôn ngữ
+
+5. Đã cập nhật file `sumerize.txt` để ghi lại thông tin chi tiết về tính năng mới:
+   - Thêm mục cập nhật mới (#7) vào danh sách cập nhật gần đây
+   - Thêm chi tiết về cách tính năng hoạt động
+   - Bổ sung vào danh sách các vấn đề đã giải quyết
+
+Tính năng này giúp người dùng dễ dàng quản lý không gian lưu trữ khi xóa video khỏi danh sách. Nếu chỉ muốn xóa khỏi database nhưng giữ lại file video, người dùng có thể không chọn checkbox. Giao diện trực quan và dễ sử dụng, phù hợp với phần còn lại của ứng dụng.
+
+---
+
+_**User**_
+
+- Khi user mà chọn xóa file trên ổ đĩa thì hãy xóa luôn cả thumbnail nữa
+
+---
+
+_**Assistant**_
 
 
 
