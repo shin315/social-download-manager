@@ -213,13 +213,21 @@ class VideoInfoTab(QWidget):
             # Kiểm tra xem đã chọn thư mục đầu ra chưa
             has_output_folder = bool(self.output_folder_display.text())
             
+            # Đảm bảo thuộc tính title tồn tại
+            if not hasattr(video_info, 'title') or video_info.title is None or video_info.title.strip() == "":
+                from datetime import datetime
+                default_title = f"Video_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                setattr(video_info, 'title', default_title)
+                print(f"DEBUG - Created default title for video without title: {default_title}")
+            
             # Kiểm tra video có lỗi không
             has_error = False
             if hasattr(video_info, 'title'):
                 has_error = video_info.title.startswith("Error:")
             
             # Chỉ hiển thị Rename nếu video không có lỗi và đã chọn thư mục đầu ra
-            if not has_error and has_output_folder and hasattr(video_info, 'url') and hasattr(video_info, 'title'):
+            # Bỏ điều kiện hasattr(video_info, 'title') để cho phép rename cả video không có tiêu đề
+            if not has_error and has_output_folder and hasattr(video_info, 'url'):
                 # Action Rename Video - Cho phép đổi tên video trước khi tải
                 rename_action = QAction(self.tr_("CONTEXT_RENAME_VIDEO"), self)
                 rename_action.triggered.connect(lambda: self.rename_video(row))
@@ -248,8 +256,11 @@ class VideoInfoTab(QWidget):
         # Lấy tiêu đề hiện tại
         current_title = video_info.title if hasattr(video_info, 'title') else ""
         
+        # Nếu không có tiêu đề, tạo tiêu đề mặc định từ timestamp
         if not current_title:
-            return
+            from datetime import datetime
+            current_title = f"Video_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            print(f"DEBUG - Creating default title for empty video title: {current_title}")
             
         # Hiển thị dialog để nhập tên mới
         new_title, ok = QInputDialog.getText(
@@ -273,6 +284,9 @@ class VideoInfoTab(QWidget):
                     
                 # Cập nhật tên mới
                 setattr(video_info, 'title', clean_title)
+                
+                # Thêm thuộc tính custom_title
+                setattr(video_info, 'custom_title', clean_title)
                 
                 # Cập nhật UI - cột title trong bảng
                 title_cell = self.video_table.item(row, 1)

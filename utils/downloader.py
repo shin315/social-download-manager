@@ -377,17 +377,32 @@ class TikTokDownloader(QObject):
             if is_audio_request:
                 # Lấy tiêu đề từ đường dẫn đã tải nếu có, nếu không lấy từ thông tin video
                 title = os.path.splitext(os.path.basename(downloaded_file))[0]
-                if not title:
+                
+                # Xử lý đặc biệt khi tên file bắt đầu bằng 'Video_' - trường hợp video không có tiêu đề
+                if title.startswith("Video_") and re.match(r"Video_\d{8}_\d{6}", title):
+                    print(f"Detected automatically generated title: {title}")
+                    # Sử dụng trực tiếp tên này, không cần slugify để tránh thay đổi chữ hoa/thường
+                    safe_title = title
+                    # Đảm bảo không thay đổi case của tên file
+                    mp3_output = os.path.join(os.path.dirname(downloaded_file), f"{title}.mp3")
+                elif not title:
                     # Fallback để lấy tiêu đề nếu cần thiết
                     with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
                         info = ydl.extract_info(url, download=False)
                         title = info.get('title', 'unknown_title').replace('/', '-')
+                    # Tạo tên file an toàn với slugify
+                    safe_title = self.slugify(title)
+                    if not safe_title:  # Nếu slugify trả về chuỗi rỗng
+                        # Tạo tên file dựa trên timestamp
+                        safe_title = f"audio_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                    mp3_output = os.path.splitext(downloaded_file)[0] + '.mp3'
+                else:
+                    # Tạo tên file an toàn với slugify
+                    safe_title = self.slugify(title)
+                    if not safe_title:  # Nếu slugify trả về chuỗi rỗng
+                        safe_title = "audio"  # Đặt tên mặc định
+                    mp3_output = os.path.splitext(downloaded_file)[0] + '.mp3'
                 
-                # Tạo tên file an toàn với slugify
-                safe_title = self.slugify(title)
-                if not safe_title:  # Nếu slugify trả về chuỗi rỗng
-                    safe_title = "audio"  # Đặt tên mặc định
-                    
                 # Tạo đường dẫn đến file MP3 sử dụng tên an toàn
                 safe_mp3_path = os.path.join(os.path.dirname(downloaded_file), f"{safe_title}.mp3")
                 
@@ -396,13 +411,14 @@ class TikTokDownloader(QObject):
                 
                 # Use FFmpeg to convert
                 try:
-                    # Run FFmpeg to extract audio to MP3 sử dụng tên file an toàn
+                    # Đơn giản hóa quy trình - chuyển đổi trực tiếp sang file đích cuối cùng
+                    # thay vì dùng file tạm thời rồi đổi tên (để tránh lỗi đổi tên)
                     command = [
                         'ffmpeg', '-i', downloaded_file, 
                         '-vn',  # No video
                         '-acodec', 'libmp3lame', 
                         '-q:a', '2',  # VBR quality 2 (good quality)
-                        safe_mp3_path,
+                        mp3_output,  # Lưu trực tiếp sang file đích
                         '-y'  # Overwrite if exists
                     ]
                     
@@ -417,16 +433,12 @@ class TikTokDownloader(QObject):
                         self.finished_signal.emit(url, False, f"Error converting to MP3: {result.stderr}")
                         return False
                     
-                    # Đổi tên file từ tên an toàn trở lại tên gốc nếu thành công
-                    if os.path.exists(safe_mp3_path) and os.path.getsize(safe_mp3_path) > 0:
-                        # Xóa file gốc trước nếu nó tồn tại
-                        if os.path.exists(mp3_output):
-                            os.remove(mp3_output)
-                        # Đổi tên file
-                        os.rename(safe_mp3_path, mp3_output)
+                    # Kiểm tra file MP3 đã được tạo thành công chưa
+                    if os.path.exists(mp3_output) and os.path.getsize(mp3_output) > 0:
                         # Xóa file MP4 tạm
                         os.remove(downloaded_file)
                         downloaded_file = mp3_output
+                        print(f"Successfully converted to MP3: {mp3_output}")
                     else:
                         print("MP3 conversion failed or output file is empty")
                         self.converting_mp3_urls.discard(url)  # Xóa URL khỏi danh sách convert

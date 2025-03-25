@@ -15,6 +15,10 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
 - Hiển thị thumbnail của video
 - Hỗ trợ đa ngôn ngữ (Tiếng Anh, Tiếng Việt)
 - Cơ sở dữ liệu SQLite để lưu thông tin video đã tải
+- Tính năng đổi tên video trước và trong khi tải xuống
+- Xử lý thông minh với video không có tiêu đề
+- Phát video trực tiếp từ tab "Downloaded Videos"
+- Chuyển đổi sang MP3 với xử lý tên file thông minh
 
 ## CẤU TRÚC DỰ ÁN
 - `main.py`: Điểm khởi đầu của ứng dụng
@@ -35,32 +39,78 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
 - `config.json`: File cấu hình ứng dụng
 
 ## CẬP NHẬT GẦN ĐÂY
-1. Đã thêm tính năng chọn nhiều video để tải xuống cùng lúc
-2. Đã thêm chức năng "Select All" và "Unselect All"
-3. Đã tối ưu giao diện tab "Downloaded Videos":
+1. **Đã thêm tính năng "Rename Video"**:
+   - Cho phép người dùng đổi tên video trước khi tải xuống thông qua menu chuột phải
+   - Tên mới sẽ được hiển thị trong tab "Downloaded Videos" và làm tên file khi lưu
+   - Áp dụng các quy tắc làm sạch tên tệp để đảm bảo tính hợp lệ
+
+2. **Xử lý cải tiến cho video không có tiêu đề**:
+   - Bắt buộc người dùng phải đặt tên file trước khi tải xuống nếu video không có tiêu đề
+   - Tự động đề xuất tên mặc định dựa trên timestamp: Video_YYYYMMdd_HHmmss
+   - Tên đã đặt sẽ được lưu vào cơ sở dữ liệu và hiển thị chính xác trong tab Downloaded Videos
+
+3. **Cải tiến thuật toán tìm kiếm và phát video**:
+   - Nâng cao khả năng tìm kiếm tập tin dựa trên tiêu đề, bao gồm xử lý khi tiêu đề có ký tự đặc biệt
+   - Thêm nhiều biến thể tìm kiếm như từ đầu tiên, 3 từ đầu, 5 từ đầu để tăng khả năng tìm thấy file
+   - Hỗ trợ đặc biệt xử lý các ký tự đặc biệt như dấu ngoặc kép, ba chấm, v.v.
+   - Giảm ngưỡng tương đồng xuống 30% để tìm được nhiều file hơn
+
+4. **Giao diện "File Already Exists" cải tiến**:
+   - Thêm tùy chọn "Apply to all" cho việc ghi đè file trong trường hợp tải nhiều video
+   - Chỉ hiển thị "Apply to all" khi có từ 2 file trở lên cần xử lý
+   - Cải thiện vị trí của checkbox "Apply to all" sang cùng hàng với các nút Yes/No/Cancel
+   - Thêm spacing và style để giao diện trông chuyên nghiệp và cân đối hơn
+
+5. **Cải tiến lưu và hiển thị thông tin video**:
+   - Tên tùy chỉnh sẽ được lưu vào cả video_info và VideoInfo object
+   - Hiển thị đúng tên đã đặt trong tab Downloaded Videos, kể cả khi không có tiêu đề ban đầu
+   - Xác định tên file thông minh dựa trên các thuộc tính có sẵn
+
+6. **Cải tiến quá trình chuyển đổi MP3**:
+   - Đơn giản hóa quy trình chuyển đổi MP3 bằng cách lưu trực tiếp vào đường dẫn đích
+   - Loại bỏ bước tạo tệp tạm thời và đổi tên sau đó, giảm thiểu lỗi đường dẫn
+   - Thêm kiểm tra file đầu ra đã được tạo thành công
+   - Bổ sung nhật ký chi tiết để dễ dàng gỡ lỗi
+   - Xử lý đúng đắn tên tệp đặc biệt và ký tự không hợp lệ trong tên file đầu ra
+
+7. **Đã sửa các lỗi logic**:
+   - Sửa lỗi hiển thị "Apply to all" khi chỉ có 1 file cần xử lý
+   - Cải thiện việc tải xuống video không có tiêu đề
+   - Sửa lỗi khi phát video có ký tự đặc biệt trong tên file như dấu ngoặc kép
+   - Xử lý trường hợp video không có tiêu đề, tìm kiếm trong thư mục theo định dạng
+
+8. **Đã tối ưu giao diện tab "Downloaded Videos"**:
    - Điều chỉnh độ rộng cột, ưu tiên hiển thị cột Title (tăng từ 150px lên 250px)
    - Cố định kích thước các cột ngoại trừ Title để ngăn tự động co giãn
    - Cột Title được thiết lập ở chế độ Stretch để mở rộng khi có thêm không gian
    - Đã vô hiệu hóa sắp xếp cho cột Select
-4. Đã cải thiện dialog copy:
+
+9. **Đã cải thiện dialog copy**:
    - Chỉ hiển thị nội dung full title đã loại bỏ hashtags để dễ dàng copy
    - Thêm định dạng cho các hashtags khi hiển thị riêng
-5. Đã sửa lỗi trong hàm `delete_selected_videos` và `on_download_finished`
-6. Đã cải thiện cách hiển thị tooltip khi hover chuột vào các cột Title, Creator và Hashtags
-7. Đã cải thiện xử lý lỗi khi gặp video chỉ chứa hình ảnh và âm thanh (không có video)
+
+10. **Đã sửa lỗi trong hàm `delete_selected_videos` và `on_download_finished`**
+
+11. **Đã cải thiện cách hiển thị tooltip khi hover chuột vào các cột Title, Creator và Hashtags**
+
+12. **Đã cải thiện xử lý lỗi khi gặp video chỉ chứa hình ảnh và âm thanh (không có video)**
 
 ## CÔNG NGHỆ SỬ DỤNG
 - Python 3.8+
 - PyQt6 cho giao diện người dùng
 - SQLite cho cơ sở dữ liệu
+- yt-dlp cho engine tải xuống
 - Requests và BeautifulSoup4 cho việc tải và phân tích dữ liệu
 - Git cho quản lý mã nguồn
+- FFmpeg để chuyển đổi video sang MP3
 
 ## HƯỚNG PHÁT TRIỂN
 - Mở rộng hỗ trợ tải xuống từ các nền tảng khác như YouTube, Instagram, Facebook
 - Cải thiện hiệu suất tải xuống
-- Cải thiện khả năng tổ chức dữ liệu để có thể đáp ứng được nhu cầu của user khi quản lý số lượng lớn các file đã tải xuống.
+- Thêm tính năng batch renaming cho nhiều video cùng lúc
+- Cải thiện khả năng tổ chức dữ liệu để có thể đáp ứng được nhu cầu của user khi quản lý số lượng lớn các file đã tải xuống
 - Hỗ trợ thêm các ngôn ngữ khác
+- Tạo queue manager để quản lý hàng đợi tải xuống phức tạp hơn
 
 ## LƯU Ý KỸ THUẬT
 - Ứng dụng sử dụng kiến trúc MVC (Model-View-Controller)
@@ -68,6 +118,7 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
 - Dữ liệu được lưu trữ trong cơ sở dữ liệu SQLite
 - Giao diện được thiết kế để dễ sử dụng và đáp ứng
 - Hỗ trợ đa ngôn ngữ thông qua cơ chế chuyển đổi chuỗi động
+- Sử dụng custom context menu để cung cấp thêm tính năng như rename, play, open folder
 
 ## NHỮNG VẤN ĐỀ ĐÃ GIẢI QUYẾT
 1. Đã xử lý lỗi khi hiển thị tiêu đề video và tác giả
@@ -75,4 +126,40 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
 3. Đã sửa lỗi hiển thị trạng thái tải xuống không đúng
 4. Đã cải thiện cách hiển thị trên tab "Downloaded Videos"
 5. Đã xử lý lỗi khi tải nội dung không được hỗ trợ (như video chỉ chứa hình ảnh)
-6. Đã khắc phục vấn đề về hiển thị hashtags trong tiêu đề khi copy 
+6. Đã khắc phục vấn đề về hiển thị hashtags trong tiêu đề khi copy
+7. Đã sửa lỗi không thể phát video có dấu ngoặc kép trong tên
+8. Đã cải thiện xử lý video không có tiêu đề, bắt buộc người dùng đặt tên
+9. Đã sửa lỗi hiển thị "Apply to all" khi chỉ có 1 file cần xử lý
+10. Đã sửa lỗi title không hiển thị đúng trong tab Downloaded Videos với video đã rename
+11. Đã sửa lỗi chuyển đổi MP3 cho video không có tiêu đề
+12. Đã cải thiện thuật toán đặt tên file khi chuyển đổi định dạng
+
+## CHI TIẾT TÍNH NĂNG "RENAME VIDEO"
+- Hiển thị trong context menu (menu chuột phải) của tab Video Info
+- Lưu tên gốc vào thuộc tính original_title của đối tượng video_info
+- Cập nhật UI (bảng) với tên mới ngay lập tức
+- Làm sạch tên file trước khi lưu, loại bỏ các ký tự không hợp lệ như: \/*?:"<>|
+- Hiển thị thông báo thành công trong status bar
+- Tên mới sẽ được sử dụng khi tải xuống và hiển thị trong tab Downloaded Videos
+
+## CHI TIẾT XỬ LÝ VIDEO KHÔNG CÓ TIÊU ĐỀ
+- Kiểm tra tiêu đề rỗng trước khi tải xuống
+- Hiển thị hộp thoại yêu cầu nhập tên với tiêu đề và nội dung tùy chỉnh 
+- Tạo tên mặc định theo định dạng "Video_YYYYMMdd_HHmmss"
+- Nếu người dùng không nhập tên hoặc hủy dialog, video sẽ bị bỏ qua
+- Lưu tên mới vào custom_title và cập nhật để hiển thị trong tab Downloaded Videos
+
+## CHI TIẾT CẢI TIẾN THUẬT TOÁN TÌM KIẾM FILE
+- Tìm kiếm file dựa trên nhiều biến thể của tiêu đề (5 từ đầu, 3 từ đầu, 1 từ đầu)
+- Xử lý đặc biệt với các ký tự như ", ', đấu ba chấm (...)
+- Tính điểm tương đồng dựa trên nhiều tiêu chí khác nhau
+- Hỗ trợ tìm kiếm từng từ chung giữa tiêu đề và tên file
+- Đối với video không có tiêu đề, ưu tiên tìm file có tên đặc biệt như "#.mp4" hoặc ".mp4"
+- Giảm ngưỡng tương đồng xuống còn 30% để tăng tỷ lệ tìm thấy file 
+
+## CHI TIẾT CẢI TIẾN QUÁ TRÌNH CHUYỂN ĐỔI MP3
+- Đơn giản hóa quy trình chuyển đổi bằng cách sử dụng FFmpeg để xuất trực tiếp vào đường dẫn đích
+- Loại bỏ quá trình tạo tệp tạm thời và đổi tên sau đó, giảm thiểu lỗi đường dẫn
+- Thêm kiểm tra file đầu ra đã được tạo thành công
+- Bổ sung nhật ký chi tiết để dễ dàng gỡ lỗi
+- Xử lý đúng đắn tên tệp đặc biệt và ký tự không hợp lệ trong tên file đầu ra 
