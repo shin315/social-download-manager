@@ -133,6 +133,8 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
 10. Đã sửa lỗi title không hiển thị đúng trong tab Downloaded Videos với video đã rename
 11. Đã sửa lỗi chuyển đổi MP3 cho video không có tiêu đề
 12. Đã cải thiện thuật toán đặt tên file khi chuyển đổi định dạng
+13. Đã sửa lỗi tự động tải xuống video MP3 không có tiêu đề mà không hỏi người dùng
+14. Đã sửa lỗi hiển thị không đầy đủ tiêu đề khi double-click để copy ở tab Video Info
 
 ## CHI TIẾT TÍNH NĂNG "RENAME VIDEO"
 - Hiển thị trong context menu (menu chuột phải) của tab Video Info

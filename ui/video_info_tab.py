@@ -545,17 +545,48 @@ class VideoInfoTab(QWidget):
                     # Lấy format_id dựa trên chất lượng và định dạng
                     format_id = self.get_format_id(url, quality, format_str)
 
-                    # Làm sạch tên video, loại bỏ hashtag để tạo tên file
-                    clean_title = title
-                    # Loại bỏ tất cả các hashtag còn sót nếu có
-                    import re
-                    clean_title = re.sub(r'#\S+', '', clean_title).strip()
-                    # Loại bỏ các ký tự không hợp lệ cho tên file
-                    clean_title = re.sub(r'[\\/*?:"<>|]', '', clean_title).strip()
-                    
                     # Xác định phần mở rộng file dựa trên định dạng
-                    is_audio = "audio" in format_id.lower() or "bestaudio" in format_id.lower()
+                    is_audio = format_str == self.tr_("FORMAT_AUDIO_MP3") or "audio" in format_id.lower() or "bestaudio" in format_id.lower()
                     ext = "mp3" if is_audio else "mp4"
+                    
+                    # Kiểm tra xem tiêu đề có rỗng không trước khi tiếp tục
+                    if not title.strip() or title.strip().startswith('#'):
+                        # Hiển thị dialog để nhập tên mới cho video
+                        default_name = f"Video_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                        new_title, ok = QInputDialog.getText(
+                            self, 
+                            self.tr_("DIALOG_RENAME_TITLE"),
+                            self.tr_("DIALOG_ENTER_NAME_REQUIRED"), 
+                            QLineEdit.EchoMode.Normal, 
+                            default_name
+                        )
+                        
+                        if not ok or not new_title.strip():
+                            # Người dùng hủy hoặc không nhập tên, bỏ qua video này
+                            print(f"DEBUG - User cancelled entering required name for video without title")
+                            continue
+                        
+                        # Làm sạch tên file để tránh ký tự không hợp lệ
+                        import re
+                        clean_title = re.sub(r'[\\/*?:"<>|]', '', new_title).strip()
+                        
+                        # Cập nhật title trong video_info_dict
+                        if row in self.video_info_dict:
+                            self.video_info_dict[row].custom_title = new_title
+                            # Lưu title mới để hiển thị trong tab Downloaded Videos
+                            self.video_info_dict[row].title = new_title
+                            print(f"DEBUG - New title set for video without title: '{new_title}'")
+                        
+                        # Cập nhật title trong download_queue
+                        title = new_title
+                    else:
+                        # Làm sạch tên video, loại bỏ hashtag để tạo tên file
+                        clean_title = title
+                        # Loại bỏ tất cả các hashtag còn sót nếu có
+                        import re
+                        clean_title = re.sub(r'#\S+', '', clean_title).strip()
+                        # Loại bỏ các ký tự không hợp lệ cho tên file
+                        clean_title = re.sub(r'[\\/*?:"<>|]', '', clean_title).strip()
                     
                     # Tạo đường dẫn file đầy đủ
                     output_dir = self.output_folder_display.text()
@@ -723,46 +754,10 @@ class VideoInfoTab(QWidget):
                 # Xác định phần mở rộng file dựa trên định dạng
                 is_audio = "audio" in video_info['format_id'].lower() or "bestaudio" in video_info['format_id'].lower()
                 ext = "mp3" if is_audio else "mp4"
-                
-            # Kiểm tra xem tiêu đề có rỗng không
-            if not clean_title.strip():
-                # Hiển thị dialog để nhập tên mới cho video
-                default_name = f"Video_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-                new_title, ok = QInputDialog.getText(
-                    self, 
-                    self.tr_("DIALOG_RENAME_TITLE"),
-                    self.tr_("DIALOG_ENTER_NAME_REQUIRED"), 
-                    QLineEdit.EchoMode.Normal, 
-                    default_name
-                )
-                
-                if not ok or not new_title.strip():
-                    # Người dùng hủy hoặc không nhập tên, bỏ qua video này
-                    print(f"DEBUG - User cancelled entering required name for video without title")
-                    self.downloading_count -= 1
-                    continue
-                
-                # Làm sạch tên file để tránh ký tự không hợp lệ
-                import re
-                clean_title = re.sub(r'[\\/*?:"<>|]', '', new_title).strip()
-                
-                # Cập nhật title trong video_info
-                video_info['title'] = new_title
-                video_info['clean_title'] = clean_title
-                
-                # Đặt thuộc tính custom_title vào đối tượng VideoInfo trong video_info_dict
-                for row_idx, video_obj in self.video_info_dict.items():
-                    if video_obj and video_obj.url == url:
-                        # Thêm thuộc tính custom_title nếu chưa có
-                        if not hasattr(video_obj, 'custom_title'):
-                            video_obj.custom_title = new_title
-                        else:
-                            video_obj.custom_title = new_title
-                        print(f"DEBUG - Added custom_title to VideoInfo object for row {row_idx}")
-                        break
-                
-                print(f"DEBUG - New title set for video without title: '{clean_title}'")
-                
+            
+            # ĐOẠN KIỂM TRA TIÊU ĐỀ RỖNG ĐÃ ĐƯỢC DI CHUYỂN LÊN PHÍA TRÊN
+            # VÀ ĐƯỢC KIỂM TRA TRƯỚC KHI ĐƯA VÀO DOWNLOAD_QUEUE
+            
             # Thiết lập template đầu ra với tên đã được làm sạch
             output_dir = self.output_folder_display.text()
             
@@ -1650,11 +1645,25 @@ class VideoInfoTab(QWidget):
         if row in self.video_info_dict:
             video_info = self.video_info_dict[row]
             if column == 1:  # Title
-                # Ưu tiên lấy title gốc nếu có
-                if hasattr(video_info, 'original_title') and video_info.original_title:
+                # In thông tin debug để xem nội dung
+                if hasattr(video_info, 'title'):
+                    print(f"DEBUG - Title: '{video_info.title}'")
+                if hasattr(video_info, 'caption'):
+                    print(f"DEBUG - Caption: '{video_info.caption}'")
+                if hasattr(video_info, 'original_title'):
+                    print(f"DEBUG - Original title: '{video_info.original_title}'")
+                
+                # Ưu tiên lấy caption làm nguồn dữ liệu chính vì thường chứa nội dung đầy đủ nhất
+                if hasattr(video_info, 'caption') and video_info.caption:
+                    full_text = video_info.caption
+                elif hasattr(video_info, 'original_title') and video_info.original_title:
+                    # Lấy tiêu đề gốc nếu không có caption
                     full_text = video_info.original_title
                 else:
+                    # Sử dụng title hiện tại nếu không có các thông tin khác
                     full_text = video_info.title if hasattr(video_info, 'title') else item.text()
+                
+                print(f"DEBUG - Selected full_text for dialog: '{full_text}'")
             elif column == 2:  # Creator
                 full_text = video_info.creator if hasattr(video_info, 'creator') else item.text()
             elif column == 7:  # Hashtags
