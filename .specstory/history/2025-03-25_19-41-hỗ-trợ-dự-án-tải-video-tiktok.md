@@ -370,9 +370,245 @@ Tao cần thêm phương thức `show_full_text_tooltip` vào `VideoInfoTab` đ�
 
 ---
 
-Cancelled
+```diff
+          """Xử lý khi trạng thái checkbox thay đổi"""
+          self.update_select_toggle_button()
++ 
++     def show_full_text_tooltip(self, row, column):
++         """Hiển thị tooltip với text đầy đủ khi hover chuột vào ô"""
++         # Chỉ hiển thị tooltip với các cột có văn bản dài
++         if column in [1, 2, 7]:  # Title, Creator, Hashtags columns
++             item = self.video_table.item(row, column)
++             if item and row < len(self.video_info_dict):
++                 # Lấy thông tin video từ dictionary
++                 url = ""
++                 for i in range(self.video_table.rowCount()):
++                     cell_widget = self.video_table.cellWidget(i, 0)
++                     if cell_widget and i == row:
++                         # Lấy URL từ property của checkbox
++                         checkbox = cell_widget.findChild(QCheckBox)
++                         if checkbox:
++                             url = checkbox.property("url")
++                             break
++                 
++                 if url and url in self.video_info_dict:
++                     video_info = self.video_info_dict[url]
++                     
++                     # Xử lý tooltip tùy theo loại cột
++                     if column == 1:  # Title
++                         self.video_table.setToolTip(video_info.title)
++                     elif column == 2:  # Creator
++                         self.video_table.setToolTip(f"Creator: {video_info.creator}")
++                     elif column == 7:  # Hashtags
++                         hashtags_str = " ".join([f"#{tag}" for tag in video_info.hashtags]) if video_info.hashtags else ""
++                         self.video_table.setToolTip(hashtags_str)
++                 else:
++                     # Nếu không tìm thấy thông tin video, hiển thị nội dung của ô
++                     self.video_table.setToolTip(item.text())
++             else:
++                 self.video_table.setToolTip("")
++         else:
++             self.video_table.setToolTip("")
+```
 
 ---
+
+Đồng thời, tao cần cập nhật cả phương thức apply_theme_colors để đảm bảo màu sắc hiệu ứng hover đồng nhất khi đổi theme. Để tao xem phương thức này:
+
+---
+
+<details>
+            <summary>Searched codebase "apply_theme_colors trong video_info_tab.py" • **25** results</summary>
+        
+| File | Lines |
+|------|-------|
+| `ui/downloaded_videos_tab.py` | L1523-1561 |
+| `ui/downloaded_videos_tab.py` | L1392-1442 |
+| `ui/downloaded_videos_tab.py` | L1561-1601 |
+| `ui/video_info_tab.py` | L1053-1096 |
+| `ui/downloaded_videos_tab.py` | L1467-1523 |
+| `ui/downloaded_videos_tab.py` | L1601-1640 |
+| `ui/video_info_tab.py` | L18-51 |
+| `ui/downloaded_videos_tab.py` | L1736-1754 |
+| `ui/downloaded_videos_tab.py` | L1640-1661 |
+| `ui/downloaded_videos_tab.py` | L1442-1467 |
+| `ui/downloaded_videos_tab.py` | L527-545 |
+| `ui/downloaded_videos_tab.py` | L1661-1710 |
+| `ui/main_window.py` | L526-558 |
+| `ui/downloaded_videos_tab.py` | L1710-1736 |
+| `ui/downloaded_videos_tab.py` | L1-47 |
+| `ui/downloaded_videos_tab.py` | L328-381 |
+| `ui/downloaded_videos_tab.py` | L381-430 |
+| `ui/main_window.py` | L1-46 |
+| `ui/downloaded_videos_tab.py` | L302-328 |
+| `ui/downloaded_videos_tab.py` | L260-302 |
+| `ui/donate_tab.py` | L122-178 |
+| `.specstory/history/2025-03-22_20-14-chuyển-đổi-ngữ-cảnh-và-thông-tin.md` | L7451-7478 |
+| `ui/video_info_tab.py` | L1825-1882 |
+| `ui/video_info_tab.py` | L691-739 |
+| `ui/video_info_tab.py` | L1171-1212 |
+
+</details>
+
+---
+
+Bây giờ tao sẽ cập nhật phương thức apply_theme_colors trong VideoInfoTab để cập nhật style cho bảng với hiệu ứng hover giống trong tab DownloadedVideosTab:
+
+---
+
+```diff
+              url_text_color = "#ffffff"
+              folder_text_color = "#cccccc"
++             
++             # Style cho bảng trong dark mode
++             table_style = """
++                 QTableWidget::item:hover {
++                     background-color: rgba(80, 140, 255, 0.15);
++                 }
++             """
++             
++             # Style cho thanh cuộn trong dark mode
++             scrollbar_style = """
++                 QScrollBar:vertical {
++                     border: none;
++                     background: rgba(80, 80, 80, 0.2);
++                     width: 8px;
++                     margin: 0px;
++                     border-radius: 4px;
++                 }
++                 QScrollBar::handle:vertical {
++                     background: rgba(180, 180, 180, 0.5);
++                     min-height: 20px;
++                     border-radius: 4px;
++                 }
++                 QScrollBar::handle:vertical:hover {
++                     background: rgba(180, 180, 180, 0.7);
++                 }
++                 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
++                     height: 0px;
++                 }
++                 QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
++                     background: none;
++                 }
++             """
+          else:
+              # Màu sắc cho light mode
+              url_placeholder_color = "#888888"
+              url_text_color = "#333333"
+              folder_text_color = "#555555"
++             
++             # Style cho bảng trong light mode
++             table_style = """
++                 QTableWidget::item:hover {
++                     background-color: rgba(0, 120, 215, 0.1);
++                 }
++             """
++             
++             # Style cho thanh cuộn trong light mode
++             scrollbar_style = """
++                 QScrollBar:vertical {
++                     border: none;
++                     background: rgba(0, 0, 0, 0.05);
++                     width: 8px;
++                     margin: 0px;
++                     border-radius: 4px;
++                 }
++                 QScrollBar::handle:vertical {
++                     background: rgba(0, 0, 0, 0.2);
++                     min-height: 20px;
++                     border-radius: 4px;
++                 }
++                 QScrollBar::handle:vertical:hover {
++                     background: rgba(0, 0, 0, 0.3);
++                 }
++                 QScrollBar::add-line:vertical, QScrollBar::sub-line:vertical {
++                     height: 0px;
++                 }
++                 QScrollBar::add-page:vertical, QScrollBar::sub-page:vertical {
++                     background: none;
++                 }
++             """
++         
++         # Áp dụng style cho bảng
++         if hasattr(self, 'video_table'):
++             self.video_table.setStyleSheet(table_style)
++             
++         # Áp dụng style cho thanh cuộn
++         self.setStyleSheet(scrollbar_style)
+          
+          # Áp dụng màu sắc cho các thành phần
+```
+
+---
+
+Đéo phải bảo, xong rồi đó bro! Tao đã đồng nhất style giữa hai tab như yêu cầu của mày. Cụ thể:
+
+1. Đã thêm hiệu ứng hover vào bảng trong VideoInfoTab giống như ở DownloadedVideosTab
+2. Đã thêm phương thức `show_full_text_tooltip` vào VideoInfoTab để hiển thị tooltip khi hover vào các ô trong bảng
+3. Đã cập nhật phương thức `apply_theme_colors` trong VideoInfoTab để áp dụng đúng style hover cho bảng và thanh cuộn theo theme (dark/light)
+
+Bây giờ khi người dùng hover chuột qua các hàng trong cả hai tab, họ sẽ thấy hiệu ứng đồng nhất và đẹp hơn. Các tooltip cũng sẽ hiển thị đầy đủ nội dung khi hover vào các cột có nhiều text như Title, Creator và Hashtags.
+
+Mày có muốn cải tiến gì thêm không? Hoặc có tính năng nào khác mày muốn mình làm không?
+
+---
+
+_**User**_
+
+Mày đã cập nhật file Sumerize chưa, đừng quên đó, mà giờ của tao là GMT +7 hôm nay mới 26/3 mà trong sumerize có 27/3 rồi mày.
+
+---
+
+_**Assistant**_
+
+Ái chà, mày nói đúng. Tao quên cập nhật file Sumerize.txt rồi và có vẻ như ngày tháng trong file đó bị sai. Để tao cập nhật lại ngay nhé. Hôm nay là 26/3/2024 với múi giờ GMT+7, tao sẽ sửa lại cho đúng.
+
+---
+
+```diff
+     - Khoảng cách giữa các phần tử được điều chỉnh để dễ nhìn hơn
+  
+- ## 2025-03-26: Khắc phục lỗi UI và logic trong dialog và nút Select All
++ ## 2024-03-26: Khắc phục lỗi UI và logic trong dialog và nút Select All
+  1. **Khắc phục lỗi hiển thị tên dialog "DIALOG_CONFIRM_DELETE_SELECTED_VIDEOS"**:
+     - Sử dụng trực tiếp đối tượng LanguageManager để lấy chuỗi đã dịch thay vì qua phương thức tr_()
+     - Đảm bảo trạng thái UI luôn phản ánh đúng trạng thái hiện tại của dữ liệu
+  
+- ## 2025-03-27: Cải thiện thông báo File Already Exists
++ ## 2024-03-26: Cải thiện thông báo File Already Exists và đồng nhất UI giữa các tab
+  1. **Cải thiện nội dung thông báo trong dialog "File Already Exists"**:
+     - Sửa đổi chuỗi thông báo trong localization/english.py và localization/vietnamese.py
+     - Sau đó mới tạo nội dung thông báo dựa trên danh sách
+     - Đơn giản hóa code và tăng hiệu suất bằng cách loại bỏ các bước kiểm tra không cần thiết
++ 
++ 4. **Đồng nhất hiệu ứng UI giữa các tab**:
++    - Cập nhật stylesheet cho bảng trong tab Video Info để có hiệu ứng hover giống với tab Downloaded Videos
++    - Thêm phương thức show_full_text_tooltip để hiển thị tooltip khi hover vào các ô trong bảng
++    - Cập nhật phương thức apply_theme_colors để áp dụng style đồng nhất giữa hai tab
++    - Thêm style cho thanh cuộn trong tab Video Info để đảm bảo trải nghiệm nhất quán
++    - Đảm bảo màu sắc hiệu ứng hover phù hợp với theme đang sử dụng (dark/light)
+```
+
+---
+
+Oke bro, tao đã cập nhật lại file Sumerize.txt rồi. Đã sửa hai chỗ:
+
+1. Sửa lại ngày tháng từ 2025-03-26 thành 2024-03-26 và từ 2025-03-27 thành 2024-03-26
+2. Thêm phần "Đồng nhất hiệu ứng UI giữa các tab" vào mục 4 trong cập nhật ngày 26/3/2024
+
+Giờ file Sumerize đã được cập nhật đầy đủ với mô tả chi tiết về những thay đổi mới nhất mà mình vừa thực hiện.
+
+Còn vấn đề gì khác mày muốn tao giúp không?
+
+---
+
+_**User**_
+
+Tao nghĩ khi mới vào mà danh sách đang trống thì những cái nút như là unselect all hay delete all này sẽ chuyển qua màu xám cho nó hợp lý hơn đúng không. Bởi vì lúc đấy mình chưa thể thực hiện các nút này được mà. 
+
+---
+
+_**Assistant**_
 
 
 

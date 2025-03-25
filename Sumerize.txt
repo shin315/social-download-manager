@@ -227,7 +227,7 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
    - Các nút Yes/No được thiết kế với hover effect và màu sắc rõ ràng hơn
    - Khoảng cách giữa các phần tử được điều chỉnh để dễ nhìn hơn
 
-## 2025-03-26: Khắc phục lỗi UI và logic trong dialog và nút Select All
+## 2024-03-26: Khắc phục lỗi UI và logic trong dialog và nút Select All
 1. **Khắc phục lỗi hiển thị tên dialog "DIALOG_CONFIRM_DELETE_SELECTED_VIDEOS"**:
    - Sử dụng trực tiếp đối tượng LanguageManager để lấy chuỗi đã dịch thay vì qua phương thức tr_()
    - Đảm bảo chuỗi luôn được dịch đúng, ngay cả khi không có language manager
@@ -249,7 +249,7 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
    - Cải thiện tính nhất quán giữa các dialog trong ứng dụng
    - Đảm bảo trạng thái UI luôn phản ánh đúng trạng thái hiện tại của dữ liệu
 
-## 2025-03-27: Cải thiện thông báo File Already Exists
+## 2024-03-26: Cải thiện thông báo File Already Exists và đồng nhất UI giữa các tab
 1. **Cải thiện nội dung thông báo trong dialog "File Already Exists"**:
    - Sửa đổi chuỗi thông báo trong localization/english.py và localization/vietnamese.py
    - Thay thế văn bản cũ "File '{}' đã tồn tại trong thư mục lưu.\nBạn có muốn ghi đè lên không?" 
@@ -265,3 +265,10 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
    - Thu thập danh sách file đã tồn tại trước
    - Sau đó mới tạo nội dung thông báo dựa trên danh sách
    - Đơn giản hóa code và tăng hiệu suất bằng cách loại bỏ các bước kiểm tra không cần thiết
+
+4. **Đồng nhất hiệu ứng UI giữa các tab**:
+   - Cập nhật stylesheet cho bảng trong tab Video Info để có hiệu ứng hover giống với tab Downloaded Videos
+   - Thêm phương thức show_full_text_tooltip để hiển thị tooltip khi hover vào các ô trong bảng
+   - Cập nhật phương thức apply_theme_colors để áp dụng style đồng nhất giữa hai tab
+   - Thêm style cho thanh cuộn trong tab Video Info để đảm bảo trải nghiệm nhất quán
+   - Đảm bảo màu sắc hiệu ứng hover phù hợp với theme đang sử dụng (dark/light)

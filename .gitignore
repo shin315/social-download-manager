@@ -151,3 +151,6 @@ test_*.py
 *_backup.py
 error_log.txt
 temp_backup/ 
+
+#Tóm tắt :
+Sumerize.txt
