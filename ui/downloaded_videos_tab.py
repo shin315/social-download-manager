@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QLineEdit, QPushButton, QTableWidget, QHeaderView,
                              QTableWidgetItem, QMessageBox, QFrame, QScrollArea, QApplication, QDialog, QTextEdit, QCheckBox,
-                             QMenu, QDialogButtonBox)
+                             QMenu, QDialogButtonBox, QToolTip)
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QCursor, QAction
 import os
@@ -23,28 +23,51 @@ class DownloadedVideosTab(QWidget):
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
-        self.lang_manager = get_language_manager()
-        self.all_videos = []  # Lưu trữ tất cả các video
-        self.filtered_videos = []  # Danh sách video sau khi lọc
+        self.lang_manager = parent.lang_manager if parent and hasattr(parent, 'lang_manager') else None
+        self.all_videos = []  # Danh sách tất cả các video
+        self.filtered_videos = []  # Danh sách các video đã lọc
         self.selected_video = None  # Video được chọn hiện tại
+        self.sort_column = 7  # Mặc định sắp xếp theo ngày tải
+        self.sort_order = Qt.SortOrder.DescendingOrder  # Mặc định sắp xếp giảm dần
+        
+        # Các chỉ số cột
+        self.select_col = 0
+        self.title_col = 1
+        self.creator_col = 2
+        self.quality_col = 3
+        self.format_col = 4
+        self.size_col = 5
+        self.status_col = 6
+        self.date_col = 7
+        self.hashtags_col = 8
+        self.actions_col = 9
+        
+        # Khởi tạo giao diện
         self.init_ui()
+        
+        # Tải danh sách video đã tải
         self.load_downloaded_videos()
-        # Biến cho việc sắp xếp
-        self.sort_column = 0  # Mặc định sắp xếp theo cột thứ tự
-        self.sort_order = Qt.SortOrder.AscendingOrder  # Mặc định tăng dần
         
-        # Kết nối với tín hiệu thay đổi ngôn ngữ từ MainWindow
-        if parent and hasattr(parent, 'language_changed'):
-            parent.language_changed.connect(self.update_language)
-        
-        # Áp dụng kiểu màu mặc định theo chế độ tối (có thể được ghi đè sau này)
-        self.apply_theme_colors("dark")
-            
     def tr_(self, key):
-        """Dịch theo key sử dụng language manager hiện tại"""
+        """Dịch tùy thuộc vào ngôn ngữ hiện tại"""
         if hasattr(self, 'lang_manager') and self.lang_manager:
             return self.lang_manager.tr(key)
-        return key  # Trả về key nếu không có language manager
+        return key  # Fallback nếu không có language manager
+    
+    def format_tooltip_text(self, text):
+        """Format tooltip text với dấu xuống dòng để dễ đọc hơn"""
+        if not text:
+            return ""
+        
+        # Xử lý xuống dòng tại dấu chấm, chấm than, chấm hỏi mà có khoảng trắng phía sau
+        formatted_text = re.sub(r'([.!?]) ', r'\1\n', text)
+        # Xử lý xuống dòng tại dấu phẩy mà có khoảng trắng phía sau
+        formatted_text = re.sub(r'([,]) ', r'\1\n', formatted_text)
+        
+        # Xử lý hashtag - mỗi hashtag một dòng
+        formatted_text = re.sub(r' (#[^\s#]+)', r'\n\1', formatted_text)
+        
+        return formatted_text
         
     def update_language(self):
         """Cập nhật ngôn ngữ hiển thị khi thay đổi ngôn ngữ"""
@@ -761,8 +784,14 @@ class DownloadedVideosTab(QWidget):
                 self.parent.status_bar.showMessage(self.tr_("STATUS_ERROR").format(str(e)))
 
     def display_videos(self):
-        """Hiển thị danh sách video đã lọc"""
-        # Xóa dữ liệu hiện tại trong bảng
+        """Hiển thị danh sách các video đã tải xuống trong bảng"""
+        # Debug: Kiểm tra các video và original_title
+        for idx, video in enumerate(self.filtered_videos[:3]):  # Chỉ debug 3 video đầu tiên để tránh quá nhiều log
+            has_original = len(video) > 9 and video[9]
+            original_value = video[9] if len(video) > 9 else "N/A"
+            print(f"DEBUG - Video {idx}: has_original={has_original}, title='{video[0]}', original_title='{original_value}'")
+        
+        # Xóa nội dung hiện tại và thiết lập số dòng mới
         self.downloads_table.clearContents()
         self.downloads_table.setRowCount(0)
         
@@ -785,11 +814,20 @@ class DownloadedVideosTab(QWidget):
             
             # Cột Title
             title_item = QTableWidgetItem(video[0])
+            # Lưu full title vào UserRole để dùng khi copy
+            if len(video) > 9 and video[9]:
+                title_item.setData(Qt.ItemDataRole.UserRole, video[9])  # Lưu original_title
+            else:
+                title_item.setData(Qt.ItemDataRole.UserRole, video[0])  # Fallback lưu title ngắn
             # Ưu tiên sử dụng full title cho tooltip nếu có
             if len(video) > 9 and video[9]:
-                title_item.setToolTip(video[9])  # Tooltip với full title
+                # Format tooltip đẹp hơn với xuống dòng
+                tooltip_text = self.format_tooltip_text(video[9])
+                title_item.setToolTip(tooltip_text)  # Tooltip với full title đã format
             else:
-                title_item.setToolTip(video[0])  # Fallback với title ngắn
+                # Format tooltip đẹp hơn với xuống dòng
+                tooltip_text = self.format_tooltip_text(video[0]) 
+                title_item.setToolTip(tooltip_text)  # Fallback với title ngắn đã format
             # Tắt khả năng chỉnh sửa
             title_item.setFlags(title_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
             self.downloads_table.setItem(idx, 1, title_item)
@@ -1298,13 +1336,55 @@ class DownloadedVideosTab(QWidget):
             
             # Lọc bỏ hashtag khỏi title nếu chưa được lọc
             title = download_info.get('title', 'Unknown')
-            if hashtags and '#' in title:
-                # Xóa hashtag và dấu cách thừa
-                cleaned_title = re.sub(r'#\S+', '', title).strip()
-                # Xóa nhiều dấu cách thành một dấu cách
-                cleaned_title = re.sub(r'\s+', ' ', cleaned_title).strip()
-                title = cleaned_title
+            original_title = title  # Lưu lại title gốc trước khi xử lý
+
+            # Xử lý hashtags
+            hashtags = download_info.get('hashtags', [])
+            if hashtags:
+                if isinstance(hashtags, list):
+                    hashtags_str = ' '.join(['#' + tag if not tag.startswith('#') else tag for tag in hashtags])
+                else:
+                    hashtags_str = str(hashtags)
+                    if ' ' in hashtags_str and not '#' in hashtags_str:
+                        hashtags_str = ' '.join(['#' + tag.strip() for tag in hashtags_str.split()])
+            else:
+                hashtags_str = ""
+
+            # Nếu có hashtags nhưng title vẫn chứa dấu #, lọc bỏ các hashtag khỏi title
+            if '#' in title:
+                # Trích xuất các hashtag từ title để đảm bảo không mất thông tin
+                import re
+                found_hashtags = re.findall(r'#([^\s#]+)', title)
+                if found_hashtags:
+                    # Thêm các hashtag tìm thấy vào danh sách hashtags nếu chưa có
+                    if isinstance(hashtags, list):
+                        for tag in found_hashtags:
+                            if tag not in hashtags:
+                                hashtags.append(tag)
+                    
+                    # Cập nhật chuỗi hashtags
+                    if isinstance(hashtags, list):
+                        hashtags_str = ' '.join(['#' + tag if not tag.startswith('#') else tag for tag in hashtags])
+                    
+                    # Xóa hashtag và dấu cách thừa khỏi title
+                    cleaned_title = re.sub(r'#\S+', '', title).strip()
+                    # Xóa nhiều dấu cách thành một dấu cách
+                    cleaned_title = re.sub(r'\s+', ' ', cleaned_title).strip()
+                    title = cleaned_title
+                    
                 print(f"DEBUG cleaned title: {title}")
+
+            # Cập nhật title trong download_info nếu đã được làm sạch
+            if title != original_title:
+                download_info['title'] = title
+                
+            # Cập nhật hashtags trong download_info
+            if hashtags_str and isinstance(hashtags, list):
+                download_info['hashtags'] = hashtags
+
+            # Lưu title gốc vào trường description nếu chưa có
+            if not download_info.get('description'):
+                download_info['description'] = original_title
             
             # Kiểm tra và cập nhật kích thước file thực tế
             file_path = download_info.get('filepath', '')
@@ -1732,17 +1812,18 @@ class DownloadedVideosTab(QWidget):
             item = self.downloads_table.item(row, column)
             if item and 0 <= row < len(self.filtered_videos):
                 video = self.filtered_videos[row]
+                tooltip_text = ""
                 
                 # Xử lý tooltip tùy theo loại cột
                 if column == 1:  # Title
                     # Nếu có full title thì hiển thị full title, ngược lại hiển thị title ngắn
                     if len(video) > 9 and video[9]:
-                        self.downloads_table.setToolTip(video[9])
+                        tooltip_text = video[9]
                     else:
-                        self.downloads_table.setToolTip(video[0])
+                        tooltip_text = video[0]
                 elif column == 2:  # Creator
                     # Hiển thị tên creator đầy đủ
-                    self.downloads_table.setToolTip(f"Creator: {video[1]}")
+                    tooltip_text = f"Creator: {video[1]}"
                 elif column == 8:  # Hashtags
                     # Hiển thị hashtags đầy đủ với format hợp lý
                     if video[7]:
@@ -1750,17 +1831,23 @@ class DownloadedVideosTab(QWidget):
                         hashtags = video[7]
                         # Chuyển thành dạng danh sách hashtags để dễ đọc
                         if ' ' in hashtags and not all(tag.startswith('#') for tag in hashtags.split()):
-                            formatted_hashtags = ' '.join(['#' + tag.strip() if not tag.strip().startswith('#') else tag.strip() 
-                                                          for tag in hashtags.split()])
-                            self.downloads_table.setToolTip(formatted_hashtags)
+                            tooltip_text = ' '.join(['#' + tag.strip() if not tag.strip().startswith('#') else tag.strip() 
+                                           for tag in hashtags.split()])
                         else:
-                            self.downloads_table.setToolTip(hashtags)
+                            tooltip_text = hashtags
                     else:
-                        self.downloads_table.setToolTip("No hashtags")
+                        tooltip_text = "No hashtags"
+                
+                # Format tooltip text để dễ đọc hơn
+                if tooltip_text:
+                    formatted_text = self.format_tooltip_text(tooltip_text)
+                    QToolTip.showText(QCursor.pos(), formatted_text)
+                else:
+                    QToolTip.hideText()
             else:
-                self.downloads_table.setToolTip("")
+                QToolTip.hideText()
         else:
-            self.downloads_table.setToolTip("")
+            QToolTip.hideText()
 
     def show_copy_dialog(self, item):
         """Hiển thị dialog cho phép copy text khi double-click vào ô trong bảng"""
@@ -1866,7 +1953,15 @@ class DownloadedVideosTab(QWidget):
         
         # Copy button
         copy_btn = QPushButton(self.tr_("BUTTON_COPY"))
-        copy_btn.clicked.connect(lambda: self.copy_to_clipboard(full_text))
+        # Thêm column_name tương ứng với loại dữ liệu
+        if column == 1:  # Title
+            copy_btn.clicked.connect(lambda: self.copy_to_clipboard(full_text, "title"))
+        elif column == 2:  # Creator
+            copy_btn.clicked.connect(lambda: self.copy_to_clipboard(full_text, "creator"))
+        elif column == 8:  # Hashtags
+            copy_btn.clicked.connect(lambda: self.copy_to_clipboard(full_text, "hashtags"))
+        else:
+            copy_btn.clicked.connect(lambda: self.copy_to_clipboard(full_text))
         button_layout.addWidget(copy_btn)
         
         # Close button
@@ -1885,12 +1980,24 @@ class DownloadedVideosTab(QWidget):
         # Đặt focus về ô tìm kiếm để tránh hiệu ứng bôi đen
         self.search_input.setFocus()
         
-    def copy_to_clipboard(self, text):
-        """Copy text vào clipboard"""
+    def copy_to_clipboard(self, text, column_name=None):
+        """Copy text vào clipboard với xử lý đặc biệt cho một số cột"""
+        if not text:
+            return
+        
+        # Xử lý đặc biệt cho cột title - loại bỏ hashtags
+        if column_name == "title":
+            # Loại bỏ các hashtag khỏi title
+            text = re.sub(r'#\w+', '', text).strip()
+            # Loại bỏ khoảng trắng kép
+            text = re.sub(r'\s+', ' ', text)
+        
         clipboard = QApplication.clipboard()
         clipboard.setText(text)
         if self.parent:
-            self.parent.status_bar.showMessage(self.tr_("STATUS_COPIED")) 
+            # Hiển thị thông báo preview của text đã copy (tối đa 50 ký tự)
+            copied_text = text[:50] + "..." if len(text) > 50 else text
+            self.parent.status_bar.showMessage(self.tr_("STATUS_TEXT_COPIED").format(copied_text), 3000)
 
     def delete_selected_videos(self):
         """Xóa các video đã chọn khỏi database và bảng"""
@@ -2162,12 +2269,13 @@ class DownloadedVideosTab(QWidget):
         """Hiển thị menu chuột phải cho bảng video đã tải"""
         # Lấy vị trí dòng và cột hiện tại
         index = self.downloads_table.indexAt(position)
+        
         if not index.isValid():
             return
             
         row = index.row()
         column = index.column()
-        
+            
         if row < 0 or row >= self.downloads_table.rowCount():
             return
         
@@ -2186,6 +2294,9 @@ class DownloadedVideosTab(QWidget):
                 format_str = video[3] if len(video) > 3 else "MP4"  # Default to MP4
                 hashtags_raw = video[7] if len(video) > 7 else ""
                 directory_path = video[8] if len(video) > 8 else ""
+                original_title = video[9] if len(video) > 9 else title  # Sử dụng original_title nếu có
+                
+                print(f"DEBUG - Video data: title='{title}', original_title='{original_title}'")
                 
                 # Xác định filepath dựa vào title và format
                 if title and directory_path:
@@ -2198,23 +2309,46 @@ class DownloadedVideosTab(QWidget):
                 creator = video.get('creator', '')
                 hashtags_raw = video.get('hashtags', [])
                 filepath = video.get('filepath', '')
+                original_title = video.get('original_title', title)  # Sử dụng original_title nếu có
+                
+                print(f"DEBUG - Dict data: title='{title}', original_title='{original_title}'")
             else:
                 title = getattr(video, 'title', '')
                 creator = getattr(video, 'creator', '')
                 hashtags_raw = getattr(video, 'hashtags', [])
                 filepath = getattr(video, 'filepath', '')
+                original_title = getattr(video, 'original_title', title)  # Sử dụng original_title nếu có
+                
+                print(f"DEBUG - Object data: title='{title}', original_title='{original_title}'")
             
             # Xác định loại dữ liệu dựa vào cột
             if column == 1:  # Title
                 # Thêm action Copy Title
                 copy_action = QAction(self.tr_("CONTEXT_COPY_TITLE"), self)
-                copy_action.triggered.connect(lambda: self.copy_to_clipboard(title))
+                # Lấy full title từ UserRole data thay vì lấy text hiển thị
+                item = self.downloads_table.item(row, column)
+                
+                # Debug: kiểm tra UserRole data
+                user_role_data = item.data(Qt.ItemDataRole.UserRole) if item else None
+                displayed_text = item.text() if item else ""
+                
+                print(f"DEBUG - Title column - Displayed: '{displayed_text}'")
+                print(f"DEBUG - Title column - UserRole: '{user_role_data}'")
+                print(f"DEBUG - Video original_title (index 9): '{original_title}'")
+                
+                # Ưu tiên dùng UserRole data (original_title) nếu có
+                full_title = user_role_data if user_role_data else (original_title if original_title else title)
+                print(f"DEBUG - Final title to copy: '{full_title}'")
+                
+                # Sửa cách tạo lambda để tránh vấn đề với closure
+                copy_action.triggered.connect(lambda checked=False, title_to_copy=full_title: self.copy_to_clipboard(title_to_copy, column_name="title"))
                 context_menu.addAction(copy_action)
             
             elif column == 2:  # Creator
                 # Thêm action Copy Creator
                 copy_action = QAction(self.tr_("CONTEXT_COPY_CREATOR"), self)
-                copy_action.triggered.connect(lambda: self.copy_to_clipboard(creator))
+                print(f"DEBUG - Creator to copy: '{creator}'")
+                copy_action.triggered.connect(lambda checked=False, creator_to_copy=creator: self.copy_to_clipboard(creator_to_copy, column_name="creator"))
                 context_menu.addAction(copy_action)
             
             elif column == 8:  # Hashtags
@@ -2226,11 +2360,12 @@ class DownloadedVideosTab(QWidget):
                     # Nếu là string, giả sử rằng hashtags là một chuỗi đã được định dạng sẵn
                     hashtags_str = hashtags_raw
                 
+                print(f"DEBUG - Hashtags to copy: '{hashtags_str}'")
                 # Thêm action Copy Hashtags
                 copy_action = QAction(self.tr_("CONTEXT_COPY_HASHTAGS"), self)
-                copy_action.triggered.connect(lambda: self.copy_to_clipboard(hashtags_str))
+                copy_action.triggered.connect(lambda checked=False, hashtags_to_copy=hashtags_str: self.copy_to_clipboard(hashtags_to_copy, column_name="hashtags"))
                 context_menu.addAction(copy_action)
-                
+            
             # Chức năng chung cho tất cả các cột
             # Thêm separator nếu có action trước đó
             if not context_menu.isEmpty():
@@ -2319,7 +2454,7 @@ class DownloadedVideosTab(QWidget):
         # Hiển thị menu nếu có action
         if not context_menu.isEmpty():
             context_menu.exec(QCursor.pos())
-            
+
     def play_video(self, row):
         """Phát video đã tải bằng trình phát mặc định của hệ thống"""
         if row < 0 or row >= len(self.filtered_videos):

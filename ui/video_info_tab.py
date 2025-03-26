@@ -13,6 +13,8 @@ from datetime import datetime
 from utils.db_manager import DatabaseManager
 import requests
 import shutil  # For file operations
+import re
+from PyQt6.QtWidgets import QToolTip
 
 # Đường dẫn đến file cấu hình
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
@@ -179,9 +181,23 @@ class VideoInfoTab(QWidget):
             # Lấy title từ item
             item = self.video_table.item(row, column)
             if item and item.text():
+                # Lấy full title từ video_info_dict nếu có
+                full_title = item.text()  # Default là text hiển thị
+                if row in self.video_info_dict:
+                    video_info = self.video_info_dict[row]
+                    # Ưu tiên caption nếu có vì nó thường chứa nội dung đầy đủ nhất
+                    if hasattr(video_info, 'caption') and video_info.caption:
+                        full_title = video_info.caption
+                    # Nếu không có caption, thử dùng original_title
+                    elif hasattr(video_info, 'original_title') and video_info.original_title:
+                        full_title = video_info.original_title
+                    # Nếu không, dùng title
+                    elif hasattr(video_info, 'title'):
+                        full_title = video_info.title
+                
                 # Thêm action Copy
                 copy_action = QAction(self.tr_("CONTEXT_COPY_TITLE"), self)
-                copy_action.triggered.connect(lambda: self.copy_to_clipboard(item.text()))
+                copy_action.triggered.connect(lambda: self.copy_to_clipboard(full_title, "title"))
                 context_menu.addAction(copy_action)
         
         elif column == 2:  # Creator
@@ -190,7 +206,7 @@ class VideoInfoTab(QWidget):
             if item and item.text():
                 # Thêm action Copy
                 copy_action = QAction(self.tr_("CONTEXT_COPY_CREATOR"), self)
-                copy_action.triggered.connect(lambda: self.copy_to_clipboard(item.text()))
+                copy_action.triggered.connect(lambda: self.copy_to_clipboard(item.text(), "creator"))
                 context_menu.addAction(copy_action)
         
         elif column == 7:  # Hashtags
@@ -199,7 +215,7 @@ class VideoInfoTab(QWidget):
             if item and item.text():
                 # Thêm action Copy
                 copy_action = QAction(self.tr_("CONTEXT_COPY_HASHTAGS"), self)
-                copy_action.triggered.connect(lambda: self.copy_to_clipboard(item.text()))
+                copy_action.triggered.connect(lambda: self.copy_to_clipboard(item.text(), "hashtags"))
                 context_menu.addAction(copy_action)
                 
         # Chức năng chung cho tất cả các cột
@@ -1021,6 +1037,27 @@ class VideoInfoTab(QWidget):
                 
             return "best"  # Mặc định nếu không tìm thấy
 
+    def tr_(self, key):
+        """Dịch theo key sử dụng language manager hiện tại"""
+        if hasattr(self, 'lang_manager') and self.lang_manager:
+            return self.lang_manager.tr(key)
+        return key  # Trả về key nếu không có language manager
+
+    def format_tooltip_text(self, text):
+        """Format tooltip text với dấu xuống dòng để dễ đọc hơn"""
+        if not text:
+            return ""
+        
+        # Xử lý xuống dòng tại dấu chấm, chấm than, chấm hỏi mà có khoảng trắng phía sau
+        formatted_text = re.sub(r'([.!?]) ', r'\1\n', text)
+        # Xử lý xuống dòng tại dấu phẩy mà có khoảng trắng phía sau
+        formatted_text = re.sub(r'([,]) ', r'\1\n', formatted_text)
+        
+        # Xử lý hashtag - mỗi hashtag một dòng
+        formatted_text = re.sub(r' (#[^\s#]+)', r'\n\1', formatted_text)
+        
+        return formatted_text
+
     def update_language(self):
         """Cập nhật ngôn ngữ cho tất cả các thành phần"""
         # Cập nhật các label
@@ -1041,10 +1078,6 @@ class VideoInfoTab(QWidget):
         
         # Cập nhật header bảng
         self.update_table_headers()
-
-    def tr_(self, key):
-        """Dịch chuỗi dựa trên ngôn ngữ hiện tại"""
-        return self.lang_manager.get_text(key)
 
     def update_table_headers(self):
         """Cập nhật header của bảng theo ngôn ngữ hiện tại"""
@@ -1239,7 +1272,14 @@ class VideoInfoTab(QWidget):
                     title_text = video_info.title
                     
                 title_item = QTableWidgetItem(title_text)
-                title_item.setToolTip(title_text)
+                # Lưu title gốc vào UserRole để có thể lấy ra khi cần
+                if hasattr(video_info, 'original_title') and video_info.original_title:
+                    title_item.setData(Qt.ItemDataRole.UserRole, video_info.original_title)
+                else:
+                    title_item.setData(Qt.ItemDataRole.UserRole, title_text)
+                # Format tooltip text để dễ đọc hơn
+                tooltip_text = self.format_tooltip_text(title_text)
+                title_item.setToolTip(tooltip_text)
                 # Tắt khả năng chỉnh sửa
                 title_item.setFlags(title_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.video_table.setItem(row, 1, title_item)
@@ -1248,7 +1288,9 @@ class VideoInfoTab(QWidget):
                 creator = video_info.creator if hasattr(video_info, 'creator') and video_info.creator else ""
                 creator_item = QTableWidgetItem(creator)
                 creator_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                creator_item.setToolTip(creator)  # Thêm tooltip khi hover
+                # Format tooltip text để dễ đọc hơn
+                creator_tooltip = self.format_tooltip_text(creator)
+                creator_item.setToolTip(creator_tooltip)  # Thêm tooltip khi hover
                 # Tắt khả năng chỉnh sửa
                 creator_item.setFlags(creator_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.video_table.setItem(row, 2, creator_item)
@@ -1350,7 +1392,9 @@ class VideoInfoTab(QWidget):
                 
                 hashtags_str = " ".join([f"#{tag}" for tag in hashtags]) if hashtags else ""
                 hashtags_item = QTableWidgetItem(hashtags_str)
-                hashtags_item.setToolTip(hashtags_str)  # Thêm tooltip khi hover
+                # Format tooltip text để dễ đọc hơn
+                hashtags_tooltip = self.format_tooltip_text(hashtags_str)
+                hashtags_item.setToolTip(hashtags_tooltip)  # Thêm tooltip khi hover
                 # Tắt khả năng chỉnh sửa
                 hashtags_item.setFlags(hashtags_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.video_table.setItem(row, 7, hashtags_item)
@@ -2008,12 +2052,30 @@ class VideoInfoTab(QWidget):
         # Đặt focus về ô tìm kiếm để tránh hiệu ứng bôi đen
         self.url_input.setFocus()
         
-    def copy_to_clipboard(self, text):
-        """Copy text vào clipboard"""
+    def copy_to_clipboard(self, text, column_name=None):
+        """Sao chép văn bản vào clipboard với xử lý đặc biệt cho một số cột"""
+        if not text:
+            return
+        
+        # Xử lý đặc biệt cho cột title - loại bỏ hashtags
+        if column_name == "title":
+            # Loại bỏ các hashtag khỏi title
+            text = re.sub(r'#\w+', '', text).strip()
+            # Loại bỏ khoảng trắng kép
+            text = re.sub(r'\s+', ' ', text)
+        
+        # Đặt văn bản vào clipboard
         clipboard = QApplication.clipboard()
         clipboard.setText(text)
-        if self.parent:
-            self.parent.status_bar.showMessage(self.tr_("STATUS_COPIED")) 
+        
+        # Hiển thị thông báo
+        show_message = True
+        if hasattr(self, 'parent') and hasattr(self.parent, 'settings'):
+            show_message = self.parent.settings.value("show_copy_message", "true") == "true"
+        
+        if show_message:
+            copied_text = text[:50] + "..." if len(text) > 50 else text
+            self.parent.status_bar.showMessage(self.tr_("STATUS_TEXT_COPIED").format(copied_text), 3000)
 
     # Thêm phương thức mới để chọn hoặc bỏ chọn tất cả video trong bảng
     def toggle_select_all(self):
@@ -2089,41 +2151,36 @@ class VideoInfoTab(QWidget):
         self.update_select_toggle_button()
 
     def show_full_text_tooltip(self, row, column):
-        """Hiển thị tooltip với text đầy đủ khi hover chuột vào ô"""
-        # Chỉ hiển thị tooltip với các cột có văn bản dài
-        if column in [1, 2, 7]:  # Title, Creator, Hashtags columns
+        """Hiển thị tooltip với toàn bộ nội dung khi hover vào ô"""
+        try:
             item = self.video_table.item(row, column)
-            if item and row < len(self.video_info_dict):
-                # Lấy thông tin video từ dictionary
-                url = ""
-                for i in range(self.video_table.rowCount()):
-                    cell_widget = self.video_table.cellWidget(i, 0)
-                    if cell_widget and i == row:
-                        # Lấy URL từ property của checkbox
-                        checkbox = cell_widget.findChild(QCheckBox)
-                        if checkbox:
-                            url = checkbox.property("url")
-                            break
+            if item:
+                text = item.text()
                 
-                if url and url in self.video_info_dict:
-                    video_info = self.video_info_dict[url]
+                # Xử lý đặc biệt cho cột title (column 1)
+                if column == 1 and row in self.video_info_dict:
+                    video_info = self.video_info_dict[row]
                     
-                    # Xử lý tooltip tùy theo loại cột
-                    if column == 1:  # Title
-                        self.video_table.setToolTip(video_info.title)
-                    elif column == 2:  # Creator
-                        self.video_table.setToolTip(f"Creator: {video_info.creator}")
-                    elif column == 7:  # Hashtags
-                        hashtags_str = " ".join([f"#{tag}" for tag in video_info.hashtags]) if video_info.hashtags else ""
-                        self.video_table.setToolTip(hashtags_str)
-                else:
-                    # Nếu không tìm thấy thông tin video, hiển thị nội dung của ô
-                    self.video_table.setToolTip(item.text())
-            else:
-                self.video_table.setToolTip("")
-        else:
-            self.video_table.setToolTip("")
-            
+                    # Ưu tiên sử dụng caption nếu có (chứa đầy đủ thông tin nhất)
+                    if hasattr(video_info, 'caption') and video_info.caption:
+                        text = video_info.caption
+                    # Nếu không có caption, thử dùng original_title
+                    elif hasattr(video_info, 'original_title') and video_info.original_title:
+                        text = video_info.original_title
+                    # Nếu không, thì sử dụng title
+                    elif hasattr(video_info, 'title'):
+                        text = video_info.title
+                        
+                # Đối với các trường khác, lấy text trực tiếp từ item
+                if text:
+                    # Format tooltip text để dễ đọc hơn với line breaks
+                    formatted_text = self.format_tooltip_text(text)
+                    QToolTip.showText(QCursor.pos(), formatted_text)
+        except Exception as e:
+            print(f"DEBUG - Error in show_full_text_tooltip: {e}")
+            # Ignore exceptions
+            pass
+
     def update_button_states(self):
         """Cập nhật trạng thái các nút dựa trên số lượng video trong bảng"""
         has_videos = self.video_table.rowCount() > 0

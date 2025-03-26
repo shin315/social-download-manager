@@ -20,61 +20,51 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
 - Phát video trực tiếp từ tab "Downloaded Videos"
 - Chuyển đổi sang MP3 với xử lý tên file thông minh
 
-## CẤU TRÚC DỰ ÁN
-- `main.py`: Điểm khởi đầu của ứng dụng
-- `ui/`: Thư mục chứa các file liên quan đến giao diện
-  - `main_window.py`: Cửa sổ chính của ứng dụng
-  - `video_info_tab.py`: Tab hiển thị thông tin video và tải xuống
-  - `downloaded_videos_tab.py`: Tab quản lý video đã tải xuống
-  - `donate_tab.py`: Tab cho phần quyên góp
-- `utils/`: Thư mục chứa các tiện ích
-  - `downloader.py`: Xử lý tải video
-  - `db_manager.py`: Quản lý cơ sở dữ liệu SQLite
-  - `download_thread.py`: Xử lý tải xuống bất đồng bộ
-- `localization/`: Thư mục chứa các file ngôn ngữ
-  - `english.py`: Chuỗi tiếng Anh
-  - `vietnamese.py`: Chuỗi tiếng Việt
-  - `language_manager.py`: Quản lý ngôn ngữ
-- `assets/`: Thư mục chứa tài nguyên (logo, hình ảnh)
-- `config.json`: File cấu hình ứng dụng
-
 ## CẬP NHẬT GẦN ĐÂY
-1. **Đã thêm tính năng "Rename Video"**:
+1. **2024-03-26: Cải thiện hiển thị tooltip và copy title trong cả hai tab**:
+   - Thêm hàm `format_tooltip_text()` để định dạng tooltip với dấu xuống dòng tự động tại dấu chấm câu và hashtag, giúp dễ đọc hơn
+   - Lưu trữ title đầy đủ vào `Qt.ItemDataRole.UserRole` để sử dụng khi copy từ context menu
+   - Cập nhật hàm `copy_to_clipboard()` để loại bỏ hashtag khi copy từ cột title, làm cho nội dung sạch và dễ sử dụng
+   - Áp dụng cải tiến tooltip cho cả hai tab (Video Info và Downloaded Videos)
+   - Đảm bảo rằng khi right-click vào title và chọn "Copy Title", người dùng luôn nhận được phiên bản title đã làm sạch (không có hashtag)
+   - Cải thiện trải nghiệm người dùng bằng cách hiển thị thông tin rõ ràng hơn trong các tooltip
+
+2. **Đã thêm tính năng "Rename Video"**:
    - Cho phép người dùng đổi tên video trước khi tải xuống thông qua menu chuột phải
    - Tên mới sẽ được hiển thị trong tab "Downloaded Videos" và làm tên file khi lưu
    - Áp dụng các quy tắc làm sạch tên tệp để đảm bảo tính hợp lệ
 
-2. **Xử lý cải tiến cho video không có tiêu đề**:
+3. **Xử lý cải tiến cho video không có tiêu đề**:
    - Bắt buộc người dùng phải đặt tên file trước khi tải xuống nếu video không có tiêu đề
    - Tự động đề xuất tên mặc định dựa trên timestamp: Video_YYYYMMdd_HHmmss
    - Tên đã đặt sẽ được lưu vào cơ sở dữ liệu và hiển thị chính xác trong tab Downloaded Videos
 
-3. **Cải tiến thuật toán tìm kiếm và phát video**:
+4. **Cải tiến thuật toán tìm kiếm và phát video**:
    - Nâng cao khả năng tìm kiếm tập tin dựa trên tiêu đề, bao gồm xử lý khi tiêu đề có ký tự đặc biệt
    - Thêm nhiều biến thể tìm kiếm như từ đầu tiên, 3 từ đầu, 5 từ đầu để tăng khả năng tìm thấy file
    - Hỗ trợ đặc biệt xử lý các ký tự đặc biệt như dấu ngoặc kép, ba chấm, v.v.
    - Giảm ngưỡng tương đồng xuống 30% để tìm được nhiều file hơn
 
-4. **Giao diện "File Already Exists" cải tiến**:
+5. **Giao diện "File Already Exists" cải tiến**:
    - Thêm tùy chọn "Apply to all" cho việc ghi đè file trong trường hợp tải nhiều video
    - Chỉ hiển thị "Apply to all" khi có từ 2 file trở lên cần xử lý
    - Cải thiện vị trí của checkbox "Apply to all" sang cùng hàng với các nút Yes/No/Cancel
    - Thêm spacing và style để giao diện trông chuyên nghiệp và cân đối hơn
    - Sửa lỗi không hiển thị "Apply to all" ở thông báo file đã tồn tại đầu tiên
 
-5. **Cải tiến lưu và hiển thị thông tin video**:
+6. **Cải tiến lưu và hiển thị thông tin video**:
    - Tên tùy chỉnh sẽ được lưu vào cả video_info và VideoInfo object
    - Hiển thị đúng tên đã đặt trong tab Downloaded Videos, kể cả khi không có tiêu đề ban đầu
    - Xác định tên file thông minh dựa trên các thuộc tính có sẵn
 
-6. **Cải tiến quá trình chuyển đổi MP3**:
+7. **Cải tiến quá trình chuyển đổi MP3**:
    - Đơn giản hóa quy trình chuyển đổi MP3 bằng cách lưu trực tiếp vào đường dẫn đích
    - Loại bỏ bước tạo tệp tạm thời và đổi tên sau đó, giảm thiểu lỗi đường dẫn
    - Thêm kiểm tra file đầu ra đã được tạo thành công
    - Bổ sung nhật ký chi tiết để dễ dàng gỡ lỗi
    - Xử lý đúng đắn tên tệp đặc biệt và ký tự không hợp lệ trong tên file đầu ra
 
-7. **Đã thêm tính năng xóa file vật lý khi xóa record video**:
+8. **Đã thêm tính năng xóa file vật lý khi xóa record video**:
    - Thêm checkbox "Delete file from disk" trong dialog xác nhận xóa
    - Kiểm tra sự tồn tại của file trước khi cho phép xóa
    - Hỗ trợ xóa nhiều file cùng lúc với tùy chọn "Apply to all"
@@ -84,36 +74,45 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
    - Kiểm tra sự tồn tại của thumbnail trước khi xóa để tránh lỗi
    - Cải thiện kích thước dialog xóa video trong tab Downloaded Videos để phù hợp với kiểu dialog khác
 
-8. **Đã sửa các lỗi logic**:
+9. **Đã sửa các lỗi logic**:
    - Sửa lỗi hiển thị "Apply to all" khi chỉ có 1 file cần xử lý
    - Cải thiện việc tải xuống video không có tiêu đề
    - Sửa lỗi khi phát video có ký tự đặc biệt trong tên file như dấu ngoặc kép
    - Xử lý trường hợp video không có tiêu đề, tìm kiếm trong thư mục theo định dạng
    - Sửa lỗi nút Select All/Unselect All không cập nhật đúng khi chuyển tab từ Info sang Downloaded Videos
 
-9. **Đã tối ưu giao diện tab "Downloaded Videos"**:
+10. **Đã tối ưu giao diện tab "Downloaded Videos"**:
    - Điều chỉnh độ rộng cột, ưu tiên hiển thị cột Title (tăng từ 150px lên 250px)
    - Cố định kích thước các cột ngoại trừ Title để ngăn tự động co giãn
    - Cột Title được thiết lập ở chế độ Stretch để mở rộng khi có thêm không gian
    - Đã vô hiệu hóa sắp xếp cho cột Select
 
-10. **Đã cải thiện dialog copy**:
+11. **Đã cải thiện dialog copy**:
    - Chỉ hiển thị nội dung full title đã loại bỏ hashtags để dễ dàng copy
    - Thêm định dạng cho các hashtags khi hiển thị riêng
 
-11. **Đã sửa lỗi trong hàm `delete_selected_videos` và `on_download_finished`**
+12. **Đã sửa lỗi trong hàm `delete_selected_videos` và `on_download_finished`**
 
-12. **Đã cải thiện cách hiển thị tooltip khi hover chuột vào các cột Title, Creator và Hashtags**
+13. **Đã cải thiện cách hiển thị tooltip khi hover chuột vào các cột Title, Creator và Hashtags**:
+   - Đã thêm hàm format_tooltip_text() để tự động thêm dấu xuống dòng sau dấu chấm câu, dấu phẩy và hashtag
+   - Tooltip giờ đây hiển thị rõ ràng và dễ đọc hơn với định dạng xuống dòng tự động
+   - Mỗi hashtag hiển thị trên một dòng riêng biệt để dễ đọc
+   - Áp dụng cải tiến này cho cả hai tab Video Info và Downloaded Videos
 
-13. **Đã cải thiện xử lý lỗi khi gặp video chỉ chứa hình ảnh và âm thanh (không có video)**
+14. **Đã cải thiện xử lý lỗi khi gặp video chỉ chứa hình ảnh và âm thanh (không có video)**
 
-14. **Đã sửa lỗi tự động tải xuống video MP3 không có tiêu đề mà không hỏi người dùng**
+15. **Đã sửa lỗi tự động tải xuống video MP3 không có tiêu đề mà không hỏi người dùng**
 
-15. **Đã sửa lỗi hiển thị không đầy đủ tiêu đề khi double-click để copy ở tab Video Info**
+16. **Đã sửa lỗi hiển thị không đầy đủ tiêu đề khi double-click để copy ở tab Video Info**
 
-16. **Đã loại bỏ các hashtag trong tiêu đề khi hiển thị trong dialog copy**
+17. **Đã loại bỏ các hashtag trong tiêu đề khi copy**:
+   - Tự động loại bỏ hashtag khi copy title từ cột Title hoặc dialog copy
+   - Đảm bảo nội dung copy luôn sạch và dễ sử dụng cho người dùng
+   - Áp dụng cho cả menu context (chuột phải) và double-click
+   - Cập nhật cho cả hai tab Video Info và Downloaded Videos
+   - Vẫn giữ đầy đủ hashtag khi copy từ cột Hashtag
 
-17. **Đã thêm tính năng xóa file vật lý khi xóa video từ danh sách**
+18. **Đã thêm tính năng xóa file vật lý khi xóa video từ danh sách**
 
 ## CÔNG NGHỆ SỬ DỤNG
 - Python 3.8+
@@ -339,3 +338,29 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
    - Giúp người dùng dễ dàng nhận biết và theo dõi tiến trình tải xuống
    - Giảm khả năng hiển thị thông tin bị tràn ra khỏi status bar
    - Vẫn đảm bảo người dùng có thể nhận diện được tên file đang được tải xuống
+
+## 2024-03-26: Cải thiện hiển thị tooltip và tính năng copy title
+1. **Thêm định dạng tooltip khi hover title**:
+   - Triển khai hàm `format_tooltip_text()` để hiển thị nội dung theo dạng có xuống dòng
+   - Thêm dấu xuống dòng sau các dấu chấm câu (., !, ?) và phẩy (,) để nội dung dễ đọc hơn
+   - Tự động xuống dòng cho mỗi hashtag để phân tách rõ ràng hơn
+   - Áp dụng định dạng mới cho tất cả các tooltip, đặc biệt là khi hover vào title và hashtags
+
+2. **Cải thiện tính năng copy title đầy đủ**:
+   - Lưu trữ title đầy đủ (chưa bị cắt ngắn) vào Qt.ItemDataRole.UserRole 
+   - Khi người dùng click chuột phải và chọn "Copy Title", sẽ copy title gốc đầy đủ
+   - Vẫn giữ nguyên tính năng hiển thị title ngắn gọn trong bảng để dễ xem
+   - Đảm bảo người dùng vẫn có thể xem title đầy đủ qua tooltip khi hover chuột
+
+3. **Cải thiện xử lý hashtags trong title**:
+   - Tự động phát hiện và tách hashtags từ title
+   - Lưu title gốc (có hashtags) vào trường description để đảm bảo không mất thông tin
+   - Cập nhật xử lý hashtags để đảm bảo chúng được thêm vào cột hashtags
+   - Giữ lại title đã làm sạch (không có hashtags) để hiển thị trong bảng
+   - Xác định rõ ràng vai trò của từng trường: title hiển thị, title gốc, và hashtags
+
+4. **Tăng cường trải nghiệm người dùng**:
+   - Tooltip hiển thị theo định dạng xuống dòng, dễ đọc hơn
+   - Người dùng có thể copy đúng title gốc dù trong table hiển thị title đã lọc
+   - Tăng tính nhất quán trong việc hiển thị và sắp xếp thông tin
+   - Giúp người dùng dễ dàng phân biệt và tìm kiếm video trong danh sách
