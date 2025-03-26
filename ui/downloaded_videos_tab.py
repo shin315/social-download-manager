@@ -1,7 +1,7 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QLineEdit, QPushButton, QTableWidget, QHeaderView,
                              QTableWidgetItem, QMessageBox, QFrame, QScrollArea, QApplication, QDialog, QTextEdit, QCheckBox,
-                             QMenu, QDialogButtonBox, QToolTip)
+                             QMenu, QDialogButtonBox, QToolTip, QAbstractItemView)
 from PyQt6.QtCore import Qt
 from PyQt6.QtGui import QPixmap, QCursor, QAction
 import os
@@ -229,19 +229,20 @@ class DownloadedVideosTab(QWidget):
         self.update_button_states()
 
     def create_downloads_table(self):
-        """Tạo bảng hiển thị video đã tải xuống"""
+        """Tạo bảng hiển thị danh sách video đã tải xuống"""
+        # Tạo widget bảng
         self.downloads_table = QTableWidget()
         self.downloads_table.setColumnCount(10)  # Tăng từ 9 lên 10 (thêm cột Select)
         
-        # Thiết lập header
+        # Thiết lập headers và kích thước cột
         self.update_table_headers()
         
-        # Giảm font size của header
+        # Thiết lập font cho header
         header_font = self.downloads_table.horizontalHeader().font()
-        header_font.setPointSize(8)  # Điều chỉnh kích thước font lên 8pt
+        header_font.setBold(True)
         self.downloads_table.horizontalHeader().setFont(header_font)
         
-        # Thiết lập độ rộng cho các cột
+        # Thiết lập chiều rộng cho các cột
         self.downloads_table.setColumnWidth(0, 30)   # Select - giảm xuống
         self.downloads_table.setColumnWidth(1, 250)  # Tiêu đề - tăng thêm để ưu tiên hiển thị
         self.downloads_table.setColumnWidth(2, 80)   # Tác giả - giảm xuống
@@ -253,10 +254,11 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.setColumnWidth(8, 90)   # Hashtags - giảm lại để nhường cho Action
         self.downloads_table.setColumnWidth(9, 140)  # Thao tác - tăng để đủ chỗ hiển thị 2 nút
         
-        # Thiết lập thuộc tính bảng
+        # Thiết lập chế độ chọn dòng
         self.downloads_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.downloads_table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
         
-        # Chuyển từ ResizeToContents sang Fixed cho hầu hết các cột
+        # Thiết lập chế độ resize cho các cột
         self.downloads_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)  # Select
         self.downloads_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)  # Title - Stretch
         self.downloads_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)  # Creator
@@ -268,33 +270,47 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.horizontalHeader().setSectionResizeMode(8, QHeaderView.ResizeMode.Fixed)  # Hashtags
         self.downloads_table.horizontalHeader().setSectionResizeMode(9, QHeaderView.ResizeMode.Fixed)  # Actions
         
-        # Vô hiệu hóa việc sắp xếp cho cột Select
+        # Hiển thị indicator sắp xếp
         self.downloads_table.horizontalHeader().setSortIndicatorShown(True)
-        # Vô hiệu hóa khả năng click để sắp xếp cột Select
+        # Cho phép click vào header để sắp xếp
         self.downloads_table.horizontalHeader().setSectionsClickable(True)
-        
-        # Kết nối sự kiện click header để sắp xếp (nhưng sẽ bỏ qua cột Select)
+        # Kết nối sự kiện click vào header với phương thức sắp xếp
         self.downloads_table.horizontalHeader().sectionClicked.connect(self.sort_table)
         
-        # Kết nối sự kiện click dòng để hiển thị thông tin chi tiết
-        self.downloads_table.itemClicked.connect(self.show_video_details)
+        # Kết nối sự kiện selection changed thay vì itemClicked
+        # Sử dụng cách an toàn hơn để disconnect signal
+        try:
+            self.downloads_table.itemClicked.disconnect()
+        except (TypeError, RuntimeError):
+            # Signal chưa được connect hoặc đã disconnect
+            pass
+        self.downloads_table.selectionModel().selectionChanged.connect(self.handle_selection_changed)
         
-        # Kết nối sự kiện double-click để hiển thị dialog copy text
+        # Kết nối sự kiện double-click để hiển thị dialog copy
         self.downloads_table.itemDoubleClicked.connect(self.show_copy_dialog)
         
-        # Thiết lập sự kiện hover để hiển thị tooltip với text đầy đủ
+        # Bật track mouse để hiển thị tooltip khi hover
         self.downloads_table.setMouseTracking(True)
         self.downloads_table.cellEntered.connect(self.show_full_text_tooltip)
         
-        # Thiết lập style của bảng với hiệu ứng hover
+        # Thiết lập style cho bảng
         self.downloads_table.setStyleSheet("""
-            QTableWidget::item:hover {
-                background-color: rgba(0, 120, 215, 0.1);
+            QTableWidget {
+                gridline-color: #444444;
+                border: none;
+                background-color: #2a2a2a;
+            }
+            QTableWidget::item:selected {
+                background-color: #0078d7;
             }
         """)
         
-        # Thiết lập số dòng ban đầu
+        # Reset số dòng
         self.downloads_table.setRowCount(0)
+        
+        # Thiết lập focus policy để có thể nhận sự kiện phím
+        self.downloads_table.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
+        self.setFocusProxy(self.downloads_table)
 
     def create_video_details_area(self):
         """Tạo khu vực hiển thị thông tin chi tiết video"""
@@ -335,6 +351,13 @@ class DownloadedVideosTab(QWidget):
         self.play_icon.setText("▶️")  # Unicode play icon
         self.play_icon.setStyleSheet("font-size: 48px; color: white; background-color: transparent;")
         self.play_icon.resize(150, 150)
+        
+        # Thiết lập cursor và tooltip để chỉ ra rằng có thể click
+        self.thumbnail_label.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.thumbnail_label.setToolTip(self.tr_("TOOLTIP_CLICK_TO_PLAY"))
+        
+        # Kết nối sự kiện click vào thumbnail để phát video
+        self.thumbnail_label.mousePressEvent = self.thumbnail_click_event
         
         thumbnail_layout.addWidget(self.thumbnail_label)
         details_layout.addWidget(self.thumbnail_frame)
@@ -443,6 +466,29 @@ class DownloadedVideosTab(QWidget):
         self.folder_label = QLabel()
         self.folder_label.setStyleSheet("color: #b3b3b3; font-size: 12px;")
         self.folder_layout.addWidget(self.folder_label)
+        
+        # Thêm nút Play video
+        self.play_btn = QPushButton("▶️ Play")
+        self.play_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #0078d7;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 3px 8px;
+                font-size: 11px;
+            }
+            QPushButton:hover {
+                background-color: #1084d9;
+            }
+            QPushButton:pressed {
+                background-color: #0063b1;
+            }
+        """)
+        self.play_btn.setCursor(Qt.CursorShape.PointingHandCursor)
+        self.play_btn.clicked.connect(self.play_selected_video)
+        self.folder_layout.addWidget(self.play_btn)
+        
         self.folder_layout.addStretch(1)
         
         info_layout.addLayout(self.folder_layout)
@@ -465,6 +511,12 @@ class DownloadedVideosTab(QWidget):
         
         details_layout.addWidget(self.info_frame, 1)  # Stretch factor 1 để mở rộng
 
+    def thumbnail_click_event(self, event):
+        """Xử lý sự kiện click vào thumbnail"""
+        if event.button() == Qt.MouseButton.LeftButton:
+            # Phát video khi click chuột trái
+            self.play_selected_video()
+
     def eventFilter(self, obj, event):
         """Xử lý sự kiện click ra ngoài video trong bảng"""
         if obj == self.downloads_table.viewport() and event.type() == event.Type.MouseButtonPress:
@@ -475,181 +527,26 @@ class DownloadedVideosTab(QWidget):
                 self.selected_video = None
         return super().eventFilter(obj, event)
 
-    def show_video_details(self, item):
-        """Hiển thị thông tin chi tiết video khi click vào dòng trong bảng"""
-        row = item.row()
+    def handle_selection_changed(self, selected, deselected):
+        """Xử lý sự kiện khi selection trong bảng thay đổi"""
+        # Lấy các dòng đã chọn
+        indexes = selected.indexes()
+        if not indexes:
+            return
+            
+        # Lấy row của item đầu tiên được chọn
+        row = indexes[0].row()
         
-        # Tính toán index thực tế trong danh sách filtered_videos
+        # Hiển thị thông tin chi tiết của video nếu dòng hợp lệ
         if row >= 0 and row < len(self.filtered_videos):
             video = self.filtered_videos[row]
             self.selected_video = video
             
-            # Ẩn khu vực donate và hiện khu vực chi tiết
+            # Hiển thị khu vực chi tiết
             self.video_details_frame.setVisible(True)
             
-            # Cập nhật tiêu đề
-            self.title_label.setText(video[0])  # Tiêu đề video
-            
-            # Kiểm tra đường dẫn file để xác định đúng chất lượng và định dạng
-            filepath = video[8] + '/' + video[0] if video[8] and video[0] else ""
-            is_mp3 = filepath and filepath.lower().endswith('.mp3')
-            
-            # Cập nhật thông tin kỹ thuật
-            if is_mp3:
-                self.quality_label.setText(f"🔷 {self.tr_('DETAIL_QUALITY')}: 320kbps")
-            else:
-                self.quality_label.setText(f"🔷 {self.tr_('DETAIL_QUALITY')}: {video[2]}")
-            
-            # Đảm bảo hiển thị định dạng đúng
-            format_value = ""
-            if is_mp3:
-                format_value = self.tr_("FORMAT_AUDIO_MP3")
-            else:
-                format_value = video[3]
-                if format_value == "1080p" or format_value == "720p" or format_value == "480p" or format_value == "360p" or format_value == "Video (mp4)":
-                    format_value = self.tr_("FORMAT_VIDEO_MP4")
-                elif format_value == "320kbps" or format_value == "192kbps" or format_value == "128kbps" or format_value == "Audio (mp3)":
-                    format_value = self.tr_("FORMAT_AUDIO_MP3")
-            self.format_label.setText(f"🎬 {self.tr_('DETAIL_FORMAT')}: {format_value}")
-            
-            # Kiểm tra file tồn tại và hiển thị status tương ứng
-            status_value = video[5]
-            if filepath and os.path.exists(filepath):
-                status_value = "Successful"
-            elif status_value == "Download successful":
-                status_value = "Successful"
-            self.status_label.setText(f"✅ {self.tr_('DETAIL_STATUS')}: {status_value}")
-            
-            # Hiển thị duration
-            if hasattr(self, 'duration_label'):
-                # Kiểm tra xem có thông tin duration trong video hay không (index 10 nếu có)
-                if len(video) > 10 and video[10]:
-                    duration = video[10]
-                else:
-                    # Nếu không có thì sử dụng giá trị mặc định
-                    duration = "Unknown" 
-                self.duration_label.setText(f"⏱️ {self.tr_('DETAIL_DURATION')}: {duration}")
-            
-            self.size_label.setText(f"💾 {self.tr_('DETAIL_SIZE')}: {video[4]}")
-            self.date_label.setText(f"📅 {self.tr_('DETAIL_DOWNLOADED')}: {video[6]}")
-            
-            # Cập nhật hashtags và đảm bảo có dấu # ở đầu mỗi hashtag
-            hashtags = video[7]
-            if hashtags and not '#' in hashtags:
-                # Nếu là chuỗi các hashtag ngăn cách bằng khoảng trắng mà không có dấu #
-                hashtags = ' '.join(['#' + tag.strip() for tag in hashtags.split()])
-            self.hashtags_label.setText(hashtags)
-            
-            # Cập nhật đường dẫn thư mục
-            self.folder_label.setText(video[8])
-            
-            # Cập nhật mô tả
-            creator = video[1] if len(video) > 1 else "Unknown"
-            self.desc_label.setText(f"Creator: {creator}")
-            
-            # Cập nhật thumbnail nếu có đường dẫn
-            # Reset pixmap trước để đảm bảo trạng thái sạch sẽ
-            default_pixmap = QPixmap(150, 150)
-            default_pixmap.fill(Qt.GlobalColor.transparent)
-            self.thumbnail_label.setPixmap(default_pixmap)
-            
-            # Thiết lập style mặc định dựa trên loại file
-            is_audio = is_mp3 or "MP3" in format_value or "Audio" in video[3] or "mp3" in format_value.lower()
-            if is_audio:
-                # Nếu là file audio, dùng icon âm nhạc làm mặc định
-                self.thumbnail_label.setStyleSheet(f"background-color: {self.theme_colors['audio_background']}; border-radius: 8px;")
-                self.play_icon.setText("🎵")  # Unicode music icon
-                self.play_icon.setStyleSheet("font-size: 52px; color: white; background-color: transparent;")
-                self.play_icon.setVisible(True)  # Luôn hiển thị icon âm nhạc cho file MP3
-            else:
-                # Nếu là video, dùng icon play làm mặc định
-                self.thumbnail_label.setStyleSheet(f"background-color: {self.theme_colors['background']}; border-radius: 8px;")
-                self.play_icon.setText("▶️")  # Unicode play icon
-                self.play_icon.setStyleSheet("font-size: 52px; color: white; background-color: transparent;")
-            
-            # Thử tải thumbnail cho cả file mp3 và mp4
-            thumbnail_path = video[11] if len(video) > 11 and video[11] else ""
-            if thumbnail_path and os.path.exists(thumbnail_path):
-                try:
-                    print(f"Loading thumbnail from: {thumbnail_path}")
-                    pixmap = QPixmap(thumbnail_path)
-                    if not pixmap.isNull():
-                        print(f"Successfully loaded thumbnail: {thumbnail_path}, size: {pixmap.width()}x{pixmap.height()}")
-                        pixmap = pixmap.scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio)
-                        self.thumbnail_label.setPixmap(pixmap)
-                        # Khi thumbnail load thành công, xóa background color
-                        self.thumbnail_label.setStyleSheet("background-color: transparent; border-radius: 8px;")
-                        # Ẩn play icon khi có thumbnail
-                        self.play_icon.setVisible(False)
-                    else:
-                        print(f"Failed to load thumbnail: pixmap is null for {thumbnail_path}")
-                        self.play_icon.setVisible(True)
-                except Exception as e:
-                    print(f"Error loading thumbnail: {e} for {thumbnail_path}")
-                    self.play_icon.setVisible(True)
-            else:
-                print(f"No thumbnail or file doesn't exist: {thumbnail_path}")
-                self.play_icon.setVisible(True)
-                
-                # Thử tạo lại thumbnail nếu có đường dẫn video hoặc từ thông tin URL
-                video_id = ""
-                if len(self.selected_video) > 0:
-                    db_manager = DatabaseManager()
-                    video_info = db_manager.get_download_by_title(self.selected_video[0])
-                    if video_info and 'url' in video_info:
-                        try:
-                            video_id = video_info['url'].split('/')[-1].split('?')[0]
-                        except Exception as e:
-                            print(f"Error extracting video ID: {e}")
-                
-                if video_id:
-                    # Tạo thư mục thumbnails nếu chưa có
-                    output_folder = video[8] if len(video) > 8 and video[8] else ""
-                    if output_folder:
-                        thumbnails_dir = os.path.join(output_folder, "thumbnails")
-                        if not os.path.exists(thumbnails_dir):
-                            try:
-                                os.makedirs(thumbnails_dir)
-                            except Exception as e:
-                                print(f"Error creating thumbnails directory: {e}")
-                                return
-                        
-                        # Đặt đường dẫn thumbnail mới
-                        new_thumbnail_path = os.path.join(thumbnails_dir, f"{video_id}.jpg")
-                        
-                        # Cập nhật đường dẫn thumbnail trong database
-                        if video_info:
-                            try:
-                                # Lấy thông tin hiện tại
-                                metadata_str = video_info.get('metadata', '{}')
-                                metadata = json.loads(metadata_str) if metadata_str else {}
-                                metadata['thumbnail'] = new_thumbnail_path
-                                
-                                # Cập nhật vào database
-                                conn = sqlite3.connect(db_manager.db_path)
-                                cursor = conn.cursor()
-                                cursor.execute(
-                                    "UPDATE downloads SET metadata = ? WHERE title = ?", 
-                                    (json.dumps(metadata), video[0])
-                                )
-                                conn.commit()
-                                conn.close()
-                                
-                                print(f"Updated thumbnail path for {video[0]}")
-                                
-                                # Tạo thumbnail nếu chưa tồn tại
-                                if not os.path.exists(new_thumbnail_path):
-                                    # Trong trường hợp thực tế, ở đây sẽ tạo thumbnail từ video
-                                    # Nhưng do giới hạn về thời gian, chỉ ghi đường dẫn để làm gốc cho lần tải sau
-                                    pass
-                            except Exception as e:
-                                print(f"Error updating thumbnail in database: {e}")
-                        else:
-                            print(f"Video info not found for title: {video[0]}")
-        else:
-            # Không tìm thấy video trong danh sách
-            self.video_details_frame.setVisible(False)
-            self.selected_video = None
+            # Cập nhật thông tin chi tiết
+            self.update_selected_video_details(video)
 
     def filter_videos(self):
         """Lọc video theo từ khóa tìm kiếm"""
@@ -795,11 +692,11 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.clearContents()
         self.downloads_table.setRowCount(0)
         
-        # Thêm hàng mới cho mỗi video
+        # Thêm các dòng mới cho mỗi video
         for idx, video in enumerate(self.filtered_videos):
             self.downloads_table.insertRow(idx)
             
-            # Thêm checkbox vào cột Select
+            # Cột Select (checkbox)
             select_widget = QWidget()
             layout = QHBoxLayout(select_widget)
             layout.setContentsMargins(0, 0, 0, 0)
@@ -968,12 +865,12 @@ class DownloadedVideosTab(QWidget):
             final_path = full_filepath if full_filepath else directory_path
             
             # Kết nối nút Open với phương thức open_folder
-            open_btn.clicked.connect(lambda checked, path=final_path: self.open_folder(path))
+            open_btn.clicked.connect(lambda checked, path=final_path, row_idx=idx: self.open_folder_and_select(path, row_idx))
             action_layout.addWidget(open_btn)
             
             # Nút Delete
             delete_btn = QPushButton(self.tr_("BUTTON_DELETE"))
-            delete_btn.clicked.connect(lambda checked, idx=idx: self.delete_video(idx))
+            delete_btn.clicked.connect(lambda checked, row_idx=idx: self.delete_video_and_select(row_idx))
             action_layout.addWidget(delete_btn)
             
             self.downloads_table.setCellWidget(idx, 9, action_widget)
@@ -991,6 +888,24 @@ class DownloadedVideosTab(QWidget):
         
         # Cập nhật trạng thái các nút
         self.update_button_states()
+
+    def open_folder_and_select(self, path, row=None):
+        """Mở thư mục và chọn dòng tương ứng"""
+        # Chọn dòng tương ứng
+        if row is not None and 0 <= row < self.downloads_table.rowCount():
+            self.downloads_table.selectRow(row)
+        
+        # Mở thư mục
+        self.open_folder(path)
+    
+    def delete_video_and_select(self, row):
+        """Xóa video và chọn dòng tương ứng"""
+        # Chọn dòng tương ứng
+        if row is not None and 0 <= row < self.downloads_table.rowCount():
+            self.downloads_table.selectRow(row)
+        
+        # Xóa video
+        self.delete_video(row)
 
     def open_folder(self, path):
         """
@@ -1667,19 +1582,65 @@ class DownloadedVideosTab(QWidget):
         self.selected_video = video
         self.video_details_frame.setVisible(True)
         
-        # Cập nhật tiêu đề
-        self.title_label.setText(video[0])  # Tiêu đề
+        # Cập nhật tiêu đề - Ưu tiên original_title nếu có, nhưng cắt ngắn nó
+        title = ""
+        if len(video) > 9 and video[9]:
+            title = video[9]  # Sử dụng original_title
+        else:
+            title = video[0]  # Fallback: tiêu đề ngắn
+            
+        # Cắt ngắn tiêu đề nếu quá dài
+        if len(title) > 45:
+            title = title[:45] + "..."
+            
+        self.title_label.setText(title)
+        
+        # Kiểm tra đường dẫn file để xác định đúng chất lượng và định dạng
+        filepath = os.path.join(video[8], video[0]) if video[8] and video[0] else ""
+        is_mp3 = filepath and filepath.lower().endswith('.mp3')
         
         # Cập nhật thông tin kỹ thuật
-        self.quality_label.setText(f"{self.tr_('DETAIL_QUALITY')}: {video[2]}")  # Chất lượng
-        self.format_label.setText(f"{self.tr_('DETAIL_FORMAT')}: {video[3]}")  # Định dạng
-        self.size_label.setText(f"{self.tr_('DETAIL_SIZE')}: {video[4]}")  # Kích thước
-        self.date_label.setText(f"{self.tr_('DETAIL_DOWNLOADED')}: {video[6]}")  # Ngày tải
-        self.status_label.setText(f"✅ {self.tr_('DETAIL_STATUS')}: {video[5]}")  # Trạng thái
+        if is_mp3:
+            self.quality_label.setText(f"🔷 {self.tr_('DETAIL_QUALITY')}: 320kbps")
+        else:
+            self.quality_label.setText(f"🔷 {self.tr_('DETAIL_QUALITY')}: {video[2]}")
+        
+        # Đảm bảo hiển thị định dạng đúng
+        format_value = ""
+        if is_mp3:
+            format_value = self.tr_("FORMAT_AUDIO_MP3")
+        else:
+            format_value = video[3]
+            if format_value == "1080p" or format_value == "720p" or format_value == "480p" or format_value == "360p" or format_value == "Video (mp4)":
+                format_value = self.tr_("FORMAT_VIDEO_MP4")
+            elif format_value == "320kbps" or format_value == "192kbps" or format_value == "128kbps" or format_value == "Audio (mp3)":
+                format_value = self.tr_("FORMAT_AUDIO_MP3")
+        self.format_label.setText(f"🎬 {self.tr_('DETAIL_FORMAT')}: {format_value}")
+        
+        # Cập nhật size và date
+        self.size_label.setText(f"💾 {self.tr_('DETAIL_SIZE')}: {video[4]}")
+        self.date_label.setText(f"📅 {self.tr_('DETAIL_DOWNLOADED')}: {video[6]}")
+        
+        # Kiểm tra file tồn tại và hiển thị status tương ứng
+        status_value = video[5]
+        if filepath and os.path.exists(filepath):
+            status_value = "Successful"
+        elif status_value == "Download successful":
+            status_value = "Successful"
+        self.status_label.setText(f"✅ {self.tr_('DETAIL_STATUS')}: {status_value}")
+        
+        # Hiển thị duration
+        if hasattr(self, 'duration_label'):
+            # Kiểm tra xem có thông tin duration trong video hay không (index 10 nếu có)
+            if len(video) > 10 and video[10]:
+                duration = video[10]
+            else:
+                # Nếu không có thì sử dụng giá trị mặc định
+                duration = "Unknown" 
+            self.duration_label.setText(f"⏱️ {self.tr_('DETAIL_DURATION')}: {duration}")
         
         # Cập nhật hashtags - Đảm bảo hiển thị đúng
         hashtags = video[7]
-        # Kiểm tra xem đã có dấu # chưa, nếu chưa có thì thêm vào
         if hashtags and not hashtags.startswith('#'):
             # Nếu là chuỗi các hashtag ngăn cách bằng khoảng trắng mà không có dấu #
             if ' ' in hashtags and not '#' in hashtags:
@@ -1693,17 +1654,49 @@ class DownloadedVideosTab(QWidget):
         creator = video[1] if len(video) > 1 else "Unknown"
         self.desc_label.setText(f"Creator: {creator}")
         
-        # Nếu ảnh thumbnail có sẵn, hiển thị
-        if hasattr(self, 'thumbnail_label') and hasattr(video, 'thumbnail'):
+        # Cập nhật thumbnail
+        # Reset pixmap trước để đảm bảo trạng thái sạch sẽ
+        default_pixmap = QPixmap(150, 150)
+        default_pixmap.fill(Qt.GlobalColor.transparent)
+        self.thumbnail_label.setPixmap(default_pixmap)
+        
+        # Thiết lập style mặc định dựa trên loại file
+        is_audio = is_mp3 or "MP3" in format_value or "Audio" in video[3] or "mp3" in format_value.lower()
+        if is_audio:
+            # Nếu là file audio, dùng icon âm nhạc làm mặc định
+            self.thumbnail_label.setStyleSheet(f"background-color: {self.theme_colors['audio_background']}; border-radius: 8px;")
+            self.play_icon.setText("🎵")  # Unicode music icon
+            self.play_icon.setStyleSheet("font-size: 52px; color: white; background-color: transparent;")
+            self.play_icon.setVisible(True)  # Luôn hiển thị icon âm nhạc cho file MP3
+        else:
+            # Nếu là video, dùng icon play làm mặc định
+            self.thumbnail_label.setStyleSheet(f"background-color: {self.theme_colors['background']}; border-radius: 8px;")
+            self.play_icon.setText("▶️")  # Unicode play icon
+            self.play_icon.setStyleSheet("font-size: 52px; color: white; background-color: transparent;")
+        
+        # Thử tải thumbnail cho cả file mp3 và mp4
+        thumbnail_path = video[11] if len(video) > 11 and video[11] else ""
+        if thumbnail_path and os.path.exists(thumbnail_path):
             try:
-                pixmap = QPixmap()
-                if pixmap.loadFromData(video.thumbnail):
-                    pixmap = pixmap.scaled(280, 157, Qt.AspectRatioMode.KeepAspectRatio)
+                print(f"Loading thumbnail from: {thumbnail_path}")
+                pixmap = QPixmap(thumbnail_path)
+                if not pixmap.isNull():
+                    print(f"Successfully loaded thumbnail: {thumbnail_path}, size: {pixmap.width()}x{pixmap.height()}")
+                    pixmap = pixmap.scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio)
                     self.thumbnail_label.setPixmap(pixmap)
-                    self.thumbnail_label.setVisible(True)
+                    # Khi thumbnail load thành công, xóa background color
+                    self.thumbnail_label.setStyleSheet("background-color: transparent; border-radius: 8px;")
+                    # Ẩn play icon khi có thumbnail
+                    self.play_icon.setVisible(False)
+                else:
+                    print(f"Failed to load thumbnail: pixmap is null for {thumbnail_path}")
+                    self.play_icon.setVisible(True)
             except Exception as e:
-                print(f"Error loading thumbnail: {e}")
-                self.thumbnail_label.setVisible(False)
+                print(f"Error loading thumbnail: {e} for {thumbnail_path}")
+                self.play_icon.setVisible(True)
+        else:
+            print(f"No thumbnail or file doesn't exist: {thumbnail_path}")
+            self.play_icon.setVisible(True)
 
     def sort_table(self, column):
         """Sắp xếp bảng theo cột được click"""
@@ -2640,3 +2633,82 @@ class DownloadedVideosTab(QWidget):
             current_style = btn.styleSheet()
             if "QPushButton:disabled" not in current_style:
                 btn.setStyleSheet(current_style + disabled_style)
+
+    def play_selected_video(self):
+        """Phát video hiện tại được chọn trong chi tiết video"""
+        if not self.selected_video:
+            QMessageBox.information(self, self.tr_("DIALOG_INFO"), self.tr_("DIALOG_NO_VIDEO_SELECTED"))
+            return
+            
+        # Tìm row của video được chọn trong filtered_videos
+        try:
+            selected_index = self.filtered_videos.index(self.selected_video)
+            self.play_video(selected_index)
+        except ValueError:
+            # Video không còn trong danh sách filtered_videos
+            QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("CONTEXT_FILE_NOT_FOUND"))
+
+    def keyPressEvent(self, event):
+        """Xử lý sự kiện phím được nhấn"""
+        # Nếu không phải các phím đặc biệt thì để widget xử lý
+        if event.key() not in [Qt.Key.Key_Up, Qt.Key.Key_Down, Qt.Key.Key_PageUp, Qt.Key.Key_PageDown, Qt.Key.Key_Home, Qt.Key.Key_End]:
+            super().keyPressEvent(event)
+            return
+            
+        # Đảm bảo table có focus khi nhấn phím
+        if not self.downloads_table.hasFocus():
+            self.downloads_table.setFocus()
+            
+        # Lấy model của table
+        model = self.downloads_table.model()
+        if not model:
+            super().keyPressEvent(event)
+            return
+            
+        # Lấy dòng hiện tại đang được chọn trong bảng 
+        current_row = -1
+        selected_rows = self.downloads_table.selectionModel().selectedRows()
+        if selected_rows:
+            current_row = selected_rows[0].row()
+        elif self.selected_video:
+            # Nếu không có dòng nào được chọn mà vẫn hiển thị chi tiết video
+            try:
+                current_row = self.filtered_videos.index(self.selected_video)
+                # Nếu tìm được dòng, select dòng đó
+                self.downloads_table.selectRow(current_row)
+            except (ValueError, IndexError):
+                current_row = -1
+                
+        # Nếu không có dòng nào được chọn và có video trong danh sách
+        if current_row == -1 and len(self.filtered_videos) > 0:
+            # Select dòng đầu tiên
+            self.downloads_table.selectRow(0)
+            current_row = 0
+            
+        # Xử lý phím điều hướng
+        new_row = current_row
+        
+        if event.key() == Qt.Key.Key_Up:
+            new_row = max(0, current_row - 1)
+        elif event.key() == Qt.Key.Key_Down:
+            new_row = min(len(self.filtered_videos) - 1, current_row + 1)
+        elif event.key() == Qt.Key.Key_PageUp:
+            # Di chuyển lên khoảng 10 dòng
+            new_row = max(0, current_row - 10)
+        elif event.key() == Qt.Key.Key_PageDown:
+            # Di chuyển xuống khoảng 10 dòng
+            new_row = min(len(self.filtered_videos) - 1, current_row + 10)
+        elif event.key() == Qt.Key.Key_Home:
+            # Di chuyển đến dòng đầu tiên
+            new_row = 0
+        elif event.key() == Qt.Key.Key_End:
+            # Di chuyển đến dòng cuối cùng
+            new_row = len(self.filtered_videos) - 1 if len(self.filtered_videos) > 0 else current_row
+            
+        # Nếu có thay đổi dòng, cập nhật selection
+        if new_row != current_row and 0 <= new_row < len(self.filtered_videos):
+            self.downloads_table.selectRow(new_row)
+            # Đảm bảo dòng được chọn nằm trong vùng nhìn thấy
+            self.downloads_table.scrollTo(self.downloads_table.model().index(new_row, 0), QAbstractItemView.ScrollHint.EnsureVisible)
+            
+        event.accept()
