@@ -272,3 +272,70 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
    - Cập nhật phương thức apply_theme_colors để áp dụng style đồng nhất giữa hai tab
    - Thêm style cho thanh cuộn trong tab Video Info để đảm bảo trải nghiệm nhất quán
    - Đảm bảo màu sắc hiệu ứng hover phù hợp với theme đang sử dụng (dark/light)
+
+## 2024-03-26: Cải thiện UI với vô hiệu hóa nút khi danh sách trống
+1. **Vô hiệu hóa các nút không cần thiết khi danh sách video trống**:
+   - Thêm phương thức `update_button_states()` vào cả hai tab (VideoInfoTab và DownloadedVideosTab)
+   - Tự động vô hiệu hóa các nút "Select All/Unselect All", "Delete Selected", "Delete All" và "Download" khi không có video nào
+   - Thêm style cho trạng thái disabled của các nút, chuyển sang màu xám để đánh dấu rõ nút không khả dụng
+   - Kích hoạt lại các nút khi có video được thêm vào danh sách
+
+2. **Cải thiện logic để cập nhật trạng thái nút**:
+   - Cập nhật trạng thái nút khi khởi tạo UI
+   - Cập nhật trạng thái nút sau khi xóa video (cả xóa một video hoặc nhiều video)
+   - Cập nhật trạng thái nút sau khi refresh danh sách
+   - Cập nhật trạng thái nút khi nhận được thông tin video mới
+
+3. **Tăng cường trải nghiệm người dùng**:
+   - Giúp người dùng hiểu rõ hơn khi nào có thể sử dụng các chức năng
+   - Tránh tình trạng người dùng click vào các nút không có tác dụng khi danh sách trống
+   - Giao diện trực quan hơn, dễ hiểu hơn cho người dùng mới
+   - Áp dụng nguyên tắc thiết kế UI "affordance" - chỉ hiển thị các hành động khả dụng
+
+## 2024-03-26: Sửa lỗi và tối ưu hóa code
+1. **Sửa lỗi biến không được định nghĩa trong DownloadedVideosTab**:
+   - Khắc phục lỗi biến `deleted_text` không được định nghĩa trong phương thức `delete_selected_videos()`
+   - Loại bỏ code dư thừa không cần thiết do status bar đã được cập nhật trước đó
+   - Tối ưu hóa luồng xử lý khi xóa video đã chọn
+
+2. **Cải thiện hiệu suất và độ ổn định**:
+   - Kiểm tra và xử lý các trường hợp ngoại lệ một cách cẩn thận hơn
+   - Loại bỏ các đoạn code dư thừa để tăng tốc độ xử lý
+   - Giữ lại thông báo lỗi cần thiết để hỗ trợ debug và phát hiện vấn đề
+
+## 2024-03-26: Sửa lỗi hiển thị key thay vì text đã dịch trong status bar
+1. **Khắc phục lỗi hiển thị STATUS_INFO_RECEIVED trong status bar**:
+   - Thêm định nghĩa cho key `STATUS_INFO_RECEIVED` vào cả hai file ngôn ngữ:
+     - English: "Video information received"
+     - Vietnamese: "Đã nhận thông tin video"
+   - Đảm bảo tất cả key được sử dụng trong status bar đều có định nghĩa tương ứng
+
+2. **Khắc phục lỗi hiển thị STATUS_DOWNLOADING_MULTIPLE_PROGRESS**:
+   - Thêm định nghĩa cho key `STATUS_DOWNLOADING_MULTIPLE_PROGRESS` vào cả hai file ngôn ngữ
+   - Điều chỉnh định dạng để phù hợp với cách gọi trong code:
+     - English: "Downloaded {} of {} videos - {}"
+     - Vietnamese: "Đã tải {} trong tổng số {} video - {}"
+   - Đồng bộ các tham số định dạng giữa code và file ngôn ngữ
+
+3. **Cải thiện trải nghiệm người dùng**:
+   - Đảm bảo tất cả thông báo trạng thái hiển thị đúng ngôn ngữ của người dùng
+   - Thông báo rõ ràng hơn về trạng thái khi nhận thông tin video
+   - Thông báo tiến trình tải xuống video chính xác hơn với số lượng và trạng thái
+
+## 2024-03-26: Cải thiện hiển thị status bar khi tải nhiều video
+1. **Làm rõ thông báo trong status bar khi tải xuống**:
+   - Thay đổi định dạng chuỗi STATUS_ONE_OF_MULTIPLE_DONE để tách biệt rõ ràng phần tên file và phần thông tin số lượng:
+     - English: "Downloaded: {} | {} videos still downloading..."
+     - Vietnamese: "Đã tải: {} | Còn {} video đang tải..."
+   - Sử dụng dấu | làm phân cách giúp mắt người dùng dễ nhận biết giữa các phần thông tin
+
+2. **Thêm chức năng cắt gọn tên file trong status bar**:
+   - Thêm hàm truncate_filename() để hiển thị tên file một cách hợp lý
+   - Đối với tên file quá dài (trên 30 ký tự) sẽ hiển thị dạng rút gọn: "phần_đầu...phần_cuối.mp4"
+   - Tính toán thông minh tỷ lệ cắt gọn dựa trên độ dài phần mở rộng của file
+   - Áp dụng cắt gọn tên file ở tất cả các vị trí hiển thị tên file trong status bar
+
+3. **Cải thiện UX khi xem thông tin tải xuống**:
+   - Giúp người dùng dễ dàng nhận biết và theo dõi tiến trình tải xuống
+   - Giảm khả năng hiển thị thông tin bị tràn ra khỏi status bar
+   - Vẫn đảm bảo người dùng có thể nhận diện được tên file đang được tải xuống

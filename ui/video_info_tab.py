@@ -154,6 +154,9 @@ class VideoInfoTab(QWidget):
         # Thiết lập context menu cho video_table
         self.video_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.video_table.customContextMenuRequested.connect(self.show_context_menu)
+        
+        # Cập nhật trạng thái các nút ban đầu
+        self.update_button_states()
 
     def show_context_menu(self, position):
         """Hiển thị menu chuột phải cho bảng video"""
@@ -481,6 +484,8 @@ class VideoInfoTab(QWidget):
     def delete_row(self, row):
         """Xóa một dòng khỏi bảng"""
         self.video_table.removeRow(row)
+        # Cập nhật trạng thái các nút
+        self.update_button_states()
 
     def delete_all_videos(self):
         """Xóa tất cả video khỏi bảng"""
@@ -493,8 +498,11 @@ class VideoInfoTab(QWidget):
         
         if reply == QMessageBox.StandardButton.Yes:
             self.video_table.setRowCount(0)
+            self.video_info_dict.clear()
             if self.parent:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_REFRESHED"))
+            # Cập nhật trạng thái các nút
+            self.update_button_states()
 
     def download_videos(self):
         """Tải xuống các video đã chọn"""
@@ -1395,6 +1403,19 @@ class VideoInfoTab(QWidget):
             # Không reset cứng trạng thái mà để hàm update_select_toggle_button quyết định giá trị đúng dựa trên trạng thái của các checkbox.
             # self.all_selected = False
             # self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
+            
+            # Cập nhật UI
+            self.get_info_btn.setEnabled(True)
+            self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
+            self.url_input.setEnabled(True)
+            self.url_input.clear()
+            
+            # Cập nhật trạng thái các nút
+            self.update_button_states()
+            
+            # Hiển thị thông báo trên status bar
+            if self.parent:
+                self.parent.status_bar.showMessage(self.tr_("STATUS_INFO_RECEIVED"))
         except Exception as e:
             print(f"Critical error in on_video_info_received: {e}")
             # Đảm bảo giảm biến đếm
@@ -1463,8 +1484,10 @@ class VideoInfoTab(QWidget):
             if self.parent and self.parent.status_bar:
                 # Nếu còn video đang tải
                 if self.downloading_count > 0:
+                    # Cắt gọn tên file nếu quá dài
+                    short_filename = self.truncate_filename(filename)
                     self.parent.status_bar.showMessage(self.tr_("STATUS_ONE_OF_MULTIPLE_DONE").format(
-                        filename,
+                        short_filename,
                         self.downloading_count
                     ))
                 else:
@@ -1472,7 +1495,9 @@ class VideoInfoTab(QWidget):
                     if self.success_downloads > 1:
                         self.parent.status_bar.showMessage(self.tr_("DIALOG_DOWNLOAD_MULTIPLE_SUCCESS").format(self.success_downloads))
                     else:
-                        self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOAD_SUCCESS_WITH_FILENAME").format(filename))
+                        # Cắt gọn tên file nếu quá dài
+                        short_filename = self.truncate_filename(filename)
+                        self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOAD_SUCCESS_WITH_FILENAME").format(short_filename))
             
             # Cập nhật UI ngay lập tức để hiển thị thông báo
             QApplication.processEvents()
@@ -1647,6 +1672,22 @@ class VideoInfoTab(QWidget):
             if self.parent and self.parent.status_bar:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOAD_SUCCESS"))
 
+    def truncate_filename(self, filename, max_length=30):
+        """Cắt gọn tên file để hiển thị trong status bar"""
+        if len(filename) <= max_length:
+            return filename
+            
+        # Lấy tên và phần mở rộng
+        name, ext = os.path.splitext(filename)
+        
+        # Tính toán số ký tự giữ lại
+        # Giữ 10 ký tự đầu, dấu ..., và 10 ký tự cuối + phần mở rộng
+        keep_length = max_length - 3  # trừ đi 3 dấu chấm
+        first_part = (keep_length // 2) - len(ext)
+        last_part = keep_length - first_part - len(ext)
+        
+        return f"{name[:first_part]}...{name[-last_part:]}{ext}"
+
     def open_folder(self, folder_path):
         """Mở thư mục chứa file"""
         try:
@@ -1714,7 +1755,7 @@ class VideoInfoTab(QWidget):
             quality_combo.addItems(video_qualities) 
 
     def delete_selected_videos(self):
-        """Xóa các video đã chọn"""
+        """Xóa các video đã chọn khỏi bảng"""
         # Đếm số video đã chọn
         selected_count = 0
         for row in range(self.video_table.rowCount()):
@@ -1760,6 +1801,15 @@ class VideoInfoTab(QWidget):
             
             if self.parent:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_SELECTED_DELETED").format(selected_count))
+            
+            # Sau khi hoàn tất xóa các video đã chọn
+            self.video_table.blockSignals(False)
+            
+            # Cập nhật trạng thái nút chọn tất cả
+            self.update_select_toggle_button()
+            
+            # Cập nhật trạng thái các nút
+            self.update_button_states()
 
     def get_selected_quality(self, row):
         """Lấy chất lượng được chọn từ hàng trong bảng"""
@@ -2073,3 +2123,28 @@ class VideoInfoTab(QWidget):
                 self.video_table.setToolTip("")
         else:
             self.video_table.setToolTip("")
+            
+    def update_button_states(self):
+        """Cập nhật trạng thái các nút dựa trên số lượng video trong bảng"""
+        has_videos = self.video_table.rowCount() > 0
+        
+        # Vô hiệu hóa các nút khi không có video nào
+        self.select_toggle_btn.setEnabled(has_videos)
+        self.delete_selected_btn.setEnabled(has_videos)
+        self.delete_all_btn.setEnabled(has_videos)
+        self.download_btn.setEnabled(has_videos)
+        
+        # Cập nhật style cho các nút bị vô hiệu hóa
+        disabled_style = """
+            QPushButton:disabled {
+                background-color: #555555;
+                color: #888888;
+                border: none;
+            }
+        """
+        
+        # Áp dụng style cho các nút
+        for btn in [self.select_toggle_btn, self.delete_selected_btn, self.delete_all_btn, self.download_btn]:
+            current_style = btn.styleSheet()
+            if "QPushButton:disabled" not in current_style:
+                btn.setStyleSheet(current_style + disabled_style)

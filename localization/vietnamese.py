@@ -117,7 +117,8 @@ STATUS_VIDEOS_LOADED = "Đã tải xong thông tin {} video"
 STATUS_DOWNLOADING_MULTIPLE = "Đang tải {} video..."
 STATUS_DOWNLOADING_WITH_TITLE = "Đang tải xuống: {}"
 STATUS_DOWNLOADING_REMAINING = "Đang tải {} video còn lại..."
-STATUS_ONE_OF_MULTIPLE_DONE = "Đã tải xong: {}. Còn {} video đang tải..."
+STATUS_DOWNLOADING_MULTIPLE_PROGRESS = "Đã tải {} trong tổng số {} video - {}"
+STATUS_ONE_OF_MULTIPLE_DONE = "Đã tải: {} | Còn {} video đang tải..."
 STATUS_SELECTED_DELETED = "Đã xóa {} video đã chọn"
 STATUS_REFRESH_ERROR = "Lỗi khi làm mới danh sách video"
 STATUS_ADD_VIDEO_ERROR = "Lỗi khi thêm video"
@@ -138,6 +139,7 @@ STATUS_DOWNLOADED_VIDEOS_LOADED = "Đã tải {} video từ cơ sở dữ liệu
 STATUS_NO_DOWNLOADS = "Không tìm thấy video nào đã tải xuống"
 STATUS_NO_NEW_URLS = "Tất cả URL đã tồn tại trong danh sách"
 STATUS_RENAMED_VIDEO = "Đã đổi tên video thành: {}"
+STATUS_INFO_RECEIVED = "Đã nhận thông tin video"
 
 # Dialogs
 DIALOG_CONFIRM_DELETION = "Xác Nhận Xóa"

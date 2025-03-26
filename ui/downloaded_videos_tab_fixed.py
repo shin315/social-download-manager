@@ -2088,6 +2088,10 @@ class DownloadedVideosTab(QWidget):
         self.load_downloaded_videos()
         self.display_videos()
         
+        # Nếu có thông báo, cập nhật status bar
+        if deleted_text and self.parent and hasattr(self.parent, 'status_bar'):
+            self.parent.status_bar.showMessage(deleted_text)
+            
         # Cập nhật trạng thái các nút
         self.update_button_states()
 
