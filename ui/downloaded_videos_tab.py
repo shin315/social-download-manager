@@ -1,9 +1,11 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QLineEdit, QPushButton, QTableWidget, QHeaderView,
                              QTableWidgetItem, QMessageBox, QFrame, QScrollArea, QApplication, QDialog, QTextEdit, QCheckBox,
-                             QMenu, QDialogButtonBox, QToolTip, QAbstractItemView)
-from PyQt6.QtCore import Qt
-from PyQt6.QtGui import QPixmap, QCursor, QAction
+                             QMenu, QDialogButtonBox, QToolTip, QAbstractItemView,
+                             QStyledItemDelegate, QSizePolicy, QListWidget, QListWidgetItem,
+                             QFileDialog)
+from PyQt6.QtCore import Qt, QSize, QTimer, QPoint, QEvent, pyqtSignal, QCoreApplication
+from PyQt6.QtGui import QPixmap, QCursor, QIcon, QColor, QPainter, QPen, QMouseEvent, QAction
 import os
 import subprocess
 import math
@@ -17,17 +19,54 @@ import re
 import logging
 
 
+class FilterPopup(QMenu):
+    """Menu popup cho phép lọc các giá trị trong cột"""
+    filterChanged = pyqtSignal(int, str)  # Signal khi filter thay đổi (column_index, selected_value)
+    
+    def __init__(self, parent=None, column_index=0, unique_values=None, header_text=""):
+        super().__init__(parent)
+        
+        self.column_index = column_index
+        self.unique_values = unique_values or []
+        self.header_text = header_text
+        
+        # Tạo các action cho từng giá trị duy nhất
+        self.create_filter_items()
+        
+    def create_filter_items(self):
+        """Tạo danh sách các giá trị duy nhất để lọc"""
+        # Thêm tùy chọn "Clear Filter" ở đầu menu
+        all_action = self.addAction("Clear Filter")
+        all_action.triggered.connect(lambda: self.apply_filter(None))
+        
+        self.addSeparator()
+        
+        # Thêm các giá trị duy nhất vào menu
+        for value in sorted(self.unique_values):
+            display_value = str(value) if value is not None else "Trống"
+            action = self.addAction(display_value)
+            # Sử dụng lambda với giá trị mặc định để tránh lỗi closure
+            action.triggered.connect(lambda checked=False, val=value: self.apply_filter(val))
+    
+    def apply_filter(self, value):
+        """Áp dụng bộ lọc cho giá trị được chọn"""
+        # Phát signal với giá trị đã chọn (None = tất cả)
+        self.filterChanged.emit(self.column_index, value)
+        self.close()
+
 class DownloadedVideosTab(QWidget):
     """Tab quản lý các video đã tải xuống"""
 
     def __init__(self, parent=None):
+        """Khởi tạo tab quản lý video đã tải xuống"""
         super().__init__(parent)
-        self.parent = parent
+        
+        self.parent = parent  # Tham chiếu đến MainWindow
         self.lang_manager = parent.lang_manager if parent and hasattr(parent, 'lang_manager') else None
-        self.all_videos = []  # Danh sách tất cả các video
-        self.filtered_videos = []  # Danh sách các video đã lọc
-        self.selected_video = None  # Video được chọn hiện tại
-        self.sort_column = 7  # Mặc định sắp xếp theo ngày tải
+        self.all_videos = []  # Danh sách tất cả video đã tải xuống
+        self.filtered_videos = []  # Danh sách video đã lọc
+        self.selected_video = None  # Video hiện tại đang được chọn
+        self.sort_column = 7  # Mặc định sắp xếp theo ngày tải (giảm dần)
         self.sort_order = Qt.SortOrder.DescendingOrder  # Mặc định sắp xếp giảm dần
         
         # Các chỉ số cột
@@ -41,6 +80,9 @@ class DownloadedVideosTab(QWidget):
         self.date_col = 7
         self.hashtags_col = 8
         self.actions_col = 9
+        
+        # Biến lưu trữ bộ lọc
+        self.active_filters = {}  # {column_index: [allowed_values]}
         
         # Khởi tạo giao diện
         self.init_ui()
@@ -293,15 +335,44 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.setMouseTracking(True)
         self.downloads_table.cellEntered.connect(self.show_full_text_tooltip)
         
+        # Thiết lập header contextmenu để thêm filter
+        self.downloads_table.horizontalHeader().setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.downloads_table.horizontalHeader().customContextMenuRequested.connect(self.show_header_context_menu)
+        
+        # Thêm tooltip cho các header có thể filter
+        filterable_columns = [3, 4, 6, 7]  # Quality, Format, Status, Date
+        
+        # Cài đặt tooltip cho các cột có thể filter
+        for i in filterable_columns:
+            header_item = self.downloads_table.horizontalHeaderItem(i)
+            if header_item:
+                tooltip_text = self.tr_("TOOLTIP_FILTER_BY").format(header_item.text())
+                header_item.setToolTip(tooltip_text)
+        
         # Thiết lập style cho bảng
         self.downloads_table.setStyleSheet("""
             QTableWidget {
                 gridline-color: #444444;
                 border: none;
                 background-color: #2a2a2a;
+                selection-background-color: #3D5A80;
+                selection-color: white;
             }
             QTableWidget::item:selected {
                 background-color: #0078d7;
+            }
+            QHeaderView::section {
+                background-color: #2D2D2D;
+                color: white;
+                border: 1px solid #444444;
+                padding: 4px;
+            }
+            QHeaderView::section:hover {
+                background-color: #3D5A80;
+                border: 1px solid #6F9CEB;
+            }
+            QHeaderView::section:checked {
+                background-color: #3D5A80;
             }
         """)
         
@@ -314,53 +385,58 @@ class DownloadedVideosTab(QWidget):
 
     def create_video_details_area(self):
         """Tạo khu vực hiển thị thông tin chi tiết video"""
-        # Tạo frame chứa thông tin chi tiết
         self.video_details_frame = QFrame()
-        self.video_details_frame.setFrameShape(QFrame.Shape.NoFrame)  # Bỏ khung
-        self.video_details_frame.setMinimumHeight(180)  # Chiều cao tối thiểu
-        self.video_details_frame.setMaximumHeight(200)  # Chiều cao tối đa
+        self.video_details_frame.setStyleSheet("""
+            QFrame {
+                background-color: #202020;
+                border-radius: 8px;
+                margin-top: 10px;
+            }
+        """)
         
-        # Layout cho frame
+        # Layout chính cho khu vực chi tiết
         details_layout = QHBoxLayout(self.video_details_frame)
-        details_layout.setContentsMargins(10, 10, 10, 10)
-        details_layout.setSpacing(20)  # Tăng khoảng cách
+        details_layout.setContentsMargins(15, 15, 15, 15)
         
-        # Khu vực thumbnail
-        self.thumbnail_frame = QFrame()
-        self.thumbnail_frame.setFrameShape(QFrame.Shape.NoFrame)
-        self.thumbnail_frame.setFixedSize(150, 150)
+        # Khu vực thumbnail (bên trái)
+        thumbnail_frame = QFrame()
+        thumbnail_frame.setFixedSize(150, 150)
+        thumbnail_frame.setStyleSheet("background-color: transparent; border: none;")
         
-        # Label hiển thị thumbnail
-        thumbnail_layout = QVBoxLayout(self.thumbnail_frame)
-        thumbnail_layout.setContentsMargins(0, 0, 0, 0)
+        # Stack layout để chồng play icon lên thumbnail
+        stack_layout = QVBoxLayout(thumbnail_frame)
+        stack_layout.setContentsMargins(0, 0, 0, 0)
         
+        # Thumbnail
         self.thumbnail_label = QLabel()
-        self.thumbnail_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.thumbnail_label.setStyleSheet("background-color: #292929; border-radius: 8px;")  # Tăng border-radius
         self.thumbnail_label.setFixedSize(150, 150)
+        self.thumbnail_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.thumbnail_label.setStyleSheet("background-color: #303030; border-radius: 8px;")
+        self.thumbnail_label.setCursor(Qt.CursorShape.PointingHandCursor)  # Đổi con trỏ khi hover
         
-        # Đặt logo TikTok làm hình mặc định (trong thực tế sẽ là thumbnail thực)
-        default_pixmap = QPixmap(150, 150)
-        default_pixmap.fill(Qt.GlobalColor.transparent)
-        self.thumbnail_label.setPixmap(default_pixmap)
+        # Bỏ tooltip cho thumbnail
+        self.thumbnail_label.setToolTip("")
+        self.thumbnail_label.setToolTipDuration(0)  # Vô hiệu hóa tooltip
         
-        # Icon phát video
-        self.play_icon = QLabel(self.thumbnail_label)
-        self.play_icon.setStyleSheet("background-color: transparent;")
-        self.play_icon.setAlignment(Qt.AlignmentFlag.AlignCenter)
-        self.play_icon.setText("▶️")  # Unicode play icon
-        self.play_icon.setStyleSheet("font-size: 48px; color: white; background-color: transparent;")
-        self.play_icon.resize(150, 150)
-        
-        # Thiết lập cursor và tooltip để chỉ ra rằng có thể click
-        self.thumbnail_label.setCursor(Qt.CursorShape.PointingHandCursor)
-        self.thumbnail_label.setToolTip(self.tr_("TOOLTIP_CLICK_TO_PLAY"))
-        
-        # Kết nối sự kiện click vào thumbnail để phát video
+        # Kết nối sự kiện click vào thumbnail
         self.thumbnail_label.mousePressEvent = self.thumbnail_click_event
         
-        thumbnail_layout.addWidget(self.thumbnail_label)
-        details_layout.addWidget(self.thumbnail_frame)
+        # Icon play (nằm ở trên thumbnail)
+        self.play_icon = QLabel()
+        self.play_icon.setText("▶️")  # Biểu tượng play Unicode
+        self.play_icon.setStyleSheet("font-size: 52px; color: white; background-color: transparent;")
+        self.play_icon.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.play_icon.setFixedSize(150, 150)
+        
+        # Thêm thumbnail và play icon vào stack layout
+        stack_layout.addWidget(self.thumbnail_label)
+        stack_layout.addWidget(self.play_icon)
+        
+        # Thiết lập vị trí chồng lên nhau
+        self.thumbnail_label.raise_()
+        self.play_icon.raise_()
+        
+        details_layout.addWidget(thumbnail_frame)
         
         # Khu vực thông tin chi tiết
         self.info_frame = QFrame()
@@ -549,22 +625,57 @@ class DownloadedVideosTab(QWidget):
             self.update_selected_video_details(video)
 
     def filter_videos(self):
-        """Lọc video theo từ khóa tìm kiếm"""
+        """Lọc video theo từ khóa tìm kiếm và các bộ lọc"""
         search_text = self.search_input.text().lower()
         
+        # Bước 1: Lọc theo từ khóa tìm kiếm
         if not search_text:
-            # Nếu không có từ khóa tìm kiếm, hiển thị tất cả
-            self.filtered_videos = self.all_videos.copy()
+            # Nếu không có từ khóa tìm kiếm, bắt đầu với tất cả video
+            temp_filtered = self.all_videos.copy()
         else:
             # Lọc video theo từ khóa
-            self.filtered_videos = []
+            temp_filtered = []
             for video in self.all_videos:
                 title = video[0].lower()  # Title
                 hashtags = video[7].lower()  # Hashtags
-                description = video[9].lower()  # Description
+                description = video[9].lower() if len(video) > 9 else ""  # Description
                 
                 if search_text in title or search_text in hashtags or search_text in description:
-                    self.filtered_videos.append(video)
+                    temp_filtered.append(video)
+        
+        # Bước 2: Áp dụng các bộ lọc cho các cột
+        if self.active_filters:
+            # Mapping từ column UI index sang data index trong list video
+            column_mapping = {
+                3: 2,  # Quality (index 2 trong filtered_videos)
+                4: 3,  # Format (index 3 trong filtered_videos)
+                6: 5,  # Status (index 5 trong filtered_videos)
+                7: 6,  # Date (index 6 trong filtered_videos)
+            }
+            
+            # Áp dụng từng bộ lọc
+            for column_index, filter_value in self.active_filters.items():
+                if column_index in column_mapping:
+                    data_index = column_mapping[column_index]
+                    
+                    # Xử lý đặc biệt cho cột Date
+                    if column_index == 7 and isinstance(filter_value, tuple):
+                        start_date, end_date, _ = filter_value
+                        from datetime import datetime
+                        # Lọc video theo khoảng thời gian
+                        temp_filtered = [
+                            video for video in temp_filtered 
+                            if self.is_date_in_range(video[data_index], start_date, end_date)
+                        ]
+                    else:
+                        # Lọc thông thường cho các cột khác
+                        temp_filtered = [
+                            video for video in temp_filtered 
+                            if video[data_index] == filter_value
+                        ]
+        
+        # Cập nhật danh sách filtered_videos
+        self.filtered_videos = temp_filtered
         
         # Hiển thị lại danh sách
         self.display_videos()
@@ -572,6 +683,24 @@ class DownloadedVideosTab(QWidget):
         # Ẩn khu vực chi tiết video khi thay đổi tìm kiếm
         self.video_details_frame.setVisible(False)
         self.selected_video = None
+        
+    def is_date_in_range(self, date_string, start_date, end_date):
+        """Kiểm tra xem ngày có nằm trong khoảng thời gian không"""
+        from datetime import datetime
+        
+        try:
+            # Chuyển đổi chuỗi ngày sang datetime
+            # Định dạng ngày có thể là: "YYYY/MM/DD HH:MM" hoặc "YYYY/MM/DD"
+            if " " in date_string:
+                video_date = datetime.strptime(date_string, "%Y/%m/%d %H:%M")
+            else:
+                video_date = datetime.strptime(date_string, "%Y/%m/%d")
+                
+            # Kiểm tra xem ngày có nằm trong khoảng thời gian
+            return start_date <= video_date <= end_date
+        except Exception as e:
+            print(f"Error parsing date: {e}")
+            return False
 
     def load_downloaded_videos(self):
         """Load danh sách video đã tải từ cơ sở dữ liệu"""
@@ -579,6 +708,10 @@ class DownloadedVideosTab(QWidget):
             # Xóa dữ liệu cũ
             self.all_videos = []
             self.filtered_videos = []
+            
+            # Xóa bộ lọc hiện tại
+            self.active_filters = {}
+            self.update_all_filter_icons()
             
             # Lấy dữ liệu từ cơ sở dữ liệu
             db_manager = DatabaseManager()
@@ -1137,6 +1270,11 @@ class DownloadedVideosTab(QWidget):
         try:
             # Clear the filtered_videos list và reload từ database
             self.filtered_videos = []
+            
+            # Reset all filters
+            self.active_filters = {}
+            
+            # Load lại data từ database
             self.load_downloaded_videos()
             
             # Reset the search input
@@ -1144,6 +1282,9 @@ class DownloadedVideosTab(QWidget):
             
             # Kiểm tra thumbnails cho tất cả video đã tải
             self.check_and_update_thumbnails()
+            
+            # Cập nhật bộ lọc và biểu tượng filter
+            self.update_all_filter_icons()
             
             # Hiển thị danh sách video mới tải lên
             self.display_videos()
@@ -1155,17 +1296,37 @@ class DownloadedVideosTab(QWidget):
             # Update trạng thái nút Select All/Unselect All
             self.update_select_toggle_button()
             
-            # Cập nhật thông báo trong status bar
-            if self.parent:
-                self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_REFRESHED"))
+            # Cập nhật thống kê
+            self.update_statistics()
             
             # Cập nhật trạng thái các nút
             self.update_button_states()
+            
+            # Cập nhật thông báo trong status bar
+            if self.parent:
+                self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_REFRESHED"))
         except Exception as e:
             print(f"Error refreshing downloads: {e}")
             if self.parent:
-                self.parent.status_bar.showMessage(self.tr_("STATUS_REFRESH_ERROR"))
-    
+                self.parent.status_bar.showMessage(self.tr_("STATUS_ERROR").format(str(e)))
+
+    def update_all_filter_icons(self):
+        """Cập nhật tất cả các biểu tượng filter trên headers"""
+        # Xóa tất cả các biểu tượng filter
+        filterable_columns = [3, 4, 6, 7]  # Quality, Format, Status, Date (loại bỏ Size)
+        for column_index in filterable_columns:
+            self.update_filter_icon(column_index, False)
+        
+        # Cập nhật lại headers để đảm bảo tiêu đề đúng
+        self.update_table_headers()
+        
+        # Cập nhật tooltip cho các cột có thể filter
+        for column_index in filterable_columns:
+            header_item = self.downloads_table.horizontalHeaderItem(column_index)
+            if header_item:
+                tooltip_text = self.tr_("TOOLTIP_FILTER_BY").format(header_item.text())
+                header_item.setToolTip(tooltip_text)
+
     def check_and_update_thumbnails(self):
         """Kiểm tra và cập nhật thumbnails cho tất cả video"""
         if not self.all_videos:
@@ -2712,3 +2873,163 @@ class DownloadedVideosTab(QWidget):
             self.downloads_table.scrollTo(self.downloads_table.model().index(new_row, 0), QAbstractItemView.ScrollHint.EnsureVisible)
             
         event.accept()
+
+    def get_unique_column_values(self, column_index):
+        """Lấy danh sách các giá trị duy nhất cho một cột"""
+        # Map từ column UI index sang data index trong filtered_videos
+        column_mapping = {
+            3: 2,  # Quality (index 2 trong filtered_videos)
+            4: 3,  # Format (index 3 trong filtered_videos)
+            5: 4,  # Size (index 4 trong filtered_videos)
+            6: 5,  # Status (index 5 trong filtered_videos)
+            7: 6,  # Date (index 6 trong filtered_videos)
+        }
+        
+        # Nếu column_index không nằm trong mapping, trả về danh sách rỗng
+        if column_index not in column_mapping:
+            return []
+        
+        # Lấy index trong filtered_videos tương ứng với column UI
+        data_index = column_mapping[column_index]
+        
+        # Thu thập các giá trị duy nhất
+        unique_values = set()
+        for video in self.all_videos:
+            if data_index < len(video):
+                unique_values.add(video[data_index])
+        
+        return list(unique_values)
+
+    def show_header_context_menu(self, pos):
+        """Hiển thị context menu cho header để lọc"""
+        # Lấy chỉ số cột từ vị trí click
+        index = self.downloads_table.horizontalHeader().logicalIndexAt(pos)
+        
+        # Chỉ hiển thị menu cho các cột có thể lọc
+        filterable_columns = [3, 4, 6, 7]  # Quality, Format, Status, Date (loại bỏ Size)
+        
+        if index in filterable_columns:
+            # Xử lý đặc biệt cho cột Date
+            if index == 7:  # Date column
+                self.show_date_filter_menu(pos)
+                return
+                
+            # Lấy danh sách giá trị duy nhất cho cột này
+            unique_values = self.get_unique_column_values(index)
+            
+            # Hiển thị menu filter
+            filter_menu = FilterPopup(self, index, unique_values, self.downloads_table.horizontalHeaderItem(index).text())
+            filter_menu.filterChanged.connect(self.apply_column_filter)
+            
+            # Hiển thị menu tại vị trí chuột
+            header_pos = self.downloads_table.horizontalHeader().mapToGlobal(pos)
+            filter_menu.exec(header_pos)
+            
+    def show_date_filter_menu(self, pos):
+        """Hiển thị menu filter đặc biệt cho cột Date"""
+        # Tạo menu mới
+        date_menu = QMenu(self)
+        
+        # Thêm tùy chọn Clear Filter
+        clear_action = date_menu.addAction("Clear Filter")
+        clear_action.triggered.connect(lambda: self.apply_column_filter(7, None))
+        
+        date_menu.addSeparator()
+        
+        # Thêm các khoảng thời gian
+        today_action = date_menu.addAction("Hôm nay")
+        today_action.triggered.connect(lambda: self.filter_by_date_range("today"))
+        
+        yesterday_action = date_menu.addAction("Hôm qua")
+        yesterday_action.triggered.connect(lambda: self.filter_by_date_range("yesterday"))
+        
+        last_7_days_action = date_menu.addAction("7 ngày qua")
+        last_7_days_action.triggered.connect(lambda: self.filter_by_date_range("last_7_days"))
+        
+        last_30_days_action = date_menu.addAction("30 ngày qua")
+        last_30_days_action.triggered.connect(lambda: self.filter_by_date_range("last_30_days"))
+        
+        this_month_action = date_menu.addAction("Tháng này")
+        this_month_action.triggered.connect(lambda: self.filter_by_date_range("this_month"))
+        
+        last_month_action = date_menu.addAction("Tháng trước")
+        last_month_action.triggered.connect(lambda: self.filter_by_date_range("last_month"))
+        
+        # Hiển thị menu tại vị trí chuột
+        header_pos = self.downloads_table.horizontalHeader().mapToGlobal(pos)
+        date_menu.exec(header_pos)
+        
+    def filter_by_date_range(self, date_range):
+        """Lọc video theo khoảng thời gian"""
+        from datetime import datetime, timedelta
+        
+        # Lấy ngày hiện tại
+        today = datetime.now().replace(hour=0, minute=0, second=0, microsecond=0)
+        
+        # Xác định khoảng thời gian dựa trên loại
+        if date_range == "today":
+            start_date = today
+            end_date = today + timedelta(days=1) - timedelta(seconds=1)
+            filter_name = "Hôm nay"
+        elif date_range == "yesterday":
+            start_date = today - timedelta(days=1)
+            end_date = today - timedelta(seconds=1)
+            filter_name = "Hôm qua"
+        elif date_range == "last_7_days":
+            start_date = today - timedelta(days=7)
+            end_date = today + timedelta(days=1) - timedelta(seconds=1)
+            filter_name = "7 ngày qua"
+        elif date_range == "last_30_days":
+            start_date = today - timedelta(days=30)
+            end_date = today + timedelta(days=1) - timedelta(seconds=1)
+            filter_name = "30 ngày qua"
+        elif date_range == "this_month":
+            start_date = today.replace(day=1)
+            if today.month == 12:
+                end_date = today.replace(year=today.year+1, month=1, day=1) - timedelta(seconds=1)
+            else:
+                end_date = today.replace(month=today.month+1, day=1) - timedelta(seconds=1)
+            filter_name = "Tháng này"
+        elif date_range == "last_month":
+            if today.month == 1:
+                start_date = today.replace(year=today.year-1, month=12, day=1)
+                end_date = today.replace(day=1) - timedelta(seconds=1)
+            else:
+                start_date = today.replace(month=today.month-1, day=1)
+                end_date = today.replace(day=1) - timedelta(seconds=1)
+            filter_name = "Tháng trước"
+        else:
+            return
+            
+        # Lưu bộ lọc thời gian
+        self.active_filters[7] = (start_date, end_date, filter_name)
+        
+        # Cập nhật biểu tượng filter
+        self.update_filter_icon(7, True)
+        
+        # Cập nhật lại danh sách video
+        self.filter_videos()
+
+    def apply_column_filter(self, column_index, selected_value):
+        """Áp dụng bộ lọc cho một cột cụ thể"""
+        # Nếu không có giá trị nào được chọn, xóa bộ lọc cho cột này
+        if not selected_value:
+            if column_index in self.active_filters:
+                del self.active_filters[column_index]
+            self.update_filter_icon(column_index, False)
+        else:
+            # Cập nhật bộ lọc
+            self.active_filters[column_index] = selected_value
+            self.update_filter_icon(column_index, True, selected_value)
+        
+        # In ra thông tin filter để debug
+        print(f"Applied filter for column {column_index}: {selected_value}")
+        print(f"Active filters: {self.active_filters}")
+        
+        # Áp dụng lọc và hiển thị lại danh sách
+        self.filter_videos()
+    
+    def update_filter_icon(self, column_index, has_filter, filter_value=None):
+        """Cập nhật biểu tượng filter trên header"""
+        # Không thay đổi tiêu đề khi filter - giữ nguyên tên cột
+        pass

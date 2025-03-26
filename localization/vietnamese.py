@@ -200,6 +200,10 @@ CONTEXT_NEED_DOWNLOAD = "Video chưa được tải xuống.\nVui lòng tải xu
 CONTEXT_PLAYING = "Đang phát"
 CONTEXT_RENAME_VIDEO = "Đổi tên video"
 
+# Tooltips
+TOOLTIP_FILTER_BY = "Click chuột phải để lọc theo {}"
+TOOLTIP_CLICK_TO_PLAY = "Click để phát video"
+
 # Donate area
 DONATE_TITLE = "Ủng hộ tác giả"
 DONATE_DESC = "Tool này hoàn toàn miễn phí, nhưng nếu bạn thấy nó hữu ích, hãy ủng hộ tác giả 1 ly cafe nhé."

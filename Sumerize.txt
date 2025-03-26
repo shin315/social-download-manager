@@ -364,3 +364,29 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
    - Người dùng có thể copy đúng title gốc dù trong table hiển thị title đã lọc
    - Tăng tính nhất quán trong việc hiển thị và sắp xếp thông tin
    - Giúp người dùng dễ dàng phân biệt và tìm kiếm video trong danh sách
+
+## 2024-03-27: Thêm tính năng filter và cải thiện UI trong tab Downloaded Videos
+1. **Thêm tính năng filter cho các cột trong tab Downloaded Videos**:
+   - Cho phép lọc theo các cột Quality, Format, Status và Date bằng cách nhấp chuột phải vào tiêu đề cột
+   - Thiết kế menu filter đơn giản, chỉ hiển thị các giá trị có thể lọc
+   - Thêm hiệu ứng hover và tooltip cho tiêu đề cột có thể filter để người dùng dễ dàng nhận biết
+   - Hiển thị biểu tượng filter (🔍) trên header của cột đang được lọc
+   - Xử lý đặc biệt cho cột Date với các tùy chọn lọc theo khoảng thời gian như "Hôm nay", "Hôm qua", "7 ngày qua", "30 ngày qua", "Tháng này", "Tháng trước"
+   - Dễ dàng xóa bộ lọc với tùy chọn "Clear Filter"
+
+2. **Cải thiện hiển thị thông tin chi tiết video**:
+   - Cắt ngắn tiêu đề video trong phần thông tin chi tiết nếu quá dài (hiển thị tối đa 45 ký tự và thêm "...")
+   - Loại bỏ tooltip khi hover vào thumbnail video để tránh hiển thị thông tin không cần thiết
+   - Cải thiện trải nghiệm người dùng khi click vào thumbnail để phát video
+
+3. **Đa ngôn ngữ và UI improvements**:
+   - Đảm bảo tất cả các chuỗi hiển thị đều được dịch đúng theo ngôn ngữ hiện tại của ứng dụng
+   - Cập nhật tooltip để sử dụng hàm dịch tr_() thay vì chuỗi cứng
+   - Thêm hiệu ứng hover cho header với màu nền và viền nổi bật
+   - Tối ưu hóa giao diện người dùng để trực quan và dễ sử dụng hơn
+
+4. **Xử lý dữ liệu và filter hiệu quả hơn**:
+   - Lọc video theo nhiều tiêu chí một cách hiệu quả
+   - Duy trì trạng thái filter giữa các lần tìm kiếm
+   - Reset filter khi tải lại danh sách video hoặc refresh
+   - Tương thích với tính năng tìm kiếm hiện có, cho phép kết hợp tìm kiếm và filter

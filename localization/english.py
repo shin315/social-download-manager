@@ -199,6 +199,10 @@ CONTEXT_NEED_DOWNLOAD = "The video has not been downloaded yet.\nPlease download
 CONTEXT_PLAYING = "Playing"
 CONTEXT_RENAME_VIDEO = "Rename Video"
 
+# Tooltips
+TOOLTIP_FILTER_BY = "Right-click to filter by {}"
+TOOLTIP_CLICK_TO_PLAY = "Click to play video"
+
 # Donate area
 DONATE_TITLE = "Support Me"
 DONATE_DESC = "This tool is completely free, but if you find it useful, please consider buying me a coffee!"
