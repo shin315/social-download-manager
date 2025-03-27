@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Vietnamese language file for SoDownloader
+Vietnamese language file for Social Download Manager
 """
 
 # Common strings
@@ -109,6 +109,7 @@ STATUS_DOWNLOAD_FAILED = "Tải xuống thất bại"
 STATUS_VIDEO_INFO = "Đã lấy thông tin video thành công"
 STATUS_DELETED = "Đã xóa: {}"
 STATUS_VIDEOS_REFRESHED = "Đã làm mới danh sách video"
+STATUS_REFRESHING = "Đang làm mới danh sách video..."
 STATUS_LANGUAGE_CHANGED = "Đã chuyển ngôn ngữ sang: {}"
 STATUS_DOWNLOADING_SHORT = "Đang tải..."
 STATUS_GETTING_INFO_SHORT = "Đang lấy..."
@@ -177,8 +178,8 @@ DIALOG_INVALID_NAME = "Tên không hợp lệ. Vui lòng nhập tên hợp lệ.
 DIALOG_INFO = "Thông tin"
 
 # About dialog
-ABOUT_TITLE = "Giới Thiệu SoDownloader"
-ABOUT_MESSAGE = "SoDownloader v1.0\n\nỨng dụng đơn giản để tải video không có watermark từ nhiều nền tảng."
+ABOUT_TITLE = "Giới Thiệu Social Download Manager"
+ABOUT_MESSAGE = "Social Download Manager v1.0\n\nỨng dụng đơn giản để tải video không có watermark từ nhiều nền tảng."
 
 # Video details
 DETAIL_QUALITY = "Chất lượng"

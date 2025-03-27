@@ -14,7 +14,7 @@ from localization import get_language_manager
 
 
 class MainWindow(QMainWindow):
-    """Cửa sổ chính của ứng dụng SoDownloader"""
+    """Cửa sổ chính của ứng dụng Social Download Manager"""
     
     # Tín hiệu khi ngôn ngữ thay đổi
     language_changed = pyqtSignal(str)
@@ -47,7 +47,7 @@ class MainWindow(QMainWindow):
 
     def init_ui(self):
         """Khởi tạo giao diện người dùng"""
-        self.setWindowTitle("SoDownloader")
+        self.setWindowTitle("Social Download Manager")
         self.setGeometry(100, 100, 1000, 700)  # Điều chỉnh kích thước cửa sổ lớn hơn
         self.setWindowIcon(QIcon("assets/logo.png"))
         

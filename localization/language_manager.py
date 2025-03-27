@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Language manager for TikTok Downloader
+Language manager for Social Download Manager
 """
 
 import importlib

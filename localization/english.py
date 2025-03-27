@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-English language file for SoDownloader
+English language file for Social Download Manager
 """
 
 # Common strings
@@ -108,6 +108,7 @@ STATUS_DOWNLOAD_FAILED = "Download failed"
 STATUS_VIDEO_INFO = "Video information retrieved successfully"
 STATUS_DELETED = "Deleted: {}"
 STATUS_VIDEOS_REFRESHED = "Videos list refreshed"
+STATUS_REFRESHING = "Refreshing videos list..."
 STATUS_LANGUAGE_CHANGED = "Language changed to: {}"
 STATUS_DOWNLOADING_SHORT = "Downloading..."
 STATUS_GETTING_INFO_SHORT = "Getting info..."
@@ -176,8 +177,8 @@ DIALOG_INVALID_NAME = "Invalid name. Please enter a valid name."
 DIALOG_INFO = "Information"
 
 # About dialog
-ABOUT_TITLE = "About SoDownloader"
-ABOUT_MESSAGE = "SoDownloader v1.0\n\nA simple application to download videos without watermark from multiple platforms."
+ABOUT_TITLE = "About Social Download Manager"
+ABOUT_MESSAGE = "Social Download Manager v1.0\n\nA simple application to download videos without watermark from multiple platforms."
 
 # Video details
 DETAIL_QUALITY = "Quality"

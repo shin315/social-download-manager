@@ -2,7 +2,7 @@
 # -*- coding: utf-8 -*-
 
 """
-Localization module for TikTok Downloader
+Localization module for Social Download Manager
 """
 
 from localization import english, vietnamese
