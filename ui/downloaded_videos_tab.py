@@ -284,17 +284,17 @@ class DownloadedVideosTab(QWidget):
         header_font.setBold(True)
         self.downloads_table.horizontalHeader().setFont(header_font)
         
-        # Thiết lập chiều rộng cho các cột
-        self.downloads_table.setColumnWidth(0, 30)   # Select - giảm xuống
-        self.downloads_table.setColumnWidth(1, 250)  # Tiêu đề - tăng thêm để ưu tiên hiển thị
-        self.downloads_table.setColumnWidth(2, 80)   # Tác giả - giảm xuống
-        self.downloads_table.setColumnWidth(3, 70)   # Chất lượng - giảm xuống
-        self.downloads_table.setColumnWidth(4, 70)   # Định dạng - giảm để nhường cho Action
-        self.downloads_table.setColumnWidth(5, 70)   # Kích thước
-        self.downloads_table.setColumnWidth(6, 90)   # Trạng thái - giảm do sẽ thay đổi nội dung
-        self.downloads_table.setColumnWidth(7, 110)  # Ngày tải - giảm để nhường cho Action
-        self.downloads_table.setColumnWidth(8, 90)   # Hashtags - giảm lại để nhường cho Action
-        self.downloads_table.setColumnWidth(9, 140)  # Thao tác - tăng để đủ chỗ hiển thị 2 nút
+        # Thiết lập chiều rộng cho các cột (tối ưu lại để cột tiêu đề có nhiều không gian hơn)
+        self.downloads_table.setColumnWidth(0, 30)     # Select
+        self.downloads_table.setColumnWidth(1, 280)    # Tiêu đề - tăng thêm để hiển thị nhiều hơn
+        self.downloads_table.setColumnWidth(2, 85)     # Tác giả - giảm nhẹ
+        self.downloads_table.setColumnWidth(3, 80)     # Chất lượng - giảm bớt
+        self.downloads_table.setColumnWidth(4, 80)     # Định dạng - giảm bớt
+        self.downloads_table.setColumnWidth(5, 75)     # Kích thước - giảm bớt
+        self.downloads_table.setColumnWidth(6, 80)     # Trạng thái - giảm bớt vì chỉ hiển thị "Successful"
+        self.downloads_table.setColumnWidth(7, 100)    # Ngày tải - giảm nhẹ
+        self.downloads_table.setColumnWidth(8, 90)     # Hashtags - giảm nhẹ
+        self.downloads_table.setColumnWidth(9, 130)    # Thao tác - giảm nhẹ, đủ cho 2 nút
         
         # Thiết lập chế độ chọn dòng
         self.downloads_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)

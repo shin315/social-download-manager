@@ -334,6 +334,30 @@ class MainWindow(QMainWindow):
                 QCheckBox {
                     color: #ffffff;
                 }
+                QCheckBox::indicator {
+                    width: 13px;
+                    height: 13px;
+                    background-color: #3d3d3d;
+                    border: 1px solid #555555;
+                    border-radius: 2px;
+                }
+                QCheckBox::indicator:checked {
+                    background-color: #0078d7;
+                    border: 1px solid #0078d7;
+                    border-radius: 2px;
+                }
+                QTableWidget QCheckBox::indicator {
+                    width: 13px;
+                    height: 13px;
+                    background-color: #3d3d3d;
+                    border: 1px solid #555555;
+                    border-radius: 2px;
+                }
+                QTableWidget QCheckBox::indicator:checked {
+                    background-color: #0078d7;
+                    border: 1px solid #0078d7;
+                    border-radius: 2px;
+                }
                 QMenuBar {
                     background-color: #2d2d2d;
                     color: #ffffff;
@@ -411,7 +435,6 @@ class MainWindow(QMainWindow):
                     font-family: 'Inter';
                 }
                 QTabWidget::pane {
-                    border: 1px solid #cccccc;
                     background-color: #f0f0f0;
                 }
                 QTabBar::tab {
@@ -465,6 +488,30 @@ class MainWindow(QMainWindow):
                 }
                 QCheckBox {
                     color: #333333;
+                }
+                QCheckBox::indicator {
+                    width: 13px;
+                    height: 13px;
+                    background-color: #e0e0e0;
+                    border: 1px solid #aaaaaa;
+                    border-radius: 2px;
+                }
+                QCheckBox::indicator:checked {
+                    background-color: #0078d7;
+                    border: 1px solid #0078d7;
+                    border-radius: 2px;
+                }
+                QTableWidget QCheckBox::indicator {
+                    width: 13px;
+                    height: 13px;
+                    background-color: #e0e0e0;
+                    border: 1px solid #aaaaaa;
+                    border-radius: 2px;
+                }
+                QTableWidget QCheckBox::indicator:checked {
+                    background-color: #0078d7;
+                    border: 1px solid #0078d7;
+                    border-radius: 2px;
                 }
                 QMenuBar {
                     background-color: #e0e0e0;

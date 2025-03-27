@@ -21,7 +21,58 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
 - Chuyển đổi sang MP3 với xử lý tên file thông minh
 
 ## CẬP NHẬT GẦN ĐÂY
-1. **2024-03-26: Cải thiện hiển thị tooltip và copy title trong cả hai tab**:
+
+## CẬP NHẬT MỚI NHẤT 2025-03-27
+1. **Đã chuẩn hóa hiệu ứng checkbox giữa chế độ sáng và tối**:
+   - Thống nhất hiệu ứng dấu tích cho checkbox trong cả chế độ sáng và tối
+   - Thiết lập kích thước cố định 13x13px cho checkbox trong cả hai chế độ
+   - Chỉnh sửa bo góc (border-radius: 2px) để có giao diện nhất quán
+   - Sử dụng màu xanh (#0078d7) khi được tích cho cả hai chế độ 
+   - Đảm bảo checkbox trong bảng (QTableWidget) có cùng hiệu ứng với checkbox thông thường
+   - Mặc dù màu nền checkbox khác nhau giữa các chế độ (#3d3d3d cho tối, #e0e0e0 cho sáng) nhưng hiệu ứng tích vào hoàn toàn giống nhau
+
+2. **Đã cải thiện giao diện checkbox trong chế độ sáng**:
+   - Thay đổi màu nền của checkbox trong light mode sang màu xám nhạt (#e0e0e0)
+   - Thêm đường viền màu xám (#aaaaaa) để checkbox nổi bật và dễ nhìn hơn trên nền trắng
+   - Thiết lập màu nền xanh (#0078d7) cho checkbox khi được chọn
+   - Thiết lập riêng style cho checkbox trong bảng để đảm bảo hiển thị đồng nhất
+   - Giữ nguyên style của checkbox trong chế độ tối
+
+3. **Đã sửa lỗi hiển thị trong status bar với thông báo copy text**:
+   - Thêm chuỗi STATUS_TEXT_COPIED thiếu trong file ngôn ngữ tiếng Anh và tiếng Việt
+   - Chuỗi được thêm vào có định dạng "Đã sao chép: {}" và "Copied text: {}"
+   - Khắc phục lỗi hiển thị key ngôn ngữ trực tiếp trong status bar
+   - Đảm bảo hiển thị thông báo copy đúng khi người dùng copy nội dung từ bảng
+
+4. **Đã sửa lỗi hiển thị tiêu đề cột bị xáo trộn khi refresh bảng**:
+   - Khắc phục lỗi khi nhấn nút Refresh, tiêu đề cột Date hiển thị thành Hashtags và cột Status hiển thị thành Date
+   - Sửa lại hàm `update_all_filter_icons()` để gọi `update_table_headers()` thay vì tự định nghĩa lại header_texts
+   - Đảm bảo các tiêu đề cột luôn được cập nhật đúng khi refresh dữ liệu
+   - Sửa thứ tự gọi hàm trong `refresh_downloads()` để đảm bảo bộ lọc và tiêu đề được cập nhật đúng
+   
+5. **Đã tối ưu hiển thị tiêu đề cột cho ngôn ngữ tiếng Việt**:
+   - Tăng độ rộng cột để đảm bảo các tiêu đề dài trong tiếng Việt hiển thị đầy đủ
+   - Tăng chiều rộng cột Chất Lượng từ 70px lên 90px
+   - Tăng chiều rộng cột Định Dạng từ 70px lên 90px
+   - Tăng chiều rộng cột Kích Thước từ 70px lên 90px
+   - Tăng chiều rộng cột Trạng Thái từ 90px lên 100px
+   - Tăng chiều rộng cột Hashtags từ 90px lên 100px
+   - Điều chỉnh độ rộng cột Tiêu Đề để cân bằng với các thay đổi khác
+
+6. **Đã tối ưu lại phân bố không gian giữa các cột**:
+   - Tăng đáng kể độ rộng cột Tiêu Đề từ 230px lên 280px để hiển thị thêm nội dung
+   - Giảm độ rộng của các cột ít quan trọng để dành thêm không gian cho cột tiêu đề:
+     - Giảm cột Tác Giả từ 90px xuống 85px
+     - Giảm cột Chất Lượng từ 90px xuống 80px
+     - Giảm cột Định Dạng từ 90px xuống 80px
+     - Giảm cột Kích Thước từ 90px xuống 75px
+     - Giảm cột Trạng Thái từ 100px xuống 80px (chỉ hiển thị "Successful")
+     - Giảm cột Ngày Tải từ 110px xuống 100px
+     - Giảm cột Hashtags từ 100px xuống 90px
+     - Giảm cột Thao Tác từ 140px xuống 130px (vẫn đủ cho 2 nút)
+   - Tổng cộng đã tối ưu thêm 50px cho cột tiêu đề và giảm 95px từ các cột còn lại
+
+7. **2024-03-26: Cải thiện hiển thị tooltip và copy title trong cả hai tab**:
    - Thêm hàm `format_tooltip_text()` để định dạng tooltip với dấu xuống dòng tự động tại dấu chấm câu và hashtag, giúp dễ đọc hơn
    - Lưu trữ title đầy đủ vào `Qt.ItemDataRole.UserRole` để sử dụng khi copy từ context menu
    - Cập nhật hàm `copy_to_clipboard()` để loại bỏ hashtag khi copy từ cột title, làm cho nội dung sạch và dễ sử dụng
@@ -29,42 +80,42 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
    - Đảm bảo rằng khi right-click vào title và chọn "Copy Title", người dùng luôn nhận được phiên bản title đã làm sạch (không có hashtag)
    - Cải thiện trải nghiệm người dùng bằng cách hiển thị thông tin rõ ràng hơn trong các tooltip
 
-2. **Đã thêm tính năng "Rename Video"**:
+8. **Đã thêm tính năng "Rename Video"**:
    - Cho phép người dùng đổi tên video trước khi tải xuống thông qua menu chuột phải
    - Tên mới sẽ được hiển thị trong tab "Downloaded Videos" và làm tên file khi lưu
    - Áp dụng các quy tắc làm sạch tên tệp để đảm bảo tính hợp lệ
 
-3. **Xử lý cải tiến cho video không có tiêu đề**:
+9. **Xử lý cải tiến cho video không có tiêu đề**:
    - Bắt buộc người dùng phải đặt tên file trước khi tải xuống nếu video không có tiêu đề
    - Tự động đề xuất tên mặc định dựa trên timestamp: Video_YYYYMMdd_HHmmss
    - Tên đã đặt sẽ được lưu vào cơ sở dữ liệu và hiển thị chính xác trong tab Downloaded Videos
 
-4. **Cải tiến thuật toán tìm kiếm và phát video**:
+10. **Cải tiến thuật toán tìm kiếm và phát video**:
    - Nâng cao khả năng tìm kiếm tập tin dựa trên tiêu đề, bao gồm xử lý khi tiêu đề có ký tự đặc biệt
    - Thêm nhiều biến thể tìm kiếm như từ đầu tiên, 3 từ đầu, 5 từ đầu để tăng khả năng tìm thấy file
    - Hỗ trợ đặc biệt xử lý các ký tự đặc biệt như dấu ngoặc kép, ba chấm, v.v.
    - Giảm ngưỡng tương đồng xuống 30% để tìm được nhiều file hơn
 
-5. **Giao diện "File Already Exists" cải tiến**:
+11. **Giao diện "File Already Exists" cải tiến**:
    - Thêm tùy chọn "Apply to all" cho việc ghi đè file trong trường hợp tải nhiều video
    - Chỉ hiển thị "Apply to all" khi có từ 2 file trở lên cần xử lý
    - Cải thiện vị trí của checkbox "Apply to all" sang cùng hàng với các nút Yes/No/Cancel
    - Thêm spacing và style để giao diện trông chuyên nghiệp và cân đối hơn
    - Sửa lỗi không hiển thị "Apply to all" ở thông báo file đã tồn tại đầu tiên
 
-6. **Cải tiến lưu và hiển thị thông tin video**:
+12. **Cải tiến lưu và hiển thị thông tin video**:
    - Tên tùy chỉnh sẽ được lưu vào cả video_info và VideoInfo object
    - Hiển thị đúng tên đã đặt trong tab Downloaded Videos, kể cả khi không có tiêu đề ban đầu
    - Xác định tên file thông minh dựa trên các thuộc tính có sẵn
 
-7. **Cải tiến quá trình chuyển đổi MP3**:
+13. **Cải tiến quá trình chuyển đổi MP3**:
    - Đơn giản hóa quy trình chuyển đổi MP3 bằng cách lưu trực tiếp vào đường dẫn đích
    - Loại bỏ bước tạo tệp tạm thời và đổi tên sau đó, giảm thiểu lỗi đường dẫn
    - Thêm kiểm tra file đầu ra đã được tạo thành công
    - Bổ sung nhật ký chi tiết để dễ dàng gỡ lỗi
    - Xử lý đúng đắn tên tệp đặc biệt và ký tự không hợp lệ trong tên file đầu ra
 
-8. **Đã thêm tính năng xóa file vật lý khi xóa record video**:
+14. **Đã thêm tính năng xóa file vật lý khi xóa record video**:
    - Thêm checkbox "Delete file from disk" trong dialog xác nhận xóa
    - Kiểm tra sự tồn tại của file trước khi cho phép xóa
    - Hỗ trợ xóa nhiều file cùng lúc với tùy chọn "Apply to all"
@@ -74,45 +125,45 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
    - Kiểm tra sự tồn tại của thumbnail trước khi xóa để tránh lỗi
    - Cải thiện kích thước dialog xóa video trong tab Downloaded Videos để phù hợp với kiểu dialog khác
 
-9. **Đã sửa các lỗi logic**:
+15. **Đã sửa các lỗi logic**:
    - Sửa lỗi hiển thị "Apply to all" khi chỉ có 1 file cần xử lý
    - Cải thiện việc tải xuống video không có tiêu đề
    - Sửa lỗi khi phát video có ký tự đặc biệt trong tên file như dấu ngoặc kép
    - Xử lý trường hợp video không có tiêu đề, tìm kiếm trong thư mục theo định dạng
    - Sửa lỗi nút Select All/Unselect All không cập nhật đúng khi chuyển tab từ Info sang Downloaded Videos
 
-10. **Đã tối ưu giao diện tab "Downloaded Videos"**:
+16. **Đã tối ưu giao diện tab "Downloaded Videos"**:
    - Điều chỉnh độ rộng cột, ưu tiên hiển thị cột Title (tăng từ 150px lên 250px)
    - Cố định kích thước các cột ngoại trừ Title để ngăn tự động co giãn
    - Cột Title được thiết lập ở chế độ Stretch để mở rộng khi có thêm không gian
    - Đã vô hiệu hóa sắp xếp cho cột Select
 
-11. **Đã cải thiện dialog copy**:
+17. **Đã cải thiện dialog copy**:
    - Chỉ hiển thị nội dung full title đã loại bỏ hashtags để dễ dàng copy
    - Thêm định dạng cho các hashtags khi hiển thị riêng
 
-12. **Đã sửa lỗi trong hàm `delete_selected_videos` và `on_download_finished`**
+18. **Đã sửa lỗi trong hàm `delete_selected_videos` và `on_download_finished`**
 
-13. **Đã cải thiện cách hiển thị tooltip khi hover chuột vào các cột Title, Creator và Hashtags**:
+19. **Đã cải thiện cách hiển thị tooltip khi hover chuột vào các cột Title, Creator và Hashtags**:
    - Đã thêm hàm format_tooltip_text() để tự động thêm dấu xuống dòng sau dấu chấm câu, dấu phẩy và hashtag
    - Tooltip giờ đây hiển thị rõ ràng và dễ đọc hơn với định dạng xuống dòng tự động
    - Mỗi hashtag hiển thị trên một dòng riêng biệt để dễ đọc
    - Áp dụng cải tiến này cho cả hai tab Video Info và Downloaded Videos
 
-14. **Đã cải thiện xử lý lỗi khi gặp video chỉ chứa hình ảnh và âm thanh (không có video)**
+20. **Đã cải thiện xử lý lỗi khi gặp video chỉ chứa hình ảnh và âm thanh (không có video)**
 
-15. **Đã sửa lỗi tự động tải xuống video MP3 không có tiêu đề mà không hỏi người dùng**
+21. **Đã sửa lỗi tự động tải xuống video MP3 không có tiêu đề mà không hỏi người dùng**
 
-16. **Đã sửa lỗi hiển thị không đầy đủ tiêu đề khi double-click để copy ở tab Video Info**
+22. **Đã sửa lỗi hiển thị không đầy đủ tiêu đề khi double-click để copy ở tab Video Info**
 
-17. **Đã loại bỏ các hashtag trong tiêu đề khi copy**:
+23. **Đã loại bỏ các hashtag trong tiêu đề khi copy**:
    - Tự động loại bỏ hashtag khi copy title từ cột Title hoặc dialog copy
    - Đảm bảo nội dung copy luôn sạch và dễ sử dụng cho người dùng
    - Áp dụng cho cả menu context (chuột phải) và double-click
    - Cập nhật cho cả hai tab Video Info và Downloaded Videos
    - Vẫn giữ đầy đủ hashtag khi copy từ cột Hashtag
 
-18. **Đã thêm tính năng xóa file vật lý khi xóa video từ danh sách**
+24. **Đã thêm tính năng xóa file vật lý khi xóa video từ danh sách**
 
 ## CÔNG NGHỆ SỬ DỤNG
 - Python 3.8+
@@ -157,6 +208,8 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
 15. Đã loại bỏ các hashtag trong tiêu đề khi hiển thị trong dialog copy
 16. Đã thêm tính năng xóa file vật lý khi xóa video từ danh sách
 17. Đã cải thiện tính năng xóa file vật lý bằng cách tự động xóa cả file thumbnail tương ứng
+18. Đã sửa lỗi hiển thị tiêu đề cột bị xáo trộn khi refresh bảng (cột Date hiển thị thành Hashtags và cột Status hiển thị thành Date)
+19. Đã tối ưu hiển thị tiêu đề cột cho ngôn ngữ tiếng Việt bằng cách tăng độ rộng các cột
 
 ## CHI TIẾT TÍNH NĂNG "RENAME VIDEO"
 - Hiển thị trong context menu (menu chuột phải) của tab Video Info
@@ -247,146 +300,3 @@ Social Download Manager (ban đầu là TikTok Downloader) là ứng dụng desk
    - Đảm bảo tất cả dialog hiển thị đúng ngôn ngữ và văn bản đã được dịch
    - Cải thiện tính nhất quán giữa các dialog trong ứng dụng
    - Đảm bảo trạng thái UI luôn phản ánh đúng trạng thái hiện tại của dữ liệu
-
-## 2024-03-26: Cải thiện thông báo File Already Exists và đồng nhất UI giữa các tab
-1. **Cải thiện nội dung thông báo trong dialog "File Already Exists"**:
-   - Sửa đổi chuỗi thông báo trong localization/english.py và localization/vietnamese.py
-   - Thay thế văn bản cũ "File '{}' đã tồn tại trong thư mục lưu.\nBạn có muốn ghi đè lên không?" 
-     bằng thông báo rõ ràng hơn "Những file sau đã tồn tại trong thư mục đầu ra. Bạn có muốn ghi đè lên không?"
-   - Loại bỏ tham số định dạng {} không cần thiết, thay vào đó hiển thị trực tiếp danh sách file
-
-2. **Sửa đổi cấu trúc hiển thị dialog**:
-   - Đặt danh sách file đã tồn tại sau thông báo chính, phân tách bằng dòng trống
-   - Hiển thị danh sách dưới dạng liệt kê với bullets (•) đầu dòng
-   - Hiển thị tối đa 5 file và thông báo "... và X file khác" nếu có nhiều hơn
-
-3. **Cải thiện luồng xử lý trong phương thức download_videos()**:
-   - Thu thập danh sách file đã tồn tại trước
-   - Sau đó mới tạo nội dung thông báo dựa trên danh sách
-   - Đơn giản hóa code và tăng hiệu suất bằng cách loại bỏ các bước kiểm tra không cần thiết
-
-4. **Đồng nhất hiệu ứng UI giữa các tab**:
-   - Cập nhật stylesheet cho bảng trong tab Video Info để có hiệu ứng hover giống với tab Downloaded Videos
-   - Thêm phương thức show_full_text_tooltip để hiển thị tooltip khi hover vào các ô trong bảng
-   - Cập nhật phương thức apply_theme_colors để áp dụng style đồng nhất giữa hai tab
-   - Thêm style cho thanh cuộn trong tab Video Info để đảm bảo trải nghiệm nhất quán
-   - Đảm bảo màu sắc hiệu ứng hover phù hợp với theme đang sử dụng (dark/light)
-
-## 2024-03-26: Cải thiện UI với vô hiệu hóa nút khi danh sách trống
-1. **Vô hiệu hóa các nút không cần thiết khi danh sách video trống**:
-   - Thêm phương thức `update_button_states()` vào cả hai tab (VideoInfoTab và DownloadedVideosTab)
-   - Tự động vô hiệu hóa các nút "Select All/Unselect All", "Delete Selected", "Delete All" và "Download" khi không có video nào
-   - Thêm style cho trạng thái disabled của các nút, chuyển sang màu xám để đánh dấu rõ nút không khả dụng
-   - Kích hoạt lại các nút khi có video được thêm vào danh sách
-
-2. **Cải thiện logic để cập nhật trạng thái nút**:
-   - Cập nhật trạng thái nút khi khởi tạo UI
-   - Cập nhật trạng thái nút sau khi xóa video (cả xóa một video hoặc nhiều video)
-   - Cập nhật trạng thái nút sau khi refresh danh sách
-   - Cập nhật trạng thái nút khi nhận được thông tin video mới
-
-3. **Tăng cường trải nghiệm người dùng**:
-   - Giúp người dùng hiểu rõ hơn khi nào có thể sử dụng các chức năng
-   - Tránh tình trạng người dùng click vào các nút không có tác dụng khi danh sách trống
-   - Giao diện trực quan hơn, dễ hiểu hơn cho người dùng mới
-   - Áp dụng nguyên tắc thiết kế UI "affordance" - chỉ hiển thị các hành động khả dụng
-
-## 2024-03-26: Sửa lỗi và tối ưu hóa code
-1. **Sửa lỗi biến không được định nghĩa trong DownloadedVideosTab**:
-   - Khắc phục lỗi biến `deleted_text` không được định nghĩa trong phương thức `delete_selected_videos()`
-   - Loại bỏ code dư thừa không cần thiết do status bar đã được cập nhật trước đó
-   - Tối ưu hóa luồng xử lý khi xóa video đã chọn
-
-2. **Cải thiện hiệu suất và độ ổn định**:
-   - Kiểm tra và xử lý các trường hợp ngoại lệ một cách cẩn thận hơn
-   - Loại bỏ các đoạn code dư thừa để tăng tốc độ xử lý
-   - Giữ lại thông báo lỗi cần thiết để hỗ trợ debug và phát hiện vấn đề
-
-## 2024-03-26: Sửa lỗi hiển thị key thay vì text đã dịch trong status bar
-1. **Khắc phục lỗi hiển thị STATUS_INFO_RECEIVED trong status bar**:
-   - Thêm định nghĩa cho key `STATUS_INFO_RECEIVED` vào cả hai file ngôn ngữ:
-     - English: "Video information received"
-     - Vietnamese: "Đã nhận thông tin video"
-   - Đảm bảo tất cả key được sử dụng trong status bar đều có định nghĩa tương ứng
-
-2. **Khắc phục lỗi hiển thị STATUS_DOWNLOADING_MULTIPLE_PROGRESS**:
-   - Thêm định nghĩa cho key `STATUS_DOWNLOADING_MULTIPLE_PROGRESS` vào cả hai file ngôn ngữ
-   - Điều chỉnh định dạng để phù hợp với cách gọi trong code:
-     - English: "Downloaded {} of {} videos - {}"
-     - Vietnamese: "Đã tải {} trong tổng số {} video - {}"
-   - Đồng bộ các tham số định dạng giữa code và file ngôn ngữ
-
-3. **Cải thiện trải nghiệm người dùng**:
-   - Đảm bảo tất cả thông báo trạng thái hiển thị đúng ngôn ngữ của người dùng
-   - Thông báo rõ ràng hơn về trạng thái khi nhận thông tin video
-   - Thông báo tiến trình tải xuống video chính xác hơn với số lượng và trạng thái
-
-## 2024-03-26: Cải thiện hiển thị status bar khi tải nhiều video
-1. **Làm rõ thông báo trong status bar khi tải xuống**:
-   - Thay đổi định dạng chuỗi STATUS_ONE_OF_MULTIPLE_DONE để tách biệt rõ ràng phần tên file và phần thông tin số lượng:
-     - English: "Downloaded: {} | {} videos still downloading..."
-     - Vietnamese: "Đã tải: {} | Còn {} video đang tải..."
-   - Sử dụng dấu | làm phân cách giúp mắt người dùng dễ nhận biết giữa các phần thông tin
-
-2. **Thêm chức năng cắt gọn tên file trong status bar**:
-   - Thêm hàm truncate_filename() để hiển thị tên file một cách hợp lý
-   - Đối với tên file quá dài (trên 30 ký tự) sẽ hiển thị dạng rút gọn: "phần_đầu...phần_cuối.mp4"
-   - Tính toán thông minh tỷ lệ cắt gọn dựa trên độ dài phần mở rộng của file
-   - Áp dụng cắt gọn tên file ở tất cả các vị trí hiển thị tên file trong status bar
-
-3. **Cải thiện UX khi xem thông tin tải xuống**:
-   - Giúp người dùng dễ dàng nhận biết và theo dõi tiến trình tải xuống
-   - Giảm khả năng hiển thị thông tin bị tràn ra khỏi status bar
-   - Vẫn đảm bảo người dùng có thể nhận diện được tên file đang được tải xuống
-
-## 2024-03-26: Cải thiện hiển thị tooltip và tính năng copy title
-1. **Thêm định dạng tooltip khi hover title**:
-   - Triển khai hàm `format_tooltip_text()` để hiển thị nội dung theo dạng có xuống dòng
-   - Thêm dấu xuống dòng sau các dấu chấm câu (., !, ?) và phẩy (,) để nội dung dễ đọc hơn
-   - Tự động xuống dòng cho mỗi hashtag để phân tách rõ ràng hơn
-   - Áp dụng định dạng mới cho tất cả các tooltip, đặc biệt là khi hover vào title và hashtags
-
-2. **Cải thiện tính năng copy title đầy đủ**:
-   - Lưu trữ title đầy đủ (chưa bị cắt ngắn) vào Qt.ItemDataRole.UserRole 
-   - Khi người dùng click chuột phải và chọn "Copy Title", sẽ copy title gốc đầy đủ
-   - Vẫn giữ nguyên tính năng hiển thị title ngắn gọn trong bảng để dễ xem
-   - Đảm bảo người dùng vẫn có thể xem title đầy đủ qua tooltip khi hover chuột
-
-3. **Cải thiện xử lý hashtags trong title**:
-   - Tự động phát hiện và tách hashtags từ title
-   - Lưu title gốc (có hashtags) vào trường description để đảm bảo không mất thông tin
-   - Cập nhật xử lý hashtags để đảm bảo chúng được thêm vào cột hashtags
-   - Giữ lại title đã làm sạch (không có hashtags) để hiển thị trong bảng
-   - Xác định rõ ràng vai trò của từng trường: title hiển thị, title gốc, và hashtags
-
-4. **Tăng cường trải nghiệm người dùng**:
-   - Tooltip hiển thị theo định dạng xuống dòng, dễ đọc hơn
-   - Người dùng có thể copy đúng title gốc dù trong table hiển thị title đã lọc
-   - Tăng tính nhất quán trong việc hiển thị và sắp xếp thông tin
-   - Giúp người dùng dễ dàng phân biệt và tìm kiếm video trong danh sách
-
-## 2024-03-27: Thêm tính năng filter và cải thiện UI trong tab Downloaded Videos
-1. **Thêm tính năng filter cho các cột trong tab Downloaded Videos**:
-   - Cho phép lọc theo các cột Quality, Format, Status và Date bằng cách nhấp chuột phải vào tiêu đề cột
-   - Thiết kế menu filter đơn giản, chỉ hiển thị các giá trị có thể lọc
-   - Thêm hiệu ứng hover và tooltip cho tiêu đề cột có thể filter để người dùng dễ dàng nhận biết
-   - Hiển thị biểu tượng filter (🔍) trên header của cột đang được lọc
-   - Xử lý đặc biệt cho cột Date với các tùy chọn lọc theo khoảng thời gian như "Hôm nay", "Hôm qua", "7 ngày qua", "30 ngày qua", "Tháng này", "Tháng trước"
-   - Dễ dàng xóa bộ lọc với tùy chọn "Clear Filter"
-
-2. **Cải thiện hiển thị thông tin chi tiết video**:
-   - Cắt ngắn tiêu đề video trong phần thông tin chi tiết nếu quá dài (hiển thị tối đa 45 ký tự và thêm "...")
-   - Loại bỏ tooltip khi hover vào thumbnail video để tránh hiển thị thông tin không cần thiết
-   - Cải thiện trải nghiệm người dùng khi click vào thumbnail để phát video
-
-3. **Đa ngôn ngữ và UI improvements**:
-   - Đảm bảo tất cả các chuỗi hiển thị đều được dịch đúng theo ngôn ngữ hiện tại của ứng dụng
-   - Cập nhật tooltip để sử dụng hàm dịch tr_() thay vì chuỗi cứng
-   - Thêm hiệu ứng hover cho header với màu nền và viền nổi bật
-   - Tối ưu hóa giao diện người dùng để trực quan và dễ sử dụng hơn
-
-4. **Xử lý dữ liệu và filter hiệu quả hơn**:
-   - Lọc video theo nhiều tiêu chí một cách hiệu quả
-   - Duy trì trạng thái filter giữa các lần tìm kiếm
-   - Reset filter khi tải lại danh sách video hoặc refresh
-   - Tương thích với tính năng tìm kiếm hiện có, cho phép kết hợp tìm kiếm và filter
