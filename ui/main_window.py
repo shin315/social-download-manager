@@ -272,6 +272,8 @@ class MainWindow(QMainWindow):
         app = QApplication.instance()
         self.current_theme = theme
         
+        print(f"DEBUG: Setting theme to {theme}")
+        
         if theme == "dark":
             # Áp dụng Dark mode stylesheet
             app.setStyleSheet("""
@@ -293,6 +295,9 @@ class MainWindow(QMainWindow):
                 QTabBar::tab:selected {
                     background-color: #0078d7;
                 }
+                QTabBar::tab:hover:!selected {
+                    background-color: #505050;
+                }
                 QTableWidget {
                     background-color: #2d2d2d;
                     color: #ffffff;
@@ -306,17 +311,30 @@ class MainWindow(QMainWindow):
                 QTableWidget::item:selected {
                     background-color: #0078d7;
                 }
+                QTableWidget::item:hover {
+                    background-color: #3a3a3a;
+                }
                 QHeaderView::section {
                     background-color: #3d3d3d;
                     color: #ffffff;
                     padding: 5px;
                     border: 1px solid #444444;
                 }
+                QHeaderView::section:hover {
+                    background-color: #505050;
+                }
                 QLineEdit, QComboBox {
                     background-color: #3d3d3d;
                     color: #ffffff;
                     border: 1px solid #555555;
                     padding: 5px;
+                }
+                QComboBox:hover {
+                    background-color: #505050;
+                    border: 1px solid #666666;
+                }
+                QComboBox::drop-down:hover {
+                    background-color: #505050;
                 }
                 QPushButton {
                     background-color: #0078d7;
@@ -330,6 +348,11 @@ class MainWindow(QMainWindow):
                 }
                 QPushButton:pressed {
                     background-color: #0067b8;
+                }
+                QPushButton:disabled {
+                    background-color: #444444 !important;
+                    color: #777777 !important;
+                    border: none !important;
                 }
                 QCheckBox {
                     color: #ffffff;
@@ -365,6 +388,9 @@ class MainWindow(QMainWindow):
                 QMenuBar::item:selected {
                     background-color: #3d3d3d;
                 }
+                QMenuBar::item:hover {
+                    background-color: #3d3d3d;
+                }
                 QMenu {
                     background-color: #2d2d2d;
                     color: #ffffff;
@@ -372,6 +398,9 @@ class MainWindow(QMainWindow):
                 }
                 QMenu::item:selected {
                     background-color: #0078d7;
+                }
+                QMenu::item:hover:!selected {
+                    background-color: #3d3d3d;
                 }
                 QStatusBar {
                     background-color: #2d2d2d;
@@ -421,10 +450,14 @@ class MainWindow(QMainWindow):
                     background-color: #2d2d2d;
                     color: #ffffff;
                 }
+                QToolTip {
+                    background-color: #3d3d3d;
+                    color: #ffffff;
+                    border: 1px solid #555555;
+                    padding: 5px;
+                    border-radius: 3px;
+                }
             """)
-            self.status_bar.showMessage(self.tr_("STATUS_DARK_MODE_ENABLED"))
-            
-            # Cập nhật icon sang phiên bản viền trắng rõ ràng hơn
             self.update_platform_icons("-outlined")
         else:
             # Áp dụng Light mode stylesheet với màu sắc tương phản tốt hơn
@@ -447,6 +480,9 @@ class MainWindow(QMainWindow):
                     background-color: #0078d7;
                     color: white;
                 }
+                QTabBar::tab:hover:!selected {
+                    background-color: #d0d0d0;
+                }
                 QTableWidget {
                     background-color: #ffffff;
                     color: #333333;
@@ -461,17 +497,30 @@ class MainWindow(QMainWindow):
                     background-color: #0078d7;
                     color: #ffffff;
                 }
+                QTableWidget::item:hover {
+                    background-color: #e8e8e8;
+                }
                 QHeaderView::section {
                     background-color: #e0e0e0;
                     color: #333333;
                     padding: 5px;
                     border: 1px solid #cccccc;
                 }
+                QHeaderView::section:hover {
+                    background-color: #d0d0d0;
+                }
                 QLineEdit, QComboBox {
                     background-color: #ffffff;
                     color: #333333;
                     border: 1px solid #cccccc;
                     padding: 5px;
+                }
+                QComboBox:hover {
+                    background-color: #f5f5f5;
+                    border: 1px solid #bbbbbb;
+                }
+                QComboBox::drop-down:hover {
+                    background-color: #e5e5e5;
                 }
                 QPushButton {
                     background-color: #0078d7;
@@ -485,6 +534,11 @@ class MainWindow(QMainWindow):
                 }
                 QPushButton:pressed {
                     background-color: #0067b8;
+                }
+                QPushButton:disabled {
+                    background-color: #e5e5e5 !important;
+                    color: #a0a0a0 !important;
+                    border: 1px solid #d0d0d0 !important;
                 }
                 QCheckBox {
                     color: #333333;
@@ -521,6 +575,9 @@ class MainWindow(QMainWindow):
                 QMenuBar::item:selected {
                     background-color: #d0d0d0;
                 }
+                QMenuBar::item:hover {
+                    background-color: #d0d0d0;
+                }
                 QMenu {
                     background-color: #f5f5f5;
                     color: #333333;
@@ -529,6 +586,9 @@ class MainWindow(QMainWindow):
                 QMenu::item:selected {
                     background-color: #0078d7;
                     color: #ffffff;
+                }
+                QMenu::item:hover:!selected {
+                    background-color: #e0e0e0;
                 }
                 QStatusBar {
                     background-color: #e0e0e0;
@@ -570,11 +630,14 @@ class MainWindow(QMainWindow):
                     background-color: #e0e0e0;
                     color: #333333;
                 }
+                QToolTip {
+                    background-color: #f5f5f5;
+                    color: #333333;
+                    border: 1px solid #cccccc;
+                    padding: 5px;
+                    border-radius: 3px;
+                }
             """)
-            self.status_bar.showMessage(self.tr_("STATUS_LIGHT_MODE_ENABLED"))
-            
-            # Cập nhật icon sang phiên bản đen
-            self.update_platform_icons("-bw")
             
         # Cập nhật màu sắc cho các tab con
         if hasattr(self, 'downloaded_videos_tab') and hasattr(self.downloaded_videos_tab, 'apply_theme_colors'):
@@ -593,7 +656,7 @@ class MainWindow(QMainWindow):
             
             # Cập nhật donate_tab nếu tồn tại
             if hasattr(self, 'donate_tab'):
-                self.donate_tab.apply_theme_colors(theme)
+                self.donate_tab.apply_theme_colors(self.current_theme)
 
     def update_platform_icons(self, suffix):
         """Cập nhật icon cho các menu platform theo theme"""

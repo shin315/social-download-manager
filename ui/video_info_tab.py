@@ -2182,26 +2182,22 @@ class VideoInfoTab(QWidget):
             pass
 
     def update_button_states(self):
-        """Cập nhật trạng thái các nút dựa trên số lượng video trong bảng"""
+        """Cập nhật trạng thái các nút dựa trên số lượng hàng được chọn"""
         has_videos = self.video_table.rowCount() > 0
-        
-        # Vô hiệu hóa các nút khi không có video nào
         self.select_toggle_btn.setEnabled(has_videos)
         self.delete_selected_btn.setEnabled(has_videos)
         self.delete_all_btn.setEnabled(has_videos)
         self.download_btn.setEnabled(has_videos)
+
+        print("DEBUG: Current theme of parent:", self.parent.current_theme if hasattr(self.parent, "current_theme") else "Unknown")
         
-        # Cập nhật style cho các nút bị vô hiệu hóa
-        disabled_style = """
-            QPushButton:disabled {
-                background-color: #555555;
-                color: #888888;
-                border: none;
-            }
-        """
-        
-        # Áp dụng style cho các nút
-        for btn in [self.select_toggle_btn, self.delete_selected_btn, self.delete_all_btn, self.download_btn]:
-            current_style = btn.styleSheet()
-            if "QPushButton:disabled" not in current_style:
-                btn.setStyleSheet(current_style + disabled_style)
+        # Kiểm tra theme hiện tại từ parent để debugging
+        if hasattr(self.parent, "current_theme"):
+            theme = self.parent.current_theme
+            print(f"DEBUG: Using theme from parent: {theme}")
+        else:
+            theme = "dark"  # Mặc định là dark nếu không có theme
+            print("DEBUG: No parent theme found, using default dark theme")
+            
+        # Không áp dụng style vì đã được xử lý từ main_window
+        print("DEBUG: Main window already applied styles with !important, not applying button styles here")
