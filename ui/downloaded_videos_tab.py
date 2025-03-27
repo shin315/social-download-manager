@@ -20,8 +20,8 @@ import logging
 
 
 class FilterPopup(QMenu):
-    """Menu popup cho phép lọc các giá trị trong cột"""
-    filterChanged = pyqtSignal(int, str)  # Signal khi filter thay đổi (column_index, selected_value)
+    """Menu popup for filtering column values"""
+    filterChanged = pyqtSignal(int, str)  # Signal when filter changes (column_index, selected_value)
     
     def __init__(self, parent=None, column_index=0, unique_values=None, header_text=""):
         super().__init__(parent)
@@ -30,46 +30,46 @@ class FilterPopup(QMenu):
         self.unique_values = unique_values or []
         self.header_text = header_text
         
-        # Tạo các action cho từng giá trị duy nhất
+        # Create actions for each unique value
         self.create_filter_items()
         
     def create_filter_items(self):
-        """Tạo danh sách các giá trị duy nhất để lọc"""
-        # Thêm tùy chọn "Clear Filter" ở đầu menu
+        """Create list of unique values for filtering"""
+        # Add "Clear Filter" option at the top of the menu
         all_action = self.addAction("Clear Filter")
         all_action.triggered.connect(lambda: self.apply_filter(None))
         
         self.addSeparator()
         
-        # Thêm các giá trị duy nhất vào menu
+        # Add unique values to the menu
         for value in sorted(self.unique_values):
-            display_value = str(value) if value is not None else "Trống"
+            display_value = str(value) if value is not None else "Empty"
             action = self.addAction(display_value)
-            # Sử dụng lambda với giá trị mặc định để tránh lỗi closure
+            # Use lambda with default value to avoid closure issues
             action.triggered.connect(lambda checked=False, val=value: self.apply_filter(val))
     
     def apply_filter(self, value):
-        """Áp dụng bộ lọc cho giá trị được chọn"""
-        # Phát signal với giá trị đã chọn (None = tất cả)
+        """Apply filter for selected value"""
+        # Emit signal with selected value (None = all)
         self.filterChanged.emit(self.column_index, value)
         self.close()
 
 class DownloadedVideosTab(QWidget):
-    """Tab quản lý các video đã tải xuống"""
+    """Tab for managing downloaded videos"""
 
     def __init__(self, parent=None):
-        """Khởi tạo tab quản lý video đã tải xuống"""
+        """Initialize downloaded videos management tab"""
         super().__init__(parent)
         
-        self.parent = parent  # Tham chiếu đến MainWindow
+        self.parent = parent  # Reference to MainWindow
         self.lang_manager = parent.lang_manager if parent and hasattr(parent, 'lang_manager') else None
-        self.all_videos = []  # Danh sách tất cả video đã tải xuống
-        self.filtered_videos = []  # Danh sách video đã lọc
-        self.selected_video = None  # Video hiện tại đang được chọn
-        self.sort_column = 7  # Mặc định sắp xếp theo ngày tải (giảm dần)
-        self.sort_order = Qt.SortOrder.DescendingOrder  # Mặc định sắp xếp giảm dần
+        self.all_videos = []  # List of all downloaded videos
+        self.filtered_videos = []  # List of filtered videos
+        self.selected_video = None  # Currently selected video
+        self.sort_column = 7  # Default sort by download date (descending)
+        self.sort_order = Qt.SortOrder.DescendingOrder  # Default descending order
         
-        # Các chỉ số cột
+        # Column indices
         self.select_col = 0
         self.title_col = 1
         self.creator_col = 2
@@ -81,79 +81,79 @@ class DownloadedVideosTab(QWidget):
         self.hashtags_col = 8
         self.actions_col = 9
         
-        # Biến lưu trữ bộ lọc
+        # Filter storage variables
         self.active_filters = {}  # {column_index: [allowed_values]}
         
-        # Khởi tạo giao diện
+        # Initialize UI
         self.init_ui()
         
-        # Tải danh sách video đã tải
+        # Load downloaded videos
         self.load_downloaded_videos()
         
     def tr_(self, key):
-        """Dịch tùy thuộc vào ngôn ngữ hiện tại"""
+        """Translate based on current language"""
         if hasattr(self, 'lang_manager') and self.lang_manager:
             return self.lang_manager.tr(key)
-        return key  # Fallback nếu không có language manager
+        return key  # Fallback if no language manager
     
     def format_tooltip_text(self, text):
-        """Format tooltip text với dấu xuống dòng để dễ đọc hơn"""
+        """Format tooltip text with line breaks for better readability"""
         if not text:
             return ""
         
-        # Xử lý xuống dòng tại dấu chấm, chấm than, chấm hỏi mà có khoảng trắng phía sau
+        # Handle line breaks at periods, exclamation points, question marks with space after
         formatted_text = re.sub(r'([.!?]) ', r'\1\n', text)
-        # Xử lý xuống dòng tại dấu phẩy mà có khoảng trắng phía sau
+        # Handle line breaks at commas with space after
         formatted_text = re.sub(r'([,]) ', r'\1\n', formatted_text)
         
-        # Xử lý hashtag - mỗi hashtag một dòng
+        # Handle hashtags - each hashtag on a new line
         formatted_text = re.sub(r' (#[^\s#]+)', r'\n\1', formatted_text)
         
         return formatted_text
         
     def update_language(self):
-        """Cập nhật ngôn ngữ hiển thị khi thay đổi ngôn ngữ"""
-        # Cập nhật tiêu đề và nhãn tìm kiếm
+        """Update display language when language changes"""
+        # Update title and search labels
         self.search_label.setText(self.tr_("LABEL_SEARCH"))
         self.search_input.setPlaceholderText(self.tr_("PLACEHOLDER_SEARCH"))
         
-        # Cập nhật các nhãn thống kê
-        self.update_statistics()  # Sẽ cập nhật trực tiếp các nhãn từ hàm này
+        # Update statistics labels
+        self.update_statistics()  # Will directly update labels from this function
         
-        # Cập nhật nút Select/Unselect All
+        # Update Select/Unselect All button
         current_text = self.select_toggle_btn.text()
         if current_text == "Select All" or current_text == "Chọn Tất Cả":
             self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
         else:
             self.select_toggle_btn.setText(self.tr_("BUTTON_UNSELECT_ALL"))
         
-        # Cập nhật nút Refresh và Delete Selected
+        # Update Refresh and Delete Selected buttons
         self.refresh_btn.setText(self.tr_("BUTTON_REFRESH"))
         self.delete_selected_btn.setText(self.tr_("BUTTON_DELETE_SELECTED"))
         
-        # Cập nhật tiêu đề bảng
+        # Update table headers
         self.update_table_headers()
         
-        # Cập nhật nội dung bảng (cần cập nhật lại các nút trong cột Action)
+        # Update table contents (need to update buttons in Action column)
         for row in range(self.downloads_table.rowCount()):
-            # Lấy widget ở cột Action
+            # Get widget in Action column
             action_widget = self.downloads_table.cellWidget(row, 9)
             if action_widget:
-                # Tìm các nút trong widget
+                # Find buttons in the widget
                 for child in action_widget.findChildren(QPushButton):
-                    # Cập nhật text của nút
+                    # Update button text
                     if child.text() == "Open" or child.text() == "Mở":
                         child.setText(self.tr_("BUTTON_OPEN"))
                     elif child.text() == "Delete" or child.text() == "Xóa":
                         child.setText(self.tr_("BUTTON_DELETE"))
         
-        # Refresh lại bảng để đảm bảo mọi thứ được hiển thị đúng
+        # Refresh table to ensure everything is displayed correctly
         self.display_videos()
         
     def update_table_headers(self):
-        """Cập nhật header của bảng theo ngôn ngữ hiện tại"""
+        """Update table headers according to current language"""
         headers = [
-            "",  # Cột Select không có tiêu đề
+            "",  # Select column has no title
             self.tr_("HEADER_TITLE"), 
             self.tr_("HEADER_CREATOR"), 
             self.tr_("HEADER_QUALITY"), 
@@ -167,32 +167,32 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.setHorizontalHeaderLabels(headers)
         
     def update_table_buttons(self):
-        """Cập nhật các nút trong bảng"""
+        """Update buttons in the table"""
         for row in range(self.downloads_table.rowCount()):
-            # Lấy widget ở cột Action
+            # Get widget in Action column
             action_widget = self.downloads_table.cellWidget(row, 9)
             if action_widget:
-                # Tìm các nút trong widget
+                # Find buttons in the widget
                 for child in action_widget.findChildren(QPushButton):
-                    # Cập nhật theo nội dung hiện tại của nút
+                    # Update based on current button content
                     if "Open" in child.text() or "Mở" in child.text():
                         child.setText(self.tr_("BUTTON_OPEN"))
                     elif "Delete" in child.text() or "Xóa" in child.text():
                         child.setText(self.tr_("BUTTON_DELETE"))
 
     def init_ui(self):
-        # Layout chính
+        # Main layout
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
 
-        # Phần tìm kiếm
+        # Search section
         search_layout = QHBoxLayout()
         
-        # Label tìm kiếm
+        # Search label
         self.search_label = QLabel(self.tr_("LABEL_SEARCH"))
         search_layout.addWidget(self.search_label)
         
-        # Input tìm kiếm
+        # Search input
         self.search_input = QLineEdit()
         self.search_input.setPlaceholderText(self.tr_("PLACEHOLDER_SEARCH"))
         self.search_input.textChanged.connect(self.filter_videos)
@@ -200,53 +200,53 @@ class DownloadedVideosTab(QWidget):
         
         main_layout.addLayout(search_layout)
 
-        # Bảng video đã tải
+        # Downloaded videos table
         self.create_downloads_table()
         main_layout.addWidget(self.downloads_table)
 
-        # Khu vực hiển thị thông tin chi tiết video
+        # Video details display area
         self.create_video_details_area()
         main_layout.addWidget(self.video_details_frame)
         
-        # Ẩn khu vực chi tiết video mặc định
+        # Hide video details area by default
         self.video_details_frame.setVisible(False)
 
-        # Thêm thanh thông tin tổng quát
+        # Add general information bar
         stats_layout = QHBoxLayout()
-        stats_layout.setContentsMargins(0, 8, 0, 0)  # Tạo khoảng cách với phần trên
+        stats_layout.setContentsMargins(0, 8, 0, 0)  # Create spacing with section above
         
-        # Tạo frame để chứa thống kê với hiệu ứng nổi
+        # Create frame to contain statistics with raised effect
         self.stats_frame = QFrame()
         self.stats_frame.setObjectName("statsFrame")
         stats_frame_layout = QHBoxLayout(self.stats_frame)
         stats_frame_layout.setContentsMargins(15, 10, 15, 10)
         
-        # Tạo box chứa thông tin thống kê
+        # Create box for statistics information
         stats_box = QHBoxLayout()
-        stats_box.setSpacing(20)  # Khoảng cách giữa các thông tin
+        stats_box.setSpacing(20)  # Spacing between information
         
-        # Tổng số video
+        # Total videos
         self.total_videos_label = QLabel(self.tr_("LABEL_TOTAL_VIDEOS").format(0))
         stats_box.addWidget(self.total_videos_label)
         
-        # Tổng dung lượng
+        # Total size
         self.total_size_label = QLabel(self.tr_("LABEL_TOTAL_SIZE").format("0 MB"))
         stats_box.addWidget(self.total_size_label)
         
-        # Lần tải xuống cuối cùng
+        # Last download
         self.last_download_label = QLabel(self.tr_("LABEL_LAST_DOWNLOAD").format("N/A"))
         stats_box.addWidget(self.last_download_label)
         
-        # Thêm vào layout của frame
+        # Add to frame layout
         stats_frame_layout.addLayout(stats_box)
         stats_frame_layout.addStretch(1)
         
-        # Nút Select/Unselect All
+        # Select/Unselect All button
         self.select_toggle_btn = QPushButton(self.tr_("BUTTON_SELECT_ALL"))
         self.select_toggle_btn.clicked.connect(self.toggle_select_all)
         stats_frame_layout.addWidget(self.select_toggle_btn)
         
-        # Nút Delete Selected
+        # Delete Selected button
         self.delete_selected_btn = QPushButton(self.tr_("BUTTON_DELETE_SELECTED"))
         self.delete_selected_btn.clicked.connect(self.delete_selected_videos)
         stats_frame_layout.addWidget(self.delete_selected_btn)

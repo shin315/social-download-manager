@@ -16,80 +16,80 @@ import shutil  # For file operations
 import re
 from PyQt6.QtWidgets import QToolTip
 
-# Đường dẫn đến file cấu hình
+# Path to configuration file
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
 
 class VideoInfoTab(QWidget):
-    """Tab hiển thị thông tin video và tải video"""
+    """Tab for displaying video information and downloading videos"""
 
     def __init__(self, parent=None):
         super().__init__(parent)
         self.parent = parent
         self.lang_manager = get_language_manager()
         
-        # Khởi tạo TikTokDownloader
+        # Initialize TikTokDownloader
         self.downloader = TikTokDownloader()
         
-        # Khởi tạo biến lưu trữ thông tin video
-        self.video_info_dict = {}  # Dictionary với key là URL, value là VideoInfo
+        # Initialize video information storage
+        self.video_info_dict = {}  # Dictionary with URL as key, VideoInfo as value
         
-        # Biến đếm số video đang xử lý
+        # Counter for videos being processed
         self.processing_count = 0
         
-        # Biến đếm số video đang tải xuống
+        # Counter for videos being downloaded
         self.downloading_count = 0
         
         self.init_ui()
         self.load_last_output_folder()
         
-        # Kết nối signals từ downloader
+        # Connect downloader signals
         self.connect_downloader_signals()
         
-        # Kết nối với tín hiệu thay đổi ngôn ngữ từ MainWindow
+        # Connect to language change signal from MainWindow
         if parent and hasattr(parent, 'language_changed'):
             parent.language_changed.connect(self.update_language)
             
-        # Áp dụng kiểu màu mặc định theo chế độ tối (có thể được ghi đè sau này)
+        # Apply default color style based on dark mode (may be overridden later)
         self.apply_theme_colors("dark")
 
     def init_ui(self):
-        # Layout chính
+        # Main layout
         main_layout = QVBoxLayout()
         self.setLayout(main_layout)
 
-        # Phần URL và Get Info
+        # URL and Get Info section
         url_layout = QHBoxLayout()
         
-        # Label URL
+        # URL Label
         self.url_label = QLabel(self.tr_("LABEL_VIDEO_URL"))
         url_layout.addWidget(self.url_label)
         
-        # Tạo khoảng cách để căn chỉnh ô input URL với ô output folder
-        spacer_width = 18  # Điều chỉnh lên 70px để căn chỉnh tốt hơn
+        # Create spacing to align URL input with output folder
+        spacer_width = 18  # Adjusted to 70px for better alignment
         url_layout.addSpacing(spacer_width)
         
-        # Input URL
+        # URL Input
         self.url_input = QLineEdit()
         self.url_input.setFixedHeight(30)
-        # Không đặt chiều rộng cố định nữa - cho phép kéo giãn theo cửa sổ
+        # No fixed width - allow resizing with window
         self.url_input.setMinimumWidth(500)
         self.url_input.setPlaceholderText(self.tr_("PLACEHOLDER_VIDEO_URL"))
-        # Kết nối sự kiện returnPressed với hàm get_video_info
+        # Connect returnPressed event to get_video_info function
         self.url_input.returnPressed.connect(self.get_video_info)
-        url_layout.addWidget(self.url_input, 1)  # stretch factor 1 để mở rộng khi phóng to
+        url_layout.addWidget(self.url_input, 1)  # stretch factor 1 to expand when window is resized
         
-        # Nút Get Info
+        # Get Info button
         self.get_info_btn = QPushButton(self.tr_("BUTTON_GET_INFO"))
-        self.get_info_btn.setFixedWidth(120)  # Cố định chiều rộng
+        self.get_info_btn.setFixedWidth(120)  # Fixed width
         self.get_info_btn.clicked.connect(self.get_video_info)
         url_layout.addWidget(self.get_info_btn)
         
         main_layout.addLayout(url_layout)
 
-        # Phần Output Folder
+        # Output Folder section
         output_layout = QHBoxLayout()
         
-        # Label Output Folder
+        # Output Folder Label
         self.output_label = QLabel(self.tr_("LABEL_OUTPUT_FOLDER"))
         output_layout.addWidget(self.output_label)
         

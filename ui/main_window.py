@@ -14,78 +14,78 @@ from localization import get_language_manager
 
 
 class MainWindow(QMainWindow):
-    """Cửa sổ chính của ứng dụng Social Download Manager"""
+    """Main window of the Social Download Manager application"""
     
-    # Tín hiệu khi ngôn ngữ thay đổi
+    # Signal when language changes
     language_changed = pyqtSignal(str)
 
     def __init__(self):
         super().__init__()
         self.output_folder = ""
-        self.current_theme = "dark"  # Lưu theme hiện tại
+        self.current_theme = "dark"  # Store current theme
         
-        # Khởi tạo quản lý ngôn ngữ
+        # Initialize language manager
         self.lang_manager = get_language_manager()
         
-        # Lưu trữ các action platform để cập nhật icon dựa vào theme
+        # Store platform actions to update icons based on theme
         self.platform_actions = {}
         
         self.setup_font()
         self.init_ui()
         
-        # Thiết lập chế độ tối mặc định
+        # Set dark mode as default
         self.set_theme("dark")
         
-        # Cập nhật giao diện theo ngôn ngữ hiện tại
+        # Update UI based on current language
         self.update_ui_language()
 
     def setup_font(self):
-        """Thiết lập font Inter cho ứng dụng"""
-        # Tạo font Inter thường (không đậm)
+        """Set up Inter font for the application"""
+        # Create regular Inter font (not bold)
         font = QFont("Inter", 10, QFont.Weight.Normal)
         QApplication.setFont(font)
 
     def init_ui(self):
-        """Khởi tạo giao diện người dùng"""
+        """Initialize user interface"""
         self.setWindowTitle("Social Download Manager")
-        self.setGeometry(100, 100, 1000, 700)  # Điều chỉnh kích thước cửa sổ lớn hơn
+        self.setGeometry(100, 100, 1000, 700)  # Adjust window size to be larger
         self.setWindowIcon(QIcon("assets/logo.png"))
         
-        # Thiết lập layout chính
+        # Set up main layout
         main_widget = QWidget()
         self.setCentralWidget(main_widget)
         main_layout = QVBoxLayout(main_widget)
 
-        # Tạo menu bar
+        # Create menu bar
         self.create_menu_bar()
 
-        # Tạo tab widget và các tab
+        # Create tab widget and tabs
         self.tab_widget = QTabWidget()
         
-        # Tab Video Info
+        # Video Info Tab
         self.video_info_tab = VideoInfoTab(self)
         self.tab_widget.addTab(self.video_info_tab, self.tr_("TAB_VIDEO_INFO"))
 
-        # Tab Downloaded Videos
+        # Downloaded Videos Tab
         self.downloaded_videos_tab = DownloadedVideosTab(self)
         self.tab_widget.addTab(self.downloaded_videos_tab, self.tr_("TAB_DOWNLOADED_VIDEOS"))
 
-        # Đặt tab widget làm widget trung tâm
+        # Set tab widget as central widget
         main_layout.addWidget(self.tab_widget)
 
-        # Tạo status bar
+        # Create status bar
         self.status_bar = QStatusBar()
         self.setStatusBar(self.status_bar)
         self.status_bar.showMessage(self.tr_("STATUS_READY"))
         
-        # Khởi tạo donate dialog (không hiển thị)
+        # Initialize donate dialog (not displayed)
         self.donate_dialog = None
 
     def create_menu_bar(self):
-        """Tạo menu bar với các menu và action"""
+        """Create menu bar with menus and actions"""
         menu_bar = self.menuBar()
 
-        # Menu File
+        # File Menu
         file_menu = menu_bar.addMenu(self.tr_("MENU_FILE"))
         
         # Action: Set Output Folder
@@ -102,17 +102,17 @@ class MainWindow(QMainWindow):
         exit_action.triggered.connect(self.close)
         file_menu.addAction(exit_action)
         
-        # Menu Platform (YouTube, Instagram, Facebook)
+        # Platform Menu (YouTube, Instagram, Facebook)
         platform_menu = menu_bar.addMenu(self.tr_("MENU_PLATFORM"))
         
-        # Chọn icon suffix dựa vào theme hiện tại
+        # Choose icon suffix based on current theme
         icon_suffix = "-outlined" if self.current_theme == "dark" else "-bw"
         
-        # Action: TikTok (Hiện tại)
+        # Action: TikTok (Current)
         tiktok_icon = QIcon(f"assets/platforms/tiktok{icon_suffix}.png")
         tiktok_action = QAction(tiktok_icon, self.tr_("PLATFORM_TIKTOK"), self)
         tiktok_action.setCheckable(True)
-        tiktok_action.setChecked(True)  # Mặc định là đang ở TikTok
+        tiktok_action.setChecked(True)  # Default is TikTok
         platform_menu.addAction(tiktok_action)
         
         platform_menu.addSeparator()
@@ -135,7 +135,7 @@ class MainWindow(QMainWindow):
         facebook_action.triggered.connect(self.show_developing_feature)
         platform_menu.addAction(facebook_action)
         
-        # Lưu các action vào dictionary để update icon khi đổi theme
+        # Store actions in dictionary to update icons when theme changes
         self.platform_actions = {
             "tiktok": tiktok_action,
             "youtube": youtube_action,
@@ -143,10 +143,10 @@ class MainWindow(QMainWindow):
             "facebook": facebook_action
         }
         
-        # Menu Theme (Dark/Light)
+        # Theme Menu (Dark/Light)
         theme_menu = menu_bar.addMenu(self.tr_("MENU_APPEARANCE"))
         
-        # Tạo action group để chọn 1 trong các theme
+        # Create action group to select one theme
         light_mode_action = QAction(self.tr_("MENU_LIGHT_MODE"), self)
         light_mode_action.setCheckable(True)
         light_mode_action.triggered.connect(lambda: self.set_theme("light"))
@@ -154,21 +154,21 @@ class MainWindow(QMainWindow):
         
         dark_mode_action = QAction(self.tr_("MENU_DARK_MODE"), self)
         dark_mode_action.setCheckable(True)
-        dark_mode_action.setChecked(True)  # Mặc định là dark mode
+        dark_mode_action.setChecked(True)  # Default is dark mode
         dark_mode_action.triggered.connect(lambda: self.set_theme("dark"))
         theme_menu.addAction(dark_mode_action)
         
-        # Tạo action group để chỉ chọn một theme
+        # Create action group to select only one theme
         theme_group = QActionGroup(self)
         theme_group.addAction(light_mode_action)
         theme_group.addAction(dark_mode_action)
         theme_group.setExclusive(True)
         
-        # Menu Language
+        # Language Menu
         self.lang_menu = menu_bar.addMenu(self.tr_("MENU_LANGUAGE"))
         self.create_language_menu()
         
-        # Menu Help
+        # Help Menu
         help_menu = menu_bar.addMenu(self.tr_("MENU_HELP"))
         
         # Action: About
@@ -181,28 +181,28 @@ class MainWindow(QMainWindow):
         check_updates_action.triggered.connect(self.show_developing_feature)
         help_menu.addAction(check_updates_action)
         
-        # Thêm separator trước Buy Me A Coffee
+        # Add separator before Buy Me A Coffee
         help_menu.addSeparator()
         
-        # Action: Buy Me A Coffee (đặt trong menu Help thay vì là một menu riêng)
+        # Action: Buy Me A Coffee (placed in Help menu instead of a separate menu)
         donate_action = QAction(self.tr_("MENU_BUY_COFFEE"), self)
         donate_action.triggered.connect(self.show_donate_tab)
         help_menu.addAction(donate_action)
 
     def create_language_menu(self):
-        """Tạo menu ngôn ngữ động từ các ngôn ngữ có sẵn"""
-        # Xóa tất cả action hiện có trong menu
+        """Create dynamic language menu from available languages"""
+        # Clear all existing actions in menu
         self.lang_menu.clear()
         
-        # Tạo action group để chỉ một ngôn ngữ được chọn
+        # Create action group so only one language can be selected
         lang_action_group = QActionGroup(self)
         lang_action_group.setExclusive(True)
         
-        # Lấy danh sách ngôn ngữ từ LanguageManager
+        # Get list of languages from LanguageManager
         available_languages = self.lang_manager.get_available_languages()
         current_language = self.lang_manager.current_language
         
-        # Thêm từng ngôn ngữ vào menu
+        # Add each language to menu
         for lang_code, lang_name in available_languages.items():
             lang_action = QAction(lang_name, self)
             lang_action.setCheckable(True)
@@ -212,8 +212,8 @@ class MainWindow(QMainWindow):
             self.lang_menu.addAction(lang_action)
 
     def set_output_folder(self):
-        """Mở hộp thoại chọn thư mục đầu ra"""
-        # Sử dụng thư mục hiện tại làm điểm bắt đầu nếu có
+        """Open folder selection dialog"""
+        # Use current folder as starting point if it exists
         start_folder = self.output_folder if self.output_folder else ""
         
         folder = QFileDialog.getExistingDirectory(
@@ -224,43 +224,43 @@ class MainWindow(QMainWindow):
             self.status_bar.showMessage(self.tr_("STATUS_FOLDER_SET").format(folder))
 
     def set_language(self, lang_code):
-        """Thay đổi ngôn ngữ của ứng dụng"""
+        """Change application language"""
         if self.lang_manager.set_language(lang_code):
-            # Cập nhật giao diện với ngôn ngữ mới
+            # Update UI with new language
             self.update_ui_language()
             
-            # Phát tín hiệu để các component khác cập nhật
+            # Emit signal to other components to update
             self.language_changed.emit(lang_code)
             
-            # Hiển thị thông báo
+            # Show notification
             language_name = self.lang_manager.get_current_language_name()
             self.status_bar.showMessage(self.tr_("STATUS_LANGUAGE_CHANGED").format(language_name))
 
     def update_ui_language(self):
-        """Cập nhật giao diện với ngôn ngữ hiện tại"""
-        # Cập nhật tiêu đề tab
+        """Update UI based on current language"""
+        # Update tab titles
         self.tab_widget.setTabText(0, self.tr_("TAB_VIDEO_INFO"))
         self.tab_widget.setTabText(1, self.tr_("TAB_DOWNLOADED_VIDEOS"))
         
-        # Cập nhật menu
+        # Update menu
         self.menuBar().clear()
         self.create_menu_bar()
         
-        # Cập nhật các component khác nếu cần
+        # Update other components if needed
         self.video_info_tab.update_language()
         self.downloaded_videos_tab.update_language()
         
     def tr_(self, key):
-        """Dịch chuỗi dựa trên ngôn ngữ hiện tại"""
+        """Translate string based on current language"""
         return self.lang_manager.get_text(key)
 
     def show_developing_feature(self):
-        """Hiển thị thông báo tính năng đang phát triển"""
+        """Show notification about feature under development"""
         QMessageBox.information(
             self, self.tr_("DIALOG_COMING_SOON"), self.tr_("DIALOG_FEATURE_DEVELOPING"))
 
     def show_about(self):
-        """Hiển thị thông tin về ứng dụng"""
+        """Show application information"""
         QMessageBox.about(
             self, 
             self.tr_("ABOUT_TITLE"),
@@ -268,12 +268,12 @@ class MainWindow(QMainWindow):
         )
         
     def set_theme(self, theme):
-        """Thay đổi giao diện giữa Light và Dark mode"""
+        """Change between Light and Dark mode"""
         app = QApplication.instance()
         self.current_theme = theme
         
         if theme == "dark":
-            # Áp dụng Dark mode stylesheet
+            # Apply Dark mode stylesheet
             app.setStyleSheet("""
                 QMainWindow, QWidget {
                     background-color: #2d2d2d;
@@ -409,24 +409,24 @@ class MainWindow(QMainWindow):
                     color: #ffffff;
                     border-radius: 8px;
                 }
-                /* Đồng bộ màu sắc cho các icon trong context menu */
+                /* Sync color for icons in context menu */
                 QMenu::icon {
                     color: #cccccc;
                 }
-                /* Màu sắc cho tất cả các action trong context menu */
+                /* Color for all actions in context menu */
                 QMenu QAction {
                     color: #ffffff;
                 }
-                /* Màu sắc cho tất cả các icon khi chuột phải */
+                /* Color for all icons when right-clicked */
                 QMenu::indicator:non-exclusive:checked {
                     image: url(:/qt-project.org/styles/commonstyle/images/checkbox-checked.png);
                     color: #cccccc;
                 }
-                /* Thiết lập màu chung cho tất cả các icon trong context menu */
+                /* Set common color for all icons in context menu */
                 QMenu QIcon {
                     color: #cccccc;
                 }
-                /* Màu cho icon cut, copy, paste và các icon khác trong context menu */
+                /* Color for cut, copy, paste and other icons in context menu */
                 QLineEdit::contextmenu-item QMenu::icon,
                 QLineEdit::contextmenu-item QAction::icon,
                 QTextEdit::contextmenu-item QMenu::icon,
@@ -435,7 +435,7 @@ class MainWindow(QMainWindow):
                 QPlainTextEdit::contextmenu-item QAction::icon {
                     color: #cccccc;
                 }
-                /* Title bar (thanh tiêu đề) */
+                /* Title bar (title bar) */
                 QDockWidget::title {
                     background-color: #2d2d2d;
                     color: #ffffff;
@@ -458,10 +458,10 @@ class MainWindow(QMainWindow):
             """)
             self.status_bar.showMessage(self.tr_("STATUS_DARK_MODE_ENABLED"))
             
-            # Cập nhật icon sang phiên bản viền trắng rõ ràng hơn
+            # Update icon to more distinct outlined version
             self.update_platform_icons("-outlined")
         else:
-            # Áp dụng Light mode stylesheet với màu sắc tương phản tốt hơn
+            # Apply Light mode stylesheet with better contrast
             app.setStyleSheet("""
                 QMainWindow, QWidget {
                     background-color: #f0f0f0;
@@ -601,24 +601,24 @@ class MainWindow(QMainWindow):
                     color: #333333;
                     border-radius: 8px;
                 }
-                /* Đồng bộ màu sắc cho các icon trong context menu */
+                /* Sync color for icons in context menu */
                 QMenu::icon {
                     color: #555555;
                 }
-                /* Màu sắc cho tất cả các action trong context menu */
+                /* Color for all actions in context menu */
                 QMenu QAction {
                     color: #333333;
                 }
-                /* Màu sắc cho tất cả các icon khi chuột phải */
+                /* Color for all icons when right-clicked */
                 QMenu::indicator:non-exclusive:checked {
                     image: url(:/qt-project.org/styles/commonstyle/images/checkbox-checked.png);
                     color: #555555;
                 }
-                /* Thiết lập màu chung cho tất cả các icon trong context menu */
+                /* Set common color for all icons in context menu */
                 QMenu QIcon {
                     color: #555555;
                 }
-                /* Title bar (thanh tiêu đề) */
+                /* Title bar (title bar) */
                 QDockWidget::title {
                     background-color: #e0e0e0;
                     color: #333333;
@@ -641,30 +641,30 @@ class MainWindow(QMainWindow):
             """)
             self.status_bar.showMessage(self.tr_("STATUS_LIGHT_MODE_ENABLED"))
             
-            # Cập nhật icon sang phiên bản đen
+            # Update icon to black
             self.update_platform_icons("-bw")
             
-        # Cập nhật màu sắc cho các tab con
+        # Update color for tab widgets
         if hasattr(self, 'downloaded_videos_tab') and hasattr(self.downloaded_videos_tab, 'apply_theme_colors'):
             self.downloaded_videos_tab.apply_theme_colors(theme)
             
         if hasattr(self, 'video_info_tab') and hasattr(self.video_info_tab, 'apply_theme_colors'):
             self.video_info_tab.apply_theme_colors(theme)
             
-        # Cập nhật theme cho donate dialog nếu đã được tạo
+        # Update theme for donate dialog if it exists
         if hasattr(self, 'donate_dialog') and self.donate_dialog:
-            # Cập nhật style cho dialog
+            # Update style for dialog
             if theme == "dark":
                 self.donate_dialog.setStyleSheet("background-color: #2d2d2d; color: #ffffff;")
             else:
                 self.donate_dialog.setStyleSheet("background-color: #f5f5f5; color: #333333;")
             
-            # Cập nhật donate_tab nếu tồn tại
+            # Update donate_tab if it exists
             if hasattr(self, 'donate_tab'):
                 self.donate_tab.apply_theme_colors(self.current_theme)
 
     def update_platform_icons(self, suffix):
-        """Cập nhật icon cho các menu platform theo theme"""
+        """Update icon for platform menus based on theme"""
         if not hasattr(self, 'platform_actions'):
             return
             
@@ -673,18 +673,18 @@ class MainWindow(QMainWindow):
             action.setIcon(QIcon(icon_path))
 
     def show_donate_tab(self):
-        """Hiển thị dialog donate"""
-        # Tạo dialog nếu chưa có
+        """Show donate dialog"""
+        # Create dialog if it doesn't exist
         if not self.donate_dialog:
             self.donate_dialog = QDialog(self)
-            self.donate_dialog.setObjectName("donateDialog")  # Thêm objectName cho dialog
+            self.donate_dialog.setObjectName("donateDialog")  # Add objectName for dialog
             self.donate_dialog.setWindowTitle(self.tr_("DONATE_TITLE"))
-            self.donate_dialog.setMinimumSize(320, 340)  # Giảm chiều cao từ 400 xuống 340
-            self.donate_dialog.setMaximumSize(330, 350)  # Giảm chiều cao từ 420 xuống 350
+            self.donate_dialog.setMinimumSize(320, 340)  # Reduce height from 400 to 340
+            self.donate_dialog.setMaximumSize(330, 350)  # Reduce height from 420 to 350
             self.donate_dialog.setWindowFlags(self.donate_dialog.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
             self.donate_dialog.setModal(True)
             
-            # Đặt style trực tiếp dựa trên theme hiện tại
+            # Set style directly based on current theme
             if self.current_theme == "dark":
                 self.donate_dialog.setStyleSheet("background-color: #2d2d2d; color: #ffffff;")
             else:
@@ -694,30 +694,30 @@ class MainWindow(QMainWindow):
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(0)
             
-            self.donate_tab = DonateTab(self.donate_dialog)  # Lưu donate_tab như một thuộc tính
+            self.donate_tab = DonateTab(self.donate_dialog)  # Save donate_tab as a property
             layout.addWidget(self.donate_tab)
             
             self.donate_dialog.setLayout(layout)
             
-            # Đăng ký tín hiệu language_changed cho DonateTab
+            # Register language_changed signal for DonateTab
             self.language_changed.connect(lambda: self.donate_tab.update_language())
             
-            # Áp dụng theme cho dialog - sử dụng theme hiện tại của app
+            # Apply theme for dialog - use app's current theme
             self.donate_tab.apply_theme_colors(self.current_theme)
         else:
-            # Cập nhật title và nội dung theo ngôn ngữ hiện tại
+            # Update title and content based on current language
             self.donate_dialog.setWindowTitle(self.tr_("DONATE_TITLE"))
             
-            # Cập nhật style của dialog dựa trên theme hiện tại
+            # Update style of dialog based on current theme
             if self.current_theme == "dark":
                 self.donate_dialog.setStyleSheet("background-color: #2d2d2d; color: #ffffff;")
             else:
                 self.donate_dialog.setStyleSheet("background-color: #f5f5f5; color: #333333;")
             
-            # Cập nhật donate_tab đã lưu
+            # Update saved donate_tab
             if hasattr(self, 'donate_tab'):
                 self.donate_tab.update_language()
                 self.donate_tab.apply_theme_colors(self.current_theme)
         
-        # Hiển thị dialog
+        # Show dialog
         self.donate_dialog.exec() 
