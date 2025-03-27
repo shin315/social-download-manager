@@ -12,46 +12,46 @@ class DonateTab(QWidget):
     
     def __init__(self, parent=None):
         super().__init__(parent)
-        # Khởi tạo quản lý ngôn ngữ
+        # Initialize language manager
         self.lang_manager = get_language_manager()
         self.init_ui()
         
     def init_ui(self):
         """Khởi tạo giao diện"""
-        # Layout chính
+        # Main layout
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
         self.setLayout(main_layout)
         
-        # Container chính với padding
+        # Main container with padding
         container = QWidget()
         container.setObjectName("containerWidget")
         container_layout = QVBoxLayout(container)
-        container_layout.setContentsMargins(20, 15, 20, 10)  # Giảm padding dưới
-        container_layout.setSpacing(8)  # Giảm khoảng cách giữa các phần tử
+        container_layout.setContentsMargins(20, 15, 20, 10)  # Reduced bottom padding
+        container_layout.setSpacing(8)  # Reduced spacing between elements
         
-        # Tiêu đề
+        # Title
         self.title_label = QLabel(self.tr_("DONATE_TITLE"))
         self.title_label.setObjectName("titleLabel")
         self.title_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         container_layout.addWidget(self.title_label)
         
-        # Text thông báo
+        # Message text
         self.message_label = QLabel(self.tr_("DONATE_DESC"))
         self.message_label.setObjectName("messageLabel")
         self.message_label.setWordWrap(True)
         self.message_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
         container_layout.addWidget(self.message_label)
         
-        # Phần trung tâm với QR và nút
+        # Center section with QR and button
         center_frame = QFrame()
         center_frame.setObjectName("centerFrame")
         center_layout = QVBoxLayout(center_frame)
-        center_layout.setSpacing(10)  # Giảm khoảng cách giữa QR và nút
-        center_layout.setContentsMargins(0, 5, 0, 0)  # Thêm padding trên
+        center_layout.setSpacing(10)  # Reduced spacing between QR and button
+        center_layout.setContentsMargins(0, 5, 0, 0)  # Added top padding
         
-        # QR code không có đường kẻ dọc
+        # QR code without vertical line
         qr_container = QFrame()
         qr_container.setObjectName("qrContainer")
         qr_container.setFixedSize(150, 150)
@@ -76,16 +76,16 @@ class DonateTab(QWidget):
         qr_layout.addWidget(qr_label)
         center_layout.addWidget(qr_container, 0, Qt.AlignmentFlag.AlignCenter)
         
-        # Phần nút với hiệu ứng
+        # Button section with effects
         buttons_frame = QFrame()
         buttons_frame.setObjectName("buttonsFrame")
         buttons_layout = QHBoxLayout(buttons_frame)
         buttons_layout.setContentsMargins(0, 0, 0, 0)
         
-        # Thêm spacer để căn giữa nút
+        # Add spacer to center the button
         buttons_layout.addStretch(1)
         
-        # Nút Buy Me A Coffee với thiết kế đẹp
+        # Buy Me A Coffee button with nice design
         self.coffee_button = QPushButton(self.tr_("DONATE_COFFEE_LINK"))
         self.coffee_button.setObjectName("coffeeButton")
         self.coffee_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
@@ -97,10 +97,10 @@ class DonateTab(QWidget):
         center_layout.addWidget(buttons_frame)
         container_layout.addWidget(center_frame)
         
-        # Thêm ít stretch hơn để đỡ lãng phí không gian
+        # Add less stretch to avoid wasting space
         container_layout.addStretch(1)
         
-        # Thêm frame container vào layout chính
+        # Add container frame to main layout
         main_layout.addWidget(container)
         
     def tr_(self, key):
@@ -109,22 +109,22 @@ class DonateTab(QWidget):
         
     def update_language(self):
         """Cập nhật ngôn ngữ cho tất cả các thành phần"""
-        # Cập nhật tiêu đề
+        # Update title
         if hasattr(self, 'title_label'):
             self.title_label.setText(self.tr_("DONATE_TITLE"))
         
-        # Cập nhật thông báo
+        # Update message
         if hasattr(self, 'message_label'):
             self.message_label.setText(self.tr_("DONATE_DESC"))
             
-        # Cập nhật button
+        # Update button
         if hasattr(self, 'coffee_button'):
             self.coffee_button.setText(self.tr_("DONATE_COFFEE_LINK"))
         
     def apply_theme_colors(self, theme):
         """Áp dụng màu sắc theo chủ đề"""
         if theme == "dark":
-            # Đảm bảo nền của container là tối
+            # Ensure container background is dark
             self.setStyleSheet("""
                 #containerWidget {
                     background-color: #2d2d2d;
@@ -170,14 +170,14 @@ class DonateTab(QWidget):
                 }
             """)
             
-            # Thêm style cho parent dialog nếu tồn tại
+            # Add style for parent dialog if it exists
             if self.parent():
                 self.parent().setStyleSheet("""
                     background-color: #2d2d2d;
                     color: #ffffff;
                 """)
         else:
-            # Đảm bảo nền của container là sáng
+            # Ensure container background is light
             self.setStyleSheet("""
                 #containerWidget {
                     background-color: #f5f5f5;
@@ -225,7 +225,7 @@ class DonateTab(QWidget):
                 }
             """)
             
-            # Thêm style cho parent dialog nếu tồn tại
+            # Add style for parent dialog if it exists
             if self.parent():
                 self.parent().setStyleSheet("""
                     background-color: #f5f5f5;

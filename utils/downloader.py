@@ -10,7 +10,7 @@ import string
 
 
 class VideoInfo:
-    """Lớp lưu trữ thông tin video"""
+    """Class for storing video information"""
     
     def __init__(self):
         self.title = "Unknown Title"
@@ -43,7 +43,7 @@ class VideoInfo:
 
 
 class TikTokDownloader(QObject):
-    """Lớp xử lý tải video TikTok sử dụng yt-dlp"""
+    """Class for handling TikTok video downloads using yt-dlp"""
     
     # Signals
     progress_signal = pyqtSignal(str, float, str)  # url, progress percentage, speed
@@ -53,42 +53,42 @@ class TikTokDownloader(QObject):
     def __init__(self):
         super().__init__()
         self.output_dir = ""
-        self.downloads = {}  # Lưu trữ thông tin các video đã tải
-        self.converting_mp3_urls = set()  # Theo dõi các URL đang trong quá trình convert MP3
-        self.downloading_urls = set()  # Theo dõi tất cả các URL đang trong quá trình tải xuống
+        self.downloads = {}  # Store information about downloaded videos
+        self.converting_mp3_urls = set()  # Track URLs currently being converted to MP3
+        self.downloading_urls = set()  # Track all URLs currently being downloaded
     
     def slugify(self, text):
         """
-        Chuyển đổi văn bản thành slug an toàn cho tên file.
-        Loại bỏ ký tự đặc biệt, thay thế khoảng trắng bằng gạch ngang.
+        Convert text to a safe slug for filenames.
+        Remove special characters, replace spaces with hyphens.
         """
-        # Chuẩn hóa văn bản Unicode (ví dụ: 'é' -> 'e')
+        # Normalize Unicode text (e.g., 'é' -> 'e')
         text = unicodedata.normalize('NFKD', text)
         text = ''.join([c for c in text if not unicodedata.combining(c)])
         
-        # Thay thế khoảng trắng bằng gạch ngang và chuyển thành chữ thường
+        # Replace spaces with hyphens and convert to lowercase
         text = text.lower().replace(' ', '-')
         
-        # Loại bỏ các ký tự không phải chữ cái, số, gạch ngang
+        # Remove characters that aren't letters, numbers, or hyphens
         text = re.sub(r'[^\w\s-]', '', text)
         
-        # Loại bỏ các gạch ngang liên tiếp
+        # Remove consecutive hyphens
         text = re.sub(r'[-\s]+', '-', text)
         
-        # Đảm bảo không có gạch ngang ở đầu hoặc cuối
+        # Ensure no hyphens at beginning or end
         return text.strip('-')
 
     def set_output_dir(self, directory):
-        """Thiết lập thư mục đầu ra"""
+        """Set the output directory"""
         self.output_dir = directory
     
     def get_video_info(self, url):
-        """Lấy thông tin video từ URL"""
+        """Get video information from URL"""
         try:
             info = VideoInfo()
             info.url = url
             
-            # Kiểm tra URL có phải là URL TikTok hợp lệ không
+            # Check if URL is a valid TikTok URL
             if not self._is_valid_tiktok_url(url):
                 info.title = f"Error: Invalid TikTok video URL: {url}"
                 info.formats = [{'format_id': 'best', 'quality': '720p', 'ext': 'mp4', 'height': 720, 'filesize': 0}]
@@ -97,7 +97,7 @@ class TikTokDownloader(QObject):
                 print(f"Invalid TikTok video URL: {url}")
                 return info
             
-            # Kiểm tra sớm nếu URL chứa 'photo' hoặc 'album'
+            # Early check if URL contains 'photo' or 'album'
             if re.search(r'/photo/', url) or re.search(r'/album/', url):
                 info.title = "Error: DIALOG_UNSUPPORTED_CONTENT"
                 info.formats = [{'format_id': 'best', 'quality': '720p', 'ext': 'mp4', 'height': 720, 'filesize': 0}]
@@ -129,7 +129,7 @@ class TikTokDownloader(QObject):
                                 if hasattr(result, 'keys'):
                                     print(f"Result has {len(result.keys())} keys")
                                 
-                                # Kiểm tra xem nội dung có phải video hay không
+                                # Check if content is a video
                                 is_photo = result.get('webpage_url_basename', '').startswith('photo/')
                                 is_album = 'album' in result.get('webpage_url', '').lower()
                                 is_image = result.get('is_image', False)
@@ -256,28 +256,28 @@ class TikTokDownloader(QObject):
             return info
     
     def _is_valid_tiktok_url(self, url):
-        """Kiểm tra URL có phải là URL TikTok hợp lệ không"""
-        # In URL để debug
+        """Check if URL is a valid TikTok URL"""
+        # Print URL for debugging
         print(f"Checking TikTok URL: {url}")
         
-        # Mẫu regex để kiểm tra URL TikTok video
+        # Regex patterns to check TikTok video URL
         patterns = [
-            # URL standard
+            # Standard URL
             r'https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+',
-            # URL với tham số
+            # URL with parameters
             r'https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+\?[\w=&]+',
-            # URL rút gọn
+            # Shortened URL
             r'https?://(vm\.|vt\.)?tiktok\.com/\w+',
-            # Mẫu khác có thể có
+            # Other possible patterns
             r'https?://(www\.)?tiktok\.com/t/\w+',
-            # Video từ webapp
+            # Video from webapp
             r'https?://(www\.)?tiktok\.com/@[\w\.-]+/video/\d+\?is_from_webapp=1',
-            # Photo URL (sẽ được kiểm tra và xử lý lỗi sau)
+            # Photo URL (will be checked and error handled later)
             r'https?://(www\.)?tiktok\.com/@[\w\.-]+/photo/\d+',
             r'https?://(www\.)?tiktok\.com/@[\w\.-]+/photo/\d+\?[\w=&]+'
         ]
         
-        # Kiểm tra từng mẫu
+        # Check each pattern
         for pattern in patterns:
             if re.match(pattern, url):
                 print(f"Valid TikTok URL format: {pattern}")
@@ -288,17 +288,17 @@ class TikTokDownloader(QObject):
     
     def download_video(self, url, format_id=None, remove_watermark=True, output_template=None, audio_only=False, force_overwrite=False):
         """
-        Tải video TikTok
+        Download TikTok video
         
         Args:
-            url: URL của video TikTok
-            format_id: ID định dạng muốn tải (nếu None, sẽ tự động chọn tốt nhất)
-            remove_watermark: Có xóa watermark hay không
-            output_template: Template tên file đầu ra
-            audio_only: Có tải xuống chỉ âm thanh hay không
-            force_overwrite: Ghi đè nếu file đã tồn tại
+            url: TikTok video URL
+            format_id: Format ID to download (if None, best quality will be chosen)
+            remove_watermark: Whether to remove watermark
+            output_template: Output filename template
+            audio_only: Whether to download audio only
+            force_overwrite: Overwrite if file exists
         """
-        # Đánh dấu URL này đang trong quá trình tải xuống
+        # Mark this URL as currently downloading
         self.downloading_urls.add(url)
         
         if not output_template:
@@ -307,10 +307,10 @@ class TikTokDownloader(QObject):
                 
             output_template = os.path.join(self.output_dir, '%(title)s.%(ext)s')
         
-        # Kiểm tra đây có phải là yêu cầu audio không
+        # Check if this is an audio request
         is_audio_request = audio_only or (format_id and ('audio' in format_id.lower() or 'mp3' in format_id.lower()))
         
-        # Đánh dấu URL này đang trong quá trình tải MP3 nếu là audio request
+        # Mark URL as being converted to MP3 if it's an audio request
         if is_audio_request:
             self.converting_mp3_urls.add(url)
         
@@ -321,8 +321,8 @@ class TikTokDownloader(QObject):
                 temp_output_template = output_template.replace('.%(ext)s', '.mp4')
             else:
                 temp_output_template = os.path.splitext(output_template)[0] + '.mp4'
-            # Không chỉ yêu cầu 'bestaudio' vì không phải video nào cũng có stream audio riêng
-            # Thay vào đó, tải video chất lượng tốt nhất và sau đó extract audio ra
+            # Don't just request 'bestaudio' as not all videos have separate audio streams
+            # Instead, download best quality video and extract audio later
             format_spec = 'best'
         else:
             temp_output_template = output_template
@@ -344,17 +344,17 @@ class TikTokDownloader(QObject):
             'no_warnings': True,
         }
         
-        # Thêm tùy chọn ghi đè nếu được yêu cầu
+        # Add overwrite option if requested
         if force_overwrite:
-            ydl_opts['force_overwrites'] = True  # Ghi đè các file hiện có
-            ydl_opts['nooverwrites'] = False     # Đảm bảo không bỏ qua các file hiện có
-            ydl_opts['overwrites'] = True        # Thử dùng tùy chọn khác
-            # Thêm các tùy chọn dòng lệnh
+            ydl_opts['force_overwrites'] = True  # Overwrite existing files
+            ydl_opts['nooverwrites'] = False     # Ensure not skipping existing files
+            ydl_opts['overwrites'] = True        # Try alternative option
+            # Add command line options
             if not 'postprocessor_args' in ydl_opts:
                 ydl_opts['postprocessor_args'] = {}
             if not 'ffmpeg' in ydl_opts['postprocessor_args']:
                 ydl_opts['postprocessor_args']['ffmpeg'] = []
-            # Thêm -y để force overwrite với ffmpeg
+            # Add -y to force overwrite with ffmpeg
             ydl_opts['postprocessor_args']['ffmpeg'] += ['-y']
         
         try:
@@ -365,7 +365,7 @@ class TikTokDownloader(QObject):
             # Get the actual downloaded file path
             downloaded_file = temp_output_template
             
-            # Nếu template vẫn còn chứa %(title)s, thì cần lấy thông tin tiêu đề
+            # If template still contains %(title)s, we need to get the title info
             if '%(title)s' in temp_output_template:
                 # Get info to determine the actual filename
                 with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
@@ -375,94 +375,94 @@ class TikTokDownloader(QObject):
             
             # If this was an audio request, convert to MP3
             if is_audio_request:
-                # Lấy tiêu đề từ đường dẫn đã tải nếu có, nếu không lấy từ thông tin video
+                # Get title from downloaded path if possible, otherwise from video info
                 title = os.path.splitext(os.path.basename(downloaded_file))[0]
                 
-                # Xử lý đặc biệt khi tên file bắt đầu bằng 'Video_' - trường hợp video không có tiêu đề
+                # Special handling when filename starts with 'Video_' - case of video with no title
                 if title.startswith("Video_") and re.match(r"Video_\d{8}_\d{6}", title):
                     print(f"Detected automatically generated title: {title}")
-                    # Sử dụng trực tiếp tên này, không cần slugify để tránh thay đổi chữ hoa/thường
+                    # Use this name directly, don't slugify to avoid changing case
                     safe_title = title
-                    # Đảm bảo không thay đổi case của tên file
+                    # Ensure not changing case of filename
                     mp3_output = os.path.join(os.path.dirname(downloaded_file), f"{title}.mp3")
                 elif not title:
-                    # Fallback để lấy tiêu đề nếu cần thiết
+                    # Fallback to get title if needed
                     with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
                         info = ydl.extract_info(url, download=False)
                         title = info.get('title', 'unknown_title').replace('/', '-')
-                    # Tạo tên file an toàn với slugify
+                    # Create safe filename with slugify
                     safe_title = self.slugify(title)
-                    if not safe_title:  # Nếu slugify trả về chuỗi rỗng
-                        # Tạo tên file dựa trên timestamp
+                    if not safe_title:  # If slugify returns empty string
+                        # Create timestamp-based filename
                         safe_title = f"audio_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
                     mp3_output = os.path.splitext(downloaded_file)[0] + '.mp3'
                 else:
-                    # Tạo tên file an toàn với slugify
+                    # Create safe filename with slugify
                     safe_title = self.slugify(title)
-                    if not safe_title:  # Nếu slugify trả về chuỗi rỗng
-                        safe_title = "audio"  # Đặt tên mặc định
+                    if not safe_title:  # If slugify returns empty string
+                        safe_title = "audio"  # Set default name
                     mp3_output = os.path.splitext(downloaded_file)[0] + '.mp3'
                 
-                # Tạo đường dẫn đến file MP3 sử dụng tên an toàn
+                # Create path to MP3 file using safe name
                 safe_mp3_path = os.path.join(os.path.dirname(downloaded_file), f"{safe_title}.mp3")
                 
-                # Tuy nhiên vẫn giữ đường dẫn ban đầu để trả về cho người dùng
+                # However, keep the original path to return to user
                 mp3_output = os.path.splitext(downloaded_file)[0] + '.mp3'
                 
                 # Use FFmpeg to convert
                 try:
-                    # Đơn giản hóa quy trình - chuyển đổi trực tiếp sang file đích cuối cùng
-                    # thay vì dùng file tạm thời rồi đổi tên (để tránh lỗi đổi tên)
+                    # Simplify process - convert directly to final destination file
+                    # instead of using temporary file and renaming (to avoid rename errors)
                     command = [
                         'ffmpeg', '-i', downloaded_file, 
                         '-vn',  # No video
                         '-acodec', 'libmp3lame', 
                         '-q:a', '2',  # VBR quality 2 (good quality)
-                        mp3_output,  # Lưu trực tiếp sang file đích
+                        mp3_output,  # Save directly to destination file
                         '-y'  # Overwrite if exists
                     ]
                     
                     print(f"Converting to MP3: {' '.join(command)}")
-                    # Sử dụng encoding='utf-8', errors='ignore' để tránh lỗi Unicode
+                    # Use encoding='utf-8', errors='ignore' to avoid Unicode errors
                     result = subprocess.run(command, capture_output=True, text=True, encoding='utf-8', errors='ignore')
                     
                     if result.returncode != 0:
                         print(f"FFmpeg error: {result.stderr}")
-                        self.converting_mp3_urls.discard(url)  # Xóa URL khỏi danh sách convert
-                        self.downloading_urls.discard(url)  # Xóa URL khỏi danh sách tải xuống
+                        self.converting_mp3_urls.discard(url)  # Remove URL from conversion list
+                        self.downloading_urls.discard(url)  # Remove URL from download list
                         self.finished_signal.emit(url, False, f"Error converting to MP3: {result.stderr}")
                         return False
                     
-                    # Kiểm tra file MP3 đã được tạo thành công chưa
+                    # Check if MP3 file was created successfully
                     if os.path.exists(mp3_output) and os.path.getsize(mp3_output) > 0:
-                        # Xóa file MP4 tạm
+                        # Remove temporary MP4 file
                         os.remove(downloaded_file)
                         downloaded_file = mp3_output
                         print(f"Successfully converted to MP3: {mp3_output}")
                     else:
                         print("MP3 conversion failed or output file is empty")
-                        self.converting_mp3_urls.discard(url)  # Xóa URL khỏi danh sách convert
-                        self.downloading_urls.discard(url)  # Xóa URL khỏi danh sách tải xuống
+                        self.converting_mp3_urls.discard(url)  # Remove URL from conversion list
+                        self.downloading_urls.discard(url)  # Remove URL from download list
                         self.finished_signal.emit(url, False, "MP3 conversion failed or output file is empty")
                         return False
                         
                 except Exception as e:
                     print(f"Error during MP3 conversion: {e}")
-                    self.converting_mp3_urls.discard(url)  # Xóa URL khỏi danh sách convert
-                    self.downloading_urls.discard(url)  # Xóa URL khỏi danh sách tải xuống
+                    self.converting_mp3_urls.discard(url)  # Remove URL from conversion list
+                    self.downloading_urls.discard(url)  # Remove URL from download list
                     self.finished_signal.emit(url, False, f"Error during MP3 conversion: {e}")
                     return False
             
-            # Xóa URL khỏi danh sách đang convert MP3 (nếu có)
+            # Remove URL from MP3 conversion list (if present)
             self.converting_mp3_urls.discard(url)
             
             # Add to downloads history
             self._add_to_downloads(url, True, downloaded_file)
             
-            # Phát signal hoàn thành và xóa URL khỏi danh sách tải
-            # Đảm bảo file_path không còn chứa %(ext)s
+            # Emit completion signal and remove URL from download list
+            # Ensure file_path doesn't contain %(ext)s
             if '%(ext)s' in downloaded_file:
-                # Kiểm tra đuôi file thực tế
+                # Check actual file extension
                 if downloaded_file.lower().endswith('.mp3'):
                     downloaded_file = downloaded_file.replace('.%(ext)s', '.mp3')
                 else:
@@ -474,8 +474,8 @@ class TikTokDownloader(QObject):
             
         except Exception as e:
             print(f"Error downloading video: {e}")
-            self.converting_mp3_urls.discard(url)  # Xóa URL khỏi danh sách convert
-            self.downloading_urls.discard(url)  # Xóa URL khỏi danh sách tải xuống
+            self.converting_mp3_urls.discard(url)  # Remove URL from conversion list
+            self.downloading_urls.discard(url)  # Remove URL from download list
             self.finished_signal.emit(url, False, str(e))
             return False
     
@@ -503,18 +503,18 @@ class TikTokDownloader(QObject):
             url = d.get('info_dict', {}).get('webpage_url', 'Unknown')
             filename = d.get('filename', '')
             
-            # Kiểm tra nếu URL đang trong quá trình convert MP3
+            # Check if URL is in the process of MP3 conversion
             if url in self.converting_mp3_urls:
-                # Chỉ thông báo đang chuyển đổi, không phát signal finished
+                # Only notify of conversion, don't emit finished signal
                 self.progress_signal.emit(url, 100, "Converting to MP3...")
             elif url in self.downloading_urls:
-                # Đây là một phần của quá trình tải xuống, chỉ thông báo tiến trình
-                # và không phát signal finished trong hook này
-                # (sẽ được phát trong hàm download_video sau khi hoàn tất)
+                # This is part of the download process, only notify progress
+                # and don't emit finished signal in this hook
+                # (will be emitted in the download_video function after completion)
                 self.progress_signal.emit(url, 100, "Download completed, processing...")
             else:
-                # Nếu URL không trong quá trình tải hoặc convert, phát signal finished ngay
-                # (trường hợp này hiếm khi xảy ra, chỉ là phòng trừ)
+                # If URL is not in download or conversion process, emit finished signal immediately
+                # (rare case, just a safeguard)
                 self.finished_signal.emit(url, True, filename)
     
     def _add_to_downloads(self, url, success, file_path):

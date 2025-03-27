@@ -18,11 +18,11 @@ class DownloadThread(QThread):
         
     def run(self):
         try:
-            # Giả sử đây là quá trình tải xuống thực tế
-            # Thay thế bằng code tải xuống thực của bạn
+            # Simulate the actual download process
+            # Replace with your actual download code
             self.progress_updated.emit(50)
             
-            # Khi tải xong, emit thông tin download
+            # When download completes, emit download info
             download_info = {
                 'url': self.video_url,
                 'title': self.video_info.title,
@@ -30,7 +30,7 @@ class DownloadThread(QThread):
                 'quality': self.quality,
                 'format': self.format,
                 'duration': self.video_info.duration,
-                'filesize': self.calculate_size(),  # Tính toán size dựa trên quality
+                'filesize': self.calculate_size(),  # Calculate size based on quality
                 'download_date': datetime.now().strftime("%Y-%m-%d %H:%M:%S"),
                 'description': self.video_info.description if hasattr(self.video_info, 'description') else '',
                 'hashtags': self.video_info.hashtags if hasattr(self.video_info, 'hashtags') else []
@@ -43,24 +43,24 @@ class DownloadThread(QThread):
             self.download_error.emit(str(e))
             
     def calculate_size(self):
-        """Tính toán dung lượng file dựa trên chất lượng"""
-        # Định nghĩa dung lượng trung bình cho mỗi phút video ở các chất lượng khác nhau
+        """Calculate file size based on quality"""
+        # Define average file size per minute for different quality levels
         size_per_minute = {
-            '1080p': 60,  # MB/phút
-            '720p': 30,   # MB/phút
-            '480p': 15,   # MB/phút
-            '360p': 10    # MB/phút
+            '1080p': 60,  # MB/minute
+            '720p': 30,   # MB/minute
+            '480p': 15,   # MB/minute
+            '360p': 10    # MB/minute
         }
         
-        # Lấy duration tính bằng phút
+        # Get duration in minutes
         duration_minutes = self.video_info.duration / 60 if hasattr(self.video_info, 'duration') else 1
         
-        # Tính dung lượng dựa trên chất lượng
-        quality_size = size_per_minute.get(self.quality, 30)  # Mặc định 30MB/phút nếu không tìm thấy
+        # Calculate size based on quality
+        quality_size = size_per_minute.get(self.quality, 30)  # Default to 30MB/minute if quality not found
         
-        # Nếu là audio, dung lượng sẽ nhỏ hơn nhiều
+        # If audio format, size will be much smaller
         if self.format.lower() == 'mp3':
-            quality_size = 2  # 2MB/phút cho audio
+            quality_size = 2  # 2MB/minute for audio
             
         estimated_size = round(duration_minutes * quality_size, 2)
         return estimated_size 

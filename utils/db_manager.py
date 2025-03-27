@@ -5,14 +5,14 @@ from datetime import datetime
 
 
 class DatabaseManager:
-    """Quản lý cơ sở dữ liệu cho lịch sử tải xuống"""
+    """Database manager for download history"""
     
     def __init__(self, db_path=None):
         """
-        Khởi tạo database manager
+        Initialize database manager
         
         Args:
-            db_path: Đường dẫn đến file database, nếu None sẽ tạo trong thư mục người dùng
+            db_path: Path to database file, if None will create in user directory
         """
         if not db_path:
             app_data_dir = os.path.join(os.path.expanduser("~"), ".tiktok_downloader")
@@ -24,11 +24,11 @@ class DatabaseManager:
         self.init_db()
     
     def init_db(self):
-        """Khởi tạo cơ sở dữ liệu nếu chưa tồn tại"""
+        """Initialize database if it doesn't exist"""
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
-        # Tạo bảng downloads nếu chưa tồn tại
+        # Create downloads table if it doesn't exist
         cursor.execute('''
         CREATE TABLE IF NOT EXISTS downloads (
             id INTEGER PRIMARY KEY AUTOINCREMENT,
@@ -50,15 +50,15 @@ class DatabaseManager:
     
     def add_download(self, download_info):
         """
-        Thêm một bản ghi tải xuống vào cơ sở dữ liệu
+        Add a download record to the database
         
         Args:
-            download_info: Dictionary chứa thông tin về video đã tải
+            download_info: Dictionary containing information about the downloaded video
         """
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
         
-        # Chuyển metadata thành JSON string
+        # Convert metadata to JSON string
         metadata = {}
         if 'caption' in download_info:
             metadata['caption'] = download_info['caption']
@@ -73,7 +73,7 @@ class DatabaseManager:
         
         metadata_json = json.dumps(metadata)
         
-        # Thêm bản ghi mới
+        # Add new record
         cursor.execute('''
         INSERT INTO downloads (url, title, filepath, quality, format, duration, 
                                filesize, status, download_date, metadata)
@@ -96,13 +96,13 @@ class DatabaseManager:
     
     def get_downloads(self):
         """
-        Lấy tất cả bản ghi tải xuống từ cơ sở dữ liệu
+        Get all download records from the database
         
         Returns:
-            List[Dict]: Danh sách các bản ghi tải xuống
+            List[Dict]: List of download records
         """
         conn = sqlite3.connect(self.db_path)
-        conn.row_factory = sqlite3.Row  # Để trả về dạng dictionary
+        conn.row_factory = sqlite3.Row  # Return results as dictionaries
         cursor = conn.cursor()
         
         cursor.execute('SELECT * FROM downloads ORDER BY download_date DESC')
@@ -112,7 +112,7 @@ class DatabaseManager:
         for row in rows:
             download = dict(row)
             
-            # Parse metadata từ JSON
+            # Parse metadata from JSON
             if 'metadata' in download and download['metadata']:
                 try:
                     metadata = json.loads(download['metadata'])
@@ -127,19 +127,19 @@ class DatabaseManager:
     
     def search_downloads(self, keyword):
         """
-        Tìm kiếm trong cơ sở dữ liệu theo từ khóa
+        Search the database for a keyword
         
         Args:
-            keyword: Từ khóa tìm kiếm
+            keyword: Search keyword
         
         Returns:
-            List[Dict]: Danh sách các bản ghi tải xuống phù hợp
+            List[Dict]: List of matching download records
         """
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
         cursor = conn.cursor()
         
-        # Tìm kiếm theo title hoặc metadata
+        # Search by title or metadata
         cursor.execute('''
         SELECT * FROM downloads 
         WHERE title LIKE ? OR metadata LIKE ?
@@ -152,7 +152,7 @@ class DatabaseManager:
         for row in rows:
             download = dict(row)
             
-            # Parse metadata từ JSON
+            # Parse metadata from JSON
             if 'metadata' in download and download['metadata']:
                 try:
                     metadata = json.loads(download['metadata'])
@@ -167,13 +167,13 @@ class DatabaseManager:
     
     def delete_download(self, download_id):
         """
-        Xóa một bản ghi tải xuống khỏi cơ sở dữ liệu
+        Delete a download record from the database
         
         Args:
-            download_id: ID của bản ghi cần xóa
+            download_id: ID of the record to delete
             
         Returns:
-            bool: True nếu xóa thành công, False nếu không
+            bool: True if successful, False otherwise
         """
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
@@ -191,13 +191,13 @@ class DatabaseManager:
     
     def get_download_by_url(self, url):
         """
-        Lấy bản ghi tải xuống theo URL
+        Get a download record by URL
         
         Args:
-            url: URL của video
+            url: URL of the video
             
         Returns:
-            Dict or None: Thông tin bản ghi hoặc None nếu không tìm thấy
+            Dict or None: Record information or None if not found
         """
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
@@ -209,7 +209,7 @@ class DatabaseManager:
         if row:
             download = dict(row)
             
-            # Parse metadata từ JSON
+            # Parse metadata from JSON
             if 'metadata' in download and download['metadata']:
                 try:
                     metadata = json.loads(download['metadata'])
@@ -225,13 +225,13 @@ class DatabaseManager:
     
     def delete_download_by_title(self, title):
         """
-        Xóa một bản ghi tải xuống khỏi cơ sở dữ liệu dựa trên tiêu đề
+        Delete a download record from the database based on title
         
         Args:
-            title: Tiêu đề video cần xóa
+            title: Title of the video to delete
             
         Returns:
-            bool: True nếu xóa thành công, False nếu không
+            bool: True if successful, False otherwise
         """
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
@@ -251,13 +251,13 @@ class DatabaseManager:
         
     def get_download_by_title(self, title):
         """
-        Lấy bản ghi tải xuống theo tiêu đề
+        Get a download record by title
         
         Args:
-            title: Tiêu đề của video
+            title: Title of the video
             
         Returns:
-            Dict or None: Thông tin bản ghi hoặc None nếu không tìm thấy
+            Dict or None: Record information or None if not found
         """
         conn = sqlite3.connect(self.db_path)
         conn.row_factory = sqlite3.Row
@@ -269,7 +269,7 @@ class DatabaseManager:
         if row:
             download = dict(row)
             
-            # Parse metadata từ JSON
+            # Parse metadata from JSON
             if 'metadata' in download and download['metadata']:
                 try:
                     metadata = json.loads(download['metadata'])
@@ -285,14 +285,14 @@ class DatabaseManager:
     
     def update_download_filesize(self, identifier, new_filesize):
         """
-        Cập nhật kích thước file cho một bản ghi tải xuống
+        Update the file size for a download record
         
         Args:
-            identifier: URL hoặc ID của video cần cập nhật
-            new_filesize: Kích thước file mới (dạng chuỗi, ví dụ: "10.5 MB")
+            identifier: URL or ID of the video to update
+            new_filesize: New file size (string format, e.g., "10.5 MB")
             
         Returns:
-            bool: True nếu cập nhật thành công, False nếu không
+            bool: True if successful, False otherwise
         """
         conn = sqlite3.connect(self.db_path)
         cursor = conn.cursor()
@@ -300,12 +300,12 @@ class DatabaseManager:
         try:
             print(f"Attempting to update filesize to {new_filesize} for {identifier}")
             
-            # Kiểm tra xem identifier là URL hay ID
+            # Check if identifier is URL or ID
             if isinstance(identifier, int) or (isinstance(identifier, str) and identifier.isdigit()):
-                # Trường hợp ID
+                # ID case
                 cursor.execute('UPDATE downloads SET filesize = ? WHERE id = ?', (new_filesize, identifier))
             else:
-                # Trường hợp URL
+                # URL case
                 cursor.execute('UPDATE downloads SET filesize = ? WHERE url = ?', (new_filesize, identifier))
             
             conn.commit()
