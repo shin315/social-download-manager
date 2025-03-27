@@ -1,4 +1,4 @@
-# Python
+# Python byte-compiled / optimized / DLL files
 __pycache__/
 *.py[cod]
 *$py.class
@@ -20,18 +20,48 @@ wheels/
 .installed.cfg
 *.egg
 
-# Virtual Environment
+# Virtual environments
+.venv/
 venv/
 ENV/
 env/
-.env
 
-# IDE
-.idea/
+# Config files with personal paths
+config.json
+
+# IDE specific files
 .vscode/
+.idea/
 *.swp
 *.swo
+
+# OS specific files
 .DS_Store
+Thumbs.db
+
+# Log files
+*.log
+error_report*.txt
+crash*.txt
+
+# Backup files
+*.bak
+*~
+*.tmp
+*.temp
+
+# Build distribution / packaging
+dist/
+build/
+*.egg-info/
+*.egg
+
+# Zip archives
+*.zip
+
+# Database files
+*.db
+*.sqlite3
 
 # Project specific
 *.mp4

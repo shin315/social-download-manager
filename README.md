@@ -31,10 +31,27 @@ cd social-download-manager
 pip install -r requirements.txt
 ```
 
-3. Run the application:
+3. Set up configuration:
+```bash
+cp config.template.json config.json
+```
+
+4. Run the application:
 ```bash
 python main.py
 ```
+
+## Configuration
+
+The application uses a `config.json` file to store user preferences. If this file doesn't exist, copy the template file:
+
+```bash
+cp config.template.json config.json
+```
+
+Configuration options:
+- `last_output_folder`: The last folder used for saving videos
+- `language`: Application language ("english" or "vietnamese")
 
 ## Usage
 
@@ -43,6 +60,15 @@ python main.py
 3. Select desired video quality
 4. Click "Download" to start downloading
 5. View download history in the "Downloaded Videos" tab
+
+## Development Notes
+
+### Temporary Files
+The application generates several temporary files and directories during operation:
+- `__pycache__/` directories and `.pyc` files - Python bytecode cache
+- `.venv/` - Virtual environment (should not be committed to repository)
+
+These files are excluded from the Git repository via `.gitignore`.
 
 ## Contributing
 
