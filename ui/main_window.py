@@ -10,7 +10,9 @@ from PyQt6.QtWidgets import QApplication
 from ui.video_info_tab import VideoInfoTab
 from ui.downloaded_videos_tab import DownloadedVideosTab
 from ui.donate_tab import DonateTab
+from ui.update_dialog import UpdateDialog, UpdateCheckerThread
 from localization import get_language_manager
+from utils.update_checker import UpdateChecker
 
 
 class MainWindow(QMainWindow):
@@ -178,7 +180,7 @@ class MainWindow(QMainWindow):
         
         # Action: Check for Updates
         check_updates_action = QAction(self.tr_("MENU_CHECK_UPDATES"), self)
-        check_updates_action.triggered.connect(self.show_developing_feature)
+        check_updates_action.triggered.connect(self.check_for_updates)
         help_menu.addAction(check_updates_action)
         
         # Add separator before Buy Me A Coffee
@@ -254,6 +256,48 @@ class MainWindow(QMainWindow):
         """Translate string based on current language"""
         return self.lang_manager.get_text(key)
 
+    def check_for_updates(self):
+        """Check for software updates"""
+        # Show status message
+        self.status_bar.showMessage(self.tr_("DIALOG_CHECKING_UPDATES"))
+        
+        # Create update checker
+        self.update_checker = UpdateChecker()
+        
+        # Create and run thread
+        self.update_thread = UpdateCheckerThread(self.update_checker)
+        self.update_thread.update_check_complete.connect(self.handle_update_result)
+        self.update_thread.start()
+    
+    def handle_update_result(self, result):
+        """Handle the results from update check"""
+        if not result.get("success", False):
+            # Error checking for updates
+            QMessageBox.warning(
+                self,
+                self.tr_("DIALOG_ERROR"),
+                f"{self.tr_('DIALOG_UPDATE_ERROR')}: {result.get('error', 'Unknown error')}"
+            )
+            self.status_bar.showMessage(self.tr_("DIALOG_UPDATE_ERROR"))
+            return
+            
+        if not result.get("has_update", False):
+            # No updates available
+            QMessageBox.information(
+                self,
+                self.tr_("DIALOG_NO_UPDATES"),
+                self.tr_("DIALOG_LATEST_VERSION")
+            )
+            self.status_bar.showMessage(self.tr_("DIALOG_LATEST_VERSION"))
+            return
+            
+        # Show update dialog with result information
+        update_dialog = UpdateDialog(self, result)
+        update_dialog.exec()
+        
+        # Reset status after dialog closes
+        self.status_bar.showMessage(self.tr_("STATUS_READY"))
+
     def show_developing_feature(self):
         """Display notification for features under development"""
         QMessageBox.information(
@@ -264,7 +308,17 @@ class MainWindow(QMainWindow):
         QMessageBox.about(
             self, 
             self.tr_("ABOUT_TITLE"),
-            f"{self.tr_('ABOUT_MESSAGE')}\n\nDeveloped by: Shin\nEmail: shin315@gmail.com"
+            f"{self.tr_('ABOUT_MESSAGE')}\n\n"
+            f"Version: 1.0.0\n"
+            f"© 2025 Shin\n\n"
+            f"Key Features:\n"
+            f"• Download TikTok videos in various formats\n"
+            f"• Manage downloaded videos with detailed information\n"
+            f"• Multi-language support (English & Vietnamese)\n"
+            f"• Dark and Light theme options\n\n"
+            f"Developer: Shin\n"
+            f"Email: shin315@gmail.com\n"
+            f"GitHub: github.com/shin315/social-download-manager"
         )
         
     def set_theme(self, theme):
@@ -292,6 +346,7 @@ class MainWindow(QMainWindow):
                 }
                 QTabBar::tab:selected {
                     background-color: #0078d7;
+                    font-weight: normal;
                 }
                 QTabBar::tab:hover:!selected {
                     background-color: #505050;
@@ -479,7 +534,8 @@ class MainWindow(QMainWindow):
                 }
                 QTabBar::tab:selected {
                     background-color: #0078d7;
-                    color: white;
+                    color: #ffffff;
+                    font-weight: normal;
                 }
                 QTabBar::tab:hover:!selected {
                     background-color: #d0d0d0;

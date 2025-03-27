@@ -1,11 +1,5 @@
 {
-  "version": "1.3.0",
-  "download_url": {
-    "windows": "https://github.com/shin315/social-download-manager/releases/download/v1.3.0/social_download_manager_windows_v1.3.0.exe",
-    "mac": "https://github.com/shin315/social-download-manager/releases/download/v1.3.0/social_download_manager_mac_v1.3.0.dmg",
-    "linux": "https://github.com/shin315/social-download-manager/releases/download/v1.3.0/social_download_manager_linux_v1.3.0.AppImage"
-  },
+  "version": "1.1.0",
   "release_notes": "- Improved user interface\n- Fixed TikTok video download issues\n- Added multi-language support\n- Added update checking feature",
-  "min_required_version": "1.0.0",
   "release_date": "2025-03-28"
 } 

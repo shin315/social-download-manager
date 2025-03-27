@@ -79,6 +79,7 @@ build/
 *.log
 temp/
 downloads/
+thumbnails/
 
 # Distribution / packaging
 .Python
@@ -172,6 +173,7 @@ celerybeat-schedule
 .idea/
 .vscode/
 .cursor/
+.specstory/
 
 # SQLite database
 *.db
@@ -179,6 +181,7 @@ celerybeat-schedule
 # Test và backup files
 test_*.py
 *_backup.py
+*_fixed.py
 error_log.txt
 temp_backup/ 
 

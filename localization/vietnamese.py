@@ -6,7 +6,7 @@ Vietnamese language file for Social Download Manager
 """
 
 # Common strings
-LANGUAGE_NAME = "Tiếng Việt"
+LANGUAGE_NAME = "Vietnamese"
 
 # Menu bar
 MENU_FILE = "Tệp"
@@ -211,4 +211,22 @@ DONATE_TITLE = "Ủng hộ tác giả"
 DONATE_DESC = "Tool này hoàn toàn miễn phí, nhưng nếu bạn thấy nó hữu ích, hãy ủng hộ tác giả 1 ly cafe nhé."
 DONATE_QR_LABEL = "Quét mã MOMO"
 DONATE_COFFEE_LINK = "Ủng hộ 1 ly cafe"
-DONATE_AREA_TITLE = "Khu vực ủng hộ" 
+DONATE_AREA_TITLE = "Khu vực ủng hộ"
+
+# Update dialog
+DIALOG_UPDATE_AVAILABLE = "Có Bản Cập Nhật Mới"
+DIALOG_NEW_VERSION = "Phiên Bản Mới"
+DIALOG_CURRENT_VERSION = "Phiên Bản Hiện Tại"
+DIALOG_RELEASE_DATE = "Ngày Phát Hành"
+DIALOG_RELEASE_NOTES = "Nội Dung Cập Nhật"
+DIALOG_NO_NOTES = "Không có thông tin về bản cập nhật."
+DIALOG_CLOSE = "Đóng"
+DIALOG_DOWNLOAD = "Tải Xuống"
+DIALOG_CHOOSE_SAVE_LOCATION = "Chọn Vị Trí Lưu File"
+DIALOG_CHECKING_UPDATES = "Đang kiểm tra cập nhật..."
+DIALOG_UPDATE_ERROR = "Lỗi khi kiểm tra cập nhật"
+DIALOG_NO_UPDATES = "Không Có Bản Cập Nhật Mới"
+DIALOG_LATEST_VERSION = "Bạn đang sử dụng phiên bản mới nhất."
+DIALOG_DOWNLOAD_ERROR = "Lỗi khi tải bản cập nhật"
+DIALOG_DOWNLOAD_COMPLETE = "Tải Xuống Hoàn Tất"
+DIALOG_DOWNLOAD_COMPLETE_MSG = "Đã tải bản cập nhật về:\n{}\n\nThư mục sẽ tự động mở." 
