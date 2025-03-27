@@ -1138,45 +1138,90 @@ class DownloadedVideosTab(QWidget):
         msg_box.setMinimumWidth(500)
         msg_box.setMinimumHeight(200)
         
-        # Style cho message box để trông đẹp hơn
-        msg_box.setStyleSheet("""
-            QMessageBox {
-                background-color: #2d2d2d;
-                color: #e0e0e0;
-            }
-            QMessageBox QLabel {
-                color: #e0e0e0;
-                font-size: 13px;
-                min-height: 100px;
-            }
-            QPushButton {
-                background-color: #0078d7;
-                color: white;
-                border: none;
-                padding: 6px 20px;
-                margin: 6px;
-                border-radius: 4px;
-                min-width: 60px;
-            }
-            QPushButton:hover {
-                background-color: #1084d9;
-            }
-            QPushButton:pressed {
-                background-color: #0063b1;
-            }
-            QPushButton:default {
-                background-color: #0078d7;
-                border: 1px solid #80ccff;
-            }
-            QCheckBox {
-                color: #e0e0e0;
-                spacing: 8px;
-            }
-            QCheckBox::indicator {
-                width: 16px;
-                height: 16px;
-            }
-        """)
+        # Xác định theme hiện tại
+        current_theme = "dark"
+        if hasattr(self, 'parent') and hasattr(self.parent, 'current_theme'):
+            current_theme = self.parent.current_theme
+        
+        # Style cho message box dựa trên theme hiện tại
+        if current_theme == "light":
+            msg_box.setStyleSheet("""
+                QMessageBox {
+                    background-color: #f0f0f0;
+                    color: #333333;
+                }
+                QMessageBox QLabel {
+                    color: #333333;
+                    font-size: 13px;
+                    min-height: 100px;
+                }
+                QPushButton {
+                    background-color: #0078d7;
+                    color: white;
+                    border: none;
+                    padding: 6px 20px;
+                    margin: 6px;
+                    border-radius: 4px;
+                    min-width: 60px;
+                }
+                QPushButton:hover {
+                    background-color: #1084d9;
+                }
+                QPushButton:pressed {
+                    background-color: #0063b1;
+                }
+                QPushButton:default {
+                    background-color: #0078d7;
+                    border: 1px solid #80ccff;
+                }
+                QCheckBox {
+                    color: #333333;
+                    spacing: 8px;
+                }
+                QCheckBox::indicator {
+                    width: 16px;
+                    height: 16px;
+                }
+            """)
+        else:
+            msg_box.setStyleSheet("""
+                QMessageBox {
+                    background-color: #2d2d2d;
+                    color: #e0e0e0;
+                }
+                QMessageBox QLabel {
+                    color: #e0e0e0;
+                    font-size: 13px;
+                    min-height: 100px;
+                }
+                QPushButton {
+                    background-color: #0078d7;
+                    color: white;
+                    border: none;
+                    padding: 6px 20px;
+                    margin: 6px;
+                    border-radius: 4px;
+                    min-width: 60px;
+                }
+                QPushButton:hover {
+                    background-color: #1084d9;
+                }
+                QPushButton:pressed {
+                    background-color: #0063b1;
+                }
+                QPushButton:default {
+                    background-color: #0078d7;
+                    border: 1px solid #80ccff;
+                }
+                QCheckBox {
+                    color: #e0e0e0;
+                    spacing: 8px;
+                }
+                QCheckBox::indicator {
+                    width: 16px;
+                    height: 16px;
+                }
+            """)
         
         # Thêm checkbox xóa file từ ổ đĩa
         delete_file_checkbox = QCheckBox(self.tr_("DIALOG_DELETE_FILE_FROM_DISK"))
@@ -2062,29 +2107,61 @@ class DownloadedVideosTab(QWidget):
         dialog.setMinimumWidth(600)  # Tăng chiều rộng tối thiểu
         dialog.setMinimumHeight(400)  # Thêm chiều cao tối thiểu
         dialog.resize(600, 400)  # Đặt kích thước mặc định
-        dialog.setStyleSheet("""
-            QDialog {
-                background-color: #2d2d2d;
-                color: #ffffff;
-            }
-            QTextEdit {
-                background-color: #3d3d3d;
-                color: #ffffff;
-                border: 1px solid #555555;
-                padding: 5px;
-                font-size: 14px;
-            }
-            QPushButton {
-                background-color: #0078d7;
-                color: #ffffff;
-                border: none;
-                padding: 8px 15px;
-                border-radius: 4px;
-            }
-            QPushButton:hover {
-                background-color: #0086f0;
-            }
-        """)
+        
+        # Xác định theme hiện tại từ parent window
+        current_theme = "dark"
+        if hasattr(self, 'parent') and hasattr(self.parent, 'current_theme'):
+            current_theme = self.parent.current_theme
+        
+        # Áp dụng style dựa trên theme hiện tại
+        if current_theme == "light":
+            dialog.setStyleSheet("""
+                QDialog {
+                    background-color: #f0f0f0;
+                    color: #333333;
+                }
+                QTextEdit {
+                    background-color: #ffffff;
+                    color: #333333;
+                    border: 1px solid #cccccc;
+                    padding: 5px;
+                    font-size: 14px;
+                }
+                QPushButton {
+                    background-color: #0078d7;
+                    color: #ffffff;
+                    border: none;
+                    padding: 8px 15px;
+                    border-radius: 4px;
+                }
+                QPushButton:hover {
+                    background-color: #0086f0;
+                }
+            """)
+        else:
+            dialog.setStyleSheet("""
+                QDialog {
+                    background-color: #2d2d2d;
+                    color: #ffffff;
+                }
+                QTextEdit {
+                    background-color: #3d3d3d;
+                    color: #ffffff;
+                    border: 1px solid #555555;
+                    padding: 5px;
+                    font-size: 14px;
+                }
+                QPushButton {
+                    background-color: #0078d7;
+                    color: #ffffff;
+                    border: none;
+                    padding: 8px 15px;
+                    border-radius: 4px;
+                }
+                QPushButton:hover {
+                    background-color: #0086f0;
+                }
+            """)
         
         # Layout dialog
         layout = QVBoxLayout(dialog)
@@ -2773,23 +2850,15 @@ class DownloadedVideosTab(QWidget):
             QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), error_msg)
 
     def update_button_states(self):
-        """Cập nhật trạng thái các nút dựa trên số lượng hàng được chọn"""
+        """Cập nhật trạng thái các nút dựa trên số lượng video trong bảng"""
         has_videos = self.downloads_table.rowCount() > 0
+        
+        # Vô hiệu hóa các nút khi không có video nào
         self.select_toggle_btn.setEnabled(has_videos)
         self.delete_selected_btn.setEnabled(has_videos)
         
-        print("DEBUG: Current theme of parent:", self.parent.current_theme if hasattr(self.parent, "current_theme") else "Unknown")
-        
-        # Kiểm tra theme hiện tại từ parent để debugging
-        if hasattr(self.parent, "current_theme"):
-            theme = self.parent.current_theme
-            print(f"DEBUG: Using theme from parent: {theme}")
-        else:
-            theme = "dark"  # Mặc định là dark nếu không có theme
-            print("DEBUG: No parent theme found, using default dark theme")
-            
-        # Không áp dụng style vì đã được xử lý từ main_window
-        print("DEBUG: Main window already applied styles with !important, not applying button styles here")
+        # Không áp dụng style vì đã được xử lý từ main_window.py
+        print("DEBUG: update_button_states in downloaded_videos_tab - button states updated without applying style")
 
     def play_selected_video(self):
         """Phát video hiện tại được chọn trong chi tiết video"""

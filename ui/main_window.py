@@ -272,8 +272,6 @@ class MainWindow(QMainWindow):
         app = QApplication.instance()
         self.current_theme = theme
         
-        print(f"DEBUG: Setting theme to {theme}")
-        
         if theme == "dark":
             # Áp dụng Dark mode stylesheet
             app.setStyleSheet("""
@@ -458,6 +456,9 @@ class MainWindow(QMainWindow):
                     border-radius: 3px;
                 }
             """)
+            self.status_bar.showMessage(self.tr_("STATUS_DARK_MODE_ENABLED"))
+            
+            # Cập nhật icon sang phiên bản viền trắng rõ ràng hơn
             self.update_platform_icons("-outlined")
         else:
             # Áp dụng Light mode stylesheet với màu sắc tương phản tốt hơn
@@ -638,6 +639,10 @@ class MainWindow(QMainWindow):
                     border-radius: 3px;
                 }
             """)
+            self.status_bar.showMessage(self.tr_("STATUS_LIGHT_MODE_ENABLED"))
+            
+            # Cập nhật icon sang phiên bản đen
+            self.update_platform_icons("-bw")
             
         # Cập nhật màu sắc cho các tab con
         if hasattr(self, 'downloaded_videos_tab') and hasattr(self.downloaded_videos_tab, 'apply_theme_colors'):
