@@ -567,6 +567,23 @@ class VideoInfoTab(QWidget):
                     format_cell = self.video_table.cellWidget(row, 4)
                     format_str = format_cell.findChild(QComboBox).currentText() if format_cell else self.tr_("FORMAT_VIDEO_MP4")
                     
+                    # Check if MP3 format is selected and FFmpeg is not available
+                    is_mp3 = format_str == self.tr_("FORMAT_AUDIO_MP3")
+                    if is_mp3 and hasattr(self.parent, 'ffmpeg_available') and not self.parent.ffmpeg_available:
+                        # Show error message
+                        QMessageBox.warning(
+                            self,
+                            self.tr_("DIALOG_WARNING"),
+                            f"{self.tr_('DIALOG_FFMPEG_MISSING')}\n\n{self.tr_('DIALOG_MP3_UNAVAILABLE')}"
+                        )
+                        
+                        # Show status message
+                        if self.parent:
+                            self.parent.status_bar.showMessage(self.tr_("STATUS_FFMPEG_MISSING"), 5000)
+                        
+                        # Skip this video
+                        continue
+                    
                     # Get format_id based on quality and format
                     format_id = self.get_format_id(url, quality, format_str)
 

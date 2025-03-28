@@ -44,11 +44,11 @@ class MainWindow(QMainWindow):
         # Update UI based on current language
         self.update_ui_language()
         
-        # Load last output folder
-        self.load_last_output_folder()
-        
         # Check for FFmpeg availability at startup
         self.check_ffmpeg_availability()
+        
+        # Load output folder from config if available
+        self.load_config()
 
     def setup_font(self):
         """Set up Inter font for the application"""
@@ -223,7 +223,7 @@ class MainWindow(QMainWindow):
             self.lang_menu.addAction(lang_action)
 
     def set_output_folder(self):
-        """Open dialog to choose output folder"""
+        """Set output folder"""
         # Use current folder as starting point if available
         start_folder = self.output_folder if self.output_folder else ""
         
@@ -234,22 +234,8 @@ class MainWindow(QMainWindow):
             self.video_info_tab.update_output_folder(folder)
             self.status_bar.showMessage(self.tr_("STATUS_FOLDER_SET").format(folder))
             
-            # Save output folder to config file
-            try:
-                config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config.json')
-                config = {}
-                if os.path.exists(config_file):
-                    with open(config_file, 'r') as f:
-                        config = json.load(f)
-                
-                # Update output folder
-                config['last_output_folder'] = folder
-                
-                # Save configuration
-                with open(config_file, 'w') as f:
-                    json.dump(config, f)
-            except Exception as e:
-                print(f"Error saving output folder: {e}")
+            # Save to config file
+            self.save_config('last_output_folder', folder)
 
     def set_language(self, lang_code):
         """Change application language"""
@@ -823,19 +809,44 @@ class MainWindow(QMainWindow):
                 f"- macOS: brew install ffmpeg\n"
                 f"- Linux: sudo apt install ffmpeg\n\n"
                 f"{self.tr_('DIALOG_SEE_README')}"
-            )) 
+            ))
+            
+            # Store FFmpeg availability status
+            self.ffmpeg_available = False
+        else:
+            self.ffmpeg_available = True
 
-    def load_last_output_folder(self):
-        """Load last output folder path from configuration file"""
+    def load_config(self):
+        """Load configuration from config.json file"""
+        config_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
         try:
-            config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config.json')
             if os.path.exists(config_file):
                 with open(config_file, 'r') as f:
                     config = json.load(f)
+                    # Load output folder if available
                     last_folder = config.get('last_output_folder', '')
                     if last_folder and os.path.exists(last_folder):
                         self.output_folder = last_folder
-                        self.video_info_tab.update_output_folder(last_folder)
-                        print(f"Loaded last output folder: {last_folder}")
+                        if hasattr(self, 'video_info_tab'):
+                            self.video_info_tab.update_output_folder(last_folder)
         except Exception as e:
-            print(f"Error loading last output folder: {e}") 
+            print(f"Error loading configuration: {e}")
+
+    def save_config(self, key, value):
+        """Save configuration to config.json file"""
+        config_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
+        try:
+            # Create or load existing config
+            config = {}
+            if os.path.exists(config_file):
+                with open(config_file, 'r') as f:
+                    config = json.load(f)
+            
+            # Update config
+            config[key] = value
+            
+            # Save config
+            with open(config_file, 'w') as f:
+                json.dump(config, f)
+        except Exception as e:
+            print(f"Error saving configuration: {e}") 
