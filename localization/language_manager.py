@@ -10,11 +10,11 @@ import os
 import json
 from localization import english, vietnamese
 
-# Đường dẫn đến file cấu hình
+# Path to configuration file
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
 
 class LanguageManager:
-    """Quản lý ngôn ngữ trong ứng dụng"""
+    """Application language manager"""
     
     def __init__(self):
         self.languages = {
@@ -24,7 +24,7 @@ class LanguageManager:
         self.current_language = self.load_language_from_config()
         
     def load_language_from_config(self):
-        """Tải cài đặt ngôn ngữ từ file cấu hình"""
+        """Load language settings from configuration file"""
         try:
             if os.path.exists(CONFIG_FILE):
                 with open(CONFIG_FILE, 'r') as f:
@@ -32,31 +32,31 @@ class LanguageManager:
                     language = config.get('language', 'english')
                     if language in self.languages:
                         return language
-            return "english"  # Mặc định là tiếng Anh
+            return "english"  # Default is English
         except Exception as e:
             print(f"Error loading language from config: {e}")
             return "english"
     
     def save_language_to_config(self, language):
-        """Lưu cài đặt ngôn ngữ vào file cấu hình"""
+        """Save language settings to configuration file"""
         try:
-            # Tạo file config nếu chưa tồn tại
+            # Create config file if it doesn't exist
             config = {}
             if os.path.exists(CONFIG_FILE):
                 with open(CONFIG_FILE, 'r') as f:
                     config = json.load(f)
             
-            # Cập nhật ngôn ngữ
+            # Update language
             config['language'] = language
             
-            # Lưu cấu hình
+            # Save configuration
             with open(CONFIG_FILE, 'w') as f:
                 json.dump(config, f)
         except Exception as e:
             print(f"Error saving language to config: {e}")
     
     def set_language(self, language):
-        """Thiết lập ngôn ngữ hiện tại"""
+        """Set current language"""
         if language in self.languages:
             self.current_language = language
             self.save_language_to_config(language)
@@ -64,7 +64,7 @@ class LanguageManager:
         return False
     
     def get_text(self, key):
-        """Lấy chuỗi văn bản theo key và ngôn ngữ hiện tại"""
+        """Get text string by key in current language"""
         lang_module = self.languages.get(self.current_language, english)
         if hasattr(lang_module, key):
             return getattr(lang_module, key)
@@ -75,49 +75,49 @@ class LanguageManager:
         return key
     
     def tr(self, key):
-        """Alias cho get_text để dịch key theo ngôn ngữ hiện tại"""
+        """Alias for get_text to translate key in current language"""
         return self.get_text(key)
     
     def get_available_languages(self):
-        """Lấy danh sách các ngôn ngữ có sẵn"""
+        """Get list of available languages"""
         return {code: module.LANGUAGE_NAME for code, module in self.languages.items()}
     
     def get_current_language_name(self):
-        """Lấy tên của ngôn ngữ hiện tại"""
+        """Get name of current language"""
         return self.languages[self.current_language].LANGUAGE_NAME
 
     def create_sample_data(self):
-        """Tạo dữ liệu mẫu cho demo"""
-        # Lưu toàn bộ danh sách video (để thống kê)
+        """Create sample data for demo"""
+        # Store full video list (for statistics)
         self.all_videos = [
-            # ... danh sách 12 video như cũ ...
+            # ... list of 12 videos as before ...
         ]
         
-        # Chỉ hiển thị 8 video đầu tiên khi lọc
+        # Only display first 8 videos when filtering
         self.filtered_videos = self.all_videos[:8]
 
     def filter_videos(self):
-        """Lọc video theo từ khóa tìm kiếm"""
+        """Filter videos by search keyword"""
         search_text = self.search_input.text().lower()
         
         if search_text:
-            # Lọc theo từ khóa
+            # Filter by keyword
             self.filtered_videos = [
                 video for video in self.all_videos
                 if search_text in video[0].lower() or search_text in video[7].lower()
             ]
         else:
-            # Nếu không có từ khóa, hiển thị tất cả (vẫn giới hạn 8 video)
+            # If no keyword, display all (still limited to 8 videos)
             self.filtered_videos = self.all_videos[:8]
         
-        # Cập nhật bảng
+        # Update table
         self.refresh_filtered_videos()
 
 # Singleton instance
 _instance = None
 
 def get_instance():
-    """Lấy instance của LanguageManager (Singleton pattern)"""
+    """Get instance of LanguageManager (Singleton pattern)"""
     global _instance
     if _instance is None:
         _instance = LanguageManager()

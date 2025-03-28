@@ -10,15 +10,13 @@ from PyQt6.QtWidgets import QApplication
 from ui.video_info_tab import VideoInfoTab
 from ui.downloaded_videos_tab import DownloadedVideosTab
 from ui.donate_tab import DonateTab
-from ui.update_dialog import UpdateDialog, UpdateCheckerThread
 from localization import get_language_manager
-from utils.update_checker import UpdateChecker
 
 
 class MainWindow(QMainWindow):
     """Main window of the Social Download Manager application"""
     
-    # Signal emitted when language is changed
+    # Signal when language changes
     language_changed = pyqtSignal(str)
 
     def __init__(self):
@@ -43,7 +41,7 @@ class MainWindow(QMainWindow):
 
     def setup_font(self):
         """Set up Inter font for the application"""
-        # Create normal Inter font (not bold)
+        # Create regular Inter font (not bold)
         font = QFont("Inter", 10, QFont.Weight.Normal)
         QApplication.setFont(font)
 
@@ -148,7 +146,7 @@ class MainWindow(QMainWindow):
         # Theme Menu (Dark/Light)
         theme_menu = menu_bar.addMenu(self.tr_("MENU_APPEARANCE"))
         
-        # Create action group to select one of the themes
+        # Create action group to select one theme
         light_mode_action = QAction(self.tr_("MENU_LIGHT_MODE"), self)
         light_mode_action.setCheckable(True)
         light_mode_action.triggered.connect(lambda: self.set_theme("light"))
@@ -180,13 +178,13 @@ class MainWindow(QMainWindow):
         
         # Action: Check for Updates
         check_updates_action = QAction(self.tr_("MENU_CHECK_UPDATES"), self)
-        check_updates_action.triggered.connect(self.check_for_updates)
+        check_updates_action.triggered.connect(self.show_developing_feature)
         help_menu.addAction(check_updates_action)
         
         # Add separator before Buy Me A Coffee
         help_menu.addSeparator()
         
-        # Action: Buy Me A Coffee (placed in Help menu instead of separate menu)
+        # Action: Buy Me A Coffee (placed in Help menu instead of a separate menu)
         donate_action = QAction(self.tr_("MENU_BUY_COFFEE"), self)
         donate_action.triggered.connect(self.show_donate_tab)
         help_menu.addAction(donate_action)
@@ -200,7 +198,7 @@ class MainWindow(QMainWindow):
         lang_action_group = QActionGroup(self)
         lang_action_group.setExclusive(True)
         
-        # Get language list from LanguageManager
+        # Get list of languages from LanguageManager
         available_languages = self.lang_manager.get_available_languages()
         current_language = self.lang_manager.current_language
         
@@ -214,8 +212,8 @@ class MainWindow(QMainWindow):
             self.lang_menu.addAction(lang_action)
 
     def set_output_folder(self):
-        """Open dialog to choose output folder"""
-        # Use current folder as starting point if available
+        """Open folder selection dialog"""
+        # Use current folder as starting point if it exists
         start_folder = self.output_folder if self.output_folder else ""
         
         folder = QFileDialog.getExistingDirectory(
@@ -231,15 +229,15 @@ class MainWindow(QMainWindow):
             # Update UI with new language
             self.update_ui_language()
             
-            # Emit signal for other components to update
+            # Emit signal to other components to update
             self.language_changed.emit(lang_code)
             
-            # Display notification
+            # Show notification
             language_name = self.lang_manager.get_current_language_name()
             self.status_bar.showMessage(self.tr_("STATUS_LANGUAGE_CHANGED").format(language_name))
 
     def update_ui_language(self):
-        """Update UI with current language"""
+        """Update UI based on current language"""
         # Update tab titles
         self.tab_widget.setTabText(0, self.tr_("TAB_VIDEO_INFO"))
         self.tab_widget.setTabText(1, self.tr_("TAB_DOWNLOADED_VIDEOS"))
@@ -256,73 +254,21 @@ class MainWindow(QMainWindow):
         """Translate string based on current language"""
         return self.lang_manager.get_text(key)
 
-    def check_for_updates(self):
-        """Check for software updates"""
-        # Show status message
-        self.status_bar.showMessage(self.tr_("DIALOG_CHECKING_UPDATES"))
-        
-        # Create update checker
-        self.update_checker = UpdateChecker()
-        
-        # Create and run thread
-        self.update_thread = UpdateCheckerThread(self.update_checker)
-        self.update_thread.update_check_complete.connect(self.handle_update_result)
-        self.update_thread.start()
-    
-    def handle_update_result(self, result):
-        """Handle the results from update check"""
-        if not result.get("success", False):
-            # Error checking for updates
-            QMessageBox.warning(
-                self,
-                self.tr_("DIALOG_ERROR"),
-                f"{self.tr_('DIALOG_UPDATE_ERROR')}: {result.get('error', 'Unknown error')}"
-            )
-            self.status_bar.showMessage(self.tr_("DIALOG_UPDATE_ERROR"))
-            return
-            
-        if not result.get("has_update", False):
-            # No updates available
-            QMessageBox.information(
-                self,
-                self.tr_("DIALOG_NO_UPDATES"),
-                self.tr_("DIALOG_LATEST_VERSION")
-            )
-            self.status_bar.showMessage(self.tr_("DIALOG_LATEST_VERSION"))
-            return
-            
-        # Show update dialog with result information
-        update_dialog = UpdateDialog(self, result)
-        update_dialog.exec()
-        
-        # Reset status after dialog closes
-        self.status_bar.showMessage(self.tr_("STATUS_READY"))
-
     def show_developing_feature(self):
-        """Display notification for features under development"""
+        """Show notification about feature under development"""
         QMessageBox.information(
             self, self.tr_("DIALOG_COMING_SOON"), self.tr_("DIALOG_FEATURE_DEVELOPING"))
 
     def show_about(self):
-        """Display information about the application"""
+        """Show application information"""
         QMessageBox.about(
             self, 
             self.tr_("ABOUT_TITLE"),
-            f"{self.tr_('ABOUT_MESSAGE')}\n\n"
-            f"Version: 1.0.0\n"
-            f"© 2025 Shin\n\n"
-            f"Key Features:\n"
-            f"• Download TikTok videos in various formats\n"
-            f"• Manage downloaded videos with detailed information\n"
-            f"• Multi-language support (English & Vietnamese)\n"
-            f"• Dark and Light theme options\n\n"
-            f"Developer: Shin\n"
-            f"Email: shin315@gmail.com\n"
-            f"GitHub: github.com/shin315/social-download-manager"
+            f"{self.tr_('ABOUT_MESSAGE')}\n\nDeveloped by: Shin\nEmail: shin315@gmail.com"
         )
         
     def set_theme(self, theme):
-        """Switch between Light and Dark mode"""
+        """Change between Light and Dark mode"""
         app = QApplication.instance()
         self.current_theme = theme
         
@@ -346,7 +292,6 @@ class MainWindow(QMainWindow):
                 }
                 QTabBar::tab:selected {
                     background-color: #0078d7;
-                    font-weight: normal;
                 }
                 QTabBar::tab:hover:!selected {
                     background-color: #505050;
@@ -464,15 +409,15 @@ class MainWindow(QMainWindow):
                     color: #ffffff;
                     border-radius: 8px;
                 }
-                /* Synchronize colors for icons in context menu */
+                /* Sync color for icons in context menu */
                 QMenu::icon {
                     color: #cccccc;
                 }
-                /* Colors for all actions in context menu */
+                /* Color for all actions in context menu */
                 QMenu QAction {
                     color: #ffffff;
                 }
-                /* Colors for all icons in right-click */
+                /* Color for all icons when right-clicked */
                 QMenu::indicator:non-exclusive:checked {
                     image: url(:/qt-project.org/styles/commonstyle/images/checkbox-checked.png);
                     color: #cccccc;
@@ -481,7 +426,7 @@ class MainWindow(QMainWindow):
                 QMenu QIcon {
                     color: #cccccc;
                 }
-                /* Color for cut, copy, paste icons and other icons in context menu */
+                /* Color for cut, copy, paste and other icons in context menu */
                 QLineEdit::contextmenu-item QMenu::icon,
                 QLineEdit::contextmenu-item QAction::icon,
                 QTextEdit::contextmenu-item QMenu::icon,
@@ -490,7 +435,7 @@ class MainWindow(QMainWindow):
                 QPlainTextEdit::contextmenu-item QAction::icon {
                     color: #cccccc;
                 }
-                /* Title bar */
+                /* Title bar (title bar) */
                 QDockWidget::title {
                     background-color: #2d2d2d;
                     color: #ffffff;
@@ -513,10 +458,10 @@ class MainWindow(QMainWindow):
             """)
             self.status_bar.showMessage(self.tr_("STATUS_DARK_MODE_ENABLED"))
             
-            # Update icons to white outline version for better visibility
+            # Update icon to more distinct outlined version
             self.update_platform_icons("-outlined")
         else:
-            # Apply Light mode stylesheet with better contrast colors
+            # Apply Light mode stylesheet with better contrast
             app.setStyleSheet("""
                 QMainWindow, QWidget {
                     background-color: #f0f0f0;
@@ -534,8 +479,7 @@ class MainWindow(QMainWindow):
                 }
                 QTabBar::tab:selected {
                     background-color: #0078d7;
-                    color: #ffffff;
-                    font-weight: normal;
+                    color: white;
                 }
                 QTabBar::tab:hover:!selected {
                     background-color: #d0d0d0;
@@ -657,15 +601,15 @@ class MainWindow(QMainWindow):
                     color: #333333;
                     border-radius: 8px;
                 }
-                /* Synchronize colors for icons in context menu */
+                /* Sync color for icons in context menu */
                 QMenu::icon {
                     color: #555555;
                 }
-                /* Colors for all actions in context menu */
+                /* Color for all actions in context menu */
                 QMenu QAction {
                     color: #333333;
                 }
-                /* Colors for all icons in right-click */
+                /* Color for all icons when right-clicked */
                 QMenu::indicator:non-exclusive:checked {
                     image: url(:/qt-project.org/styles/commonstyle/images/checkbox-checked.png);
                     color: #555555;
@@ -674,7 +618,7 @@ class MainWindow(QMainWindow):
                 QMenu QIcon {
                     color: #555555;
                 }
-                /* Title bar */
+                /* Title bar (title bar) */
                 QDockWidget::title {
                     background-color: #e0e0e0;
                     color: #333333;
@@ -697,30 +641,30 @@ class MainWindow(QMainWindow):
             """)
             self.status_bar.showMessage(self.tr_("STATUS_LIGHT_MODE_ENABLED"))
             
-            # Update icons to black version
+            # Update icon to black
             self.update_platform_icons("-bw")
             
-        # Update colors for child tabs
+        # Update color for tab widgets
         if hasattr(self, 'downloaded_videos_tab') and hasattr(self.downloaded_videos_tab, 'apply_theme_colors'):
             self.downloaded_videos_tab.apply_theme_colors(theme)
             
         if hasattr(self, 'video_info_tab') and hasattr(self.video_info_tab, 'apply_theme_colors'):
             self.video_info_tab.apply_theme_colors(theme)
             
-        # Update theme for donate dialog if already created
+        # Update theme for donate dialog if it exists
         if hasattr(self, 'donate_dialog') and self.donate_dialog:
-            # Update dialog style
+            # Update style for dialog
             if theme == "dark":
                 self.donate_dialog.setStyleSheet("background-color: #2d2d2d; color: #ffffff;")
             else:
                 self.donate_dialog.setStyleSheet("background-color: #f5f5f5; color: #333333;")
             
-            # Update donate_tab if exists
+            # Update donate_tab if it exists
             if hasattr(self, 'donate_tab'):
                 self.donate_tab.apply_theme_colors(self.current_theme)
 
     def update_platform_icons(self, suffix):
-        """Update icons for platform menus based on theme"""
+        """Update icon for platform menus based on theme"""
         if not hasattr(self, 'platform_actions'):
             return
             
@@ -729,14 +673,14 @@ class MainWindow(QMainWindow):
             action.setIcon(QIcon(icon_path))
 
     def show_donate_tab(self):
-        """Display donate dialog"""
-        # Create dialog if not exists
+        """Show donate dialog"""
+        # Create dialog if it doesn't exist
         if not self.donate_dialog:
             self.donate_dialog = QDialog(self)
             self.donate_dialog.setObjectName("donateDialog")  # Add objectName for dialog
             self.donate_dialog.setWindowTitle(self.tr_("DONATE_TITLE"))
-            self.donate_dialog.setMinimumSize(320, 340)  # Reduced height from 400 to 340
-            self.donate_dialog.setMaximumSize(330, 350)  # Reduced height from 420 to 350
+            self.donate_dialog.setMinimumSize(320, 340)  # Reduce height from 400 to 340
+            self.donate_dialog.setMaximumSize(330, 350)  # Reduce height from 420 to 350
             self.donate_dialog.setWindowFlags(self.donate_dialog.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
             self.donate_dialog.setModal(True)
             
@@ -750,7 +694,7 @@ class MainWindow(QMainWindow):
             layout.setContentsMargins(0, 0, 0, 0)
             layout.setSpacing(0)
             
-            self.donate_tab = DonateTab(self.donate_dialog)  # Store donate_tab as a property
+            self.donate_tab = DonateTab(self.donate_dialog)  # Save donate_tab as a property
             layout.addWidget(self.donate_tab)
             
             self.donate_dialog.setLayout(layout)
@@ -758,22 +702,22 @@ class MainWindow(QMainWindow):
             # Register language_changed signal for DonateTab
             self.language_changed.connect(lambda: self.donate_tab.update_language())
             
-            # Apply theme to dialog - use current app theme
+            # Apply theme for dialog - use app's current theme
             self.donate_tab.apply_theme_colors(self.current_theme)
         else:
             # Update title and content based on current language
             self.donate_dialog.setWindowTitle(self.tr_("DONATE_TITLE"))
             
-            # Update dialog style based on current theme
+            # Update style of dialog based on current theme
             if self.current_theme == "dark":
                 self.donate_dialog.setStyleSheet("background-color: #2d2d2d; color: #ffffff;")
             else:
                 self.donate_dialog.setStyleSheet("background-color: #f5f5f5; color: #333333;")
             
-            # Update stored donate_tab
+            # Update saved donate_tab
             if hasattr(self, 'donate_tab'):
                 self.donate_tab.update_language()
                 self.donate_tab.apply_theme_colors(self.current_theme)
         
-        # Display dialog
+        # Show dialog
         self.donate_dialog.exec() 

@@ -8,7 +8,7 @@ import webbrowser
 from localization import get_language_manager
 
 class DonateTab(QWidget):
-    """Tab hiển thị thông tin donate"""
+    """Tab for displaying donation information"""
     
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -17,7 +17,7 @@ class DonateTab(QWidget):
         self.init_ui()
         
     def init_ui(self):
-        """Khởi tạo giao diện"""
+        """Initialize the user interface"""
         # Main layout
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
@@ -28,8 +28,8 @@ class DonateTab(QWidget):
         container = QWidget()
         container.setObjectName("containerWidget")
         container_layout = QVBoxLayout(container)
-        container_layout.setContentsMargins(20, 15, 20, 10)  # Reduced bottom padding
-        container_layout.setSpacing(8)  # Reduced spacing between elements
+        container_layout.setContentsMargins(20, 15, 20, 10)  # Reduce bottom padding
+        container_layout.setSpacing(8)  # Reduce spacing between elements
         
         # Title
         self.title_label = QLabel(self.tr_("DONATE_TITLE"))
@@ -48,8 +48,8 @@ class DonateTab(QWidget):
         center_frame = QFrame()
         center_frame.setObjectName("centerFrame")
         center_layout = QVBoxLayout(center_frame)
-        center_layout.setSpacing(10)  # Reduced spacing between QR and button
-        center_layout.setContentsMargins(0, 5, 0, 0)  # Added top padding
+        center_layout.setSpacing(10)  # Reduce spacing between QR and button
+        center_layout.setContentsMargins(0, 5, 0, 0)  # Add top padding
         
         # QR code without vertical line
         qr_container = QFrame()
@@ -104,11 +104,11 @@ class DonateTab(QWidget):
         main_layout.addWidget(container)
         
     def tr_(self, key):
-        """Dịch chuỗi dựa trên ngôn ngữ hiện tại"""
+        """Translate string based on current language"""
         return self.lang_manager.get_text(key)
         
     def update_language(self):
-        """Cập nhật ngôn ngữ cho tất cả các thành phần"""
+        """Update language for all components"""
         # Update title
         if hasattr(self, 'title_label'):
             self.title_label.setText(self.tr_("DONATE_TITLE"))
@@ -122,7 +122,7 @@ class DonateTab(QWidget):
             self.coffee_button.setText(self.tr_("DONATE_COFFEE_LINK"))
         
     def apply_theme_colors(self, theme):
-        """Áp dụng màu sắc theo chủ đề"""
+        """Apply colors based on theme"""
         if theme == "dark":
             # Ensure container background is dark
             self.setStyleSheet("""
