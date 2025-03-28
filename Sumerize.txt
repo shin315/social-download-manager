@@ -18,11 +18,25 @@ Social Download Manager là ứng dụng desktop cho phép tải video từ các
 - `/translations`: Chứa các file dịch
 
 ## Phiên bản hiện tại
-- Phiên bản: 1.3.0 (Từ version.json)
+- Phiên bản: 1.1.0 (đã cập nhật)
 
 ## Timeline phát triển
 
-### 2023-03-27
+### 2025-03-28
+- Đóng gói ứng dụng cho Windows bằng PyInstaller
+- Tạo icon cho ứng dụng từ file logo.png
+- Tạo file spec cho PyInstaller để đóng gói đầy đủ
+- Tạo hook-pyqt6.py để đảm bảo import đúng các module PyQt6
+- Tạo file version.txt để nhúng thông tin version vào file exe
+- Tạo file README.txt trong thư mục dist để hướng dẫn cách dùng
+- Đơn giản hóa tính năng update:
+  + Bỏ phần tự động cài đặt khi update
+  + Thêm nút "Tải Xuống" để tải trực tiếp từ GitHub
+  + Cho phép user chọn thư mục lưu khi tải xuống
+  + Cải thiện giao diện dialog update
+  + Hiển thị GitHub Releases link để tải thủ công
+
+### 2025-03-27
 - Cập nhật tên hiển thị ngôn ngữ tiếng Việt từ "Tiếng Việt" thành "Vietnamese"
 - Triển khai tính năng kiểm tra cập nhật:
   + Tạo module utils/update_checker.py để kiểm tra cập nhật từ GitHub
@@ -40,5 +54,209 @@ Social Download Manager là ứng dụng desktop cho phép tải video từ các
   + Cải thiện cảnh báo cập nhật bắt buộc với icon và màu nổi bật
   + Tùy chỉnh style cho các thành phần dựa trên theme sáng/tối
 
-### Công việc đang thực hiện
-- Chuẩn bị repository GitHub để thực hiện chức năng cập nhật thực tế 
+### 2025-03-26
+- Cải thiện hiển thị tooltip và copy title trong cả hai tab:
+  + Thêm hàm `format_tooltip_text()` để định dạng tooltip với dấu xuống dòng tự động tại dấu chấm câu và hashtag, giúp dễ đọc hơn
+  + Lưu trữ title đầy đủ vào `Qt.ItemDataRole.UserRole` để sử dụng khi copy từ context menu
+  + Cập nhật hàm `copy_to_clipboard()` để loại bỏ hashtag khi copy từ cột title, làm cho nội dung sạch và dễ sử dụng
+  + Áp dụng cải tiến tooltip cho cả hai tab (Video Info và Downloaded Videos)
+  + Đảm bảo rằng khi right-click vào title và chọn "Copy Title", người dùng luôn nhận được phiên bản title đã làm sạch (không có hashtag)
+  + Cải thiện trải nghiệm người dùng bằng cách hiển thị thông tin rõ ràng hơn trong các tooltip
+
+### 2025-03-25
+- Cải tiến giao diện checkbox trong chế độ sáng:
+  + Thay đổi màu nền của checkbox trong light mode sang màu xám nhạt (#e0e0e0)
+  + Thêm đường viền màu xám (#aaaaaa) để checkbox nổi bật và dễ nhìn hơn trên nền trắng
+  + Thiết lập màu nền xanh (#0078d7) cho checkbox khi được chọn
+  + Thiết lập riêng style cho checkbox trong bảng để đảm bảo hiển thị đồng nhất
+  + Giữ nguyên style của checkbox trong chế độ tối
+
+### 2025-03-24
+- Cải thiện hiệu ứng hover trong light mode:
+  + Thay đổi màu nền khi hover từ màu đen (không phù hợp với theme sáng) thành màu xám nhạt (#e8e8e8, #d0d0d0)
+  + Thêm selector cho nhiều phần tử UI khi hover: QTableWidget::item, QHeaderView::section, QTabBar::tab, QComboBox, QMenuBar::item
+  + Đảm bảo hiệu ứng hover nhất quán trên tất cả các thành phần giao diện
+  + Sử dụng màu xám nhạt (#e0e0e0, #d0d0d0) cho hover trong menu và menu bar
+  + Màu hover cho combobox là #f5f5f5 với viền #bbbbbb để tạo hiệu ứng nổi bật nhẹ nhàng
+  + Sử dụng selector :hover:!selected để không ghi đè lên hiệu ứng selected của các phần tử đã được chọn
+
+### 2025-03-23
+- Đã cải thiện hiệu ứng nút disabled và tooltip trong chế độ sáng:
+  + Thay đổi màu nền nút disabled từ màu tối (#e0e0e0) sang màu sáng hơn (#e5e5e5) để phù hợp với theme sáng
+  + Thêm thuộc tính !important vào các style của nút disabled để đảm bảo không bị ghi đè từ các file con
+  + Sửa lỗi xung đột style giữa main_window.py và các file tab (video_info_tab.py, downloaded_videos_tab.py)
+  + Loại bỏ style định nghĩa trong các file tab để tránh xung đột và nhất quán với style chính
+  + Thay đổi màu nền tooltip từ màu tối thành màu xám nhạt (#f5f5f5) với viền nhẹ (#cccccc) phù hợp với theme sáng
+  + Tạo độ tương phản phù hợp giữa nút bình thường và nút disabled để người dùng dễ phân biệt
+  + Cập nhật tooltip trong cả hai tab "Video Info" và "Downloaded Videos" để hiển thị thông tin rõ ràng hơn
+
+### 2025-03-22
+- Đã chuẩn hóa hiệu ứng checkbox giữa chế độ sáng và tối:
+  + Thống nhất hiệu ứng dấu tích cho checkbox trong cả chế độ sáng và tối
+  + Thiết lập kích thước cố định 13x13px cho checkbox trong cả hai chế độ
+  + Chỉnh sửa bo góc (border-radius: 2px) để có giao diện nhất quán
+  + Sử dụng màu xanh (#0078d7) khi được tích cho cả hai chế độ 
+  + Đảm bảo checkbox trong bảng (QTableWidget) có cùng hiệu ứng với checkbox thông thường
+  + Mặc dù màu nền checkbox khác nhau giữa các chế độ (#3d3d3d cho tối, #e0e0e0 cho sáng) nhưng hiệu ứng tích vào hoàn toàn giống nhau
+
+### 2025-03-21
+- Đã cải thiện hiển thị status bar:
+  + Thêm tính năng tự động ẩn thông báo "Playing" sau 5 giây
+  + Hiển thị thông báo khi đang sử dụng bộ lọc trong tab Downloaded Videos
+  + Hiển thị tổng hợp tất cả các bộ lọc đang áp dụng (ví dụ: "Đang lọc: Quality: 1080p | Creator: username | Date: Today")
+  + Hiển thị thông báo "Đang làm mới danh sách video..." khi nhấn nút Refresh
+  + Tự động xóa thông báo lọc khi xóa bộ lọc
+  + Reset status bar về trạng thái "Sẵn sàng" sau khi hoàn thành các tác vụ
+
+### 2025-03-20
+- Đã đổi tên ứng dụng từ "SoDownloader" thành "Social Download Manager":
+  + Cập nhật tên ứng dụng trong cửa sổ chính và tất cả các dialog
+  + Thay đổi tiêu đề cửa sổ ứng dụng
+  + Cập nhật các chuỗi trong file ngôn ngữ tiếng Anh và tiếng Việt
+  + Sửa đổi comment trong mã nguồn để thống nhất với tên mới
+  + Giữ nguyên tất cả chức năng và giao diện người dùng
+
+### 2025-03-19
+- Đã tối ưu lại phân bổ không gian giữa các cột:
+  + Tăng đáng kể độ rộng cột Tiêu Đề từ 230px lên 280px để hiển thị thêm nội dung
+  + Giảm độ rộng của các cột ít quan trọng để dành thêm không gian cho cột tiêu đề:
+    - Giảm cột Tác Giả từ 90px xuống 85px
+    - Giảm cột Chất Lượng từ 90px xuống 80px
+    - Giảm cột Định Dạng từ 90px xuống 80px
+    - Giảm cột Kích Thước từ 90px xuống 75px
+    - Giảm cột Trạng Thái từ 100px xuống 80px (chỉ hiển thị "Successful")
+    - Giảm cột Ngày Tải từ 110px xuống 100px
+    - Giảm cột Hashtags từ 100px xuống 90px
+    - Giảm cột Thao Tác từ 140px xuống 130px (vẫn đủ cho 2 nút)
+  + Tổng cộng đã tối ưu thêm 50px cho cột tiêu đề và giảm 95px từ các cột còn lại
+
+### 2025-03-18
+- Đã tối ưu hiển thị tiêu đề cột cho ngôn ngữ tiếng Việt:
+  + Tăng độ rộng cột để đảm bảo các tiêu đề dài trong tiếng Việt hiển thị đầy đủ
+  + Tăng chiều rộng cột Chất Lượng từ 70px lên 90px
+  + Tăng chiều rộng cột Định Dạng từ 70px lên 90px
+  + Tăng chiều rộng cột Kích Thước từ 70px lên 90px
+  + Tăng chiều rộng cột Trạng Thái từ 90px lên 100px
+  + Tăng chiều rộng cột Hashtags từ 90px lên 100px
+  + Điều chỉnh độ rộng cột Tiêu Đề để cân bằng với các thay đổi khác
+
+### 2025-03-17
+- Đã sửa lỗi hiển thị tiêu đề cột bị xáo trộn khi refresh bảng:
+  + Khắc phục lỗi khi nhấn nút Refresh, tiêu đề cột Date hiển thị thành Hashtags và cột Status hiển thị thành Date
+  + Sửa lại hàm `update_all_filter_icons()` để gọi `update_table_headers()` thay vì tự định nghĩa lại header_texts
+  + Đảm bảo các tiêu đề cột luôn được cập nhật đúng khi refresh dữ liệu
+  + Sửa thứ tự gọi hàm trong `refresh_downloads()` để đảm bảo bộ lọc và tiêu đề được cập nhật đúng
+
+### 2025-03-16
+- Đã sửa lỗi hiển thị trong status bar với thông báo copy text:
+  + Thêm chuỗi STATUS_TEXT_COPIED thiếu trong file ngôn ngữ tiếng Anh và tiếng Việt
+  + Chuỗi được thêm vào có định dạng "Đã sao chép: {}" và "Copied text: {}"
+  + Khắc phục lỗi hiển thị key ngôn ngữ trực tiếp trong status bar
+  + Đảm bảo hiển thị thông báo copy đúng khi người dùng copy nội dung từ bảng
+
+### 2025-03-15
+- Thêm tính năng "Rename Video":
+  + Cho phép người dùng đổi tên video trước khi tải xuống thông qua menu chuột phải
+  + Tên mới sẽ được hiển thị trong tab "Downloaded Videos" và làm tên file khi lưu
+  + Áp dụng các quy tắc làm sạch tên tệp để đảm bảo tính hợp lệ
+
+### 2025-03-14
+- Xử lý cải tiến cho video không có tiêu đề:
+  + Bắt buộc người dùng phải đặt tên file trước khi tải xuống nếu video không có tiêu đề
+  + Tự động đề xuất tên mặc định dựa trên timestamp: Video_YYYYMMdd_HHmmss
+  + Tên đã đặt sẽ được lưu vào cơ sở dữ liệu và hiển thị chính xác trong tab Downloaded Videos
+
+### 2025-03-13
+- Nâng cao thuật toán tìm kiếm và phát video:
+  + Nâng cao khả năng tìm kiếm tập tin dựa trên tiêu đề, bao gồm xử lý khi tiêu đề có ký tự đặc biệt
+  + Thêm nhiều biến thể tìm kiếm như từ đầu tiên, 3 từ đầu, 5 từ đầu để tăng khả năng tìm thấy file
+  + Hỗ trợ đặc biệt xử lý các ký tự đặc biệt như dấu ngoặc kép, ba chấm, v.v.
+  + Giảm ngưỡng tương đồng xuống 30% để tìm được nhiều file hơn
+
+### 2025-03-12
+- Giao diện "File Already Exists" cải tiến:
+  + Thêm tùy chọn "Apply to all" cho việc ghi đè file trong trường hợp tải nhiều video
+  + Chỉ hiển thị "Apply to all" khi có từ 2 file trở lên cần xử lý
+  + Cải thiện vị trí của checkbox "Apply to all" sang cùng hàng với các nút Yes/No/Cancel
+  + Thêm spacing và style để giao diện trông chuyên nghiệp và cân đối hơn
+  + Sửa lỗi không hiển thị "Apply to all" ở thông báo file đã tồn tại đầu tiên
+
+### 2025-03-11
+- Cải tiến lưu và hiển thị thông tin video:
+  + Tên tùy chỉnh sẽ được lưu vào cả video_info và VideoInfo object
+  + Hiển thị đúng tên đã đặt trong tab Downloaded Videos, kể cả khi không có tiêu đề ban đầu
+  + Xác định tên file thông minh dựa trên các thuộc tính có sẵn
+
+### 2025-03-10
+- Cải tiến quá trình chuyển đổi MP3:
+  + Đơn giản hóa quy trình chuyển đổi MP3 bằng cách lưu trực tiếp vào đường dẫn đích
+  + Loại bỏ bước tạo tệp tạm thời và đổi tên sau đó, giảm thiểu lỗi đường dẫn
+  + Thêm kiểm tra file đầu ra đã được tạo thành công
+  + Bổ sung nhật ký chi tiết để dễ dàng gỡ lỗi
+  + Xử lý đúng đắn tên tệp đặc biệt và ký tự không hợp lệ trong tên file đầu ra
+
+### 2025-03-09
+- Đã thêm tính năng xóa file vật lý khi xóa record video:
+  + Thêm checkbox "Delete file from disk" trong dialog xác nhận xóa
+  + Kiểm tra sự tồn tại của file trước khi cho phép xóa
+  + Hỗ trợ xóa nhiều file cùng lúc với tùy chọn "Apply to all"
+  + Hiển thị thông báo cụ thể về số lượng file đã xóa
+  + Cải thiện giao diện người dùng với vị trí checkbox phù hợp và dễ sử dụng
+  + Tự động xóa file thumbnail khi người dùng chọn xóa file video
+  + Kiểm tra sự tồn tại của thumbnail trước khi xóa để tránh lỗi
+  + Cải thiện kích thước dialog xóa video trong tab Downloaded Videos để phù hợp với kiểu dialog khác
+
+### 2025-03-08
+- Đã sửa các lỗi logic:
+  + Sửa lỗi hiển thị "Apply to all" khi chỉ có 1 file cần xử lý
+  + Cải thiện việc tải xuống video không có tiêu đề
+  + Sửa lỗi khi phát video có ký tự đặc biệt trong tên file như dấu ngoặc kép
+  + Xử lý trường hợp video không có tiêu đề, tìm kiếm trong thư mục theo định dạng
+  + Sửa lỗi nút Select All/Unselect All không cập nhật đúng khi chuyển tab từ Info sang Downloaded Videos
+
+## CÔNG NGHỆ SỬ DỤNG
+- Python 3.8+
+- PyQt6 cho giao diện người dùng
+- SQLite cho cơ sở dữ liệu
+- yt-dlp cho engine tải xuống
+- Requests và BeautifulSoup4 cho việc tải và phân tích dữ liệu
+- Git cho quản lý mã nguồn
+- FFmpeg để chuyển đổi video sang MP3
+- PyInstaller để đóng gói ứng dụng thành file exe
+
+## HƯỚNG PHÁT TRIỂN
+- Mở rộng hỗ trợ tải xuống từ các nền tảng khác như YouTube, Instagram, Facebook
+- Cải thiện hiệu suất tải xuống
+- Thêm tính năng batch renaming cho nhiều video cùng lúc
+- Cải thiện khả năng tổ chức dữ liệu để có thể đáp ứng được nhu cầu của user khi quản lý số lượng lớn các file đã tải xuống
+- Hỗ trợ thêm các ngôn ngữ khác
+- Tạo queue manager để quản lý hàng đợi tải xuống phức tạp hơn
+
+## LƯU Ý KỸ THUẬT
+- Ứng dụng sử dụng kiến trúc MVC (Model-View-Controller)
+- Tải xuống được xử lý bất đồng bộ thông qua QThread
+- Dữ liệu được lưu trữ trong cơ sở dữ liệu SQLite
+- Giao diện được thiết kế để dễ sử dụng và đáp ứng
+- Hỗ trợ đa ngôn ngữ thông qua cơ chế chuyển đổi chuỗi động
+- Sử dụng custom context menu để cung cấp thêm tính năng như rename, play, open folder
+
+## NHỮNG VẤN ĐỀ ĐÃ GIẢI QUYẾT
+1. Đã xử lý lỗi khi hiển thị tiêu đề video và tác giả
+2. Đã khắc phục sự cố khi xóa video đã chọn khỏi cơ sở dữ liệu
+3. Đã sửa lỗi hiển thị trạng thái tải xuống không đúng
+4. Đã cải thiện cách hiển thị trên tab "Downloaded Videos"
+5. Đã xử lý lỗi khi tải nội dung không được hỗ trợ (như video chỉ chứa hình ảnh)
+6. Đã khắc phục vấn đề về hiển thị hashtags trong tiêu đề khi copy
+7. Đã sửa lỗi không thể phát video có dấu ngoặc kép trong tên
+8. Đã cải thiện xử lý video không có tiêu đề, bắt buộc người dùng đặt tên
+9. Đã sửa lỗi hiển thị "Apply to all" khi chỉ có 1 file cần xử lý
+10. Đã sửa lỗi title không hiển thị đúng trong tab Downloaded Videos với video đã rename
+11. Đã sửa lỗi chuyển đổi MP3 cho video không có tiêu đề
+12. Đã cải thiện thuật toán đặt tên file khi chuyển đổi định dạng
+13. Đã sửa lỗi tự động tải xuống video MP3 không có tiêu đề mà không hỏi người dùng
+14. Đã sửa lỗi hiển thị không đầy đủ tiêu đề khi double-click để copy ở tab Video Info
+15. Đã loại bỏ các hashtag trong tiêu đề khi hiển thị trong dialog copy
+16. Đã thêm tính năng xóa file vật lý khi xóa video từ danh sách
+17. Đã cải thiện tính năng xóa file vật lý bằng cách tự động xóa cả file thumbnail tương ứng
+18. Đã sửa lỗi hiển thị tiêu đề cột bị xáo trộn khi refresh bảng (cột Date hiển thị thành Hashtags và cột Status hiển thị thành Date)
+19. Đã tối ưu hiển thị tiêu đề cột cho ngôn ngữ tiếng Việt bằng cách tăng độ rộng các cột 
