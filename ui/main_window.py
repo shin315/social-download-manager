@@ -6,6 +6,8 @@ from PyQt6.QtWidgets import (QMainWindow, QTabWidget, QWidget, QVBoxLayout,
 from PyQt6.QtCore import Qt, QSize, pyqtSignal, QTimer
 from PyQt6.QtGui import QAction, QIcon, QActionGroup, QFont, QFontDatabase, QKeySequence
 from PyQt6.QtWidgets import QApplication
+import os
+import json
 
 from ui.video_info_tab import VideoInfoTab
 from ui.downloaded_videos_tab import DownloadedVideosTab
@@ -41,6 +43,9 @@ class MainWindow(QMainWindow):
         
         # Update UI based on current language
         self.update_ui_language()
+        
+        # Load last output folder
+        self.load_last_output_folder()
         
         # Check for FFmpeg availability at startup
         self.check_ffmpeg_availability()
@@ -228,6 +233,23 @@ class MainWindow(QMainWindow):
             self.output_folder = folder
             self.video_info_tab.update_output_folder(folder)
             self.status_bar.showMessage(self.tr_("STATUS_FOLDER_SET").format(folder))
+            
+            # Save output folder to config file
+            try:
+                config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config.json')
+                config = {}
+                if os.path.exists(config_file):
+                    with open(config_file, 'r') as f:
+                        config = json.load(f)
+                
+                # Update output folder
+                config['last_output_folder'] = folder
+                
+                # Save configuration
+                with open(config_file, 'w') as f:
+                    json.dump(config, f)
+            except Exception as e:
+                print(f"Error saving output folder: {e}")
 
     def set_language(self, lang_code):
         """Change application language"""
@@ -802,3 +824,18 @@ class MainWindow(QMainWindow):
                 f"- Linux: sudo apt install ffmpeg\n\n"
                 f"{self.tr_('DIALOG_SEE_README')}"
             )) 
+
+    def load_last_output_folder(self):
+        """Load last output folder path from configuration file"""
+        try:
+            config_file = os.path.join(os.path.dirname(os.path.abspath(__file__)), '..', 'config.json')
+            if os.path.exists(config_file):
+                with open(config_file, 'r') as f:
+                    config = json.load(f)
+                    last_folder = config.get('last_output_folder', '')
+                    if last_folder and os.path.exists(last_folder):
+                        self.output_folder = last_folder
+                        self.video_info_tab.update_output_folder(last_folder)
+                        print(f"Loaded last output folder: {last_folder}")
+        except Exception as e:
+            print(f"Error loading last output folder: {e}") 

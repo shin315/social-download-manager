@@ -342,6 +342,21 @@ class TikTokDownloader(QObject):
         
         # Mark URL as being converted to MP3 if it's an audio request
         if is_audio_request:
+            # Check FFmpeg is installed first for MP3 requests
+            ffmpeg_installed, ffmpeg_error = self.check_ffmpeg_installed()
+            if not ffmpeg_installed:
+                error_message = "FFmpeg is not installed. Cannot convert to MP3.\n\n"
+                error_message += "Please install FFmpeg to use the MP3 download feature:\n"
+                error_message += "- Windows: Download from ffmpeg.org and add to PATH\n"
+                error_message += "- macOS: Use 'brew install ffmpeg'\n"
+                error_message += "- Linux: Use your package manager (apt, dnf, etc.)\n"
+                error_message += "\nSee README.md for detailed installation instructions."
+                
+                print(error_message)
+                self.downloading_urls.discard(url)  # Remove URL from download list
+                self.finished_signal.emit(url, False, error_message)
+                return False
+            
             self.converting_mp3_urls.add(url)
         
         # For audio requests, we'll need to convert after download
