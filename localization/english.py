@@ -141,6 +141,7 @@ STATUS_NO_DOWNLOADS = "No downloads found in database"
 STATUS_NO_NEW_URLS = "All URLs already exist in the list"
 STATUS_RENAMED_VIDEO = "Renamed video to: {}"
 STATUS_INFO_RECEIVED = "Video information received"
+STATUS_FFMPEG_MISSING = "FFmpeg not found: MP3 downloads unavailable"
 
 # Dialogs
 DIALOG_CONFIRM_DELETION = "Confirm Deletion"
@@ -175,6 +176,11 @@ DIALOG_ENTER_NEW_NAME = "Enter new name for the video:"
 DIALOG_ENTER_NAME_REQUIRED = "This video has no title. You must enter a name before downloading:"
 DIALOG_INVALID_NAME = "Invalid name. Please enter a valid name."
 DIALOG_INFO = "Information"
+DIALOG_WARNING = "Warning"
+DIALOG_FFMPEG_MISSING = "FFmpeg is not installed on your system"
+DIALOG_MP3_UNAVAILABLE = "The MP3 download feature requires FFmpeg. You can still download videos in MP4 format, but MP3 conversion will not work."
+DIALOG_INSTALL_FFMPEG = "To use MP3 download feature, please install FFmpeg"
+DIALOG_SEE_README = "See README.md file for detailed installation instructions."
 
 # About dialog
 ABOUT_TITLE = "About Social Download Manager"

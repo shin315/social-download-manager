@@ -3,7 +3,7 @@ from PyQt6.QtWidgets import (QMainWindow, QTabWidget, QWidget, QVBoxLayout,
                              QTableWidget, QTableWidgetItem, QComboBox,
                              QFileDialog, QCheckBox, QHeaderView, QMessageBox,
                              QStatusBar, QMenu, QProgressBar, QDialog)
-from PyQt6.QtCore import Qt, QSize, pyqtSignal
+from PyQt6.QtCore import Qt, QSize, pyqtSignal, QTimer
 from PyQt6.QtGui import QAction, QIcon, QActionGroup, QFont, QFontDatabase, QKeySequence
 from PyQt6.QtWidgets import QApplication
 
@@ -13,6 +13,7 @@ from ui.donate_tab import DonateTab
 from ui.update_dialog import UpdateDialog, UpdateCheckerThread
 from localization import get_language_manager
 from utils.update_checker import UpdateChecker
+from utils.downloader import TikTokDownloader
 
 
 class MainWindow(QMainWindow):
@@ -40,6 +41,9 @@ class MainWindow(QMainWindow):
         
         # Update UI based on current language
         self.update_ui_language()
+        
+        # Check for FFmpeg availability at startup
+        self.check_ffmpeg_availability()
 
     def setup_font(self):
         """Set up Inter font for the application"""
@@ -776,4 +780,25 @@ class MainWindow(QMainWindow):
                 self.donate_tab.apply_theme_colors(self.current_theme)
         
         # Display dialog
-        self.donate_dialog.exec() 
+        self.donate_dialog.exec()
+
+    def check_ffmpeg_availability(self):
+        """Check if FFmpeg is installed at startup and inform the user if it is not."""
+        ffmpeg_installed, error_message = TikTokDownloader.check_ffmpeg_installed()
+        
+        if not ffmpeg_installed:
+            # Show a message in the status bar
+            self.status_bar.showMessage(self.tr_("STATUS_FFMPEG_MISSING"), 5000)
+            
+            # Show a warning dialog (after a slight delay to not block startup)
+            QTimer.singleShot(1000, lambda: QMessageBox.warning(
+                self,
+                self.tr_("DIALOG_WARNING"),
+                f"{self.tr_('DIALOG_FFMPEG_MISSING')}\n\n"
+                f"{self.tr_('DIALOG_MP3_UNAVAILABLE')}\n\n"
+                f"{self.tr_('DIALOG_INSTALL_FFMPEG')}:\n"
+                f"- Windows: https://ffmpeg.org/download.html\n"
+                f"- macOS: brew install ffmpeg\n"
+                f"- Linux: sudo apt install ffmpeg\n\n"
+                f"{self.tr_('DIALOG_SEE_README')}"
+            )) 

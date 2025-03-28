@@ -142,6 +142,7 @@ STATUS_NO_DOWNLOADS = "Không tìm thấy video nào đã tải xuống"
 STATUS_NO_NEW_URLS = "Tất cả URL đã tồn tại trong danh sách"
 STATUS_RENAMED_VIDEO = "Đã đổi tên video thành: {}"
 STATUS_INFO_RECEIVED = "Đã nhận thông tin video"
+STATUS_FFMPEG_MISSING = "Không tìm thấy FFmpeg: Tính năng tải MP3 không khả dụng"
 
 # Dialogs
 DIALOG_CONFIRM_DELETION = "Xác Nhận Xóa"
@@ -176,6 +177,11 @@ DIALOG_ENTER_NEW_NAME = "Nhập tên mới cho video:"
 DIALOG_ENTER_NAME_REQUIRED = "Video này không có tiêu đề. Bạn phải nhập tên trước khi tải xuống:"
 DIALOG_INVALID_NAME = "Tên không hợp lệ. Vui lòng nhập tên hợp lệ."
 DIALOG_INFO = "Thông tin"
+DIALOG_WARNING = "Cảnh báo"
+DIALOG_FFMPEG_MISSING = "FFmpeg chưa được cài đặt trên hệ thống của bạn"
+DIALOG_MP3_UNAVAILABLE = "Tính năng tải xuống MP3 yêu cầu FFmpeg. Bạn vẫn có thể tải video định dạng MP4, nhưng chuyển đổi sang MP3 sẽ không hoạt động."
+DIALOG_INSTALL_FFMPEG = "Để sử dụng tính năng tải MP3, vui lòng cài đặt FFmpeg"
+DIALOG_SEE_README = "Xem file README.md để biết hướng dẫn cài đặt chi tiết."
 
 # About dialog
 ABOUT_TITLE = "Giới Thiệu Social Download Manager"

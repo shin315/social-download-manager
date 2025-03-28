@@ -7,6 +7,7 @@ from PyQt6.QtCore import QObject, pyqtSignal
 import re
 import unicodedata
 import string
+import shutil
 
 
 class VideoInfo:
@@ -56,6 +57,35 @@ class TikTokDownloader(QObject):
         self.downloads = {}  # Store information about downloaded videos
         self.converting_mp3_urls = set()  # Track URLs currently being converted to MP3
         self.downloading_urls = set()  # Track all URLs currently being downloaded
+    
+    # Static method for checking if FFmpeg is installed
+    @staticmethod
+    def check_ffmpeg_installed():
+        """
+        Check if FFmpeg is installed and accessible in the system path.
+        
+        Returns:
+            tuple: (bool, str) - True if FFmpeg is installed, False otherwise
+                               - Error message if FFmpeg is not installed
+        """
+        try:
+            # First check if ffmpeg exists in PATH
+            ffmpeg_path = shutil.which('ffmpeg')
+            if not ffmpeg_path:
+                return False, "FFmpeg not found in system PATH"
+            
+            # Verify it works by running a simple command
+            subprocess.run(
+                ['ffmpeg', '-version'], 
+                stdout=subprocess.PIPE, 
+                stderr=subprocess.PIPE,
+                check=True
+            )
+            return True, ""
+        except (subprocess.SubprocessError, FileNotFoundError) as e:
+            return False, f"Error checking FFmpeg: {str(e)}"
+        except Exception as e:
+            return False, f"Unexpected error checking FFmpeg: {str(e)}"
     
     def slugify(self, text):
         """
@@ -411,6 +441,22 @@ class TikTokDownloader(QObject):
                 
                 # Use FFmpeg to convert
                 try:
+                    # Check if FFmpeg is installed first
+                    ffmpeg_installed, ffmpeg_error = self.check_ffmpeg_installed()
+                    if not ffmpeg_installed:
+                        error_message = f"Cannot convert to MP3: {ffmpeg_error}\n\n"
+                        error_message += "Please install FFmpeg to use the MP3 download feature:\n"
+                        error_message += "- Windows: Download from ffmpeg.org and add to PATH\n"
+                        error_message += "- macOS: Use 'brew install ffmpeg'\n"
+                        error_message += "- Linux: Use your package manager (apt, dnf, etc.)\n"
+                        error_message += "\nSee README.md for detailed installation instructions."
+                        
+                        print(error_message)
+                        self.converting_mp3_urls.discard(url)  # Remove URL from conversion list
+                        self.downloading_urls.discard(url)  # Remove URL from download list
+                        self.finished_signal.emit(url, False, error_message)
+                        return False
+                    
                     # Simplify process - convert directly to final destination file
                     # instead of using temporary file and renaming (to avoid rename errors)
                     command = [
@@ -430,7 +476,12 @@ class TikTokDownloader(QObject):
                         print(f"FFmpeg error: {result.stderr}")
                         self.converting_mp3_urls.discard(url)  # Remove URL from conversion list
                         self.downloading_urls.discard(url)  # Remove URL from download list
-                        self.finished_signal.emit(url, False, f"Error converting to MP3: {result.stderr}")
+                        
+                        # More user-friendly error message
+                        error_message = f"Error converting to MP3. FFmpeg reported: {result.stderr}\n\n"
+                        error_message += "This might be due to an incompatible video format or a problem with FFmpeg."
+                        
+                        self.finished_signal.emit(url, False, error_message)
                         return False
                     
                     # Check if MP3 file was created successfully
@@ -450,7 +501,19 @@ class TikTokDownloader(QObject):
                     print(f"Error during MP3 conversion: {e}")
                     self.converting_mp3_urls.discard(url)  # Remove URL from conversion list
                     self.downloading_urls.discard(url)  # Remove URL from download list
-                    self.finished_signal.emit(url, False, f"Error during MP3 conversion: {e}")
+                    
+                    # Check if this is a FileNotFoundError, which likely means FFmpeg is not installed
+                    if isinstance(e, FileNotFoundError) and 'ffmpeg' in str(e):
+                        error_message = "FFmpeg is not installed or not found in the system PATH.\n\n"
+                        error_message += "Please install FFmpeg to use the MP3 download feature:\n"
+                        error_message += "- Windows: Download from ffmpeg.org and add to PATH\n"
+                        error_message += "- macOS: Use 'brew install ffmpeg'\n"
+                        error_message += "- Linux: Use your package manager (apt, dnf, etc.)\n"
+                        error_message += "\nSee README.md for detailed installation instructions."
+                    else:
+                        error_message = f"Error during MP3 conversion: {e}"
+                    
+                    self.finished_signal.emit(url, False, error_message)
                     return False
             
             # Remove URL from MP3 conversion list (if present)

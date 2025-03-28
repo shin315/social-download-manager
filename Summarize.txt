@@ -1,0 +1,95 @@
+# Social Download Manager - Project Summary
+
+## Project Overview
+Social Download Manager is a cross-platform desktop application built with Python and PyQt6 that allows users to download videos from various social media platforms, with currently active support for TikTok. The application features a clean user interface with both dark and light modes, support for multiple languages (English and Vietnamese), and various download options.
+
+## Core Features
+- Download TikTok videos without watermarks
+- Batch download multiple videos at once
+- Download history management
+- Video quality selection (1080p, 720p, 480p, 360p)
+- MP3 audio extraction from videos
+- Multi-language support (English and Vietnamese)
+- Dark and light theme options
+
+## Project Structure
+- `main.py`: Application entry point
+- `ui/`: Contains UI-related classes
+  - `main_window.py`: Main application window
+  - `video_table.py`: Custom table for displaying videos
+  - `downloaded_tab.py`: Tab for showing downloaded videos
+  - `video_info_tab.py`: Tab for entering new videos to download
+- `utils/`: Contains utility classes and functions
+  - `downloader.py`: Core downloading functionality
+  - `database.py`: Database operations for tracking downloads
+  - `config.py`: Application configuration
+- `localization/`: Language files
+  - `english.py`: English strings
+  - `vietnamese.py`: Vietnamese strings
+  - `language_manager.py`: Manages language switching
+
+## Timeline of Development
+
+### [2023-11-10] Initial Setup
+- Created basic project structure
+- Implemented main window UI
+- Added dark/light theme support
+
+### [2023-11-15] TikTok Downloader Implementation
+- Added TikTok video downloading functionality
+- Implemented video info extraction
+- Added progress tracking
+
+### [2023-11-20] Database Integration
+- Added SQLite database for tracking download history
+- Implemented the Downloaded Videos tab
+
+### [2023-12-05] UI Improvements
+- Enhanced video table with custom delegates
+- Added context menu for video items
+- Implemented sorting and filtering
+
+### [2023-12-15] Multi-language Support
+- Added language switching capability
+- Implemented English and Vietnamese translations
+
+### [2024-01-10] MP3 Conversion Feature
+- Added ability to convert videos to MP3 format using FFmpeg
+- Implemented quality selection for audio downloads
+
+### [2024-01-20] Batch Download Improvements
+- Enhanced multiple video download capabilities
+- Added better error handling and retry mechanisms
+
+### [2024-01-25] Performance Optimization
+- Improved download speeds and reduced memory usage
+- Implemented more efficient video processing
+
+### [2024-02-10] FFmpeg Integration and Error Handling
+- Added proper error messages for unsupported platforms
+- Improved error handling for failed downloads
+
+### [2024-06-10] FFmpeg Availability Checking
+- Added functionality to check if FFmpeg is installed
+- Implemented user-friendly error messages when FFmpeg is missing
+- Added informative dialog at startup if FFmpeg is not found
+- Updated the MP3 conversion process to handle missing FFmpeg gracefully
+- Added localization support for FFmpeg-related messages in both English and Vietnamese
+
+## Technical Notes
+- Uses yt-dlp library for the backend downloading functionality
+- Requires FFmpeg for MP3 conversion from video files
+- SQLite for local storage of download history
+- PyQt6 for the user interface
+- Custom implementation for TikTok video information extraction
+
+## Future Plans
+- Add support for YouTube, Instagram, and Facebook
+- Implement video cutting/trimming features
+- Add automatic updates
+- Add more language options
+
+## Known Issues
+- Some TikTok URLs with special characters may fail to download
+- Very long video titles can sometimes cause UI rendering issues
+- MP3 conversion requires FFmpeg to be installed separately 
