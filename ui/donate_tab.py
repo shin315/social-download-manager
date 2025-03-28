@@ -17,8 +17,8 @@ class DonateTab(QWidget):
         self.init_ui()
         
     def init_ui(self):
-        """Initialize the user interface"""
-        # Main layout
+        """Khởi tạo giao diện"""
+        # Layout chính
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
         main_layout.setSpacing(0)
@@ -28,8 +28,8 @@ class DonateTab(QWidget):
         container = QWidget()
         container.setObjectName("containerWidget")
         container_layout = QVBoxLayout(container)
-        container_layout.setContentsMargins(20, 15, 20, 10)  # Reduce bottom padding
-        container_layout.setSpacing(8)  # Reduce spacing between elements
+        container_layout.setContentsMargins(20, 15, 20, 10)  # Giảm padding dưới
+        container_layout.setSpacing(8)  # Giảm khoảng cách giữa các phần tử
         
         # Title
         self.title_label = QLabel(self.tr_("DONATE_TITLE"))
@@ -48,8 +48,8 @@ class DonateTab(QWidget):
         center_frame = QFrame()
         center_frame.setObjectName("centerFrame")
         center_layout = QVBoxLayout(center_frame)
-        center_layout.setSpacing(10)  # Reduce spacing between QR and button
-        center_layout.setContentsMargins(0, 5, 0, 0)  # Add top padding
+        center_layout.setSpacing(10)  # Giảm khoảng cách giữa QR và nút
+        center_layout.setContentsMargins(0, 5, 0, 0)  # Thêm padding trên
         
         # QR code without vertical line
         qr_container = QFrame()
@@ -108,8 +108,8 @@ class DonateTab(QWidget):
         return self.lang_manager.get_text(key)
         
     def update_language(self):
-        """Update language for all components"""
-        # Update title
+        """Cập nhật ngôn ngữ cho tất cả các thành phần"""
+        # Cập nhật tiêu đề
         if hasattr(self, 'title_label'):
             self.title_label.setText(self.tr_("DONATE_TITLE"))
         

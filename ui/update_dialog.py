@@ -12,8 +12,6 @@ from PyQt6.QtWidgets import (QDialog, QVBoxLayout, QHBoxLayout, QLabel,
                              QFrame, QSizePolicy, QFileDialog)
 from PyQt6.QtCore import Qt, QThread, pyqtSignal, QSize
 from PyQt6.QtGui import QFontMetrics, QFont, QPixmap, QColor, QPainter
-from urllib.parse import unquote
-
 
 class HoverButton(QPushButton):
     """Button with hover effects"""
@@ -53,7 +51,6 @@ class HoverButton(QPushButton):
             }}
         """)
 
-
 class UpdateDialog(QDialog):
     """Dialog to show update information and download options"""
     
@@ -63,7 +60,7 @@ class UpdateDialog(QDialog):
         self.update_info = update_info
         
         self.setWindowTitle(self.tr_("DIALOG_UPDATE_AVAILABLE"))
-        self.setMinimumSize(450, 350)
+        self.setMinimumSize(500, 400)
         self.setWindowFlags(self.windowFlags() & ~Qt.WindowType.WindowContextHelpButtonHint)
         
         # Apply parent theme if available
@@ -219,6 +216,13 @@ class UpdateDialog(QDialog):
         """)
         main_layout.addWidget(self.progress_bar)
         
+        # Status label (hidden by default)
+        self.status_label = QLabel("")
+        self.status_label.setVisible(False)
+        self.status_label.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        self.status_label.setStyleSheet(f"color: {self.accent_color};")
+        main_layout.addWidget(self.status_label)
+        
         # Buttons
         button_layout = QHBoxLayout()
         button_layout.setSpacing(10)
@@ -270,44 +274,39 @@ class UpdateDialog(QDialog):
     def download_update(self):
         """Download update from GitHub"""
         try:
+            # Ask user for download location
+            default_dir = os.path.join(os.path.expanduser("~"), "Downloads")
+            download_dir = QFileDialog.getExistingDirectory(
+                self,
+                self.tr_("DIALOG_SELECT_DOWNLOAD_FOLDER"),
+                default_dir,
+                QFileDialog.Option.ShowDirsOnly
+            )
+            
+            # Check if user cancelled
+            if not download_dir:
+                return
+            
             # Get download URL for current platform
             import platform
             os_type = platform.system().lower()
             
-            # Get version and construct basic URL
-            version = self.update_info.get("remote_version", "1.1.0")
+            # Construct download URL
+            version = self.update_info["remote_version"]
+            base_url = "https://github.com/shin315/social-download-manager/releases/download"
+            if os_type == "windows":
+                url = f"{base_url}/v{version}/social_download_manager_windows_v{version}.zip"
+            elif os_type == "darwin":  # macOS
+                url = f"{base_url}/v{version}/social_download_manager_mac_v{version}.zip"
+            else:  # Linux
+                url = f"{base_url}/v{version}/social_download_manager_linux_v{version}.zip"
             
-            # For debugging/testing
-            if version == "1.5.0":
-                # Use a test ZIP file that exists
-                url = "https://github.com/atom/atom/releases/download/v1.60.0/atom-windows.zip"
-            else:
-                # Normal URL construction
-                base_url = "https://github.com/shin315/social-download-manager/releases/download"
-                if os_type == "windows":
-                    url = f"{base_url}/v{version}/social_download_manager_windows_v{version}.zip"
-                elif os_type == "darwin":  # macOS
-                    url = f"{base_url}/v{version}/social_download_manager_mac_v{version}.zip"
-                else:  # Linux
-                    url = f"{base_url}/v{version}/social_download_manager_linux_v{version}.zip"
+            # Show status
+            self.status_label.setText(self.tr_("DIALOG_DOWNLOADING"))
+            self.status_label.setVisible(True)
             
-            # Get default file name
-            default_file_name = unquote(os.path.basename(url))
-            
-            # Open file dialog to choose save location
-            file_path, _ = QFileDialog.getSaveFileName(
-                self,
-                self.tr_("DIALOG_CHOOSE_SAVE_LOCATION"),
-                os.path.join(os.path.expanduser("~"), "Downloads", default_file_name),
-                "ZIP Files (*.zip)"
-            )
-            
-            # If user canceled, return
-            if not file_path:
-                return
-                
             # Start download thread
-            self.download_thread = DownloadThread(url, file_path)
+            self.download_thread = DownloadThread(url, download_dir)
             self.download_thread.progress.connect(self.update_progress)
             self.download_thread.finished.connect(self.download_finished)
             self.download_thread.error.connect(self.download_error)
@@ -333,6 +332,7 @@ class UpdateDialog(QDialog):
     def download_finished(self, file_path):
         """Handle download completion"""
         self.progress_bar.setVisible(False)
+        self.status_label.setVisible(False)
         
         # Show success message with file location
         QMessageBox.information(
@@ -342,22 +342,26 @@ class UpdateDialog(QDialog):
         )
         
         # Open folder containing the file
+        import os
         try:
-            import os
-            # Use appropriate method based on platform
-            if os.name == 'nt':  # Windows
-                os.startfile(os.path.dirname(file_path))
-            elif os.name == 'posix':  # macOS/Linux
-                import subprocess
-                subprocess.call(('xdg-open', os.path.dirname(file_path)))
-        except Exception as e:
-            print(f"Error opening folder: {str(e)}")
+            os.startfile(os.path.dirname(file_path))
+        except:
+            # Fallback for non-Windows platforms
+            import subprocess
+            try:
+                if platform.system() == "Darwin":  # macOS
+                    subprocess.Popen(["open", os.path.dirname(file_path)])
+                else:  # Linux and others
+                    subprocess.Popen(["xdg-open", os.path.dirname(file_path)])
+            except:
+                pass  # Silently fail if cannot open folder
         
         self.accept()
         
     def download_error(self, error):
         """Handle download error"""
         self.progress_bar.setVisible(False)
+        self.status_label.setVisible(False)
         QMessageBox.warning(
             self,
             self.tr_("DIALOG_ERROR"),
@@ -371,30 +375,29 @@ class DownloadThread(QThread):
     finished = pyqtSignal(str)
     error = pyqtSignal(str)
     
-    def __init__(self, url, file_path):
+    def __init__(self, url, download_dir):
         super().__init__()
         self.url = url
-        self.file_path = file_path
+        self.download_dir = download_dir
         
     def run(self):
         try:
             import os
             import requests
+            from urllib.parse import unquote
             
-            # Create directory if it doesn't exist
-            download_dir = os.path.dirname(self.file_path)
-            if not os.path.exists(download_dir):
-                os.makedirs(download_dir)
-                
+            # Get file name from URL
+            file_name = unquote(os.path.basename(self.url))
+            file_path = os.path.join(self.download_dir, file_name)
+            
             # Download file with progress
-            response = requests.get(self.url, stream=True, timeout=30)
+            response = requests.get(self.url, stream=True)
             total_size = int(response.headers.get('content-length', 0))
             
             if response.status_code == 200:
-                with open(self.file_path, 'wb') as f:
+                with open(file_path, 'wb') as f:
                     if total_size == 0:  # No content length header
                         f.write(response.content)
-                        self.progress.emit(100)
                     else:
                         downloaded = 0
                         for data in response.iter_content(chunk_size=4096):
@@ -403,12 +406,10 @@ class DownloadThread(QThread):
                             progress = int(downloaded * 100 / total_size)
                             self.progress.emit(progress)
                             
-                self.finished.emit(self.file_path)
+                self.finished.emit(file_path)
             else:
                 self.error.emit(f"HTTP Error: {response.status_code}")
                 
-        except requests.exceptions.RequestException as e:
-            self.error.emit(f"Connection error: {str(e)}")
         except Exception as e:
             self.error.emit(str(e))
 

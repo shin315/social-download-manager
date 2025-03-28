@@ -20,7 +20,7 @@ from PyQt6.QtWidgets import QToolTip
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
 
 class VideoInfoTab(QWidget):
-    """Tab for displaying video information and downloading videos"""
+    """Tab displaying video information and downloading videos"""
 
     def __init__(self, parent=None):
         super().__init__(parent)
@@ -30,8 +30,8 @@ class VideoInfoTab(QWidget):
         # Initialize TikTokDownloader
         self.downloader = TikTokDownloader()
         
-        # Initialize video information storage
-        self.video_info_dict = {}  # Dictionary with URL as key, VideoInfo as value
+        # Initialize variables to store video information
+        self.video_info_dict = {}  # Dictionary with key as URL, value as VideoInfo
         
         # Counter for videos being processed
         self.processing_count = 0
@@ -42,7 +42,7 @@ class VideoInfoTab(QWidget):
         self.init_ui()
         self.load_last_output_folder()
         
-        # Connect downloader signals
+        # Connect signals from downloader
         self.connect_downloader_signals()
         
         # Connect to language change signal from MainWindow
@@ -71,14 +71,14 @@ class VideoInfoTab(QWidget):
         # URL Input
         self.url_input = QLineEdit()
         self.url_input.setFixedHeight(30)
-        # No fixed width - allow resizing with window
+        # No longer setting fixed width - allow stretching with window
         self.url_input.setMinimumWidth(500)
         self.url_input.setPlaceholderText(self.tr_("PLACEHOLDER_VIDEO_URL"))
         # Connect returnPressed event to get_video_info function
         self.url_input.returnPressed.connect(self.get_video_info)
-        url_layout.addWidget(self.url_input, 1)  # stretch factor 1 to expand when window is resized
+        url_layout.addWidget(self.url_input, 1)  # stretch factor 1 to expand when maximized
         
-        # Get Info button
+        # Get Info Button
         self.get_info_btn = QPushButton(self.tr_("BUTTON_GET_INFO"))
         self.get_info_btn.setFixedWidth(120)  # Fixed width
         self.get_info_btn.clicked.connect(self.get_video_info)
@@ -93,59 +93,59 @@ class VideoInfoTab(QWidget):
         self.output_label = QLabel(self.tr_("LABEL_OUTPUT_FOLDER"))
         output_layout.addWidget(self.output_label)
         
-        # Hiển thị đường dẫn thư mục
+        # Display folder path
         self.output_folder_display = QLineEdit()
         self.output_folder_display.setReadOnly(True)
         self.output_folder_display.setFixedHeight(30)
-        # Không đặt chiều rộng cố định nữa - cho phép kéo giãn theo cửa sổ
+        # No longer setting fixed width - allow stretching with window
         self.output_folder_display.setMinimumWidth(500)
         self.output_folder_display.setPlaceholderText(self.tr_("PLACEHOLDER_OUTPUT_FOLDER"))
-        output_layout.addWidget(self.output_folder_display, 1)  # stretch factor 1 để mở rộng khi phóng to
+        output_layout.addWidget(self.output_folder_display, 1)  # stretch factor 1 to expand when maximized
         
-        # Nút chọn thư mục
+        # Choose folder button
         self.choose_folder_btn = QPushButton(self.tr_("BUTTON_CHOOSE_FOLDER"))
-        self.choose_folder_btn.setFixedWidth(120)  # Cố định chiều rộng giống nút Get Info
+        self.choose_folder_btn.setFixedWidth(120)  # Fixed width same as Get Info button
         self.choose_folder_btn.clicked.connect(self.choose_output_folder)
         output_layout.addWidget(self.choose_folder_btn)
         
         main_layout.addLayout(output_layout)
 
-        # Bảng thông tin video
+        # Video information table
         self.create_video_table()
         main_layout.addWidget(self.video_table)
 
-        # Phần tùy chọn và nút Download
+        # Options and Download button section
         options_layout = QHBoxLayout()
         
-        # Nhóm các nút Select/Delete sang bên trái
+        # Group Select/Delete buttons to the left
         left_buttons_layout = QHBoxLayout()
         
-        # Nút Chọn tất cả / Bỏ chọn tất cả (gộp 2 nút thành 1)
+        # Select all / Unselect all button (combined into one)
         self.select_toggle_btn = QPushButton(self.tr_("BUTTON_SELECT_ALL"))
         self.select_toggle_btn.setFixedWidth(150)
         self.select_toggle_btn.clicked.connect(self.toggle_select_all)
-        self.all_selected = False  # Trạng thái hiện tại (False: chưa chọn tất cả)
+        self.all_selected = False  # Current state (False: not all selected)
         left_buttons_layout.addWidget(self.select_toggle_btn)
         
-        # Nút Delete Selected
+        # Delete Selected button
         self.delete_selected_btn = QPushButton(self.tr_("BUTTON_DELETE_SELECTED"))
         self.delete_selected_btn.setFixedWidth(150)
         self.delete_selected_btn.clicked.connect(self.delete_selected_videos)
         left_buttons_layout.addWidget(self.delete_selected_btn)
         
-        # Nút Delete All
+        # Delete All button
         self.delete_all_btn = QPushButton(self.tr_("BUTTON_DELETE_ALL"))
         self.delete_all_btn.setFixedWidth(150)
         self.delete_all_btn.clicked.connect(self.delete_all_videos)
         left_buttons_layout.addWidget(self.delete_all_btn)
         
-        # Thêm nhóm nút bên trái vào layout
+        # Add left button group to layout
         options_layout.addLayout(left_buttons_layout)
         
-        # Thêm stretch để đẩy nút Download sang bên phải hoàn toàn
+        # Add stretch to push Download button all the way to the right
         options_layout.addStretch(1)
         
-        # Nút Download ở bên phải
+        # Download button on the right
         self.download_btn = QPushButton(self.tr_("BUTTON_DOWNLOAD"))
         self.download_btn.setFixedWidth(150)
         self.download_btn.clicked.connect(self.download_videos)
@@ -153,16 +153,16 @@ class VideoInfoTab(QWidget):
 
         main_layout.addLayout(options_layout)
         
-        # Thiết lập context menu cho video_table
+        # Set up context menu for video_table
         self.video_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
         self.video_table.customContextMenuRequested.connect(self.show_context_menu)
         
-        # Cập nhật trạng thái các nút ban đầu
+        # Update initial button states
         self.update_button_states()
 
     def show_context_menu(self, position):
-        """Hiển thị menu chuột phải cho bảng video"""
-        # Lấy vị trí dòng và cột hiện tại
+        """Display right-click menu for video table"""
+        # Get current row and column position
         index = self.video_table.indexAt(position)
         if not index.isValid():
             return
@@ -173,115 +173,115 @@ class VideoInfoTab(QWidget):
         if row < 0 or row >= self.video_table.rowCount():
             return
         
-        # Tạo context menu
+        # Create context menu
         context_menu = QMenu(self)
         
-        # Xác định loại dữ liệu dựa vào cột
+        # Determine data type based on column
         if column == 1:  # Title
-            # Lấy title từ item
+            # Get title from item
             item = self.video_table.item(row, column)
             if item and item.text():
-                # Lấy full title từ video_info_dict nếu có
-                full_title = item.text()  # Default là text hiển thị
+                # Get full title from video_info_dict if available
+                full_title = item.text()  # Default to displayed text
                 if row in self.video_info_dict:
                     video_info = self.video_info_dict[row]
-                    # Ưu tiên caption nếu có vì nó thường chứa nội dung đầy đủ nhất
+                    # Prioritize caption if available as it usually contains the most complete content
                     if hasattr(video_info, 'caption') and video_info.caption:
                         full_title = video_info.caption
-                    # Nếu không có caption, thử dùng original_title
+                    # If no caption, try using original_title
                     elif hasattr(video_info, 'original_title') and video_info.original_title:
                         full_title = video_info.original_title
-                    # Nếu không, dùng title
+                    # If not, use title
                     elif hasattr(video_info, 'title'):
                         full_title = video_info.title
                 
-                # Thêm action Copy
+                # Add Copy action
                 copy_action = QAction(self.tr_("CONTEXT_COPY_TITLE"), self)
                 copy_action.triggered.connect(lambda: self.copy_to_clipboard(full_title, "title"))
                 context_menu.addAction(copy_action)
         
         elif column == 2:  # Creator
-            # Lấy creator từ item
+            # Get creator from item
             item = self.video_table.item(row, column)
             if item and item.text():
-                # Thêm action Copy
+                # Add Copy action
                 copy_action = QAction(self.tr_("CONTEXT_COPY_CREATOR"), self)
                 copy_action.triggered.connect(lambda: self.copy_to_clipboard(item.text(), "creator"))
                 context_menu.addAction(copy_action)
         
         elif column == 7:  # Hashtags
-            # Lấy hashtags từ item
+            # Get hashtags from item
             item = self.video_table.item(row, column)
             if item and item.text():
-                # Thêm action Copy
+                # Add Copy action
                 copy_action = QAction(self.tr_("CONTEXT_COPY_HASHTAGS"), self)
                 copy_action.triggered.connect(lambda: self.copy_to_clipboard(item.text(), "hashtags"))
                 context_menu.addAction(copy_action)
                 
-        # Chức năng chung cho tất cả các cột
-        # Thêm separtor nếu có action trước đó
+        # Common functions for all columns
+        # Add separator if there are previous actions
         if not context_menu.isEmpty():
             context_menu.addSeparator()
         
-        # Lấy thông tin video
+        # Get video information
         video_info = None
         if row in self.video_info_dict:
             video_info = self.video_info_dict[row]
         
         if video_info:
-            # Kiểm tra xem đã chọn thư mục đầu ra chưa
+            # Check if output folder has been selected
             has_output_folder = bool(self.output_folder_display.text())
             
-            # Đảm bảo thuộc tính title tồn tại
+            # Ensure title attribute exists
             if not hasattr(video_info, 'title') or video_info.title is None or video_info.title.strip() == "":
                 from datetime import datetime
                 default_title = f"Video_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
                 setattr(video_info, 'title', default_title)
                 print(f"DEBUG - Created default title for video without title: {default_title}")
             
-            # Kiểm tra video có lỗi không
+            # Check if video has an error
             has_error = False
             if hasattr(video_info, 'title'):
                 has_error = video_info.title.startswith("Error:")
             
-            # Chỉ hiển thị Rename nếu video không có lỗi và đã chọn thư mục đầu ra
-            # Bỏ điều kiện hasattr(video_info, 'title') để cho phép rename cả video không có tiêu đề
+            # Only show Rename if video has no errors and output folder is selected
+            # Removed hasattr(video_info, 'title') condition to allow renaming videos without titles
             if not has_error and has_output_folder and hasattr(video_info, 'url'):
-                # Action Rename Video - Cho phép đổi tên video trước khi tải
+                # Action Rename Video - Allow changing video name before downloading
                 rename_action = QAction(self.tr_("CONTEXT_RENAME_VIDEO"), self)
                 rename_action.triggered.connect(lambda: self.rename_video(row))
                 context_menu.addAction(rename_action)
                 
-                # Thêm separator
+                # Add separator
                 context_menu.addSeparator()
         
-        # Action Delete Video - có trong mọi trường hợp
+        # Action Delete Video - available in all cases
         delete_action = QAction(self.tr_("CONTEXT_DELETE"), self)
         delete_action.triggered.connect(lambda: self.delete_row(row))
         context_menu.addAction(delete_action)
         
-        # Hiển thị menu nếu có action
+        # Show menu if it has actions
         if not context_menu.isEmpty():
             context_menu.exec(QCursor.pos())
 
     def rename_video(self, row):
-        """Cho phép người dùng đổi tên video trước khi tải xuống"""
-        # Kiểm tra video_info có tồn tại
+        """Allow users to rename video before downloading"""
+        # Check if video_info exists
         if row not in self.video_info_dict:
             return
             
         video_info = self.video_info_dict[row]
         
-        # Lấy tiêu đề hiện tại
+        # Get current title
         current_title = video_info.title if hasattr(video_info, 'title') else ""
         
-        # Nếu không có tiêu đề, tạo tiêu đề mặc định từ timestamp
+        # If no title, create default title from timestamp
         if not current_title:
             from datetime import datetime
             current_title = f"Video_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
             print(f"DEBUG - Creating default title for empty video title: {current_title}")
             
-        # Hiển thị dialog để nhập tên mới
+        # Show dialog to enter new name
         new_title, ok = QInputDialog.getText(
             self, 
             self.tr_("DIALOG_RENAME_TITLE"),
@@ -290,36 +290,36 @@ class VideoInfoTab(QWidget):
             current_title
         )
         
-        # Kiểm tra người dùng đã nhấn OK và tên mới khác rỗng
+        # Check if user clicked OK and new name is not empty
         if ok and new_title:
-            # Làm sạch tên file để tránh ký tự không hợp lệ
+            # Clean filename to avoid invalid characters
             import re
             clean_title = re.sub(r'[\\/*?:"<>|]', '', new_title).strip()
             
             if clean_title:
-                # Lưu tên gốc vào biến original_title nếu chưa có
+                # Save original title to original_title variable if it doesn't exist
                 if not hasattr(video_info, 'original_title'):
                     setattr(video_info, 'original_title', current_title)
                     
-                # Cập nhật tên mới
+                # Update new name
                 setattr(video_info, 'title', clean_title)
                 
-                # Thêm thuộc tính custom_title
+                # Add custom_title attribute
                 setattr(video_info, 'custom_title', clean_title)
                 
-                # Cập nhật UI - cột title trong bảng
+                # Update UI - title column in table
                 title_cell = self.video_table.item(row, 1)
                 if title_cell:
                     title_cell.setText(clean_title)
                     title_cell.setToolTip(clean_title)
                 
-                # Hiển thị thông báo thành công
+                # Show success message
                 if self.parent and self.parent.status_bar:
                     self.parent.status_bar.showMessage(self.tr_("STATUS_RENAMED_VIDEO").format(clean_title))
                     
                 print(f"DEBUG - Renamed video from '{current_title}' to '{clean_title}'")
             else:
-                # Hiển thị thông báo lỗi nếu tên mới không hợp lệ
+                # Show error message if new name is invalid
                 QMessageBox.warning(
                     self, 
                     self.tr_("DIALOG_ERROR"), 
@@ -327,21 +327,21 @@ class VideoInfoTab(QWidget):
                 )
 
     def create_video_table(self):
-        """Tạo bảng hiển thị thông tin video"""
+        """Create table to display video information"""
         self.video_table = QTableWidget()
-        self.video_table.setColumnCount(8)  # Giảm từ 9 xuống 8 do bỏ cột Caption
+        self.video_table.setColumnCount(8)  # Reduced from 9 to 8 by removing Caption column
         
-        # Thiết lập header
+        # Set up headers
         self.update_table_headers()
         
-        # Thiết lập thuộc tính bảng
+        # Set table properties
         self.video_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         
-        # Thiết lập kích thước cột tùy chỉnh
-        self.video_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)  # Select - cột checkbox
+        # Set custom column sizes
+        self.video_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)  # Select - checkbox column
         self.video_table.setColumnWidth(0, 50)
         
-        self.video_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)  # Title - co giãn
+        self.video_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)  # Title - stretches
         
         self.video_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)  # Creator
         self.video_table.setColumnWidth(2, 100)
@@ -358,22 +358,22 @@ class VideoInfoTab(QWidget):
         self.video_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Size
         self.video_table.setColumnWidth(6, 80)
         
-        # Bỏ cột Caption (index 7)
+        # Removed Caption column (index 7)
         
         self.video_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Stretch)  # Hashtags 
         self.video_table.setColumnWidth(7, 180)
         
-        # Thiết lập số dòng ban đầu
+        # Set initial row count
         self.video_table.setRowCount(0)
         
-        # Kết nối sự kiện double-click để hiển thị dialog copy text
+        # Connect double-click event to show copy text dialog
         self.video_table.itemDoubleClicked.connect(self.show_copy_dialog)
         
-        # Thiết lập sự kiện hover để hiển thị tooltip với text đầy đủ
+        # Set up hover event to display tooltip with full text
         self.video_table.setMouseTracking(True)
         self.video_table.cellEntered.connect(self.show_full_text_tooltip)
         
-        # Thiết lập style của bảng với hiệu ứng hover
+        # Set table style with hover effect
         self.video_table.setStyleSheet("""
             QTableWidget::item:hover {
                 background-color: rgba(0, 120, 215, 0.1);
@@ -381,17 +381,17 @@ class VideoInfoTab(QWidget):
         """)
 
     def update_output_folder(self, folder):
-        """Cập nhật đường dẫn thư mục đầu ra"""
+        """Update output folder path"""
         self.output_folder_display.setText(folder)
-        # Lưu đường dẫn mới vào cấu hình
+        # Save new path to configuration
         self.save_last_output_folder(folder)
         
-        # Cập nhật thư mục đầu ra cho downloader
+        # Update output directory for downloader
         self.downloader.set_output_dir(folder)
 
     def choose_output_folder(self):
-        """Chọn thư mục đầu ra"""
-        # Lấy thư mục hiện tại để bắt đầu từ đó nếu có
+        """Choose output folder"""
+        # Use current folder as starting point if available
         start_folder = self.output_folder_display.text() if self.output_folder_display.text() else ""
         
         folder = QFileDialog.getExistingDirectory(
@@ -403,7 +403,7 @@ class VideoInfoTab(QWidget):
                 self.parent.status_bar.showMessage(self.tr_("STATUS_FOLDER_SET").format(folder))
 
     def load_last_output_folder(self):
-        """Tải đường dẫn thư mục đầu ra cuối cùng từ file cấu hình"""
+        """Load last output folder path from configuration file"""
         try:
             if os.path.exists(CONFIG_FILE):
                 with open(CONFIG_FILE, 'r') as f:
@@ -417,94 +417,94 @@ class VideoInfoTab(QWidget):
             print(f"Error loading last output folder: {e}")
 
     def save_last_output_folder(self, folder):
-        """Lưu đường dẫn thư mục đầu ra cuối cùng vào file cấu hình"""
+        """Save last output folder path to configuration file"""
         try:
-            # Tạo file config nếu chưa tồn tại
+            # Create config file if it doesn't exist
             config = {}
             if os.path.exists(CONFIG_FILE):
                 with open(CONFIG_FILE, 'r') as f:
                     config = json.load(f)
             
-            # Cập nhật thư mục đầu ra
+            # Update output folder
             config['last_output_folder'] = folder
             
-            # Lưu cấu hình
+            # Save configuration
             with open(CONFIG_FILE, 'w') as f:
                 json.dump(config, f)
         except Exception as e:
             print(f"Error saving last output folder: {e}")
 
     def get_video_info(self):
-        """Lấy thông tin video từ URL"""
+        """Get video information from URL"""
         url_input = self.url_input.text().strip()
         if not url_input:
             QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("DIALOG_NO_VIDEOS"))
             return
 
-        # Kiểm tra xem đã thiết lập thư mục đầu ra chưa
+        # Check if output folder has been set
         if not self.output_folder_display.text():
             QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("DIALOG_NO_OUTPUT_FOLDER"))
             return
         
-        # Xử lý nhiều URL (ngăn cách bằng khoảng trắng)
+        # Handle multiple URLs (separated by whitespace)
         new_urls = url_input.split()
         
-        # Tạo danh sách URL hiện có trong bảng
+        # Create list of URLs already in table
         existing_urls = []
         for video_info in self.video_info_dict.values():
             existing_urls.append(video_info.url)
         
-        # Lọc ra các URL mới chưa tồn tại trong bảng
+        # Filter out new URLs not yet in the table
         urls_to_process = []
         for url in new_urls:
             if url not in existing_urls:
                 urls_to_process.append(url)
             else:
-                # Thông báo URL đã tồn tại
+                # Notify URL already exists
                 print(f"URL already exists in table: {url}")
         
-        # Nếu không có URL mới nào cần xử lý
+        # If no new URLs to process
         if not urls_to_process:
             if self.parent:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_NO_NEW_URLS"))
             return
             
-        # Đặt lại biến đếm
+        # Reset counter
         self.processing_count = len(urls_to_process)
         
-        # Disable button Get Info khi đang lấy thông tin
+        # Disable Get Info button while fetching information
         self.get_info_btn.setEnabled(False)
         self.get_info_btn.setText(self.tr_("STATUS_GETTING_INFO_SHORT"))
         self.url_input.setEnabled(False)
         
-        # Cập nhật trạng thái
+        # Update status
         if self.parent:
-            # Hiển thị thông báo rõ ràng trên status bar
+            # Display clear message on status bar
             if len(urls_to_process) > 1:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO_MULTIPLE").format(len(urls_to_process)))
             else:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO_SHORT"))
         
-        # Yêu cầu cập nhật giao diện ngay lập tức để hiển thị thông báo
+        # Request immediate UI update to show notification
         QApplication.processEvents()
         
-        # Bắt đầu lấy thông tin video từ TikTokDownloader cho các URL mới
+        # Start getting video information from TikTokDownloader for new URLs
         for url in urls_to_process:
-            # Gọi phương thức get_video_info của TikTokDownloader
-            # Kết quả sẽ được xử lý bởi on_video_info_received thông qua signal
+            # Call get_video_info method of TikTokDownloader
+            # Results will be processed by on_video_info_received through the signal
             self.downloader.get_video_info(url)
             
-            # Cập nhật lại giao diện sau mỗi request để đảm bảo UI vẫn responsive
+            # Update UI after each request to ensure responsiveness
             QApplication.processEvents()
 
     def delete_row(self, row):
-        """Xóa một dòng khỏi bảng"""
+        """Delete a row from the table"""
         self.video_table.removeRow(row)
-        # Cập nhật trạng thái các nút
+        # Update button states
         self.update_button_states()
 
     def delete_all_videos(self):
-        """Xóa tất cả video khỏi bảng"""
+        """Delete all videos from the table"""
         reply = QMessageBox.question(
             self, self.tr_("DIALOG_CONFIRM_DELETION"), 
             self.tr_("DIALOG_CONFIRM_DELETE_ALL"),
@@ -517,20 +517,20 @@ class VideoInfoTab(QWidget):
             self.video_info_dict.clear()
             if self.parent:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_REFRESHED"))
-            # Cập nhật trạng thái các nút
+            # Update button states
             self.update_button_states()
 
     def download_videos(self):
-        """Tải xuống các video đã chọn"""
+        """Download selected videos"""
         if not self.check_output_folder():
             return
         
-        # Tạo danh sách thông tin chi tiết để tải xuống
+        # Create detailed list for downloading
         download_queue = []
         videos_already_exist = []
         selected_count = 0
         
-        # Đếm tổng số video được chọn trước
+        # Count total selected videos first
         for row in range(self.video_table.rowCount()):
             checkbox_cell = self.video_table.cellWidget(row, 0)
             if checkbox_cell:
@@ -538,45 +538,45 @@ class VideoInfoTab(QWidget):
                 if checkbox and checkbox.isChecked():
                     selected_count += 1
         
-        # Biến lưu lựa chọn của người dùng cho tất cả file đã tồn tại
-        overwrite_all = None  # None = chưa chọn, True = ghi đè tất cả, False = bỏ qua tất cả
+        # Variable to store user choice for all existing files
+        overwrite_all = None  # None = not chosen, True = overwrite all, False = skip all
         
-        # Duyệt qua từng dòng trong bảng
+        # Iterate through each row in the table
         for row in range(self.video_table.rowCount()):
             checkbox_cell = self.video_table.cellWidget(row, 0)
             if checkbox_cell:
                 checkbox = checkbox_cell.findChild(QCheckBox)
                 if checkbox and checkbox.isChecked():
-                    # Thu thập tất cả thông tin cần thiết
-                    # Kiểm tra nếu row tồn tại trong video_info_dict
+                    # Collect all necessary information
+                    # Check if row exists in video_info_dict
                     if row not in self.video_info_dict:
                         print(f"DEBUG - Error: Row {row} not found in video_info_dict, skipping this video")
                         continue
                         
-                    # Lấy URL từ video_info_dict
+                    # Get URL from video_info_dict
                     url = self.video_info_dict[row].url
                     
-                    # Lấy tiêu đề video để hiển thị trong thông báo
+                    # Get video title to display in notification
                     title = self.video_info_dict[row].title
                     
-                    # Lấy chất lượng được chọn
+                    # Get selected quality
                     quality_cell = self.video_table.cellWidget(row, 3)
                     quality = quality_cell.findChild(QComboBox).currentText() if quality_cell else "720p"
                     
-                    # Lấy định dạng được chọn
+                    # Get selected format
                     format_cell = self.video_table.cellWidget(row, 4)
                     format_str = format_cell.findChild(QComboBox).currentText() if format_cell else self.tr_("FORMAT_VIDEO_MP4")
                     
-                    # Lấy format_id dựa trên chất lượng và định dạng
+                    # Get format_id based on quality and format
                     format_id = self.get_format_id(url, quality, format_str)
 
-                    # Xác định phần mở rộng file dựa trên định dạng
+                    # Determine file extension based on format
                     is_audio = format_str == self.tr_("FORMAT_AUDIO_MP3") or "audio" in format_id.lower() or "bestaudio" in format_id.lower()
                     ext = "mp3" if is_audio else "mp4"
                     
-                    # Kiểm tra xem tiêu đề có rỗng không trước khi tiếp tục
+                    # Check if title is empty before continuing
                     if not title.strip() or title.strip().startswith('#'):
-                        # Hiển thị dialog để nhập tên mới cho video
+                        # Display dialog to enter new name for video
                         default_name = f"Video_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
                         new_title, ok = QInputDialog.getText(
                             self, 
@@ -587,53 +587,53 @@ class VideoInfoTab(QWidget):
                         )
                         
                         if not ok or not new_title.strip():
-                            # Người dùng hủy hoặc không nhập tên, bỏ qua video này
+                            # User canceled or didn't enter a name, skip this video
                             print(f"DEBUG - User cancelled entering required name for video without title")
                             continue
                         
-                        # Làm sạch tên file để tránh ký tự không hợp lệ
+                        # Clean filename to avoid invalid characters
                         import re
                         clean_title = re.sub(r'[\\/*?:"<>|]', '', new_title).strip()
                         
-                        # Cập nhật title trong video_info_dict
+                        # Update title in video_info_dict
                         if row in self.video_info_dict:
                             self.video_info_dict[row].custom_title = new_title
-                            # Lưu title mới để hiển thị trong tab Downloaded Videos
+                            # Save new title to display in Downloaded Videos tab
                             self.video_info_dict[row].title = new_title
                             print(f"DEBUG - New title set for video without title: '{new_title}'")
                         
-                        # Cập nhật title trong download_queue
+                        # Update title in download_queue
                         title = new_title
                     else:
-                        # Làm sạch tên video, loại bỏ hashtag để tạo tên file
+                        # Clean video name, remove hashtags to create filename
                         clean_title = title
-                        # Loại bỏ tất cả các hashtag còn sót nếu có
+                        # Remove any remaining hashtags if present
                         import re
                         clean_title = re.sub(r'#\S+', '', clean_title).strip()
-                        # Loại bỏ các ký tự không hợp lệ cho tên file
+                        # Remove invalid characters for filename
                         clean_title = re.sub(r'[\\/*?:"<>|]', '', clean_title).strip()
                     
-                    # Tạo đường dẫn file đầy đủ
+                    # Create full file path
                     output_dir = self.output_folder_display.text()
                     output_file = os.path.join(output_dir, f"{clean_title}.{ext}")
 
-                    # Kiểm tra xem video đã tồn tại chưa
+                    # Check if video already exists
                     db_manager = DatabaseManager()
                     existing_video = db_manager.get_download_by_url(url)
                     
-                    # Kiểm tra xem file đã tồn tại trên ổ đĩa chưa
+                    # Check if file already exists on disk
                     file_exists = os.path.exists(output_file)
                     
                     if existing_video:
-                        # Video đã tồn tại trong CSDL
+                        # Video already exists in database
                         videos_already_exist.append(title)
                     elif file_exists:
-                        # File tồn tại trên ổ đĩa nhưng không có trong CSDL
+                        # File exists on disk but not in database
                         
-                        # Nếu người dùng đã chọn "Áp dụng cho tất cả", sử dụng lựa chọn đó
+                        # If user has already chosen "Apply to all", use that choice
                         if overwrite_all is not None:
                             if overwrite_all:
-                                # Người dùng đã chọn ghi đè tất cả
+                                # User chose to overwrite all
                                 download_queue.append({
                                     'url': url,
                                     'title': title,
@@ -642,26 +642,23 @@ class VideoInfoTab(QWidget):
                                     'ext': ext
                                 })
                             else:
-                                # Người dùng đã chọn bỏ qua tất cả
+                                # User chose to skip all
                                 continue
                         else:
-                            # Hiển thị thông báo hỏi người dùng có muốn ghi đè không
-                            # và thêm lựa chọn "Áp dụng cho tất cả" (chỉ khi có nhiều file)
-                            
-                            # Tạo message box tùy chỉnh
+                            # Display message asking if user wants to overwrite
                             msg_box = QMessageBox(self)
                             msg_box.setWindowTitle(self.tr_("DIALOG_FILE_EXISTS"))
                             
-                            # Thu thập danh sách các file đã tồn tại
+                            # Collect list of existing files
                             file_name = f"{clean_title}.{ext}"
                             file_exists_list = [file_name]
                             remaining_files = 0
                             
-                            # Nếu có nhiều file được chọn, thu thập danh sách các file đã tồn tại để hiển thị
+                            # If multiple files are selected, collect list of existing files
                             if selected_count > 1:
-                                # Duyệt qua các dòng khác để kiểm tra file đã tồn tại
+                                # Iterate through other rows to check for existing files
                                 for check_row in range(self.video_table.rowCount()):
-                                    # Bỏ qua row hiện tại vì đã được thêm vào danh sách
+                                    # Skip current row because it's already in the list
                                     if check_row == row:
                                         continue
                                         
@@ -669,45 +666,45 @@ class VideoInfoTab(QWidget):
                                     if check_checkbox_cell:
                                         check_checkbox = check_checkbox_cell.findChild(QCheckBox)
                                         if check_checkbox and check_checkbox.isChecked():
-                                            # Chỉ kiểm tra nếu row tồn tại trong video_info_dict
+                                            # Check if row exists in video_info_dict
                                             if check_row not in self.video_info_dict:
                                                 continue
                                                 
-                                            # Lấy thông tin video
+                                            # Get video information
                                             check_title = self.video_info_dict[check_row].title
                                             
-                                            # Lấy định dạng được chọn
+                                            # Get selected format
                                             check_format_cell = self.video_table.cellWidget(check_row, 4)
                                             check_format_str = check_format_cell.findChild(QComboBox).currentText() if check_format_cell else self.tr_("FORMAT_VIDEO_MP4")
                                             
-                                            # Xác định phần mở rộng file
+                                            # Determine file extension
                                             check_is_audio = check_format_str == self.tr_("FORMAT_AUDIO_MP3")
                                             check_ext = "mp3" if check_is_audio else "mp4"
                                             
-                                            # Làm sạch tên file
+                                            # Clean filename
                                             import re
                                             check_clean_title = re.sub(r'#\S+', '', check_title).strip()
                                             check_clean_title = re.sub(r'[\\/*?:"<>|]', '', check_clean_title).strip()
                                             
-                                            # Tạo đường dẫn file đầy đủ
+                                            # Create full file path
                                             check_output_file = os.path.join(output_dir, f"{check_clean_title}.{check_ext}")
                                             
-                                            # Kiểm tra xem file đã tồn tại chưa
+                                            # Check if file already exists
                                             if os.path.exists(check_output_file):
-                                                # Nếu đã có 5 file trong danh sách, chỉ đếm số lượng
+                                                # If there are less than 5 files, add to list
                                                 if len(file_exists_list) < 5:
                                                     file_exists_list.append(f"{check_clean_title}.{check_ext}")
                                                 else:
                                                     remaining_files += 1
                             
-                            # Tạo nội dung thông báo
+                            # Create confirmation message
                             confirmation_text = self.tr_("DIALOG_FILE_EXISTS_MESSAGE")
                             
-                            # Thêm danh sách các file đã tồn tại
+                            # Add list of existing files
                             files_list = "\n".join([f"• {f}" for f in file_exists_list])
-                            # Nếu có file còn lại, thêm thông tin
+                            # If there are remaining files, add additional information
                             if remaining_files > 0:
-                                files_list += f"\n• ... và {remaining_files} file khác"
+                                files_list += f"\n• ... and {remaining_files} other files"
                             
                             confirmation_text += f"\n\n{files_list}"
                             
@@ -718,16 +715,16 @@ class VideoInfoTab(QWidget):
                             msg_box.setDefaultButton(QMessageBox.StandardButton.No)
                             msg_box.setIcon(QMessageBox.Icon.Question)
                             
-                            # Thiết lập kích thước tối thiểu
+                            # Set minimum size
                             msg_box.setMinimumWidth(500)
                             msg_box.setMinimumHeight(200)
                             
-                            # Xác định theme hiện tại
+                            # Determine current theme
                             current_theme = "dark"
                             if hasattr(self, 'parent') and hasattr(self.parent, 'current_theme'):
                                 current_theme = self.parent.current_theme
                             
-                            # Style cho message box dựa trên theme hiện tại
+                            # Style for message box based on current theme
                             if current_theme == "light":
                                 msg_box.setStyleSheet("""
                                     QMessageBox {
@@ -807,36 +804,36 @@ class VideoInfoTab(QWidget):
                                     }
                                 """)
                             
-                            # Thêm checkbox "Apply to all" nếu tổng số video được chọn > 1
+                            # Add "Apply to all" checkbox if more than one video is selected
                             apply_all_checkbox = None
                             if selected_count > 1:
                                 apply_all_checkbox = QCheckBox(self.tr_("DIALOG_APPLY_TO_ALL"))
-                                # Thêm checkbox vào button box (cùng hàng với các nút)
+                                # Add checkbox to button box (same row as buttons)
                                 button_box = msg_box.findChild(QDialogButtonBox)
                                 if button_box:
-                                    # Đưa checkbox vào bên trái của button box
+                                    # Add checkbox to left side of button box
                                     button_layout = button_box.layout()
                                     button_layout.insertWidget(0, apply_all_checkbox, 0, Qt.AlignmentFlag.AlignLeft)
-                                    # Thêm khoảng cách lớn hơn giữa checkbox và các nút
+                                    # Add extra space between checkbox and buttons
                                     button_layout.insertSpacing(1, 50)
-                                    # Tùy chỉnh checkbox để dễ nhìn hơn (không dùng font-weight: bold)
+                                    # Style checkbox to be more visually appealing (not using bold font)
                                     apply_all_checkbox.setStyleSheet("QCheckBox { margin-right: 15px; }")
                             
-                            # Hiển thị message box
+                            # Show message box
                             reply = msg_box.exec()
                             
                             if reply == QMessageBox.StandardButton.No:
-                                # Người dùng chọn không ghi đè
+                                # User chose not to overwrite
                                 if apply_all_checkbox and apply_all_checkbox.isChecked():
-                                    overwrite_all = False  # Áp dụng "không ghi đè" cho tất cả
+                                    overwrite_all = False  # Apply "not overwrite" to all
                                 continue
                             
                             elif reply == QMessageBox.StandardButton.Yes:
-                                # Người dùng chọn ghi đè
+                                # User chose to overwrite
                                 if apply_all_checkbox and apply_all_checkbox.isChecked():
-                                    overwrite_all = True  # Áp dụng "ghi đè" cho tất cả
+                                    overwrite_all = True  # Apply "overwrite" to all
                                 
-                                # Thêm vào hàng đợi tải xuống
+                                # Add to download queue
                                 download_queue.append({
                                     'url': url,
                                     'title': title,
@@ -845,7 +842,7 @@ class VideoInfoTab(QWidget):
                                     'ext': ext
                                 })
                     else:
-                        # Video chưa tồn tại, thêm vào hàng đợi tải xuống
+                        # Video doesn't exist yet, add to download queue
                         download_queue.append({
                             'url': url,
                             'title': title,
@@ -854,38 +851,38 @@ class VideoInfoTab(QWidget):
                             'ext': ext
                         })
         
-        # Nếu có video đã tồn tại, hiển thị thông báo
+        # If any videos already exist, show notification
         if videos_already_exist:
             existing_titles = "\n".join([f"- {title}" for title in videos_already_exist])
             msg = f"{self.tr_('DIALOG_VIDEOS_ALREADY_EXIST')}\n{existing_titles}"
             QMessageBox.information(self, self.tr_("DIALOG_VIDEOS_EXIST"), msg)
         
-        # Nếu không có video nào được chọn để tải
+        # If no videos are selected for download
         if selected_count == 0:
             if not videos_already_exist:
                 QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("DIALOG_NO_VIDEOS_SELECTED"))
             return
             
-        # Nếu tất cả video được chọn đều đã tồn tại (không có video mới để tải)
+        # If all selected videos already exist (no new videos to download)
         if not download_queue:
             if self.parent:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_ALREADY_EXIST"))
             return
             
-        # Đặt lại biến đếm
+        # Reset download count
         self.downloading_count = len(download_queue)
         
-        # Gán giá trị cho biến đếm tổng số video
+        # Set total video count
         self.total_videos = len(download_queue)
             
-        # Đặt lại biến đếm số video đã tải thành công
+        # Reset successful downloads count
         self.success_downloads = 0
             
-        # Disable nút Download khi đang tải
+        # Disable Download button while downloading
         self.download_btn.setEnabled(False)
         self.download_btn.setText(self.tr_("STATUS_DOWNLOADING_SHORT"))
             
-        # Hiển thị thông báo số lượng video đang tải
+        # Show notification about number of videos being downloaded
         if self.parent:
             if self.downloading_count > 1:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOADING_MULTIPLE").format(self.downloading_count))
@@ -893,61 +890,61 @@ class VideoInfoTab(QWidget):
                 video_title = download_queue[0]['title']
                 self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOADING_WITH_TITLE").format(video_title))
                 
-        # Cập nhật ngay lập tức để hiển thị thông báo
+        # Update UI immediately to show notification
         QApplication.processEvents()
                     
-        # Duyệt qua từng video trong hàng đợi để tải
+        # Iterate through each video in the queue to download
         for video_info in download_queue:
-            # Luôn xóa watermark mặc định
+            # Always remove watermark
             remove_watermark = True
             
-            # Lấy thông tin đã được tính toán trước đó
+            # Get pre-calculated information
             clean_title = video_info.get('clean_title', '')
             ext = video_info.get('ext', 'mp4')
             
-            # Nếu không có thông tin, tính toán lại (trường hợp dùng code cũ)
+            # If no information, recalculate (using old code)
             if not clean_title:
-                # Làm sạch tên video, loại bỏ hashtag để tạo tên file
+                # Clean video name, remove hashtags to create filename
                 clean_title = video_info['title']
-                # Loại bỏ tất cả các hashtag còn sót nếu có
+                # Remove any remaining hashtags if present
                 import re
                 clean_title = re.sub(r'#\S+', '', clean_title).strip()
-                # Loại bỏ các ký tự không hợp lệ cho tên file
+                # Remove invalid characters for filenames
                 clean_title = re.sub(r'[\\/*?:"<>|]', '', clean_title).strip()
                 
-                # Xác định phần mở rộng file dựa trên định dạng
+                # Determine file extension based on format
                 is_audio = "audio" in video_info['format_id'].lower() or "bestaudio" in video_info['format_id'].lower()
                 ext = "mp3" if is_audio else "mp4"
             
-            # ĐOẠN KIỂM TRA TIÊU ĐỀ RỖNG ĐÃ ĐƯỢC DI CHUYỂN LÊN PHÍA TRÊN
-            # VÀ ĐƯỢC KIỂM TRA TRƯỚC KHI ĐƯA VÀO DOWNLOAD_QUEUE
+            # CHECK IF TITLE IS EMPTY AND MOVED TO THE TOP
+            # AND CHECK BEFORE ADDING TO DOWNLOAD_QUEUE
             
-            # Thiết lập template đầu ra với tên đã được làm sạch
+            # Set output template with cleaned title
             output_dir = self.output_folder_display.text()
             
-            # Tạo đường dẫn file đầy đủ
+            # Create full file path
             output_file = os.path.join(output_dir, f"{clean_title}.{ext}")
             output_template = os.path.join(output_dir, f"{clean_title}.%(ext)s")
             
-            # Bắt đầu tải xuống với yt-dlp
+            # Start downloading with yt-dlp
             try:
-                # Trước tiên kiểm tra xem thumbnail đã tồn tại chưa
+                # First, check if thumbnail already exists
                 thumbnails_dir = os.path.join(output_dir, "thumbnails")
                 if not os.path.exists(thumbnails_dir):
                     os.makedirs(thumbnails_dir)
                 
-                # Lấy id của video (phần cuối URL trước dấu ?)
+                # Get video ID from URL (part before '?')
                 video_id = video_info['url'].split('/')[-1].split('?')[0]
                 
-                # Biến cho tải xuống
+                # Variable for download
                 format_id = video_info['format_id']
                 remove_watermark = True
                 url = video_info['url']
                 
-                # Kiểm tra xem file đã tồn tại hay chưa để quyết định có force overwrite hay không
-                force_overwrite = True  # Đã kiểm tra và được người dùng đồng ý
+                # Check if file already exists to decide if force overwrite is needed
+                force_overwrite = True  # User has confirmed this earlier
                 
-                # Nếu file tồn tại, xóa file cũ trước khi tải xuống
+                # If file exists, delete old file before downloading
                 if os.path.exists(output_file):
                     try:
                         os.remove(output_file)
@@ -955,7 +952,7 @@ class VideoInfoTab(QWidget):
                     except Exception as e:
                         print(f"Error removing existing file: {str(e)}")
                 
-                # Gọi hàm tải xuống
+                # Call download method
                 self.downloader.download_video(
                     url=url, 
                     output_template=output_template, 
@@ -965,7 +962,7 @@ class VideoInfoTab(QWidget):
                     force_overwrite=force_overwrite
                 )
                 
-                # Cập nhật biến đếm nếu có lỗi
+                # Update download count if there's an error
                 if self.parent:
                     if self.downloading_count > 1:
                         self.parent.status_bar.showMessage(
@@ -985,22 +982,22 @@ class VideoInfoTab(QWidget):
                 if self.parent:
                     self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOAD_ERROR").format(str(e)))
         
-        # Nếu tất cả video đã tải xong, kích hoạt lại nút Download
+        # If all videos have finished downloading, re-enable Download button
         if self.downloading_count <= 0:
             self.download_btn.setEnabled(True)
             self.download_btn.setText(self.tr_("BUTTON_DOWNLOAD"))
             print(f"DEBUG - All downloads finished, reset download button")
-            # Reset status bar khi tất cả đã tải xong
+            # Reset status bar when all downloads are complete
             if self.parent and self.parent.status_bar:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOAD_SUCCESS"))
 
     def check_output_folder(self):
-        """Kiểm tra xem thư mục đầu ra có tồn tại không"""
+        """Check if output folder exists"""
         if not self.output_folder_display.text():
             QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("DIALOG_NO_OUTPUT_FOLDER"))
             return False
         
-        # Kiểm tra thư mục tồn tại
+        # Check if folder exists
         output_folder = self.output_folder_display.text()
         if not os.path.exists(output_folder):
             try:
@@ -1013,8 +1010,8 @@ class VideoInfoTab(QWidget):
         return True
 
     def get_format_id(self, url, quality, format_str):
-        """Lấy format_id dựa trên chất lượng và định dạng"""
-        # Kiểm tra video_info có trong dict không
+        """Get format_id based on quality and format"""
+        # Check if video_info is in dict
         video_info = None
         for row, info in self.video_info_dict.items():
             if info.url == url:
@@ -1022,30 +1019,30 @@ class VideoInfoTab(QWidget):
                 break
                 
         if not video_info or not video_info.formats:
-            return "best"  # Mặc định là best nếu không tìm thấy
+            return "best"  # Default to best if not found
             
-        # Kiểm tra xem format là video hay audio
+        # Check if format is video or audio
         is_audio = format_str == self.tr_("FORMAT_AUDIO_MP3")
         
         if is_audio:
-            # Tìm format audio tốt nhất
+            # Find best audio format
             for fmt in video_info.formats:
                 if fmt.get('is_audio', False):
                     return fmt['format_id']
-            # Nếu không tìm thấy format audio riêng, sử dụng bestaudio
+            # If no specific audio format found, use bestaudio
             return "bestaudio/best"
         else:
-            # Nếu chất lượng là "Audio", thì đây là lỗi logic, chọn video tốt nhất
+            # If quality is "Audio", this is a logic error, choose best video
             if quality == "Audio":
                 return "best"
                 
-            # Tìm format video phù hợp với chất lượng
+            # Find format that matches quality
             for fmt in video_info.formats:
                 if fmt.get('quality', '') == quality and not fmt.get('is_audio', False):
                     return fmt['format_id']
             
-            # Nếu không tìm thấy chính xác, tìm format gần nhất
-            # Chuyển đổi chất lượng sang số
+            # If no exact match found, find closest format
+            # Convert quality to number
             target_quality = 0
             if quality == "1080p":
                 target_quality = 1080
@@ -1057,12 +1054,12 @@ class VideoInfoTab(QWidget):
                 target_quality = 360
             else:
                 try:
-                    # Thử chuyển đổi trực tiếp nếu là định dạng như "540p"
+                    # Try converting directly if format is like "540p"
                     target_quality = int(quality.replace('p', ''))
                 except:
                     pass
             
-            # Tìm format gần nhất
+            # Find closest format
             closest_fmt = None
             min_diff = float('inf')
             
@@ -1080,40 +1077,40 @@ class VideoInfoTab(QWidget):
             if closest_fmt:
                 return closest_fmt['format_id']
                 
-            return "best"  # Mặc định nếu không tìm thấy
+            return "best"  # Default if not found
 
     def tr_(self, key):
-        """Dịch theo key sử dụng language manager hiện tại"""
+        """Translate using current language manager"""
         if hasattr(self, 'lang_manager') and self.lang_manager:
             return self.lang_manager.tr(key)
-        return key  # Trả về key nếu không có language manager
+        return key  # Return key if no language manager
 
     def format_tooltip_text(self, text):
-        """Format tooltip text với dấu xuống dòng để dễ đọc hơn"""
+        """Format tooltip text with line breaks for better readability"""
         if not text:
             return ""
         
-        # Xử lý xuống dòng tại dấu chấm, chấm than, chấm hỏi mà có khoảng trắng phía sau
+        # Replace line breaks at periods, commas, and question marks with a space
         formatted_text = re.sub(r'([.!?]) ', r'\1\n', text)
-        # Xử lý xuống dòng tại dấu phẩy mà có khoảng trắng phía sau
+        # Replace line breaks at commas with a space
         formatted_text = re.sub(r'([,]) ', r'\1\n', formatted_text)
         
-        # Xử lý hashtag - mỗi hashtag một dòng
+        # Replace line breaks at spaces
         formatted_text = re.sub(r' (#[^\s#]+)', r'\n\1', formatted_text)
         
         return formatted_text
 
     def update_language(self):
-        """Cập nhật ngôn ngữ cho tất cả các thành phần"""
-        # Cập nhật các label
+        """Update language for all components"""
+        # Update labels
         self.url_label.setText(self.tr_("LABEL_VIDEO_URL"))
         self.output_label.setText(self.tr_("LABEL_OUTPUT_FOLDER"))
         
-        # Cập nhật placeholder
+        # Update placeholders
         self.url_input.setPlaceholderText(self.tr_("PLACEHOLDER_VIDEO_URL"))
         self.output_folder_display.setPlaceholderText(self.tr_("PLACEHOLDER_OUTPUT_FOLDER"))
         
-        # Cập nhật các nút
+        # Update buttons
         self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
         self.choose_folder_btn.setText(self.tr_("BUTTON_CHOOSE_FOLDER"))
         self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL") if not self.all_selected else self.tr_("BUTTON_UNSELECT_ALL"))
@@ -1121,11 +1118,11 @@ class VideoInfoTab(QWidget):
         self.delete_all_btn.setText(self.tr_("BUTTON_DELETE_ALL"))
         self.download_btn.setText(self.tr_("BUTTON_DOWNLOAD"))
         
-        # Cập nhật header bảng
+        # Update table headers
         self.update_table_headers()
 
     def update_table_headers(self):
-        """Cập nhật header của bảng theo ngôn ngữ hiện tại"""
+        """Update table headers based on current language"""
         headers = [
             self.tr_("HEADER_SELECT"),
             self.tr_("HEADER_VIDEO_TITLE"),
@@ -1138,25 +1135,25 @@ class VideoInfoTab(QWidget):
         ]
         self.video_table.setHorizontalHeaderLabels(headers)
 
-    # Thêm phương thức mới để cập nhật màu sắc theo chế độ
+    # New method to apply colors based on theme
     def apply_theme_colors(self, theme):
-        """Áp dụng màu sắc theo chủ đề"""
-        # Cập nhật màu sắc cho các thành phần
-        # Xác định màu sắc theo theme
+        """Apply colors based on theme"""
+        # Update colors for components
+        # Determine colors based on theme
         if theme == "dark":
-            # Màu sắc cho dark mode
+            # Colors for dark mode
             url_placeholder_color = "#8a8a8a"
             url_text_color = "#ffffff"
             folder_text_color = "#cccccc"
             
-            # Style cho bảng trong dark mode
+            # Style for table in dark mode
             table_style = """
                 QTableWidget::item:hover {
                     background-color: rgba(80, 140, 255, 0.15);
                 }
             """
             
-            # Style cho thanh cuộn trong dark mode
+            # Style for scrollbar in dark mode
             scrollbar_style = """
                 QScrollBar:vertical {
                     border: none;
@@ -1181,19 +1178,19 @@ class VideoInfoTab(QWidget):
                 }
             """
         else:
-            # Màu sắc cho light mode
+            # Colors for light mode
             url_placeholder_color = "#888888"
             url_text_color = "#333333"
             folder_text_color = "#555555"
             
-            # Style cho bảng trong light mode
+            # Style for table in light mode
             table_style = """
                 QTableWidget::item:hover {
                     background-color: rgba(0, 120, 215, 0.1);
                 }
             """
             
-            # Style cho thanh cuộn trong light mode
+            # Style for scrollbar in light mode
             scrollbar_style = """
                 QScrollBar:vertical {
                     border: none;
@@ -1218,14 +1215,14 @@ class VideoInfoTab(QWidget):
                 }
             """
         
-        # Áp dụng style cho bảng
+        # Apply style to table
         if hasattr(self, 'video_table'):
             self.video_table.setStyleSheet(table_style)
             
-        # Áp dụng style cho thanh cuộn
+        # Apply style to scrollbar
         self.setStyleSheet(scrollbar_style)
         
-        # Áp dụng màu sắc cho các thành phần
+        # Update colors for components
         if hasattr(self, 'url_input'):
             self.url_input.setStyleSheet(f"""
                 QLineEdit {{ 
@@ -1247,59 +1244,59 @@ class VideoInfoTab(QWidget):
             """) 
 
     def connect_downloader_signals(self):
-        """Kết nối các signals từ TikTokDownloader với UI"""
+        """Connect signals from TikTokDownloader to UI"""
         self.downloader.info_signal.connect(self.on_video_info_received)
         self.downloader.progress_signal.connect(self.on_download_progress)
         self.downloader.finished_signal.connect(self.on_download_finished)
 
-    # ===== Các phương thức xử lý signals từ TikTokDownloader =====
+    # ===== Methods to handle signals from TikTokDownloader =====
     
     def on_video_info_received(self, url, video_info):
-        """Xử lý thông tin video khi nhận được"""
+        """Handle video information received"""
         try:
             print(f"Received video info for URL: {url}, title: {video_info.title}")
             
-            # Cập nhật UI để hiển thị thông báo đang xử lý
+            # Update UI to show that information is being processed
             if self.parent and self.processing_count > 1:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO_MULTIPLE").format(self.processing_count))
                 QApplication.processEvents()
             
-            # Xử lý title - loại bỏ hashtag
+            # Process title - remove hashtags
             if video_info.title:
-                # Lọc bỏ các hashtag khỏi title
+                # Remove hashtags from title
                 import re
-                # Xóa hashtag và dấu cách thừa
+                # Remove extra spaces
                 cleaned_title = re.sub(r'#\S+', '', video_info.title).strip()
-                # Xóa nhiều dấu cách thành một dấu cách
+                # Remove multiple spaces
                 cleaned_title = re.sub(r'\s+', ' ', cleaned_title).strip()
-                video_info.original_title = video_info.title  # Lưu title gốc
-                video_info.title = cleaned_title  # Lưu title mới
+                video_info.original_title = video_info.title  # Save original title
+                video_info.title = cleaned_title  # Save new title
             
-            # Lưu thông tin video vào dictionary
+            # Save video information in dictionary
             row = self.video_table.rowCount()
             self.video_info_dict[row] = video_info
             
-            # Thêm dòng mới cho video này
+            # Add new row for this video
             self.video_table.insertRow(row)
             
-            # Kiểm tra nếu có lỗi trong tiêu đề
+            # Check for errors in title
             has_error = video_info.title.startswith("Error:")
             
-            # Kiểm tra xem có phải lỗi không hỗ trợ nội dung không (DIALOG_UNSUPPORTED_CONTENT)
+            # Check if content is unsupported (DIALOG_UNSUPPORTED_CONTENT)
             unsupported_content = "DIALOG_UNSUPPORTED_CONTENT" in video_info.title
             
             try:
-                # Cột Select (Checkbox)
+                # Select (Checkbox)
                 checkbox = QCheckBox()
-                checkbox.setChecked(not has_error)  # Không chọn nếu có lỗi
+                checkbox.setChecked(not has_error)  # Uncheck if there's an error
                 
-                # Cho phép chọn nếu là lỗi không hỗ trợ nội dung để có thể xóa
+                # Allow selection if content is unsupported
                 if unsupported_content:
                     checkbox.setEnabled(True)
                 else:
-                    checkbox.setEnabled(not has_error)  # Disable nếu có lỗi
+                    checkbox.setEnabled(not has_error)  # Disable if there's an error
                 
-                # Kết nối sự kiện stateChanged với hàm checkbox_state_changed
+                # Connect stateChanged signal to checkbox_state_changed method
                 checkbox.stateChanged.connect(self.checkbox_state_changed)
                 
                 checkbox_cell = QWidget()
@@ -1309,43 +1306,43 @@ class VideoInfoTab(QWidget):
                 layout.setContentsMargins(0, 0, 0, 0)
                 self.video_table.setCellWidget(row, 0, checkbox_cell)
                 
-                # Cột Title
+                # Title
                 if unsupported_content:
-                    # Hiển thị thông báo lỗi phù hợp từ file ngôn ngữ
+                    # Show error message from language file
                     title_text = self.tr_("DIALOG_UNSUPPORTED_CONTENT")
                 else:
                     title_text = video_info.title
                     
                 title_item = QTableWidgetItem(title_text)
-                # Lưu title gốc vào UserRole để có thể lấy ra khi cần
+                # Save original title to UserRole for later retrieval
                 if hasattr(video_info, 'original_title') and video_info.original_title:
                     title_item.setData(Qt.ItemDataRole.UserRole, video_info.original_title)
                 else:
                     title_item.setData(Qt.ItemDataRole.UserRole, title_text)
-                # Format tooltip text để dễ đọc hơn
+                # Format tooltip text for better readability
                 tooltip_text = self.format_tooltip_text(title_text)
                 title_item.setToolTip(tooltip_text)
-                # Tắt khả năng chỉnh sửa
+                # Disable editing
                 title_item.setFlags(title_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.video_table.setItem(row, 1, title_item)
                 
-                # Cột Creator (Di chuyển lên vị trí ngay sau Title)
+                # Creator (Move to after Title)
                 creator = video_info.creator if hasattr(video_info, 'creator') and video_info.creator else ""
                 creator_item = QTableWidgetItem(creator)
                 creator_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                # Format tooltip text để dễ đọc hơn
+                # Format tooltip text for better readability
                 creator_tooltip = self.format_tooltip_text(creator)
-                creator_item.setToolTip(creator_tooltip)  # Thêm tooltip khi hover
-                # Tắt khả năng chỉnh sửa
+                creator_item.setToolTip(creator_tooltip)  # Add tooltip on hover
+                # Disable editing
                 creator_item.setFlags(creator_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.video_table.setItem(row, 2, creator_item)
                 
-                # Cột Quality (Combobox)
+                # Quality (Combobox)
                 quality_combo = QComboBox()
-                # Đặt chiều rộng cố định cho combobox
+                # Set fixed width for combobox
                 quality_combo.setFixedWidth(80)
                 
-                # Lấy danh sách chất lượng từ formats
+                # Get list of qualities from formats
                 qualities = []
                 video_qualities = []
                 audio_quality = None
@@ -1359,7 +1356,7 @@ class VideoInfoTab(QWidget):
                             elif quality not in video_qualities:
                                 video_qualities.append(quality)
                 
-                # Sắp xếp chất lượng từ cao xuống thấp
+                # Sort qualities from high to low
                 def quality_to_number(q):
                     try:
                         return int(q.replace('p', ''))
@@ -1370,10 +1367,10 @@ class VideoInfoTab(QWidget):
                 qualities = video_qualities
                 
                 if not qualities:
-                    qualities = ['1080p', '720p', '480p', '360p']  # Mặc định nếu không tìm thấy
+                    qualities = ['1080p', '720p', '480p', '360p']  # Default if not found
                     
                 quality_combo.addItems(qualities)
-                quality_combo.setEnabled(not has_error)  # Disable nếu có lỗi
+                quality_combo.setEnabled(not has_error)  # Disable if there's an error
                 quality_cell = QWidget()
                 quality_layout = QHBoxLayout(quality_cell)
                 quality_layout.addWidget(quality_combo)
@@ -1381,15 +1378,15 @@ class VideoInfoTab(QWidget):
                 quality_layout.setContentsMargins(0, 0, 0, 0)
                 self.video_table.setCellWidget(row, 3, quality_cell)
                 
-                # Cột Format (Combobox)
+                # Format (Combobox)
                 format_combo = QComboBox()
-                # Đặt chiều rộng cố định cho combobox
+                # Set fixed width for combobox
                 format_combo.setFixedWidth(100)
                 
-                # Nếu là video, chỉ hiển thị hai lựa chọn: Video và Audio
+                # If it's a video, only show two options: Video and Audio
                 format_combo.addItem(self.tr_("FORMAT_VIDEO_MP4"))
                 format_combo.addItem(self.tr_("FORMAT_AUDIO_MP3"))
-                format_combo.setEnabled(not has_error)  # Disable nếu có lỗi
+                format_combo.setEnabled(not has_error)  # Disable if there's an error
                 format_cell = QWidget()
                 format_layout = QHBoxLayout(format_cell)
                 format_layout.addWidget(format_combo)
@@ -1397,39 +1394,39 @@ class VideoInfoTab(QWidget):
                 format_layout.setContentsMargins(0, 0, 0, 0)
                 self.video_table.setCellWidget(row, 4, format_cell)
                 
-                # Kết nối sự kiện thay đổi format với hàm xử lý
+                # Connect signal for format change to handle_format_change method
                 format_combo.currentIndexChanged.connect(
                     lambda index, combo=format_combo, q_combo=quality_combo, audio=audio_quality, video_qs=qualities: 
                     self.on_format_changed(index, combo, q_combo, audio, video_qs)
                 )
                 
-                # Cột Duration
+                # Duration
                 duration_str = self.format_duration(video_info.duration)
                 duration_item = QTableWidgetItem(duration_str)
                 duration_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                # Tắt khả năng chỉnh sửa
+                # Disable editing
                 duration_item.setFlags(duration_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.video_table.setItem(row, 5, duration_item)
                 
-                # Cột Size (ước lượng dựa trên format)
+                # Size (estimated based on format)
                 size_str = self.estimate_size(video_info.formats)
                 size_item = QTableWidgetItem(size_str)
                 size_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                # Tắt khả năng chỉnh sửa
+                # Disable editing
                 size_item.setFlags(size_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.video_table.setItem(row, 6, size_item)
                 
-                # Cột Hashtags
+                # Hashtags
                 hashtags = []
-                # Trích xuất hashtags từ caption nếu có
+                # Extract hashtags from caption if available
                 if video_info.caption:
                     import re
-                    # Tìm tất cả các hashtag bắt đầu bằng # trong caption, hỗ trợ cả tiếng Việt và ký tự đặc biệt
+                    # Find all hashtags starting with # in caption, supporting both Vietnamese and special characters
                     found_hashtags = re.findall(r'#([^\s#]+)', video_info.caption)
                     if found_hashtags:
                         hashtags.extend(found_hashtags)
                 
-                # Kết hợp với hashtags đã có sẵn trong video_info
+                # Combine with existing hashtags in video_info
                 if hasattr(video_info, 'hashtags') and video_info.hashtags:
                     for tag in video_info.hashtags:
                         if tag not in hashtags:
@@ -1437,121 +1434,122 @@ class VideoInfoTab(QWidget):
                 
                 hashtags_str = " ".join([f"#{tag}" for tag in hashtags]) if hashtags else ""
                 hashtags_item = QTableWidgetItem(hashtags_str)
-                # Format tooltip text để dễ đọc hơn
+                # Format tooltip text for better readability
                 hashtags_tooltip = self.format_tooltip_text(hashtags_str)
-                hashtags_item.setToolTip(hashtags_tooltip)  # Thêm tooltip khi hover
-                # Tắt khả năng chỉnh sửa
+                hashtags_item.setToolTip(hashtags_tooltip)  # Add tooltip on hover
+                hashtags_item.setToolTip(hashtags_tooltip)  # Add tooltip on hover
+                # Disable editing
                 hashtags_item.setFlags(hashtags_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.video_table.setItem(row, 7, hashtags_item)
                 
-                # Thêm tooltip cho tiêu đề
+                # Add tooltip for title
                 title_item = self.video_table.item(row, 1)
                 if title_item:
                     title_item.setToolTip(video_info.title)
             except Exception as cell_error:
                 print(f"Error creating UI cells: {cell_error}")
-                # Đảm bảo dòng được tạo đúng
+                # Ensure row is created correctly
                 while self.video_table.columnCount() > self.video_table.item(row, 0).column() + 1:
                     self.video_table.setItem(row, self.video_table.item(row, 0).column() + 1, QTableWidgetItem("Error"))
             
-            # Cập nhật trạng thái
+            # Update status
             if self.parent:
                 if has_error:
                     if unsupported_content:
-                        # Hiển thị thông báo lỗi thân thiện từ file ngôn ngữ
+                        # Display friendly error message from language file
                         self.parent.status_bar.showMessage(self.tr_("DIALOG_UNSUPPORTED_CONTENT"))
                     else:
-                        # Hiển thị lỗi khác
+                        # Display other errors
                         self.parent.status_bar.showMessage(video_info.title)
                 else:
-                    # Hiển thị thông báo đã nhận thông tin video
+                    # Display notification that video info has been received
                     if self.processing_count > 1:
                         self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO_MULTIPLE").format(self.processing_count))
                     else:
                         self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEO_INFO"))
                     
-            # Giảm biến đếm và kiểm tra xem đã xử lý hết chưa
+            # Decrease counter and check if all processing is complete
             self.processing_count -= 1
             if self.processing_count <= 0:
-                # Kích hoạt lại UI
+                # Re-enable UI
                 self.get_info_btn.setEnabled(True)
                 self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
                 self.url_input.setEnabled(True)
                 
-                # Cập nhật thông báo trạng thái
+                # Update status message
                 total_videos = self.video_table.rowCount()
                 if self.parent:
                     self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_LOADED").format(total_videos))
                     
-                # Cập nhật UI ngay lập tức
+                # Update UI immediately
                 QApplication.processEvents()
                 
-                # Cập nhật trạng thái nút Select All/Unselect All dựa trên các checkbox
+                # Update Select All/Unselect All button status based on checkboxes
                 self.update_select_toggle_button()
             
-            # Không reset cứng trạng thái mà để hàm update_select_toggle_button quyết định giá trị đúng dựa trên trạng thái của các checkbox.
+            # Don't hard reset status, let the update_select_toggle_button function determine the correct value based on checkbox states
             # self.all_selected = False
             # self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
             
-            # Cập nhật UI
+            # Update UI
             self.get_info_btn.setEnabled(True)
             self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
             self.url_input.setEnabled(True)
             self.url_input.clear()
             
-            # Cập nhật trạng thái các nút
+            # Update button states
             self.update_button_states()
             
-            # Hiển thị thông báo trên status bar
+            # Display notification on status bar
             if self.parent:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_INFO_RECEIVED"))
         except Exception as e:
             print(f"Critical error in on_video_info_received: {e}")
-            # Đảm bảo giảm biến đếm
+            # Ensure counter is decreased
             self.processing_count -= 1
             if self.processing_count <= 0:
-                # Kích hoạt lại UI
+                # Re-enable UI
                 self.get_info_btn.setEnabled(True)
                 self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
                 self.url_input.setEnabled(True)
             
-            # Hiển thị lỗi trong status bar
+            # Display error in status bar
             if self.parent:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_ERROR").format(str(e)))
     
     def on_download_progress(self, url, progress, speed):
-        """Cập nhật tiến trình tải xuống"""
-        # Tìm dòng chứa URL này
+        """Update download progress"""
+        # Find row containing this URL
         for row, info in self.video_info_dict.items():
             if info.url == url:
-                # Hiển thị tiến trình tải trong status bar
+                # Display download progress in status bar
                 if self.parent:
                     self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOADING_PROGRESS").format(int(progress), speed))
                 break
     
     def on_download_finished(self, url, success, file_path):
-        """Xử lý khi một video đã tải xong"""
+        """Handle when a video download is complete"""
         self.downloading_count -= 1
         
         # Debug log
         print(f"DEBUG - on_download_finished called with URL: {url}, success: {success}, file_path: {file_path}")
         
-        # Đảm bảo file_path không còn chứa %(ext)s
+        # Ensure file_path doesn't contain %(ext)s
         if '%(ext)s' in file_path:
-            # Kiểm tra đuôi file thực tế
+            # Check actual file extension
             if file_path.lower().endswith('.mp3'):
                 file_path = file_path.replace('.%(ext)s', '.mp3')
             else:
                 file_path = file_path.replace('.%(ext)s', '.mp4')
             print(f"DEBUG - Fixed file_path: {file_path}")
             
-        # Tìm kiếm video trong bảng và ẩn progress bar
+        # Search for video in table and hide progress bar
         row_to_remove = None
         found_video_info = None
         
-        # Tìm video trong bảng dựa vào URL
+        # Find video in the table based on URL
         for row in range(self.video_table.rowCount()):
-            # Lấy video_info từ dictionary
+            # Get video_info from dictionary
             row_info = self.video_info_dict.get(row)
             if row_info and row_info.url == url:
                 row_to_remove = row
@@ -1561,7 +1559,7 @@ class VideoInfoTab(QWidget):
         
         print(f"DEBUG - Row to remove: {row_to_remove}, Found video info: {found_video_info}")
         
-        # Tăng số lượng video đã tải thành công
+        # Increment the count of successfully downloaded videos
         if success:
             self.success_downloads += 1
             video_info = found_video_info or self.video_info_dict.get(row_to_remove, None)
@@ -1569,63 +1567,63 @@ class VideoInfoTab(QWidget):
             
             print(f"DEBUG - Success download! File: {filename}")
             
-            # Hiển thị thông báo trạng thái
+            # Display status message
             if self.parent and self.parent.status_bar:
-                # Nếu còn video đang tải
+                # If there are still videos being downloaded
                 if self.downloading_count > 0:
-                    # Cắt gọn tên file nếu quá dài
+                    # Truncate filename if too long
                     short_filename = self.truncate_filename(filename)
                     self.parent.status_bar.showMessage(self.tr_("STATUS_ONE_OF_MULTIPLE_DONE").format(
                         short_filename,
                         self.downloading_count
                     ))
                 else:
-                    # Nếu đã tải hết, hiển thị thông báo tải thành công
+                    # If all downloads finished, show success message
                     if self.success_downloads > 1:
                         self.parent.status_bar.showMessage(self.tr_("DIALOG_DOWNLOAD_MULTIPLE_SUCCESS").format(self.success_downloads))
                     else:
-                        # Cắt gọn tên file nếu quá dài
+                        # Truncate filename if too long
                         short_filename = self.truncate_filename(filename)
                         self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOAD_SUCCESS_WITH_FILENAME").format(short_filename))
             
-            # Cập nhật UI ngay lập tức để hiển thị thông báo
+            # Update UI immediately to display the message
             QApplication.processEvents()
             
-            # Cập nhật tab Downloaded Videos nếu có và thêm video mới
+            # Update Downloaded Videos tab if it exists and add the new video
             if hasattr(self.parent, 'downloaded_videos_tab') and video_info:
                 print(f"DEBUG - Adding video to Downloaded Videos tab: {video_info.title}")
                 
-                # Lấy thông tin chất lượng đã chọn
+                # Get selected quality information
                 quality_cell = self.video_table.cellWidget(row_to_remove, 3) if row_to_remove is not None else None
                 quality = quality_cell.findChild(QComboBox).currentText() if quality_cell else "1080p"
                 
-                # Lấy thông tin định dạng đã chọn
+                # Get selected format information
                 format_cell = self.video_table.cellWidget(row_to_remove, 4) if row_to_remove is not None else None
                 format_str = format_cell.findChild(QComboBox).currentText() if format_cell else self.tr_("FORMAT_VIDEO_MP4")
                 
-                # Kiểm tra kỹ đuôi file và cập nhật định dạng, chất lượng
+                # Check file extension and update format and quality
                 if file_path.lower().endswith('.mp3'):
                     format_str = self.tr_("FORMAT_AUDIO_MP3")
-                    quality = "320kbps"  # Đặt chất lượng mặc định cho audio
+                    quality = "320kbps"  # Set default quality for audio
                 elif file_path.lower().endswith('.mp4'):
-                    # Kiểm tra xem format_str có phải đã là định dạng audio không
+                    # Check if format_str is already set to audio format
                     if format_str == self.tr_("FORMAT_AUDIO_MP3"):
                         format_str = self.tr_("FORMAT_VIDEO_MP4")
                 
-                # Kiểm tra nếu đây là video không có tiêu đề đã được đặt tên mới
+                # Check if this is a video without a title that has been renamed
                 display_title = video_info.title
                 if hasattr(video_info, 'custom_title') and video_info.custom_title:
                     display_title = video_info.custom_title
                 
-                # Nếu tên file khác với tên video ban đầu, có thể đã được đổi tên
+                # If the filename is different from the original video title, it might have been renamed
                 filename_without_ext = os.path.splitext(os.path.basename(file_path))[0]
                 if filename_without_ext and filename_without_ext != video_info.title:
                     display_title = filename_without_ext
                 
-                # Tạo thông tin tải xuống để thêm vào tab Downloaded Videos
+                # Create download info to add to Downloaded Videos tab
                 download_info = {
                     'url': url,
-                    'title': display_title,  # Sử dụng tên đã được đặt
+                    'title': display_title,  # Use the custom name if set
                     'creator': video_info.creator if hasattr(video_info, 'creator') else "",
                     'quality': quality,
                     'format': format_str,
@@ -1638,64 +1636,64 @@ class VideoInfoTab(QWidget):
                     'status': "Successful"
                 }
                 
-                # Trích xuất hashtags từ tiêu đề video gốc và caption
-                combined_hashtags = set()  # Dùng set để tránh lặp lại
+                # Extract hashtags from original video title and caption
+                combined_hashtags = set()  # Use set to avoid duplicates
 
-                # Nếu có original_title, trích xuất hashtag từ đó
+                # If original_title exists, extract hashtags from it
                 if hasattr(video_info, 'original_title') and video_info.original_title:
                     import re
-                    # Phát hiện tất cả các chuỗi bắt đầu bằng # và kết thúc bằng khoảng trắng hoặc cuối chuỗi
+                    # Detect all strings that start with # and end with whitespace or end of string
                     found_hashtags = re.findall(r'#([^\s#\.]+)', video_info.original_title)
                     if found_hashtags:
                         combined_hashtags.update(found_hashtags)
                     
-                    # Xử lý trường hợp tiêu đề bị cắt (có dấu "..." ở cuối)
+                    # Handle the case where the title is truncated (has "..." at the end)
                     if "..." in video_info.original_title:
-                        # Lấy cả hashtag trong title hiển thị trong tab download
+                        # Get hashtags from the displayed title in the download tab
                         title_file = os.path.basename(file_path)
                         if "#" in title_file:
                             additional_hashtags = re.findall(r'#([^\s#\.]+)', title_file)
                             if additional_hashtags:
                                 combined_hashtags.update(additional_hashtags)
 
-                # Lấy hashtag từ caption
+                # Get hashtags from caption
                 if hasattr(video_info, 'caption') and video_info.caption:
                     import re
                     found_hashtags = re.findall(r'#([^\s#\.]+)', video_info.caption)
                     if found_hashtags:
                         combined_hashtags.update(found_hashtags)
                 
-                # Kết hợp với hashtags đã có sẵn trong video_info
+                # Combine with existing hashtags in video_info
                 if hasattr(video_info, 'hashtags') and video_info.hashtags:
                     combined_hashtags.update([tag.strip() for tag in video_info.hashtags])
                 
-                # Nếu vẫn không tìm thấy hashtag nào, kiểm tra xem filename có chứa hashtag không
+                # If no hashtags found, check if filename contains hashtags
                 if not combined_hashtags and "#" in filename:
                     additional_hashtags = re.findall(r'#([^\s#\.]+)', filename)
                     if additional_hashtags:
                         combined_hashtags.update(additional_hashtags)
                 
-                # Gán hashtags vào download_info
+                # Assign hashtags to download_info
                 if combined_hashtags:
                     download_info['hashtags'] = list(combined_hashtags)
                 
-                # In hashtag ra để debug
+                # Print hashtags for debugging
                 print(f"DEBUG - Combined hashtags: {download_info['hashtags']}")
                 
-                # Tải và lưu thumbnail nếu có
+                # Download and save thumbnail if available
                 thumbnail_path = ""
                 if hasattr(video_info, 'thumbnail') and video_info.thumbnail:
                     try:
-                        # Tạo thư mục thumbnails nếu chưa tồn tại
+                        # Create thumbnails directory if it doesn't exist
                         thumbnails_dir = os.path.join(os.path.dirname(file_path), "thumbnails")
                         if not os.path.exists(thumbnails_dir):
                             os.makedirs(thumbnails_dir)
                         
-                        # Tạo tên file thumbnail từ id video TikTok
-                        video_id = url.split('/')[-1].split('?')[0]  # Lấy ID video từ URL
+                        # Create thumbnail filename from TikTok video ID
+                        video_id = url.split('/')[-1].split('?')[0]  # Get video ID from URL
                         thumbnail_path = os.path.join(thumbnails_dir, f"{video_id}.jpg")
                         
-                        # Tải thumbnail
+                        # Download thumbnail
                         response = requests.get(video_info.thumbnail, stream=True)
                         response.raise_for_status()
                         
@@ -1704,25 +1702,25 @@ class VideoInfoTab(QWidget):
                     except Exception as e:
                         print(f"Error downloading thumbnail: {e}")
                 
-                # Lưu đường dẫn thumbnail vào thông tin video
+                # Save thumbnail path to video info
                 download_info['thumbnail'] = thumbnail_path
                 
-                # In ra log
+                # Log information
                 print(f"DEBUG - Title: {download_info['title']}")
                 print(f"DEBUG - Quality: {download_info['quality']}, Format: {download_info['format']}")
                 print(f"DEBUG - Hashtags: {download_info['hashtags']}")
                 print(f"DEBUG - Thumbnail: {download_info['thumbnail']}")
                 print(f"DEBUG - Status: {download_info['status']}")
                 
-                # Thêm vào tab Downloaded Videos
+                # Add to Downloaded Videos tab
                 self.parent.downloaded_videos_tab.add_downloaded_video(download_info)
                 print(f"DEBUG - Video added to Downloaded Videos tab")
                 
-                # Ép cập nhật giao diện Downloaded Videos tab
+                # Force update Downloaded Videos tab UI
                 self.parent.downloaded_videos_tab.display_videos()
                 print(f"DEBUG - Downloaded Videos tab display updated")
             
-            # Xóa hàng sau khi tải xuống thành công
+            # Remove row after successful download
             if row_to_remove is not None:
                 print(f"DEBUG - Removing row {row_to_remove} from video table")
                 self.video_table.removeRow(row_to_remove)
@@ -1732,11 +1730,11 @@ class VideoInfoTab(QWidget):
             else:
                 print(f"DEBUG - Could not find row to remove for URL: {url}")
             
-            # Cập nhật lại index của các mục trong video_info_dict
+            # Update indexes of items in video_info_dict
             new_dict = {}
             print(f"DEBUG - Reindexing video_info_dict after deletion, current keys: {sorted(self.video_info_dict.keys())}")
             
-            # Đơn giản hóa: Chỉ cần tạo dictionary mới với các index liên tiếp
+            # Simplify: Just create a new dictionary with consecutive indexes
             values = list(self.video_info_dict.values())
             for new_idx in range(len(values)):
                 new_dict[new_idx] = values[new_idx]
@@ -1747,38 +1745,38 @@ class VideoInfoTab(QWidget):
             if self.parent:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOAD_SUCCESS")) 
         else:
-            # Nếu tải thất bại, hiển thị thông báo lỗi phù hợp
+            # If download failed, display appropriate error message
             if self.parent and self.parent.status_bar:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOAD_FAILED"))
                 print(f"DEBUG - Download failed for URL: {url}")
         
-        # Nếu tất cả video đã tải xong, kích hoạt lại nút Download
+        # If all videos have been downloaded, re-enable Download button
         if self.downloading_count <= 0:
             self.download_btn.setEnabled(True)
             self.download_btn.setText(self.tr_("BUTTON_DOWNLOAD"))
             print(f"DEBUG - All downloads finished, reset download button")
-            # Reset status bar khi tất cả đã tải xong
+            # Reset status bar when all downloads are complete
             if self.parent and self.parent.status_bar:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOAD_SUCCESS"))
 
     def truncate_filename(self, filename, max_length=30):
-        """Cắt gọn tên file để hiển thị trong status bar"""
+        """Truncate filename for display in status bar"""
         if len(filename) <= max_length:
             return filename
             
-        # Lấy tên và phần mở rộng
+        # Get name and extension
         name, ext = os.path.splitext(filename)
         
-        # Tính toán số ký tự giữ lại
-        # Giữ 10 ký tự đầu, dấu ..., và 10 ký tự cuối + phần mở rộng
-        keep_length = max_length - 3  # trừ đi 3 dấu chấm
+        # Calculate number of characters to keep
+        # Keep first 10 characters, ..., and last 10 characters + extension
+        keep_length = max_length - 3  # subtract 3 dots
         first_part = (keep_length // 2) - len(ext)
         last_part = keep_length - first_part - len(ext)
         
         return f"{name[:first_part]}...{name[-last_part:]}{ext}"
 
     def open_folder(self, folder_path):
-        """Mở thư mục chứa file"""
+        """Open folder containing the file"""
         try:
             if os.path.exists(folder_path):
                 if os.name == 'nt':  # Windows
@@ -1800,7 +1798,7 @@ class VideoInfoTab(QWidget):
             )
     
     def format_duration(self, seconds):
-        """Định dạng thời lượng từ giây sang MM:SS"""
+        """Format duration from seconds to MM:SS"""
         if not seconds:
             return "00:00"
         
@@ -1809,11 +1807,11 @@ class VideoInfoTab(QWidget):
         return f"{minutes:02d}:{remaining_seconds:02d}"
     
     def estimate_size(self, formats):
-        """Ước lượng kích thước file dựa trên formats"""
+        """Estimate file size based on formats"""
         if not formats:
             return "Unknown"
         
-        # Lấy format lớn nhất
+        # Get largest format
         max_size = 0
         for fmt in formats:
             if 'filesize' in fmt and fmt['filesize'] and fmt['filesize'] > max_size:
@@ -1822,30 +1820,30 @@ class VideoInfoTab(QWidget):
         if max_size == 0:
             return "Unknown"
         
-        # Chuyển đổi sang MB
+        # Convert to MB
         size_mb = max_size / (1024 * 1024)
         return f"{size_mb:.2f} MB"
 
     def on_format_changed(self, index, format_combo, quality_combo, audio_quality, video_qualities):
-        """Xử lý khi người dùng thay đổi định dạng"""
+        """Handle when user changes format"""
         is_audio = format_combo.currentText() == self.tr_("FORMAT_AUDIO_MP3")
         
-        # Xóa tất cả items hiện tại
+        # Clear all current items
         quality_combo.clear()
         
         if is_audio:
-            # Nếu là audio, chỉ hiển thị chất lượng audio
+            # If audio, only display audio quality
             if audio_quality:
                 quality_combo.addItem(audio_quality)
             else:
                 quality_combo.addItem("Original")
         else:
-            # Nếu là video, hiển thị lại danh sách chất lượng video
+            # If video, display list of video qualities
             quality_combo.addItems(video_qualities) 
 
     def delete_selected_videos(self):
-        """Xóa các video đã chọn khỏi bảng"""
-        # Đếm số video đã chọn
+        """Delete selected videos from the table"""
+        # Count selected videos
         selected_count = 0
         for row in range(self.video_table.rowCount()):
             checkbox_cell = self.video_table.cellWidget(row, 0)
@@ -1854,12 +1852,12 @@ class VideoInfoTab(QWidget):
                 if checkbox and checkbox.isChecked():
                     selected_count += 1
         
-        # Nếu không có video nào được chọn
+        # If no videos are selected
         if selected_count == 0:
             QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("DIALOG_NO_VIDEOS_SELECTED"))
             return
             
-        # Hiển thị hộp thoại xác nhận
+        # Display confirmation dialog
         reply = QMessageBox.question(
             self, self.tr_("DIALOG_CONFIRM_DELETION"), 
             self.tr_("DIALOG_CONFIRM_DELETE_SELECTED").format(selected_count),
@@ -1868,20 +1866,20 @@ class VideoInfoTab(QWidget):
         )
         
         if reply == QMessageBox.StandardButton.Yes:
-            # Xóa từ dưới lên trên để tránh lỗi index
+            # Delete from bottom to top to avoid index errors
             for row in range(self.video_table.rowCount() - 1, -1, -1):
                 checkbox_cell = self.video_table.cellWidget(row, 0)
                 if checkbox_cell:
                     checkbox = checkbox_cell.findChild(QCheckBox)
                     if checkbox and checkbox.isChecked():
                         self.video_table.removeRow(row)
-                        # Cập nhật lại index của các mục trong video_info_dict
+                        # Update index of items in video_info_dict
                         if row in self.video_info_dict:
                             del self.video_info_dict[row]
             
-            # Cập nhật lại index của các mục trong video_info_dict
+            # Update indices of items in video_info_dict
             new_dict = {}
-            # Đơn giản hóa: Chỉ cần tạo dictionary mới với các index liên tiếp
+            # Simplification: Just create a new dictionary with sequential indices
             values = list(self.video_info_dict.values())
             for new_idx in range(len(values)):
                 new_dict[new_idx] = values[new_idx]
@@ -1891,22 +1889,16 @@ class VideoInfoTab(QWidget):
             if self.parent:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_SELECTED_DELETED").format(selected_count))
             
-            # Sau khi hoàn tất xóa các video đã chọn
+            # After completing deletion of selected videos
             self.video_table.blockSignals(False)
-            
-            # Cập nhật trạng thái nút chọn tất cả
-            self.update_select_toggle_button()
-            
-            # Cập nhật trạng thái các nút
-            self.update_button_states()
 
     def get_selected_quality(self, row):
-        """Lấy chất lượng được chọn từ hàng trong bảng"""
+        """Get selected quality from row in table"""
         if row is None or row < 0 or row >= self.video_table.rowCount():
-            return "1080p"  # Giá trị mặc định khi không có row
+            return "1080p"  # Default value when no row is available
         
         try:
-            quality_cell = self.video_table.cellWidget(row, 2)  # Cột Quality (index 2)
+            quality_cell = self.video_table.cellWidget(row, 2)  # Quality column (index 2)
             if quality_cell:
                 quality_combo = quality_cell.findChild(QComboBox)
                 if quality_combo:
@@ -1919,15 +1911,15 @@ class VideoInfoTab(QWidget):
         except Exception as e:
             print(f"Error getting quality: {e}")
             
-        return "1080p"  # Giá trị mặc định
+        return "1080p"  # Default value
         
     def get_selected_format(self, row):
-        """Lấy định dạng được chọn từ hàng trong bảng"""
+        """Get selected format from row in table"""
         if row is None or row < 0 or row >= self.video_table.rowCount():
-            return "Video (mp4)"  # Giá trị mặc định khi không có row
+            return "Video (mp4)"  # Default value when no row is available
         
         try:
-            format_cell = self.video_table.cellWidget(row, 3)  # Cột Format (index 3)
+            format_cell = self.video_table.cellWidget(row, 3)  # Format column (index 3)
             if format_cell:
                 format_combo = format_cell.findChild(QComboBox)
                 if format_combo:
@@ -1940,35 +1932,35 @@ class VideoInfoTab(QWidget):
         except Exception as e:
             print(f"Error getting format: {e}")
             
-        return "Video (mp4)"  # Giá trị mặc định 
+        return "Video (mp4)"  # Default value 
 
     def show_copy_dialog(self, item):
-        """Hiển thị dialog cho phép copy text khi double-click vào ô trong bảng"""
+        """Display dialog to copy text when double-clicking a cell in the table"""
         column = item.column()
         row = item.row()
         
-        # Map thực tế của các cột trong bảng:
+        # Actual map of columns in the table:
         # Column 1: Title
         # Column 2: Creator
         # Column 7: Hashtags
         
-        # Chỉ hiển thị dialog copy cho các cột quan trọng
+        # Only display copy dialog for important columns
         if column not in [1, 2, 7]:
             return
         
-        # Debug để hiểu cấu trúc của video_info_dict
+        # Debug to understand the structure of video_info_dict
         print(f"DEBUG - video_info_dict type: {type(self.video_info_dict)}")
         print(f"DEBUG - Double-clicked on row {row}, column {column}")
         if row in self.video_info_dict:
             print(f"DEBUG - video_info at row {row} type: {type(self.video_info_dict[row])}")
             print(f"DEBUG - video_info attributes: {dir(self.video_info_dict[row])}")
         
-        # Lấy thông tin video đầy đủ
+        # Get full video information
         full_text = ""
         if row in self.video_info_dict:
             video_info = self.video_info_dict[row]
             if column == 1:  # Title
-                # In thông tin debug để xem nội dung
+                # Print debug information to see content
                 if hasattr(video_info, 'title'):
                     print(f"DEBUG - Title: '{video_info.title}'")
                 if hasattr(video_info, 'caption'):
@@ -1976,24 +1968,24 @@ class VideoInfoTab(QWidget):
                 if hasattr(video_info, 'original_title'):
                     print(f"DEBUG - Original title: '{video_info.original_title}'")
                 
-                # Ưu tiên lấy caption làm nguồn dữ liệu chính vì thường chứa nội dung đầy đủ nhất
+                # Prioritize caption as the main data source as it usually contains the most complete content
                 if hasattr(video_info, 'caption') and video_info.caption:
                     full_text = video_info.caption
                 elif hasattr(video_info, 'original_title') and video_info.original_title:
-                    # Lấy tiêu đề gốc nếu không có caption
+                    # Use original title if no caption
                     full_text = video_info.original_title
                 else:
-                    # Sử dụng title hiện tại nếu không có các thông tin khác
+                    # Use current title if no other information is available
                     full_text = video_info.title if hasattr(video_info, 'title') else item.text()
                 
-                # Loại bỏ các hashtag khỏi tiêu đề khi hiển thị
+                # Remove hashtags from title when displaying
                 if full_text:
-                    # Loại bỏ các hashtag ở dạng #xxx
+                    # Remove hashtags in #xxx format
                     import re
                     full_text = re.sub(r'#\w+', '', full_text)
-                    # Loại bỏ các hashtag ở dạng #xxx với khoảng trắng trước
+                    # Remove hashtags in #xxx format with leading whitespace
                     full_text = re.sub(r'\s+#\w+', '', full_text)
-                    # Loại bỏ khoảng trắng thừa và dấu cách cuối cùng
+                    # Remove extra whitespace and trailing spaces
                     full_text = re.sub(r'\s+', ' ', full_text).strip()
                 
                 print(f"DEBUG - Selected full_text for dialog (after removing hashtags): '{full_text}'")
@@ -2003,7 +1995,7 @@ class VideoInfoTab(QWidget):
                 if hasattr(video_info, 'hashtags') and video_info.hashtags:
                     full_text = ' '.join(f"#{tag}" for tag in video_info.hashtags)
                 else:
-                    # Thử lấy từ caption nếu không có hashtags riêng
+                    # Try to get from caption if no separate hashtags exist
                     if hasattr(video_info, 'caption') and video_info.caption:
                         import re
                         hashtags = re.findall(r'#(\w+)', video_info.caption)
@@ -2019,7 +2011,7 @@ class VideoInfoTab(QWidget):
         if not full_text:
             return
             
-        # Xác định tiêu đề dialog dựa theo cột
+        # Determine dialog title based on column
         if column == 1:
             title = self.tr_("HEADER_VIDEO_TITLE")
         elif column == 2:
@@ -2027,19 +2019,19 @@ class VideoInfoTab(QWidget):
         else:  # column == 7
             title = self.tr_("HEADER_HASHTAGS")
             
-        # Tạo dialog
+        # Create dialog
         dialog = QDialog(self)
         dialog.setWindowTitle(title)
-        dialog.setMinimumWidth(600)  # Tăng chiều rộng tối thiểu
-        dialog.setMinimumHeight(400)  # Thêm chiều cao tối thiểu
+        dialog.setMinimumWidth(600)  # Increase minimum width
+        dialog.setMinimumHeight(400)  # Add minimum height
         dialog.resize(600, 400)
         
-        # Xác định theme hiện tại từ parent window
+        # Determine current theme from parent window
         current_theme = "dark"
         if hasattr(self, 'parent') and hasattr(self.parent, 'current_theme'):
             current_theme = self.parent.current_theme
         
-        # Áp dụng style dựa trên theme hiện tại
+        # Apply style based on current theme
         if current_theme == "light":
             dialog.setStyleSheet("""
                 QDialog {
@@ -2092,16 +2084,12 @@ class VideoInfoTab(QWidget):
         # Layout dialog
         layout = QVBoxLayout(dialog)
         
-        # Text edit để hiển thị và copy
+        # Text edit for display and copy
         text_edit = QTextEdit(dialog)
         text_edit.setPlainText(full_text)
-        text_edit.setReadOnly(True)  # Chỉ cho phép đọc và copy
-        text_edit.setMinimumHeight(300)  # Đặt chiều cao tối thiểu cho text edit
-        text_edit.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)  # Tự động wrap text
-        
-        # Thiết lập scroll bar
-        text_edit.setVerticalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
-        text_edit.setHorizontalScrollBarPolicy(Qt.ScrollBarPolicy.ScrollBarAsNeeded)
+        text_edit.setReadOnly(True)  # Only allow reading and copying
+        text_edit.setMinimumHeight(300)  # Set minimum height for text edit
+        text_edit.setLineWrapMode(QTextEdit.LineWrapMode.WidgetWidth)  # Auto wrap text
         
         layout.addWidget(text_edit)
         
@@ -2120,32 +2108,32 @@ class VideoInfoTab(QWidget):
         
         layout.addLayout(button_layout)
         
-        # Hiện dialog và xử lý sau khi đóng dialog
+        # Show dialog and handle actions
         dialog.exec()
         
-        # Xóa bôi đen và đặt focus sau khi đóng dialog
+        # Clear selection and focus
         self.video_table.clearSelection()
         self.video_table.clearFocus()
-        # Đặt focus về ô tìm kiếm để tránh hiệu ứng bôi đen
+        # Set focus back to search input
         self.url_input.setFocus()
         
     def copy_to_clipboard(self, text, column_name=None):
-        """Sao chép văn bản vào clipboard với xử lý đặc biệt cho một số cột"""
+        """Copy text to clipboard with special handling for certain columns"""
         if not text:
             return
         
-        # Xử lý đặc biệt cho cột title - loại bỏ hashtags
+        # Special handling for title column - remove hashtags
         if column_name == "title":
-            # Loại bỏ các hashtag khỏi title
+            # Remove hashtags from title
             text = re.sub(r'#\w+', '', text).strip()
-            # Loại bỏ khoảng trắng kép
+            # Remove double spaces
             text = re.sub(r'\s+', ' ', text)
         
-        # Đặt văn bản vào clipboard
+        # Set text to clipboard
         clipboard = QApplication.clipboard()
         clipboard.setText(text)
         
-        # Hiển thị thông báo
+        # Display notification
         show_message = True
         if hasattr(self, 'parent') and hasattr(self.parent, 'settings'):
             show_message = self.parent.settings.value("show_copy_message", "true") == "true"
@@ -2154,53 +2142,53 @@ class VideoInfoTab(QWidget):
             copied_text = text[:50] + "..." if len(text) > 50 else text
             self.parent.status_bar.showMessage(self.tr_("STATUS_TEXT_COPIED").format(copied_text), 3000)
 
-    # Thêm phương thức mới để chọn hoặc bỏ chọn tất cả video trong bảng
+    # New method to select or deselect all videos in the table
     def toggle_select_all(self):
-        """Chọn hoặc bỏ chọn tất cả video trong bảng"""
+        """Select or deselect all videos in the table"""
         self.all_selected = not self.all_selected
         
-        # Cập nhật nhãn của nút dựa trên trạng thái mới
+        # Update button label based on new state
         if self.all_selected:
             self.select_toggle_btn.setText(self.tr_("BUTTON_UNSELECT_ALL"))
         else:
             self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
             
-        # Tạm ngắt kết nối signal để tránh gọi checkbox_state_changed nhiều lần
+        # Temporarily disconnect signals to avoid calling checkbox_state_changed multiple times
         checkboxes = []
         
-        # Thu thập tất cả checkbox và ngắt kết nối signal
+        # Collect all checkboxes and disconnect signals
         for row in range(self.video_table.rowCount()):
             checkbox_cell = self.video_table.cellWidget(row, 0)
             if checkbox_cell:
                 checkbox = checkbox_cell.findChild(QCheckBox)
                 if checkbox:
-                    # Ngắt kết nối signal tạm thời
+                    # Temporarily disconnect signal
                     checkbox.stateChanged.disconnect(self.checkbox_state_changed)
                     checkboxes.append(checkbox)
         
-        # Cập nhật trạng thái checkbox
+        # Update checkbox states
         for checkbox in checkboxes:
             checkbox.setChecked(self.all_selected)
         
-        # Kết nối lại signal sau khi đã cập nhật xong
+        # Reconnect signals after updates
         for checkbox in checkboxes:
             checkbox.stateChanged.connect(self.checkbox_state_changed)
         
-        # Hiển thị thông báo trên status bar
+        # Display notification on status bar
         if self.parent and self.parent.status_bar:
             if self.all_selected:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_ALL_VIDEOS_SELECTED"))
             else:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_ALL_VIDEOS_UNSELECTED")) 
 
-    # Thêm phương thức để cập nhật trạng thái nút Toggle Select All dựa trên checkbox
+    # Add method to update Toggle Select All button state based on checkboxes
     def update_select_toggle_button(self):
-        """Cập nhật trạng thái nút chọn tất cả dựa trên trạng thái checkbox trong bảng"""
-        # Kiểm tra xem có video nào trong bảng không
+        """Update Toggle Select All button state based on checkboxes in the table"""
+        # Check if there are any videos in the table
         if self.video_table.rowCount() == 0:
             return
             
-        # Kiểm tra trạng thái của tất cả checkbox
+        # Check the state of all checkboxes
         all_checked = True
         any_checked = False
         
@@ -2214,7 +2202,7 @@ class VideoInfoTab(QWidget):
                     else:
                         all_checked = False
         
-        # Cập nhật trạng thái của nút và biến all_selected
+        # Update button state and all_selected variable
         if all_checked:
             self.all_selected = True
             self.select_toggle_btn.setText(self.tr_("BUTTON_UNSELECT_ALL"))
@@ -2222,35 +2210,35 @@ class VideoInfoTab(QWidget):
             self.all_selected = False
             self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
             
-    # Phương thức xử lý sự kiện checkbox thay đổi
+    # Method to handle checkbox state change event
     def checkbox_state_changed(self):
-        """Xử lý khi trạng thái checkbox thay đổi"""
+        """Handle checkbox state change"""
         self.update_select_toggle_button()
 
     def show_full_text_tooltip(self, row, column):
-        """Hiển thị tooltip với toàn bộ nội dung khi hover vào ô"""
+        """Display tooltip with full content when hovering over a cell"""
         try:
             item = self.video_table.item(row, column)
             if item:
                 text = item.text()
                 
-                # Xử lý đặc biệt cho cột title (column 1)
+                # Special handling for title column (column 1)
                 if column == 1 and row in self.video_info_dict:
                     video_info = self.video_info_dict[row]
                     
-                    # Ưu tiên sử dụng caption nếu có (chứa đầy đủ thông tin nhất)
+                    # Prioritize caption if available (contains most complete information)
                     if hasattr(video_info, 'caption') and video_info.caption:
                         text = video_info.caption
-                    # Nếu không có caption, thử dùng original_title
+                    # If no caption, try to use original_title
                     elif hasattr(video_info, 'original_title') and video_info.original_title:
                         text = video_info.original_title
-                    # Nếu không, thì sử dụng title
+                    # If not, use title
                     elif hasattr(video_info, 'title'):
                         text = video_info.title
                         
-                # Đối với các trường khác, lấy text trực tiếp từ item
+                # For other fields, get text directly from item
                 if text:
-                    # Format tooltip text để dễ đọc hơn với line breaks
+                    # Format tooltip text for better readability with line breaks
                     formatted_text = self.format_tooltip_text(text)
                     QToolTip.showText(QCursor.pos(), formatted_text)
         except Exception as e:
@@ -2259,14 +2247,14 @@ class VideoInfoTab(QWidget):
             pass
 
     def update_button_states(self):
-        """Cập nhật trạng thái các nút dựa trên số lượng video trong bảng"""
+        """Update button states based on number of videos in the table"""
         has_videos = self.video_table.rowCount() > 0
         
-        # Vô hiệu hóa các nút khi không có video nào
+        # Disable buttons when there are no videos
         self.select_toggle_btn.setEnabled(has_videos)
         self.delete_selected_btn.setEnabled(has_videos)
         self.delete_all_btn.setEnabled(has_videos)
         self.download_btn.setEnabled(has_videos)
         
-        # Không áp dụng style vì đã được xử lý từ main_window.py
+        # Don't apply style because it's already handled from main_window.py
         print("DEBUG: update_button_states in video_info_tab - button states updated without applying style")

@@ -28,7 +28,6 @@ env/
 
 # Config files with personal paths
 config.json
-Sumerize.txt
 
 # IDE specific files
 .vscode/
@@ -186,4 +185,5 @@ test_*.py
 error_log.txt
 temp_backup/ 
 
-#Summary :
+#Tóm tắt :
+Sumerize.txt
