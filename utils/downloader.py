@@ -71,12 +71,50 @@ class TikTokDownloader(QObject):
         try:
             # First check if ffmpeg exists in PATH
             ffmpeg_path = shutil.which('ffmpeg')
+            
+            # If not found in PATH, check common installation locations
             if not ffmpeg_path:
-                return False, "FFmpeg not found in system PATH"
+                # Common locations to check on Windows
+                common_locations = [
+                    # Program Files
+                    os.path.join(os.environ.get('ProgramFiles', 'C:\\Program Files'), 'ffmpeg', 'bin', 'ffmpeg.exe'),
+                    os.path.join(os.environ.get('ProgramFiles(x86)', 'C:\\Program Files (x86)'), 'ffmpeg', 'bin', 'ffmpeg.exe'),
+                    # User directories
+                    os.path.join(os.environ.get('USERPROFILE', 'C:\\Users\\Default'), 'ffmpeg', 'bin', 'ffmpeg.exe'),
+                    # Root of C drive
+                    'C:\\ffmpeg\\bin\\ffmpeg.exe',
+                    'C:\\ffmpeg-*\\bin\\ffmpeg.exe',
+                ]
+                
+                # Add any other drive letters
+                import string
+                import glob
+                for drive in string.ascii_uppercase:
+                    pattern = f"{drive}:\\ffmpeg*\\bin\\ffmpeg.exe"
+                    matches = glob.glob(pattern)
+                    if matches:
+                        ffmpeg_path = matches[0]
+                        break
+                
+                # Direct check of common locations if glob doesn't work
+                if not ffmpeg_path:
+                    for location in common_locations:
+                        if '*' in location:
+                            # Handle wildcards with glob
+                            matches = glob.glob(location)
+                            if matches:
+                                ffmpeg_path = matches[0]
+                                break
+                        elif os.path.exists(location):
+                            ffmpeg_path = location
+                            break
+            
+            if not ffmpeg_path:
+                return False, "FFmpeg not found in system PATH or common locations"
             
             # Verify it works by running a simple command
             subprocess.run(
-                ['ffmpeg', '-version'], 
+                [ffmpeg_path, '-version'], 
                 stdout=subprocess.PIPE, 
                 stderr=subprocess.PIPE,
                 check=True
@@ -342,21 +380,6 @@ class TikTokDownloader(QObject):
         
         # Mark URL as being converted to MP3 if it's an audio request
         if is_audio_request:
-            # Check FFmpeg is installed first for MP3 requests
-            ffmpeg_installed, ffmpeg_error = self.check_ffmpeg_installed()
-            if not ffmpeg_installed:
-                error_message = "FFmpeg is not installed. Cannot convert to MP3.\n\n"
-                error_message += "Please install FFmpeg to use the MP3 download feature:\n"
-                error_message += "- Windows: Download from ffmpeg.org and add to PATH\n"
-                error_message += "- macOS: Use 'brew install ffmpeg'\n"
-                error_message += "- Linux: Use your package manager (apt, dnf, etc.)\n"
-                error_message += "\nSee README.md for detailed installation instructions."
-                
-                print(error_message)
-                self.downloading_urls.discard(url)  # Remove URL from download list
-                self.finished_signal.emit(url, False, error_message)
-                return False
-            
             self.converting_mp3_urls.add(url)
         
         # For audio requests, we'll need to convert after download
@@ -472,10 +495,57 @@ class TikTokDownloader(QObject):
                         self.finished_signal.emit(url, False, error_message)
                         return False
                     
+                    # Get the full path to ffmpeg executable
+                    ffmpeg_path = shutil.which('ffmpeg')
+                    
+                    # If not found in PATH, check common installation locations
+                    if not ffmpeg_path:
+                        # Common locations to check on Windows
+                        common_locations = [
+                            # Program Files
+                            os.path.join(os.environ.get('ProgramFiles', 'C:\\Program Files'), 'ffmpeg', 'bin', 'ffmpeg.exe'),
+                            os.path.join(os.environ.get('ProgramFiles(x86)', 'C:\\Program Files (x86)'), 'ffmpeg', 'bin', 'ffmpeg.exe'),
+                            # User directories
+                            os.path.join(os.environ.get('USERPROFILE', 'C:\\Users\\Default'), 'ffmpeg', 'bin', 'ffmpeg.exe'),
+                            # Root of C drive
+                            'C:\\ffmpeg\\bin\\ffmpeg.exe',
+                            'C:\\ffmpeg-*\\bin\\ffmpeg.exe',
+                        ]
+                        
+                        # Add any other drive letters
+                        import string
+                        import glob
+                        for drive in string.ascii_uppercase:
+                            pattern = f"{drive}:\\ffmpeg*\\bin\\ffmpeg.exe"
+                            matches = glob.glob(pattern)
+                            if matches:
+                                ffmpeg_path = matches[0]
+                                break
+                        
+                        # Direct check of common locations if glob doesn't work
+                        if not ffmpeg_path:
+                            for location in common_locations:
+                                if '*' in location:
+                                    # Handle wildcards with glob
+                                    matches = glob.glob(location)
+                                    if matches:
+                                        ffmpeg_path = matches[0]
+                                        break
+                                elif os.path.exists(location):
+                                    ffmpeg_path = location
+                                    break
+                    
+                    if not ffmpeg_path:
+                        print("Cannot find ffmpeg executable even though it was detected earlier")
+                        self.converting_mp3_urls.discard(url)  # Remove URL from conversion list
+                        self.downloading_urls.discard(url)  # Remove URL from download list
+                        self.finished_signal.emit(url, False, "FFmpeg path cannot be determined")
+                        return False
+                    
                     # Simplify process - convert directly to final destination file
                     # instead of using temporary file and renaming (to avoid rename errors)
                     command = [
-                        'ffmpeg', '-i', downloaded_file, 
+                        ffmpeg_path, '-i', downloaded_file, 
                         '-vn',  # No video
                         '-acodec', 'libmp3lame', 
                         '-q:a', '2',  # VBR quality 2 (good quality)

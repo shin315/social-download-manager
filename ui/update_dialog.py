@@ -290,16 +290,64 @@ class UpdateDialog(QDialog):
             # Get download URL for current platform
             import platform
             os_type = platform.system().lower()
+            url = None
             
-            # Construct download URL
-            version = self.update_info["remote_version"]
-            base_url = "https://github.com/shin315/social-download-manager/releases/download"
-            if os_type == "windows":
-                url = f"{base_url}/v{version}/social_download_manager_windows_v{version}.zip"
-            elif os_type == "darwin":  # macOS
-                url = f"{base_url}/v{version}/social_download_manager_mac_v{version}.zip"
-            else:  # Linux
-                url = f"{base_url}/v{version}/social_download_manager_linux_v{version}.zip"
+            # Ưu tiên sử dụng URL từ update_info nếu có
+            if self.update_info and "download_url" in self.update_info:
+                if os_type == "windows" and "windows" in self.update_info["download_url"]:
+                    url = self.update_info["download_url"]["windows"]
+                elif os_type == "darwin" and "mac" in self.update_info["download_url"]:  # macOS
+                    url = self.update_info["download_url"]["mac"]
+                elif "linux" in self.update_info["download_url"]:  # Linux
+                    url = self.update_info["download_url"]["linux"]
+            
+            # Nếu không có URL trong update_info, tạo URL dựa trên version
+            if not url:
+                version = self.update_info["remote_version"]
+                # Sử dụng URL của file ZIP đã tạo trong thư mục dist
+                if os_type == "windows":
+                    # Thử cả hai định dạng URL có thể có
+                    url = f"https://github.com/shin315/social-download-manager/releases/download/v{version}/Social_Download_Manager_{version}.zip"
+                    backup_url = f"https://github.com/shin315/social-download-manager/releases/download/{version}/Social_Download_Manager_{version}.zip"
+                elif os_type == "darwin":  # macOS
+                    url = f"https://github.com/shin315/social-download-manager/releases/download/v{version}/Social_Download_Manager_{version}_mac.zip"
+                    backup_url = f"https://github.com/shin315/social-download-manager/releases/download/{version}/Social_Download_Manager_{version}_mac.zip"
+                else:  # Linux
+                    url = f"https://github.com/shin315/social-download-manager/releases/download/v{version}/Social_Download_Manager_{version}_linux.zip"
+                    backup_url = f"https://github.com/shin315/social-download-manager/releases/download/{version}/Social_Download_Manager_{version}_linux.zip"
+                    
+                # Kiểm tra URL chính có tồn tại không
+                import requests
+                response = requests.head(url, allow_redirects=True)
+                
+                # Nếu URL chính không tồn tại, thử URL backup
+                if response.status_code != 200:
+                    print(f"Primary URL returned {response.status_code}, trying backup URL")
+                    url = backup_url
+            
+            # Hiển thị thông tin URL để debug
+            print(f"Downloading from: {url}")
+            
+            # Kiểm tra URL cuối cùng
+            import requests
+            response = requests.head(url, allow_redirects=True)
+            if response.status_code != 200:
+                error_msg = f"Không thể tìm thấy file cập nhật. URL trả về lỗi {response.status_code}.\n\n"
+                error_msg += f"URL: {url}\n\n"
+                error_msg += "Bạn có muốn mở trang GitHub Releases để tải thủ công không?"
+                
+                reply = QMessageBox.question(
+                    self,
+                    self.tr_("DIALOG_DOWNLOAD_ERROR"),
+                    error_msg,
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+                )
+                
+                if reply == QMessageBox.StandardButton.Yes:
+                    github_url = "https://github.com/shin315/social-download-manager/releases"
+                    webbrowser.open(github_url)
+                
+                return
             
             # Show status
             self.status_label.setText(self.tr_("DIALOG_DOWNLOADING"))
@@ -362,11 +410,28 @@ class UpdateDialog(QDialog):
         """Handle download error"""
         self.progress_bar.setVisible(False)
         self.status_label.setVisible(False)
-        QMessageBox.warning(
-            self,
-            self.tr_("DIALOG_ERROR"),
-            f"{self.tr_('DIALOG_DOWNLOAD_ERROR')}: {error}"
-        )
+        
+        # Thêm hướng dẫn chi tiết khi gặp lỗi HTTP 404
+        error_msg = f"{self.tr_('DIALOG_DOWNLOAD_ERROR')}: {error}"
+        
+        if "404" in error:
+            error_msg += "\n\nGặp lỗi không tìm thấy file. Bạn có muốn mở trang GitHub Releases để tải về trực tiếp không?"
+            
+            reply = QMessageBox.question(
+                self,
+                self.tr_("DIALOG_ERROR"),
+                error_msg,
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            )
+            
+            if reply == QMessageBox.StandardButton.Yes:
+                webbrowser.open("https://github.com/shin315/social-download-manager/releases")
+        else:
+            QMessageBox.warning(
+                self,
+                self.tr_("DIALOG_ERROR"),
+                error_msg
+            )
 
 
 class DownloadThread(QThread):

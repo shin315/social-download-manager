@@ -8,6 +8,7 @@ from PyQt6.QtGui import QAction, QIcon, QActionGroup, QFont, QFontDatabase, QKey
 from PyQt6.QtWidgets import QApplication
 import os
 import json
+import sys
 
 from ui.video_info_tab import VideoInfoTab
 from ui.downloaded_videos_tab import DownloadedVideosTab
@@ -804,11 +805,7 @@ class MainWindow(QMainWindow):
                 self.tr_("DIALOG_WARNING"),
                 f"{self.tr_('DIALOG_FFMPEG_MISSING')}\n\n"
                 f"{self.tr_('DIALOG_MP3_UNAVAILABLE')}\n\n"
-                f"{self.tr_('DIALOG_INSTALL_FFMPEG')}:\n"
-                f"- Windows: https://ffmpeg.org/download.html\n"
-                f"- macOS: brew install ffmpeg\n"
-                f"- Linux: sudo apt install ffmpeg\n\n"
-                f"{self.tr_('DIALOG_SEE_README')}"
+                f"▶ {self.tr_('DIALOG_SEE_README')} (README.md)"
             ))
             
             # Store FFmpeg availability status
@@ -818,9 +815,35 @@ class MainWindow(QMainWindow):
 
     def load_config(self):
         """Load configuration from config.json file"""
-        config_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
         try:
+            # First try to get application directory
+            app_dir = None
+            
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            if hasattr(sys, '_MEIPASS'):
+                app_dir = os.path.dirname(sys.executable)
+                print(f"DEBUG: Running from PyInstaller bundle. App directory: {app_dir}")
+            elif getattr(sys, 'frozen', False):
+                # Running from a PyInstaller-created executable
+                app_dir = os.path.dirname(sys.executable)
+                print(f"DEBUG: Running from frozen executable. App directory: {app_dir}")
+            else:
+                # Running in a normal Python environment
+                app_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                print(f"DEBUG: Running from normal Python. App directory: {app_dir}")
+            
+            # Make sure config is not in a read-only location
+            if app_dir and (app_dir.startswith("C:\\Program Files") or app_dir.startswith("C:\\Program Files (x86)")):
+                # Use AppData folder if app is in Program Files
+                app_dir = os.path.join(os.environ.get('APPDATA', ''), 'SocialDownloadManager')
+                os.makedirs(app_dir, exist_ok=True)
+                print(f"DEBUG: App in Program Files, using AppData: {app_dir}")
+            
+            config_file = os.path.join(app_dir, 'config.json')
+            print(f"DEBUG: Config file path: {config_file}")
+            
             if os.path.exists(config_file):
+                print(f"DEBUG: Config file exists, loading")
                 with open(config_file, 'r') as f:
                     config = json.load(f)
                     # Load output folder if available
@@ -829,24 +852,71 @@ class MainWindow(QMainWindow):
                         self.output_folder = last_folder
                         if hasattr(self, 'video_info_tab'):
                             self.video_info_tab.update_output_folder(last_folder)
+                        print(f"DEBUG: Loaded last_output_folder: {last_folder}")
+                    else:
+                        print(f"DEBUG: No valid last_output_folder in config")
+            else:
+                print(f"DEBUG: Config file does not exist")
         except Exception as e:
             print(f"Error loading configuration: {e}")
 
     def save_config(self, key, value):
         """Save configuration to config.json file"""
-        config_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
         try:
+            # First try to get application directory
+            app_dir = None
+            
+            # PyInstaller creates a temp folder and stores path in _MEIPASS
+            if hasattr(sys, '_MEIPASS'):
+                app_dir = os.path.dirname(sys.executable)
+                print(f"DEBUG: Running from PyInstaller bundle. App directory: {app_dir}")
+            elif getattr(sys, 'frozen', False):
+                # Running from a PyInstaller-created executable
+                app_dir = os.path.dirname(sys.executable)
+                print(f"DEBUG: Running from frozen executable. App directory: {app_dir}")
+            else:
+                # Running in a normal Python environment
+                app_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+                print(f"DEBUG: Running from normal Python. App directory: {app_dir}")
+            
+            # Make sure config is not in a read-only location
+            if app_dir and (app_dir.startswith("C:\\Program Files") or app_dir.startswith("C:\\Program Files (x86)")):
+                # Use AppData folder if app is in Program Files
+                app_dir = os.path.join(os.environ.get('APPDATA', ''), 'SocialDownloadManager')
+                os.makedirs(app_dir, exist_ok=True)
+                print(f"DEBUG: App in Program Files, using AppData: {app_dir}")
+            
+            config_file = os.path.join(app_dir, 'config.json')
+            print(f"DEBUG: Config file path for saving: {config_file}")
+            
             # Create or load existing config
             config = {}
             if os.path.exists(config_file):
-                with open(config_file, 'r') as f:
-                    config = json.load(f)
+                try:
+                    with open(config_file, 'r') as f:
+                        config = json.load(f)
+                    print(f"DEBUG: Loaded existing config")
+                except Exception as e:
+                    print(f"DEBUG: Error loading existing config: {e}")
             
             # Update config
             config[key] = value
+            print(f"DEBUG: Updating config: {key}={value}")
             
-            # Save config
-            with open(config_file, 'w') as f:
-                json.dump(config, f)
+            # Write to a temp file first and then rename
+            temp_file = config_file + '.tmp'
+            try:
+                with open(temp_file, 'w') as f:
+                    json.dump(config, f)
+                
+                # Use os.replace for atomic operation
+                os.replace(temp_file, config_file)
+                print(f"DEBUG: Config saved successfully")
+            except Exception as e:
+                print(f"DEBUG: Error writing config: {e}")
+                # Try direct save if temp save failed
+                with open(config_file, 'w') as f:
+                    json.dump(config, f)
+                print(f"DEBUG: Fallback direct save completed")
         except Exception as e:
             print(f"Error saving configuration: {e}") 

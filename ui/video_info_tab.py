@@ -574,7 +574,9 @@ class VideoInfoTab(QWidget):
                         QMessageBox.warning(
                             self,
                             self.tr_("DIALOG_WARNING"),
-                            f"{self.tr_('DIALOG_FFMPEG_MISSING')}\n\n{self.tr_('DIALOG_MP3_UNAVAILABLE')}"
+                            f"{self.tr_('DIALOG_FFMPEG_MISSING')}\n\n"
+                            f"{self.tr_('DIALOG_MP3_UNAVAILABLE')}\n\n"
+                            f"▶ {self.tr_('DIALOG_SEE_README')} (README.md)"
                         )
                         
                         # Show status message
