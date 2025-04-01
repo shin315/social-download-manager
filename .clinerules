@@ -1,0 +1,93 @@
+# .clinerules - Social Download Manager
+
+## Quy Tắc Phát Triển
+
+### Quy Ước Đặt Tên
+- Class names: PascalCase (ví dụ: `DownloadManager`, `VideoInfoTab`)
+- Function/method names: snake_case (ví dụ: `download_video`, `check_ffmpeg`)
+- Variables: snake_case (ví dụ: `video_url`, `download_path`)
+- Constants: UPPER_SNAKE_CASE (ví dụ: `DEFAULT_QUALITY`, `MAX_DOWNLOADS`)
+- File names: snake_case.py (ví dụ: `download_thread.py`, `db_manager.py`)
+- UI elements nên có prefix để chỉ loại (ví dụ: `btn_download`, `lbl_status`, `combo_quality`)
+
+### Cấu Trúc Code
+- Mỗi file Python nên có docstring đầu file mô tả mục đích
+- Các public function cần có docstring mô tả chức năng, tham số và giá trị trả về
+- Phương thức init của class nên đặt ở đầu class, sau là các public method, cuối cùng là private method
+- Dùng type hints khi thích hợp để làm rõ kiểu dữ liệu
+- Limit line length to 100 characters
+
+### Quy Tắc PyQt
+- Signal-slot connections nên được định nghĩa trong `__init__` hoặc setup method riêng
+- Widget elements nên được tạo trong phương thức `setup_ui()` riêng biệt
+- Style sheets nên được tách thành các file riêng hoặc các biến constants
+- Các stylesheet phức tạp nên được lưu trong file .qss riêng
+
+### Database
+- Truy vấn database phải sử dụng prepared statements để tránh SQL injection
+- Tất cả truy cập database phải thông qua `db_manager.py`
+- Mỗi truy vấn phải có try-except để xử lý lỗi database
+- Tránh sử dụng raw SQL trong các file khác ngoài `db_manager.py`
+
+### Ngôn Ngữ
+- Tất cả chuỗi hiển thị cho người dùng phải được định nghĩa trong file ngôn ngữ
+- Không hardcode văn bản tiếng Anh hoặc tiếng Việt trực tiếp trong mã nguồn
+- Sử dụng `language_manager.get_string()` cho tất cả văn bản hiển thị
+- Định nghĩa key ngôn ngữ theo dạng `MODULE_CONTEXT_ACTION` (ví dụ: `VIDEO_INFO_DOWNLOAD_BUTTON`)
+
+### Xử Lý Lỗi
+- Sử dụng try-except blocks cho tất cả các hoạt động có khả năng gây lỗi
+- Hiển thị thông báo lỗi rõ ràng cho người dùng qua dialog
+- Log lỗi chi tiết hơn cho nhà phát triển
+- Không bao giờ để crash ứng dụng vì exception không được xử lý
+
+### Tài Nguyên
+- Tất cả hình ảnh và icon nên được đặt trong thư mục `assets/`
+- Đặt tên tài nguyên theo dạng `purpose_size.extension` (ví dụ: `logo_32x32.png`)
+- Tài nguyên nên được truy cập qua hàm `get_resource_path()` để đảm bảo hoạt động cả trong môi trường phát triển và đóng gói
+
+### Multi-threading
+- UI updates phải được thực hiện trong main thread
+- Tải xuống và xử lý file nặng nên được thực hiện trong worker threads
+- Sử dụng QThread và signal/slot để giao tiếp giữa các threads
+- Không chặn main thread với các hoạt động chạy lâu
+
+## Lưu Ý Quan Trọng
+
+### FFmpeg Integration
+- Luôn kiểm tra sự tồn tại của FFmpeg trước khi sử dụng
+- Cung cấp hướng dẫn rõ ràng cho người dùng nếu FFmpeg không được tìm thấy
+- Sử dụng subprocess để gọi FFmpeg với xử lý lỗi đầy đủ
+- Không giả định về vị trí cài đặt của FFmpeg, luôn tìm kiếm trong nhiều vị trí phổ biến
+
+### Platform Support
+- Thiết kế với khả năng mở rộng cho nhiều nền tảng 
+- Tách biệt logic xử lý cho mỗi nền tảng
+- Sử dụng factory pattern để tạo handler cho mỗi nền tảng
+- Luôn xử lý trường hợp platform không được hỗ trợ
+
+### UI/UX Principles
+- Giao diện phải hoạt động tốt trong cả light và dark mode
+- Tất cả các action quan trọng phải có phản hồi trực quan (status updates, progress bars)
+- Các action nguy hiểm (như xóa) cần confirmation dialog
+- Tab order phải hợp lý và support keyboard navigation
+
+### Performance
+- Tránh blocking UI thread với các hoạt động nặng
+- Cache thumbnail và metadata khi có thể
+- Sử dụng lazy loading cho danh sách video dài
+- Sử dụng database index cho các trường tìm kiếm thường xuyên
+
+### Configuration
+- Luôn lưu và đọc config từ vị trí phù hợp với môi trường (development vs packaged)
+- Kiểm tra và tạo thư mục/file cấu hình nếu chưa tồn tại
+- Xử lý gracefully nếu config file bị hỏng
+- Cung cấp default values cho tất cả các settings
+
+## Quy Trình Phát Triển
+1. Các tính năng mới nên được phát triển trong nhánh riêng
+2. Luôn test trên cả môi trường Python và đóng gói exe
+3. Cập nhật version number trong cả version.txt và version.json
+4. Đảm bảo internationalization cho mọi string mới
+5. Cập nhật file README.md với tính năng mới
+6. Đảm bảo backward compatibility khi thay đổi schema database 

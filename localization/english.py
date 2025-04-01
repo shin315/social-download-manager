@@ -68,6 +68,16 @@ HEADER_DATE = "Date"
 HEADER_SAVED_FOLDER = "Saved Folder"
 HEADER_TITLE = "Title"
 
+# Filter options
+FILTER_CLEAR = "Clear Filter"
+FILTER_TODAY = "Today"
+FILTER_YESTERDAY = "Yesterday"
+FILTER_LAST_7_DAYS = "Last 7 days"
+FILTER_LAST_30_DAYS = "Last 30 days"
+FILTER_THIS_MONTH = "This month"
+FILTER_LAST_MONTH = "Last month"
+FILTER_ALL = "Clear Filter"  # Keep for backward compatibility
+
 # Downloaded Videos tab
 LABEL_SEARCH = "Search:"
 PLACEHOLDER_SEARCH = "Search downloaded videos..."

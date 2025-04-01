@@ -2,13 +2,14 @@ from PyQt6.QtWidgets import (QMainWindow, QTabWidget, QWidget, QVBoxLayout,
                              QHBoxLayout, QLabel, QLineEdit, QPushButton,
                              QTableWidget, QTableWidgetItem, QComboBox,
                              QFileDialog, QCheckBox, QHeaderView, QMessageBox,
-                             QStatusBar, QMenu, QProgressBar, QDialog)
+                             QStatusBar, QMenu, QProgressBar, QDialog, QToolTip)
 from PyQt6.QtCore import Qt, QSize, pyqtSignal, QTimer
 from PyQt6.QtGui import QAction, QIcon, QActionGroup, QFont, QFontDatabase, QKeySequence
 from PyQt6.QtWidgets import QApplication
 import os
 import json
 import sys
+from datetime import datetime
 
 from ui.video_info_tab import VideoInfoTab
 from ui.downloaded_videos_tab import DownloadedVideosTab
@@ -18,12 +19,27 @@ from localization import get_language_manager
 from utils.update_checker import UpdateChecker
 from utils.downloader import TikTokDownloader
 
+def get_resource_path(relative_path):
+    """Get absolute path to resource, works for dev and for PyInstaller"""
+    try:
+        # PyInstaller creates a temp folder and stores path in _MEIPASS
+        base_path = sys._MEIPASS
+    except Exception:
+        # In development mode, use current directory
+        if getattr(sys, 'frozen', False):
+            # If running as a bundled executable
+            base_path = os.path.dirname(sys.executable)
+        else:
+            # If running in development environment
+            base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+    
+    return os.path.join(base_path, relative_path)
 
 class MainWindow(QMainWindow):
     """Main window of the Social Download Manager application"""
     
-    # Signal emitted when language is changed
-    language_changed = pyqtSignal(str)
+    # Signal emitted when language is changed - không cần tham số
+    language_changed = pyqtSignal()
 
     def __init__(self):
         super().__init__()
@@ -39,17 +55,17 @@ class MainWindow(QMainWindow):
         self.setup_font()
         self.init_ui()
         
-        # Set dark mode as default
-        self.set_theme("dark")
+        # Load output folder, language and theme from config if available
+        self.load_config()
+        
+        # Áp dụng rõ ràng theme hiện tại sau khi đã load từ config
+        self.set_theme(self.current_theme)
         
         # Update UI based on current language
         self.update_ui_language()
         
         # Check for FFmpeg availability at startup
         self.check_ffmpeg_availability()
-        
-        # Load output folder from config if available
-        self.load_config()
 
     def setup_font(self):
         """Set up Inter font for the application"""
@@ -61,7 +77,7 @@ class MainWindow(QMainWindow):
         """Initialize user interface"""
         self.setWindowTitle("Social Download Manager")
         self.setGeometry(100, 100, 1000, 700)  # Adjust window size to be larger
-        self.setWindowIcon(QIcon("assets/logo.png"))
+        self.setWindowIcon(QIcon(get_resource_path("assets/Logo_new_32x32.png")))
         
         # Set up main layout
         main_widget = QWidget()
@@ -121,7 +137,7 @@ class MainWindow(QMainWindow):
         icon_suffix = "-outlined" if self.current_theme == "dark" else "-bw"
         
         # Action: TikTok (Current)
-        tiktok_icon = QIcon(f"assets/platforms/tiktok{icon_suffix}.png")
+        tiktok_icon = QIcon(get_resource_path(f"assets/platforms/tiktok{icon_suffix}.png"))
         tiktok_action = QAction(tiktok_icon, self.tr_("PLATFORM_TIKTOK"), self)
         tiktok_action.setCheckable(True)
         tiktok_action.setChecked(True)  # Default is TikTok
@@ -130,19 +146,19 @@ class MainWindow(QMainWindow):
         platform_menu.addSeparator()
         
         # Action: YouTube
-        youtube_icon = QIcon(f"assets/platforms/youtube{icon_suffix}.png")
+        youtube_icon = QIcon(get_resource_path(f"assets/platforms/youtube{icon_suffix}.png"))
         youtube_action = QAction(youtube_icon, self.tr_("PLATFORM_YOUTUBE"), self)
         youtube_action.triggered.connect(self.show_developing_feature)
         platform_menu.addAction(youtube_action)
         
         # Action: Instagram
-        instagram_icon = QIcon(f"assets/platforms/instagram{icon_suffix}.png")
+        instagram_icon = QIcon(get_resource_path(f"assets/platforms/instagram{icon_suffix}.png"))
         instagram_action = QAction(instagram_icon, self.tr_("PLATFORM_INSTAGRAM"), self)
         instagram_action.triggered.connect(self.show_developing_feature)
         platform_menu.addAction(instagram_action)
         
         # Action: Facebook
-        facebook_icon = QIcon(f"assets/platforms/facebook{icon_suffix}.png")
+        facebook_icon = QIcon(get_resource_path(f"assets/platforms/facebook{icon_suffix}.png"))
         facebook_action = QAction(facebook_icon, self.tr_("PLATFORM_FACEBOOK"), self)
         facebook_action.triggered.connect(self.show_developing_feature)
         platform_menu.addAction(facebook_action)
@@ -166,9 +182,16 @@ class MainWindow(QMainWindow):
         
         dark_mode_action = QAction(self.tr_("MENU_DARK_MODE"), self)
         dark_mode_action.setCheckable(True)
-        dark_mode_action.setChecked(True)  # Default is dark mode
         dark_mode_action.triggered.connect(lambda: self.set_theme("dark"))
         theme_menu.addAction(dark_mode_action)
+        
+        # Đặt checked cho theme hiện tại dựa trên self.current_theme
+        if self.current_theme == "light":
+            light_mode_action.setChecked(True)
+            dark_mode_action.setChecked(False)
+        else:  # dark theme
+            dark_mode_action.setChecked(True)
+            light_mode_action.setChecked(False)
         
         # Create action group to select only one theme
         theme_group = QActionGroup(self)
@@ -236,20 +259,49 @@ class MainWindow(QMainWindow):
             self.status_bar.showMessage(self.tr_("STATUS_FOLDER_SET").format(folder))
             
             # Save to config file
-            self.save_config('last_output_folder', folder)
+            try:
+                self.save_config('last_output_folder', folder)
+                # Log to debug file
+                log_file = get_resource_path('log.txt')
+                with open(log_file, 'a', encoding='utf-8') as log:
+                    log.write(f"[{datetime.now()}] MainWindow set_output_folder called: Saving '{folder}' to config\n")
+            except Exception as e:
+                # Log error
+                try:
+                    log_file = get_resource_path('log.txt')
+                    with open(log_file, 'a', encoding='utf-8') as log:
+                        log.write(f"[{datetime.now()}] Error saving folder from MainWindow: {str(e)}\n")
+                except:
+                    pass
 
     def set_language(self, lang_code):
-        """Change application language"""
-        if self.lang_manager.set_language(lang_code):
-            # Update UI with new language
-            self.update_ui_language()
-            
-            # Emit signal for other components to update
-            self.language_changed.emit(lang_code)
-            
-            # Display notification
-            language_name = self.lang_manager.get_current_language_name()
-            self.status_bar.showMessage(self.tr_("STATUS_LANGUAGE_CHANGED").format(language_name))
+        """Set application language"""
+        # Set language in manager
+        self.lang_manager.set_language(lang_code)
+        
+        # Notify all tabs of language change
+        self.language_changed.emit()
+        
+        # Update tab names
+        self.tab_widget.setTabText(0, self.tr_("TAB_VIDEO_INFO"))
+        self.tab_widget.setTabText(1, self.tr_("TAB_DOWNLOADED_VIDEOS"))
+        
+        # Update menu items
+        self.update_ui_language()
+        
+        # Update status bar
+        lang_name = self.tr_("LANGUAGE_NAME")
+        self.status_bar.showMessage(self.tr_("STATUS_LANGUAGE_CHANGED").format(lang_name))
+        
+        # Save language setting to config
+        self.save_config('language', lang_code)
+        # Log language change
+        try:
+            log_file = get_resource_path('log.txt')
+            with open(log_file, 'a', encoding='utf-8') as log:
+                log.write(f"[{datetime.now()}] Language changed to: {lang_code}\n")
+        except:
+            pass
 
     def update_ui_language(self):
         """Update UI with current language"""
@@ -318,30 +370,36 @@ class MainWindow(QMainWindow):
 
     def show_about(self):
         """Display information about the application"""
-        QMessageBox.about(
-            self, 
-            self.tr_("ABOUT_TITLE"),
-            f"{self.tr_('ABOUT_MESSAGE')}\n\n"
-            f"Version: 1.0.0\n"
-            f"© 2025 Shin\n\n"
-            f"Key Features:\n"
-            f"• Download TikTok videos in various formats\n"
-            f"• Manage downloaded videos with detailed information\n"
-            f"• Multi-language support (English & Vietnamese)\n"
-            f"• Dark and Light theme options\n\n"
-            f"Developer: Shin\n"
-            f"Email: shin315@gmail.com\n"
-            f"GitHub: github.com/shin315/social-download-manager"
-        )
+        try:
+            # Sử dụng AboutDialog nếu có thể import
+            from ui.about_dialog import AboutDialog
+            dialog = AboutDialog(self)
+            dialog.exec()
+        except ImportError:
+            # Fallback nếu không tìm thấy AboutDialog
+            QMessageBox.about(
+                self, 
+                self.tr_("ABOUT_TITLE"),
+                f"{self.tr_('ABOUT_MESSAGE')}\n\n"
+                f"Version: 1.0.0\n"
+                f"© 2025 Shin\n\n"
+                f"Key Features:\n"
+                f"• Download TikTok videos in various formats\n"
+                f"• Manage downloaded videos with detailed information\n"
+                f"• Multi-language support (English & Vietnamese)\n"
+                f"• Dark and Light theme options\n\n"
+                f"Developer: Shin\n"
+                f"Email: shin315@gmail.com\n"
+                f"GitHub: github.com/shin315/social-download-manager"
+            )
         
     def set_theme(self, theme):
-        """Switch between Light and Dark mode"""
-        app = QApplication.instance()
+        """Set application theme (dark/light)"""
         self.current_theme = theme
         
+        # Apply theme to all components
         if theme == "dark":
-            # Apply Dark mode stylesheet
-            app.setStyleSheet("""
+            self.setStyleSheet("""
                 QMainWindow, QWidget {
                     background-color: #2d2d2d;
                     color: #ffffff;
@@ -526,11 +584,24 @@ class MainWindow(QMainWindow):
             """)
             self.status_bar.showMessage(self.tr_("STATUS_DARK_MODE_ENABLED"))
             
+            # Force tooltips to update immediately by hiding any visible tooltip
+            QToolTip.hideText()
+            # Set application-wide tooltip style
+            QApplication.instance().setStyleSheet("""
+                QToolTip {
+                    background-color: #3d3d3d;
+                    color: #ffffff;
+                    border: 1px solid #555555;
+                    padding: 5px;
+                    border-radius: 3px;
+                }
+            """)
+            
             # Update icons to white outline version for better visibility
             self.update_platform_icons("-outlined")
         else:
             # Apply Light mode stylesheet with better contrast colors
-            app.setStyleSheet("""
+            self.setStyleSheet("""
                 QMainWindow, QWidget {
                     background-color: #f0f0f0;
                     color: #333333;
@@ -710,6 +781,19 @@ class MainWindow(QMainWindow):
             """)
             self.status_bar.showMessage(self.tr_("STATUS_LIGHT_MODE_ENABLED"))
             
+            # Force tooltips to update immediately by hiding any visible tooltip
+            QToolTip.hideText()
+            # Set application-wide tooltip style
+            QApplication.instance().setStyleSheet("""
+                QToolTip {
+                    background-color: #f5f5f5;
+                    color: #333333;
+                    border: 1px solid #cccccc;
+                    padding: 5px;
+                    border-radius: 3px;
+                }
+            """)
+            
             # Update icons to black version
             self.update_platform_icons("-bw")
             
@@ -732,13 +816,23 @@ class MainWindow(QMainWindow):
             if hasattr(self, 'donate_tab'):
                 self.donate_tab.apply_theme_colors(self.current_theme)
 
+        # Save theme setting to config
+        self.save_config('theme', theme)
+        # Log theme change
+        try:
+            log_file = get_resource_path('log.txt')
+            with open(log_file, 'a', encoding='utf-8') as log:
+                log.write(f"[{datetime.now()}] Theme changed to: {theme}\n")
+        except:
+            pass
+
     def update_platform_icons(self, suffix):
         """Update icons for platform menus based on theme"""
         if not hasattr(self, 'platform_actions'):
             return
             
         for platform, action in self.platform_actions.items():
-            icon_path = f"assets/platforms/{platform}{suffix}.png"
+            icon_path = get_resource_path(f"assets/platforms/{platform}{suffix}.png")
             action.setIcon(QIcon(icon_path))
 
     def show_donate_tab(self):
@@ -816,107 +910,191 @@ class MainWindow(QMainWindow):
     def load_config(self):
         """Load configuration from config.json file"""
         try:
-            # First try to get application directory
-            app_dir = None
-            
-            # PyInstaller creates a temp folder and stores path in _MEIPASS
-            if hasattr(sys, '_MEIPASS'):
+            # Get application base directory (where the exe is)
+            if getattr(sys, 'frozen', False):
+                # If we're running as a PyInstaller bundle
                 app_dir = os.path.dirname(sys.executable)
-                print(f"DEBUG: Running from PyInstaller bundle. App directory: {app_dir}")
-            elif getattr(sys, 'frozen', False):
-                # Running from a PyInstaller-created executable
-                app_dir = os.path.dirname(sys.executable)
-                print(f"DEBUG: Running from frozen executable. App directory: {app_dir}")
             else:
-                # Running in a normal Python environment
+                # If we're running in a normal Python environment
                 app_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                print(f"DEBUG: Running from normal Python. App directory: {app_dir}")
-            
-            # Make sure config is not in a read-only location
-            if app_dir and (app_dir.startswith("C:\\Program Files") or app_dir.startswith("C:\\Program Files (x86)")):
-                # Use AppData folder if app is in Program Files
-                app_dir = os.path.join(os.environ.get('APPDATA', ''), 'SocialDownloadManager')
-                os.makedirs(app_dir, exist_ok=True)
-                print(f"DEBUG: App in Program Files, using AppData: {app_dir}")
             
             config_file = os.path.join(app_dir, 'config.json')
-            print(f"DEBUG: Config file path: {config_file}")
+            log_file = os.path.join(app_dir, 'log.txt')
             
-            if os.path.exists(config_file):
-                print(f"DEBUG: Config file exists, loading")
-                with open(config_file, 'r') as f:
-                    config = json.load(f)
-                    # Load output folder if available
-                    last_folder = config.get('last_output_folder', '')
-                    if last_folder and os.path.exists(last_folder):
-                        self.output_folder = last_folder
-                        if hasattr(self, 'video_info_tab'):
-                            self.video_info_tab.update_output_folder(last_folder)
-                        print(f"DEBUG: Loaded last_output_folder: {last_folder}")
-                    else:
-                        print(f"DEBUG: No valid last_output_folder in config")
-            else:
-                print(f"DEBUG: Config file does not exist")
+            with open(log_file, 'a', encoding='utf-8') as log:
+                log.write(f"[{datetime.now()}] Loading config from: {config_file}\n")
+                log.write(f"[{datetime.now()}] App directory: {app_dir}\n")
+                log.write(f"[{datetime.now()}] Executable path: {sys.executable if getattr(sys, 'frozen', False) else 'Not running as exe'}\n")
+                
+                if os.path.exists(config_file):
+                    log.write(f"[{datetime.now()}] Config file exists, reading content\n")
+                    try:
+                        with open(config_file, 'r') as f:
+                            config_content = f.read()
+                            log.write(f"[{datetime.now()}] Config content: {config_content}\n")
+                            
+                            if config_content.strip():  # Check if not empty
+                                config = json.loads(config_content)
+                                
+                                # Load output folder if available
+                                last_folder = config.get('last_output_folder', '')
+                                log.write(f"[{datetime.now()}] Read last_output_folder from config: '{last_folder}'\n")
+                                
+                                if last_folder and os.path.exists(last_folder):
+                                    log.write(f"[{datetime.now()}] Setting output_folder to: {last_folder}\n")
+                                    self.output_folder = last_folder
+                                    if hasattr(self, 'video_info_tab'):
+                                        self.video_info_tab.update_output_folder(last_folder)
+                                else:
+                                    log.write(f"[{datetime.now()}] Output folder doesn't exist or is empty: '{last_folder}'\n")
+                                
+                                # Load language setting
+                                language = config.get('language', '')
+                                if language:
+                                    log.write(f"[{datetime.now()}] Setting language to: {language}\n")
+                                    self.lang_manager.set_language(language)
+                                    # No need to emit signal here because it's during initialization
+                                    # Update tab names and menu after language is set
+                                    self.tab_widget.setTabText(0, self.tr_("TAB_VIDEO_INFO"))
+                                    self.tab_widget.setTabText(1, self.tr_("TAB_DOWNLOADED_VIDEOS"))
+                                    self.update_ui_language()
+                                
+                                # Load theme setting
+                                theme = config.get('theme', '')
+                                if theme in ['dark', 'light']:
+                                    log.write(f"[{datetime.now()}] Setting theme to: {theme}\n")
+                                    self.current_theme = theme
+                                    # Không áp dụng theme ở đây nữa, sẽ được áp dụng sau khi load_config() 
+                                    # để đảm bảo stylesheet được áp dụng đầy đủ
+                                    # self.set_theme(theme)  # <-- Bỏ dòng này
+                            else:
+                                log.write(f"[{datetime.now()}] Config file is empty\n")
+                    except Exception as e:
+                        log.write(f"[{datetime.now()}] Error parsing config file: {str(e)}\n")
+                else:
+                    log.write(f"[{datetime.now()}] Config file doesn't exist\n")
+                    
+                    # Try to create the config file with empty content
+                    try:
+                        with open(config_file, 'w') as f:
+                            f.write("{}")
+                        log.write(f"[{datetime.now()}] Created empty config file\n")
+                    except Exception as e:
+                        log.write(f"[{datetime.now()}] Error creating empty config file: {str(e)}\n")
         except Exception as e:
+            # Write to log file
+            try:
+                log_file = get_resource_path('log.txt')
+                with open(log_file, 'a', encoding='utf-8') as log:
+                    log.write(f"[{datetime.now()}] Error loading configuration: {str(e)}\n")
+            except:
+                pass
             print(f"Error loading configuration: {e}")
 
     def save_config(self, key, value):
         """Save configuration to config.json file"""
         try:
-            # First try to get application directory
-            app_dir = None
-            
-            # PyInstaller creates a temp folder and stores path in _MEIPASS
-            if hasattr(sys, '_MEIPASS'):
+            # Get application base directory (where the exe is)
+            if getattr(sys, 'frozen', False):
+                # If we're running as a PyInstaller bundle
                 app_dir = os.path.dirname(sys.executable)
-                print(f"DEBUG: Running from PyInstaller bundle. App directory: {app_dir}")
-            elif getattr(sys, 'frozen', False):
-                # Running from a PyInstaller-created executable
-                app_dir = os.path.dirname(sys.executable)
-                print(f"DEBUG: Running from frozen executable. App directory: {app_dir}")
             else:
-                # Running in a normal Python environment
+                # If we're running in a normal Python environment
                 app_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
-                print(f"DEBUG: Running from normal Python. App directory: {app_dir}")
-            
-            # Make sure config is not in a read-only location
-            if app_dir and (app_dir.startswith("C:\\Program Files") or app_dir.startswith("C:\\Program Files (x86)")):
-                # Use AppData folder if app is in Program Files
-                app_dir = os.path.join(os.environ.get('APPDATA', ''), 'SocialDownloadManager')
-                os.makedirs(app_dir, exist_ok=True)
-                print(f"DEBUG: App in Program Files, using AppData: {app_dir}")
             
             config_file = os.path.join(app_dir, 'config.json')
-            print(f"DEBUG: Config file path for saving: {config_file}")
+            log_file = os.path.join(app_dir, 'log.txt')
             
-            # Create or load existing config
-            config = {}
-            if os.path.exists(config_file):
-                try:
-                    with open(config_file, 'r') as f:
-                        config = json.load(f)
-                    print(f"DEBUG: Loaded existing config")
-                except Exception as e:
-                    print(f"DEBUG: Error loading existing config: {e}")
+            with open(log_file, 'a', encoding='utf-8') as log:
+                log.write(f"[{datetime.now()}] Saving config to: {config_file}\n")
+                log.write(f"[{datetime.now()}] App directory: {app_dir}\n")
+                log.write(f"[{datetime.now()}] Key: {key}, Value: {value}\n")
             
-            # Update config
-            config[key] = value
-            print(f"DEBUG: Updating config: {key}={value}")
-            
-            # Write to a temp file first and then rename
-            temp_file = config_file + '.tmp'
-            try:
-                with open(temp_file, 'w') as f:
-                    json.dump(config, f)
+                # Create or load existing config
+                config = {}
+                if os.path.exists(config_file):
+                    log.write(f"[{datetime.now()}] Config file exists, reading existing content\n")
+                    try:
+                        with open(config_file, 'r') as f:
+                            content = f.read().strip()
+                            if content:  # Only try to parse if not empty
+                                config = json.loads(content)
+                                log.write(f"[{datetime.now()}] Existing config: {config}\n")
+                            else:
+                                log.write(f"[{datetime.now()}] Config file exists but is empty\n")
+                    except Exception as e:
+                        log.write(f"[{datetime.now()}] Error reading existing config: {str(e)}\n")
+                else:
+                    log.write(f"[{datetime.now()}] Config file doesn't exist, will create new\n")
                 
-                # Use os.replace for atomic operation
-                os.replace(temp_file, config_file)
-                print(f"DEBUG: Config saved successfully")
-            except Exception as e:
-                print(f"DEBUG: Error writing config: {e}")
-                # Try direct save if temp save failed
-                with open(config_file, 'w') as f:
-                    json.dump(config, f)
-                print(f"DEBUG: Fallback direct save completed")
+                # Update config
+                config[key] = value
+                log.write(f"[{datetime.now()}] Updated config: {config}\n")
+                
+                # Save config
+                try:
+                    with open(config_file, 'w') as f:
+                        json.dump(config, f)
+                    log.write(f"[{datetime.now()}] Successfully saved config\n")
+                    
+                    # Verify config was written correctly
+                    with open(config_file, 'r') as f:
+                        content = f.read()
+                        log.write(f"[{datetime.now()}] Verification - Config content after save: {content}\n")
+                except Exception as e:
+                    log.write(f"[{datetime.now()}] Error saving config: {str(e)}\n")
+                    # Try to check if file is write-protected
+                    if os.path.exists(config_file):
+                        try:
+                            import stat
+                            file_stats = os.stat(config_file)
+                            is_readonly = not (file_stats.st_mode & stat.S_IWRITE)
+                            log.write(f"[{datetime.now()}] Config file read-only status: {is_readonly}\n")
+                        except Exception as stat_error:
+                            log.write(f"[{datetime.now()}] Error checking file permissions: {str(stat_error)}\n")
         except Exception as e:
+            # Write to log file
+            try:
+                log_file = get_resource_path('log.txt')
+                with open(log_file, 'a', encoding='utf-8') as log:
+                    log.write(f"[{datetime.now()}] Error in save_config: {str(e)}\n")
+            except:
+                pass
             print(f"Error saving configuration: {e}") 
+
+    def setup_tabs(self):
+        """Set up tabs in the main window"""
+        # Create tabs container
+        self.tabs = QTabWidget()
+        self.tabs.setObjectName("tabs")
+        
+        # Create tabs
+        self.video_info_tab = VideoInfoTab(self)
+        self.downloaded_videos_tab = DownloadedVideosTab(self)
+        
+        # Add custom method to handle tab changes and ensure no sort indicators
+        self.tabs.currentChanged.connect(self.on_tab_changed)
+        
+        # Add tabs to container
+        self.tabs.addTab(self.video_info_tab, self.tr_("TAB_VIDEO_INFO"))
+        self.tabs.addTab(self.downloaded_videos_tab, self.tr_("TAB_DOWNLOADS"))
+        
+        # Set tab layout properties
+        self.tabs.setTabPosition(QTabWidget.TabPosition.North)
+        self.tabs.setDocumentMode(True)
+        
+        # Set tabs as central widget
+        self.setCentralWidget(self.tabs)
+    
+    # Thêm phương thức mới để xử lý khi chuyển tab
+    def on_tab_changed(self, tab_index):
+        """Handle tab change event"""
+        # Ensure no sort indicators are shown in any tables
+        if tab_index == 0:  # Video Info tab
+            if hasattr(self.video_info_tab, 'video_table'):
+                self.video_info_tab.video_table.horizontalHeader().setSortIndicatorShown(False)
+                self.video_info_tab.video_table.setSortingEnabled(False)
+        elif tab_index == 1:  # Downloaded Videos tab
+            if hasattr(self.downloaded_videos_tab, 'downloads_table'):
+                self.downloaded_videos_tab.downloads_table.horizontalHeader().setSortIndicatorShown(False)
+                self.downloaded_videos_tab.downloads_table.setSortingEnabled(False)

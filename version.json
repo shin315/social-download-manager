@@ -1,10 +1,10 @@
 {
-  "version": "1.0",
-  "release_notes": "- Fixed bug with TikTok downloads\n- Added new interface features\n- Improved performance\n- Added multiple language support",
-  "release_date": "2025-03-28",
+  "version": "1.2",
+  "release_notes": "- Fixed bug with TikTok downloads\n- Fixed sorting issues in Downloaded Videos tab\n- Optimized column sizes for Vietnamese language\n- Fixed command prompt flashing when opening files\n- Improved user experience for delete operations",
+  "release_date": "2024-04-01",
   "download_url": {
-    "windows": "https://github.com/shin315/social-download-manager/releases/download/v1.1.0/Social_Download_Manager_1.1.0.zip",
-    "mac": "https://github.com/shin315/social-download-manager/releases/download/v1.1.0/Social_Download_Manager_1.1.0_mac.zip",
-    "linux": "https://github.com/shin315/social-download-manager/releases/download/v1.1.0/Social_Download_Manager_1.1.0_linux.zip"
+    "windows": "https://github.com/shin315/social-download-manager/releases/download/v1.2.0/Social_Download_Manager_1.2.0.zip",
+    "mac": "https://github.com/shin315/social-download-manager/releases/download/v1.2.0/Social_Download_Manager_1.2.0_mac.zip",
+    "linux": "https://github.com/shin315/social-download-manager/releases/download/v1.2.0/Social_Download_Manager_1.2.0_linux.zip"
   }
 } 

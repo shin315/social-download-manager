@@ -15,6 +15,8 @@ import requests
 import shutil  # For file operations
 import re
 from PyQt6.QtWidgets import QToolTip
+import sys
+import subprocess  # Added import for subprocess
 
 # Path to configuration file
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
@@ -334,6 +336,11 @@ class VideoInfoTab(QWidget):
         # Set up headers
         self.update_table_headers()
         
+        # Bỏ in đậm cho header để tiết kiệm không gian
+        header_font = self.video_table.horizontalHeader().font()
+        header_font.setBold(False)
+        self.video_table.horizontalHeader().setFont(header_font)
+        
         # Set table properties
         self.video_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         
@@ -347,21 +354,21 @@ class VideoInfoTab(QWidget):
         self.video_table.setColumnWidth(2, 100)
         
         self.video_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)  # Quality
-        self.video_table.setColumnWidth(3, 80)
+        self.video_table.setColumnWidth(3, 85)  # Giảm từ 80 xuống 85 để vừa đủ cho "Chất Lượng"
         
         self.video_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)  # Format
-        self.video_table.setColumnWidth(4, 100)
+        self.video_table.setColumnWidth(4, 75)  # Giảm từ 100 xuống 75 để hiển thị đủ "Định Dạng"
         
         self.video_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)  # Duration
         self.video_table.setColumnWidth(5, 90)
         
         self.video_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Size
-        self.video_table.setColumnWidth(6, 80)
+        self.video_table.setColumnWidth(6, 75)  # Giảm từ 80 xuống 75 để hiển thị đủ "Kích Thước"
         
         # Removed Caption column (index 7)
         
         self.video_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Stretch)  # Hashtags 
-        self.video_table.setColumnWidth(7, 180)
+        self.video_table.setColumnWidth(7, 150)  # Giảm từ 180 xuống 150
         
         # Set initial row count
         self.video_table.setRowCount(0)
@@ -383,11 +390,25 @@ class VideoInfoTab(QWidget):
     def update_output_folder(self, folder):
         """Update output folder path"""
         self.output_folder_display.setText(folder)
-        # Save new path to configuration
-        self.save_last_output_folder(folder)
         
         # Update output directory for downloader
         self.downloader.set_output_dir(folder)
+        
+        # Save through parent MainWindow instead of directly
+        if hasattr(self, 'parent') and hasattr(self.parent, 'save_config'):
+            self.parent.save_config('last_output_folder', folder)
+            
+            # Log to debug file
+            try:
+                log_file = os.path.join(os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else 
+                                      os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'log.txt')
+                with open(log_file, 'a', encoding='utf-8') as log:
+                    log.write(f"[{datetime.now()}] Video_info_tab update_output_folder called: Saving '{folder}' to config via parent\n")
+            except:
+                pass
+        else:
+            # Fallback to old method if parent not available
+            self.save_last_output_folder(folder)
 
     def choose_output_folder(self):
         """Choose output folder"""
@@ -401,37 +422,127 @@ class VideoInfoTab(QWidget):
             if self.parent:
                 self.parent.output_folder = folder
                 self.parent.status_bar.showMessage(self.tr_("STATUS_FOLDER_SET").format(folder))
+                
+                # Log to debug file that folder was chosen
+                try:
+                    log_file = os.path.join(os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else 
+                                          os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'log.txt')
+                    with open(log_file, 'a', encoding='utf-8') as log:
+                        log.write(f"[{datetime.now()}] choose_output_folder called: Selected folder '{folder}'\n")
+                except:
+                    pass
 
     def load_last_output_folder(self):
         """Load last output folder path from configuration file"""
+        # Try to load from parent first (preferred method)
+        if hasattr(self, 'parent') and hasattr(self.parent, 'output_folder') and self.parent.output_folder:
+            self.output_folder_display.setText(self.parent.output_folder)
+            self.downloader.set_output_dir(self.parent.output_folder)
+            
+            # Log success loading from parent
+            try:
+                log_file = os.path.join(os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else 
+                                      os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'log.txt')
+                with open(log_file, 'a', encoding='utf-8') as log:
+                    log.write(f"[{datetime.now()}] load_last_output_folder: Loaded '{self.parent.output_folder}' from parent\n")
+            except:
+                pass
+            return
+            
+        # Fallback method (directly from config file - only used if no parent)
         try:
-            if os.path.exists(CONFIG_FILE):
-                with open(CONFIG_FILE, 'r') as f:
+            # Use correct config path for both exe and dev environment
+            if getattr(sys, 'frozen', False):
+                # If running as exe
+                config_file = os.path.join(os.path.dirname(sys.executable), 'config.json')
+            else:
+                # If running in dev mode
+                config_file = CONFIG_FILE
+                
+            if os.path.exists(config_file):
+                with open(config_file, 'r') as f:
                     config = json.load(f)
                     last_folder = config.get('last_output_folder', '')
                     if last_folder and os.path.exists(last_folder):
-                        self.update_output_folder(last_folder)
+                        self.output_folder_display.setText(last_folder)
+                        self.downloader.set_output_dir(last_folder)
                         if self.parent:
                             self.parent.output_folder = last_folder
+                            
+                        # Log success loading from file
+                        try:
+                            log_file = os.path.join(os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else 
+                                                  os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'log.txt')
+                            with open(log_file, 'a', encoding='utf-8') as log:
+                                log.write(f"[{datetime.now()}] load_last_output_folder: Loaded '{last_folder}' from config file\n")
+                        except:
+                            pass
         except Exception as e:
+            # Log error
+            try:
+                log_file = os.path.join(os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else 
+                                      os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'log.txt')
+                with open(log_file, 'a', encoding='utf-8') as log:
+                    log.write(f"[{datetime.now()}] Error loading last output folder: {str(e)}\n")
+            except:
+                pass
             print(f"Error loading last output folder: {e}")
 
     def save_last_output_folder(self, folder):
         """Save last output folder path to configuration file"""
         try:
+            # Use correct config path for both exe and dev environment
+            if getattr(sys, 'frozen', False):
+                # If running as exe
+                config_file = os.path.join(os.path.dirname(sys.executable), 'config.json')
+            else:
+                # If running in dev mode
+                config_file = CONFIG_FILE
+                
+            # Log which file we're saving to
+            try:
+                log_file = os.path.join(os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else 
+                                      os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'log.txt')
+                with open(log_file, 'a', encoding='utf-8') as log:
+                    log.write(f"[{datetime.now()}] save_last_output_folder: Saving '{folder}' to '{config_file}'\n")
+            except:
+                pass
+            
             # Create config file if it doesn't exist
             config = {}
-            if os.path.exists(CONFIG_FILE):
-                with open(CONFIG_FILE, 'r') as f:
-                    config = json.load(f)
+            if os.path.exists(config_file):
+                with open(config_file, 'r') as f:
+                    content = f.read().strip()
+                    if content:  # Only try to parse if not empty
+                        config = json.loads(content)
             
             # Update output folder
             config['last_output_folder'] = folder
             
             # Save configuration
-            with open(CONFIG_FILE, 'w') as f:
+            with open(config_file, 'w') as f:
                 json.dump(config, f)
+                
+            # Verify the file was written correctly
+            with open(config_file, 'r') as f:
+                content = f.read().strip()
+                if content:
+                    try:
+                        log_file = os.path.join(os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else 
+                                              os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'log.txt')
+                        with open(log_file, 'a', encoding='utf-8') as log:
+                            log.write(f"[{datetime.now()}] save_last_output_folder verification: '{content}'\n")
+                    except:
+                        pass
         except Exception as e:
+            # Log error
+            try:
+                log_file = os.path.join(os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else 
+                                      os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'log.txt')
+                with open(log_file, 'a', encoding='utf-8') as log:
+                    log.write(f"[{datetime.now()}] Error saving last output folder: {str(e)}\n")
+            except:
+                pass
             print(f"Error saving last output folder: {e}")
 
     def get_video_info(self):
@@ -1799,7 +1910,13 @@ class VideoInfoTab(QWidget):
         try:
             if os.path.exists(folder_path):
                 if os.name == 'nt':  # Windows
-                    os.startfile(folder_path)
+                    # Use subprocess.Popen instead of os.startfile to avoid showing CMD window
+                    import subprocess
+                    # Ensure proper Windows path format
+                    folder_path = folder_path.replace('/', '\\')
+                    # Create a new process with CREATE_NO_WINDOW flag to prevent CMD window from showing
+                    subprocess.Popen(['explorer', folder_path], shell=False,
+                                    creationflags=subprocess.CREATE_NO_WINDOW)
                 elif os.name == 'posix':  # macOS, Linux
                     import subprocess
                     subprocess.Popen(['xdg-open', folder_path])
@@ -2277,3 +2394,25 @@ class VideoInfoTab(QWidget):
         
         # Don't apply style because it's already handled from main_window.py
         print("DEBUG: update_button_states in video_info_tab - button states updated without applying style")
+
+    def set_output_folder(self):
+        """Set output folder"""
+        # Use current folder as starting point if available
+        start_folder = self.output_folder_display.text() if self.output_folder_display.text() else ""
+        
+        folder = QFileDialog.getExistingDirectory(
+            self, self.tr_("MENU_CHOOSE_FOLDER"), start_folder)
+        if folder:
+            self.update_output_folder(folder)
+            # Save to config file through parent
+            if hasattr(self, 'parent') and hasattr(self.parent, 'save_config'):
+                self.parent.save_config('last_output_folder', folder)
+                
+                # Log to debug file
+                try:
+                    log_file = os.path.join(os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else 
+                                          os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'log.txt')
+                    with open(log_file, 'a', encoding='utf-8') as log:
+                        log.write(f"[{datetime.now()}] Video_info_tab set_output_folder called: Saving '{folder}' to config\n")
+                except:
+                    pass

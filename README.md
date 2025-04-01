@@ -1,6 +1,6 @@
 # Social Download Manager
 
-A powerful tool for downloading videos from various social media platforms without watermarks.
+A powerful tool for downloading TikTok videos without watermarks. Current version: 1.2.0
 
 ## Features
 
@@ -9,8 +9,19 @@ A powerful tool for downloading videos from various social media platforms witho
 - Batch download support
 - Download history management
 - Video quality selection
+- Preview downloaded videos within the app
 - Copy video information (title, creator, hashtags)
 - Download audio only (MP3 format)
+- Light/dark mode interface
+- Open file location without command prompt flashing
+
+## What's New (v1.2.0)
+
+- Optimized column widths for better multi-language display (especially Vietnamese)
+- Fixed command prompt flashing when opening file locations
+- Unchecked "Delete from disk" by default when deleting videos to prevent accidental deletion
+- Improved sorting in "Downloaded Videos" tab
+- Auto-sort videos by download date
 
 ## Requirements
 
@@ -89,8 +100,8 @@ Configuration options:
 
 ## Usage
 
-1. Copy TikTok video URL(s)
-2. Paste URL(s) into the application
+1. Copy TikTok video URL
+2. Paste URL into the application
 3. Select desired video quality
 4. Click "Download" to start downloading
 5. View download history in the "Downloaded Videos" tab
@@ -102,68 +113,31 @@ To download audio only in MP3 format:
 3. Click "Download"
 4. The application will download the video and automatically convert it to MP3 format using FFmpeg
 
-## Development Notes
+## Packaging the Application
 
-### Temporary Files
-The application generates several temporary files and directories during operation:
-- `__pycache__/` directories and `.pyc` files - Python bytecode cache
-- `.venv/` - Virtual environment (should not be committed to repository)
+To create a standalone executable file, we provide a build script that automates the PyInstaller process.
 
-These files are excluded from the Git repository via `.gitignore`.
+### Requirements
+- Python 3.7+
+- PyInstaller (will be automatically installed if missing)
 
-## Contributing
+### Steps to Package
+1. Navigate to the project directory
+2. Run the build script:
+   ```
+   python build.py
+   ```
+3. The script will:
+   - Create or update the PyInstaller spec file
+   - Package all assets and localization files correctly
+   - Build the standalone executable file
+   - Open the dist folder containing the final executable
 
-Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
-
-## License
-
-[MIT](https://choosealicense.com/licenses/mit/)
-
-# Bản sửa lỗi tính năng kiểm tra và tải cập nhật
-
-Bản cập nhật này sửa lỗi HTTP 404 khi tải cập nhật từ GitHub Releases.
-
-## Các file đã được sửa đổi
-
-1. **ui/update_dialog.py**
-   - Cải thiện hàm `download_update()` để xử lý nhiều định dạng URL khác nhau
-   - Thêm kiểm tra sự tồn tại của URL trước khi tải xuống
-   - Cải thiện thông báo lỗi với tùy chọn mở trang GitHub Releases
-   - Cải thiện hàm `download_error()` để thêm tùy chọn mở GitHub Releases khi gặp lỗi
-
-2. **version.json**
-   - Thêm trường `download_url` chứa đường dẫn chính xác cho các nền tảng khác nhau
-
-## Thay đổi chính
-
-### 1. Trong file `ui/update_dialog.py`:
-- Giờ đây sẽ thử cả hai định dạng URL có thể có:
-  - `https://github.com/shin315/social-download-manager/releases/download/v{version}/Social_Download_Manager_{version}.zip`
-  - `https://github.com/shin315/social-download-manager/releases/download/{version}/Social_Download_Manager_{version}.zip`
-- Kiểm tra URL xem có tồn tại không trước khi bắt đầu tải xuống
-- Ưu tiên sử dụng URL trực tiếp từ file version.json nếu có
-
-### 2. Trong file `version.json`:
-- Thêm thông tin URL tải xuống cho các nền tảng khác nhau
-```json
-{
-  "version": "1.1.0",
-  "release_notes": "- Fixed bug with TikTok downloads\n- Added new interface features\n- Improved performance\n- Added multiple language support",
-  "release_date": "2025-03-28",
-  "download_url": {
-    "windows": "https://github.com/shin315/social-download-manager/releases/download/v1.1.0/Social_Download_Manager_1.1.0.zip",
-    "mac": "https://github.com/shin315/social-download-manager/releases/download/v1.1.0/Social_Download_Manager_1.1.0_mac.zip",
-    "linux": "https://github.com/shin315/social-download-manager/releases/download/v1.1.0/Social_Download_Manager_1.1.0_linux.zip"
-  }
-}
-```
-
-## Hướng dẫn áp dụng bản cập nhật
-
-1. Thay thế file `ui/update_dialog.py` bằng phiên bản từ bản cập nhật này
-2. Cập nhật file `version.json` để thêm các URL tải xuống như mẫu trên
-3. Tải file ZIP của phiên bản mới nhất lên GitHub Releases với đúng định dạng tên như trong URL
-
-## Lưu ý
-- Đảm bảo rằng URL trong `version.json` đúng với đường dẫn thực tế trên GitHub Releases
-- Để tương thích với phiên bản hiện tại, nên giữ định dạng URL như trong bản mẫu 
+### Troubleshooting
+If you encounter issues with missing icons or images in the packaged application, ensure:
+1. All assets are in the `assets` folder
+2. The spec file includes all necessary data files
+3. Try rebuilding with a clean build:
+   ```
+   python build.py clean
+   ``` 

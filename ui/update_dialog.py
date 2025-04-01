@@ -304,37 +304,24 @@ class UpdateDialog(QDialog):
             # Nếu không có URL trong update_info, tạo URL dựa trên version
             if not url:
                 version = self.update_info["remote_version"]
-                # Sử dụng URL của file ZIP đã tạo trong thư mục dist
-                if os_type == "windows":
-                    # Thử cả hai định dạng URL có thể có
-                    url = f"https://github.com/shin315/social-download-manager/releases/download/v{version}/Social_Download_Manager_{version}.zip"
-                    backup_url = f"https://github.com/shin315/social-download-manager/releases/download/{version}/Social_Download_Manager_{version}.zip"
-                elif os_type == "darwin":  # macOS
-                    url = f"https://github.com/shin315/social-download-manager/releases/download/v{version}/Social_Download_Manager_{version}_mac.zip"
-                    backup_url = f"https://github.com/shin315/social-download-manager/releases/download/{version}/Social_Download_Manager_{version}_mac.zip"
-                else:  # Linux
-                    url = f"https://github.com/shin315/social-download-manager/releases/download/v{version}/Social_Download_Manager_{version}_linux.zip"
-                    backup_url = f"https://github.com/shin315/social-download-manager/releases/download/{version}/Social_Download_Manager_{version}_linux.zip"
-                    
-                # Kiểm tra URL chính có tồn tại không
-                import requests
-                response = requests.head(url, allow_redirects=True)
+                # Get the current running directory
+                dist_folder = os.path.join(os.path.dirname(os.path.dirname(os.path.realpath(__file__))), 'dist')
                 
-                # Nếu URL chính không tồn tại, thử URL backup
-                if response.status_code != 200:
-                    print(f"Primary URL returned {response.status_code}, trying backup URL")
-                    url = backup_url
+                # If no URL in update_info, create URL based on version
+                filename = f"Social_Download_Manager_{version}.zip"
+                # Use URL of the ZIP file created in the dist folder
+                url = os.path.join(dist_folder, filename)
             
-            # Hiển thị thông tin URL để debug
+            # Display URL information for debugging
             print(f"Downloading from: {url}")
             
             # Kiểm tra URL cuối cùng
             import requests
             response = requests.head(url, allow_redirects=True)
             if response.status_code != 200:
-                error_msg = f"Không thể tìm thấy file cập nhật. URL trả về lỗi {response.status_code}.\n\n"
+                error_msg = f"Could not find update file. URL returned error {response.status_code}.\n\n"
                 error_msg += f"URL: {url}\n\n"
-                error_msg += "Bạn có muốn mở trang GitHub Releases để tải thủ công không?"
+                error_msg += "Would you like to open the GitHub Releases page to download manually?"
                 
                 reply = QMessageBox.question(
                     self,
@@ -411,11 +398,11 @@ class UpdateDialog(QDialog):
         self.progress_bar.setVisible(False)
         self.status_label.setVisible(False)
         
-        # Thêm hướng dẫn chi tiết khi gặp lỗi HTTP 404
+        # Add detailed instructions when encountering HTTP 404 error
         error_msg = f"{self.tr_('DIALOG_DOWNLOAD_ERROR')}: {error}"
         
         if "404" in error:
-            error_msg += "\n\nGặp lỗi không tìm thấy file. Bạn có muốn mở trang GitHub Releases để tải về trực tiếp không?"
+            error_msg += "\n\nFile not found error. Would you like to open the GitHub Releases page to download directly?"
             
             reply = QMessageBox.question(
                 self,

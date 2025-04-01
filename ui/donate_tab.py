@@ -1,11 +1,20 @@
 from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel, 
-                             QPushButton, QFrame, QGraphicsDropShadowEffect, QSpacerItem)
-from PyQt6.QtCore import Qt, QSize
+                             QPushButton, QFrame, QGraphicsDropShadowEffect, QSpacerItem, QSizePolicy)
+from PyQt6.QtCore import Qt, QSize, QUrl
 from PyQt6.QtGui import QPixmap, QColor, QFont, QCursor
 import os
 import webbrowser
 
 from localization import get_language_manager
+
+try:
+    from ui.main_window import get_resource_path
+except ImportError:
+    # Fallback if cannot import
+    def get_resource_path(relative_path):
+        """Fallback implementation if cannot import from main_window"""
+        base_path = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
+        return os.path.join(base_path, relative_path)
 
 class DonateTab(QWidget):
     """Tab for displaying donation information"""
@@ -14,10 +23,11 @@ class DonateTab(QWidget):
         super().__init__(parent)
         # Initialize language manager
         self.lang_manager = get_language_manager()
+        self.parent = parent
         self.init_ui()
         
     def init_ui(self):
-        """Khởi tạo giao diện"""
+        """Initialize UI"""
         # Layout chính
         main_layout = QVBoxLayout()
         main_layout.setContentsMargins(0, 0, 0, 0)
@@ -63,7 +73,7 @@ class DonateTab(QWidget):
         qr_label.setObjectName("qrLabel")
         
         try:
-            qr_image_path = os.path.join(os.path.dirname(os.path.dirname(__file__)), "assets", "momo_qr.png")
+            qr_image_path = get_resource_path("assets/momo_qr.png")
             if os.path.exists(qr_image_path):
                 qr_pixmap = QPixmap(qr_image_path)
                 qr_pixmap = qr_pixmap.scaled(150, 150, Qt.AspectRatioMode.KeepAspectRatio, Qt.TransformationMode.SmoothTransformation)
@@ -89,7 +99,7 @@ class DonateTab(QWidget):
         self.coffee_button = QPushButton(self.tr_("DONATE_COFFEE_LINK"))
         self.coffee_button.setObjectName("coffeeButton")
         self.coffee_button.setCursor(QCursor(Qt.CursorShape.PointingHandCursor))
-        self.coffee_button.clicked.connect(lambda: webbrowser.open("https://buymeacoffee.com/shin315"))
+        self.coffee_button.clicked.connect(self.open_donation_link)
         
         buttons_layout.addWidget(self.coffee_button)
         buttons_layout.addStretch(1)
@@ -171,8 +181,8 @@ class DonateTab(QWidget):
             """)
             
             # Add style for parent dialog if it exists
-            if self.parent():
-                self.parent().setStyleSheet("""
+            if hasattr(self, 'parent') and self.parent:
+                self.parent.setStyleSheet("""
                     background-color: #2d2d2d;
                     color: #ffffff;
                 """)
@@ -212,7 +222,6 @@ class DonateTab(QWidget):
                     font-size: 13px;
                     font-weight: bold;
                     min-width: 140px;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.1);
                 }
                 #coffeeButton:hover {
                     background-color: #FF9B5C;
@@ -226,8 +235,12 @@ class DonateTab(QWidget):
             """)
             
             # Add style for parent dialog if it exists
-            if self.parent():
-                self.parent().setStyleSheet("""
+            if hasattr(self, 'parent') and self.parent:
+                self.parent.setStyleSheet("""
                     background-color: #f5f5f5;
                     color: #111111;
-                """) 
+                """)
+        
+    def open_donation_link(self):
+        """Open web browser with donation link"""
+        webbrowser.open("https://www.buymeacoffee.com/shin315") 

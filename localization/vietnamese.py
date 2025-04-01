@@ -69,6 +69,16 @@ HEADER_DATE = "Ngày Tải"
 HEADER_SAVED_FOLDER = "Thư Mục Lưu"
 HEADER_TITLE = "Tiêu Đề"
 
+# Filter options
+FILTER_CLEAR = "Xóa bộ lọc"
+FILTER_TODAY = "Hôm nay"
+FILTER_YESTERDAY = "Hôm qua"
+FILTER_LAST_7_DAYS = "7 ngày qua"
+FILTER_LAST_30_DAYS = "30 ngày qua"
+FILTER_THIS_MONTH = "Tháng này"
+FILTER_LAST_MONTH = "Tháng trước"
+FILTER_ALL = "Xóa bộ lọc"
+
 # Downloaded Videos tab
 LABEL_SEARCH = "Tìm kiếm:"
 PLACEHOLDER_SEARCH = "Tìm kiếm video đã tải..."

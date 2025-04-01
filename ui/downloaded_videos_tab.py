@@ -69,6 +69,8 @@ class DownloadedVideosTab(QWidget):
         self.sort_column = 7  # Default sort by download date (descending)
         self.sort_order = Qt.SortOrder.DescendingOrder  # Default sort order is descending
         
+        print(f"DEBUG: Initial sort_column={self.sort_column}, sort_order={self.sort_order}")
+        
         # Column indices
         self.select_col = 0
         self.title_col = 1
@@ -270,31 +272,52 @@ class DownloadedVideosTab(QWidget):
         # Update initial button states
         self.update_button_states()
 
+        # Thêm đoạn code này vào cuối phương thức init_ui
+        # Đảm bảo không hiển thị mũi tên chỉ báo sắp xếp
+        if hasattr(self, 'downloads_table') and self.downloads_table:
+            self.downloads_table.horizontalHeader().setSortIndicatorShown(False)
+            self.downloads_table.setSortingEnabled(False)
+
     def create_downloads_table(self):
-        """Create table to display list of downloaded videos"""
+        """Create table for displaying downloaded videos"""
         # Create table widget
         self.downloads_table = QTableWidget()
-        self.downloads_table.setColumnCount(10)  # Increased from 9 to 10 (added Select column)
+        self.downloads_table.setObjectName("downloads_table")
         
-        # Set up headers and column sizes
-        self.update_table_headers()
+        # Configure table properties
+        self.downloads_table.setColumnCount(10)  # Include selection column
         
-        # Set font for header
+        # Set header labels
+        header_labels = [
+            "",  # Selection checkbox
+            self.tr_("TABLE_TITLE"),
+            self.tr_("TABLE_CREATOR"),
+            self.tr_("TABLE_QUALITY"),
+            self.tr_("TABLE_FORMAT"),
+            self.tr_("TABLE_SIZE"),
+            self.tr_("TABLE_STATUS"),
+            self.tr_("TABLE_DATE"),
+            self.tr_("TABLE_HASHTAGS"),
+            self.tr_("TABLE_ACTIONS")
+        ]
+        self.downloads_table.setHorizontalHeaderLabels(header_labels)
+        
+        # Style header - bỏ bold font để tiết kiệm không gian
         header_font = self.downloads_table.horizontalHeader().font()
-        header_font.setBold(True)
+        header_font.setBold(False)  # Bỏ in đậm để tiết kiệm không gian
         self.downloads_table.horizontalHeader().setFont(header_font)
         
-        # Set width for columns (optimized to give title column more space)
-        self.downloads_table.setColumnWidth(0, 30)     # Select
-        self.downloads_table.setColumnWidth(1, 260)    # Title - reduced slightly to make room for other columns
-        self.downloads_table.setColumnWidth(2, 85)     # Creator - slight reduction
-        self.downloads_table.setColumnWidth(3, 90)     # Quality - increased to fully display "Quality"
-        self.downloads_table.setColumnWidth(4, 80)     # Format - reduced
-        self.downloads_table.setColumnWidth(5, 85)     # Size - increased to fully display "Size"
-        self.downloads_table.setColumnWidth(6, 80)     # Status - reduced since it only displays "Successful"
-        self.downloads_table.setColumnWidth(7, 100)    # Date - slight reduction
-        self.downloads_table.setColumnWidth(8, 90)     # Hashtags - slight reduction
-        self.downloads_table.setColumnWidth(9, 130)    # Actions - slight reduction, enough for 2 buttons
+        # Set custom column widths
+        self.downloads_table.setColumnWidth(self.select_col, 30)     # Checkbox column
+        self.downloads_table.setColumnWidth(self.title_col, 225)     # Increased title from 220 to 225
+        self.downloads_table.setColumnWidth(self.creator_col, 100)   # Keep at 100
+        self.downloads_table.setColumnWidth(self.quality_col, 85)    # Reduced from 100 to 85 (just enough for "Quality")
+        self.downloads_table.setColumnWidth(self.format_col, 75)     # Increased from 70 to 75 for better display
+        self.downloads_table.setColumnWidth(self.size_col, 75)       # Increased from 70 to 75 for better display
+        self.downloads_table.setColumnWidth(self.status_col, 80)     # Keep at 80
+        self.downloads_table.setColumnWidth(self.date_col, 120)      # Keep at 120
+        self.downloads_table.setColumnWidth(self.hashtags_col, 100)  # Keep at 100
+        self.downloads_table.setColumnWidth(self.actions_col, 130)   # Keep at 130
         
         # Set row selection mode
         self.downloads_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
@@ -313,7 +336,16 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.horizontalHeader().setSectionResizeMode(9, QHeaderView.ResizeMode.Fixed)  # Actions
         
         # Show sort indicator
-        self.downloads_table.horizontalHeader().setSortIndicatorShown(True)
+        self.downloads_table.horizontalHeader().setSortIndicatorShown(False)  # Changed from True to False
+        # Set initial sort indicator to match sort_column and sort_order
+        print(f"DEBUG: Setting initial sort indicator - column={self.sort_column}, order={self.sort_order}")
+        self.downloads_table.horizontalHeader().setSortIndicator(self.sort_column, self.sort_order)
+        print(f"DEBUG: After setting sort indicator - indicator section={self.downloads_table.horizontalHeader().sortIndicatorSection()}, indicator order={self.downloads_table.horizontalHeader().sortIndicatorOrder()}")
+        
+        # Enable sorting on the table itself
+        self.downloads_table.setSortingEnabled(True)
+        print(f"DEBUG: Enabled Qt automatic sorting")
+        
         # Allow clicking on header to sort
         self.downloads_table.horizontalHeader().setSectionsClickable(True)
         # Connect header click event to sort method
@@ -326,6 +358,11 @@ class DownloadedVideosTab(QWidget):
         except (TypeError, RuntimeError):
             # Signal not yet connected or already disconnected
             pass
+        
+        # Connect table click event to new handler method
+        self.downloads_table.cellClicked.connect(self.handle_cell_clicked)
+        
+        # Connect selection changed event to update details
         self.downloads_table.selectionModel().selectionChanged.connect(self.handle_selection_changed)
         
         # Connect double-click event to display copy dialog
@@ -382,6 +419,9 @@ class DownloadedVideosTab(QWidget):
         # Set focus policy to receive keyboard events
         self.downloads_table.setFocusPolicy(Qt.FocusPolicy.StrongFocus)
         self.setFocusProxy(self.downloads_table)
+        
+        # Install event filter to handle clicks outside the table
+        self.installEventFilter(self)
 
     def create_video_details_area(self):
         """Create area to display detailed video information"""
@@ -594,13 +634,32 @@ class DownloadedVideosTab(QWidget):
             self.play_selected_video()
 
     def eventFilter(self, obj, event):
-        """Handle click event outside of video in the table"""
-        if obj == self.downloads_table.viewport() and event.type() == event.Type.MouseButtonPress:
-            item = self.downloads_table.itemAt(event.pos())
-            if not item:  # Click on empty space
-                # Hide details area and show donate area
-                self.video_details_frame.setVisible(False)
-                self.selected_video = None
+        """Filter events for objects being watched"""
+        # Handle events for selected objects
+        if obj == self.search_input and event.type() == QEvent.Type.KeyPress:
+            # Check if Enter key was pressed 
+            if event.key() in (Qt.Key.Key_Return, Qt.Key.Key_Enter):
+                # Prevent default implementation and apply search
+                self.filter_videos()
+                return True
+        
+        # Handle clicks outside the downloads table area to clear selection
+        if event.type() == QEvent.Type.MouseButtonPress:
+            if obj == self and self.downloads_table:
+                # Get click position
+                pos = event.pos()
+                # Check if the click is outside the downloads table area
+                table_rect = self.downloads_table.geometry()
+                if not table_rect.contains(pos):
+                    # Clear selection
+                    print("DEBUG: Click outside table - clearing selection")
+                    self.downloads_table.clearSelection()
+                    # Also hide details if visible
+                    if hasattr(self, 'video_details_frame') and self.video_details_frame.isVisible():
+                        self.video_details_frame.setVisible(False)
+                        self.selected_video = None
+        
+        # Call the base class implementation for standard event handling
         return super().eventFilter(obj, event)
 
     def handle_selection_changed(self, selected, deselected):
@@ -616,14 +675,19 @@ class DownloadedVideosTab(QWidget):
         # Display detailed information of video if row is valid
         if row >= 0 and row < len(self.filtered_videos):
             video = self.filtered_videos[row]
-            self.selected_video = video
             
-            # Show details area
-            self.video_details_frame.setVisible(True)
+            # Kiểm tra nếu video này đã được chọn trước đó và đang hiển thị chi tiết
+            if self.selected_video == video:
+                # Nếu hiện tại không hiển thị, thì hiển thị lại
+                if not self.video_details_frame.isVisible():
+                    self.video_details_frame.setVisible(True)
+                # Trường hợp đã hiển thị rồi thì không cần làm gì
+            else:
+                # Video mới được chọn, cập nhật selected_video và hiển thị chi tiết
+                self.selected_video = video
+                self.video_details_frame.setVisible(True)
+                self.update_selected_video_details(video)
             
-            # Update detailed information
-            self.update_selected_video_details(video)
-
     def remove_vietnamese_accents(self, text):
         """Remove Vietnamese accents from a string"""
         if not text:
@@ -904,6 +968,11 @@ class DownloadedVideosTab(QWidget):
             # Update filtered_videos list
             self.filtered_videos = self.all_videos.copy()
             
+            # Sort videos based on default sort_column and sort_order
+            data_column = 6  # Mapping from UI column 7 (Date) to data index 6
+            print(f"DEBUG: load_downloaded_videos - Sorting videos with data_column={data_column}, sort_order={self.sort_order}")
+            self.sort_videos(data_column)
+            
             # Display list of videos
             self.display_videos()
             
@@ -927,6 +996,11 @@ class DownloadedVideosTab(QWidget):
             has_original = len(video) > 9 and video[9]
             original_value = video[9] if len(video) > 9 else "N/A"
             print(f"DEBUG - Video {idx}: has_original={has_original}, title='{video[0]}', original_title='{original_value}'")
+        
+        # Disable sorting temporarily while updating the table content
+        was_sorting_enabled = self.downloads_table.isSortingEnabled()
+        self.downloads_table.setSortingEnabled(False)
+        print(f"DEBUG: Temporarily disabled sorting for table update")
         
         # Clear current content and set new row count
         self.downloads_table.clearContents()
@@ -1021,8 +1095,41 @@ class DownloadedVideosTab(QWidget):
             status_item.setFlags(status_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
             self.downloads_table.setItem(idx, 6, status_item)
             
-            # Date column
-            date_item = QTableWidgetItem(video[6])
+            # Date column - Format as two lines with date on top and time below
+            date_string = video[6]
+            date_parts = []
+            
+            # Parse date string to extract date and time
+            if date_string and date_string != "Unknown":
+                from datetime import datetime
+                
+                # Try multiple formats to parse the date
+                date_formats = [
+                    "%Y/%m/%d %H:%M",   # YYYY/MM/DD HH:MM
+                    "%Y-%m-%d %H:%M:%S", # YYYY-MM-DD HH:MM:SS
+                    "%Y-%m-%d %H:%M",   # YYYY-MM-DD HH:MM
+                    "%d/%m/%Y %H:%M",   # DD/MM/YYYY HH:MM
+                ]
+                
+                for date_format in date_formats:
+                    try:
+                        dt = datetime.strptime(date_string, date_format)
+                        date_parts = [
+                            dt.strftime("%Y-%m-%d"),  # Date part
+                            dt.strftime("%H:%M")      # Time part
+                        ]
+                        break
+                    except ValueError:
+                        continue
+            
+            # If parsing failed, just use the original string
+            if not date_parts:
+                date_parts = [date_string, ""]
+            
+            # Create two-line date string
+            formatted_date = "\n".join(date_parts)
+            
+            date_item = QTableWidgetItem(formatted_date)
             date_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # Disable editing
             date_item.setFlags(date_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
@@ -1106,14 +1213,33 @@ class DownloadedVideosTab(QWidget):
             
             # Connect Open button to open_folder method
             open_btn.clicked.connect(lambda checked, path=final_path, row_idx=idx: self.open_folder_and_select(path, row_idx))
+            open_btn.setMinimumWidth(60)  # Đảm bảo đủ chiều rộng hiển thị text
+            open_btn.setStyleSheet("padding: 4px 8px;")
             action_layout.addWidget(open_btn)
             
             # Delete button
             delete_btn = QPushButton(self.tr_("BUTTON_DELETE"))
             delete_btn.clicked.connect(lambda checked, row_idx=idx: self.delete_video_and_select(row_idx))
+            delete_btn.setMinimumWidth(60)  # Đảm bảo đủ chiều rộng hiển thị text
+            delete_btn.setStyleSheet("padding: 4px 8px;")
             action_layout.addWidget(delete_btn)
             
+            # Đảm bảo layout không co lại
+            action_layout.setSpacing(4)  # Thêm khoảng cách giữa các nút
+            action_widget.setLayout(action_layout)
+            
             self.downloads_table.setCellWidget(idx, 9, action_widget)
+        
+        # Re-enable sorting if it was enabled
+        if was_sorting_enabled:
+            self.downloads_table.setSortingEnabled(True)
+            print(f"DEBUG: Re-enabled sorting after table update")
+            # Luôn đảm bảo không hiển thị mũi tên chỉ báo
+            self.downloads_table.horizontalHeader().setSortIndicatorShown(False)
+        
+        # Adjust row heights to accommodate multi-line date display
+        for row in range(self.downloads_table.rowCount()):
+            self.downloads_table.setRowHeight(row, 44)  # Increase row height for better display
         
         # Update total number of videos displayed (only total number of videos)
         self.total_videos_label.setText(self.tr_("LABEL_TOTAL_VIDEOS").format(len(self.all_videos)))
@@ -1169,40 +1295,44 @@ class DownloadedVideosTab(QWidget):
         try:
             if os.name == 'nt':  # Windows
                 if is_file and os.path.exists(path):
-                    # Open Explorer and select file
+                    # Open Explorer and select file using subprocess.Popen (no flashing cmd)
                     path = path.replace('/', '\\')  # Ensure path is in Windows format
                     print(f"DEBUG - Using explorer /select,{path}")
-                    os.system(f'explorer /select,"{path}"')
+                    
+                    # Sử dụng subprocess.Popen thay vì os.system để tránh hiện cửa sổ CMD
+                    subprocess.Popen(['explorer', '/select,', path], shell=False, 
+                                     creationflags=subprocess.CREATE_NO_WINDOW)
                 else:
-                    # Just open the folder
-                    os.startfile(folder_path)
+                    # Just open the folder without cmd flashing
+                    subprocess.Popen(['explorer', folder_path], shell=False,
+                                    creationflags=subprocess.CREATE_NO_WINDOW)
             elif os.name == 'darwin':  # macOS
                 if is_file and os.path.exists(path):
                     # Open Finder and select file
-                    subprocess.run(['open', '-R', path], check=True)
+                    subprocess.Popen(['open', '-R', path])
                 else:
                     # Just open the folder
-                    subprocess.run(['open', folder_path], check=True)
+                    subprocess.Popen(['open', folder_path])
             else:  # Linux and other operating systems
                 # Try using common file managers on Linux
                 if is_file and os.path.exists(path):
                     # Try with nautilus (GNOME)
                     try:
-                        subprocess.run(['nautilus', '--select', path], check=True)
+                        subprocess.Popen(['nautilus', '--select', path])
                     except:
                         try:
                             # Try with dolphin (KDE)
-                            subprocess.run(['dolphin', '--select', path], check=True)
+                            subprocess.Popen(['dolphin', '--select', path])
                         except:
                             try:
                                 # Try with thunar (XFCE)
-                                subprocess.run(['thunar', path], check=True)
+                                subprocess.Popen(['thunar', path])
                             except:
                                 # If no file manager works, open the folder
-                                subprocess.run(['xdg-open', folder_path], check=True)
+                                subprocess.Popen(['xdg-open', folder_path])
                 else:
                     # Just open the folder
-                    subprocess.run(['xdg-open', folder_path], check=True)
+                    subprocess.Popen(['xdg-open', folder_path])
                     
         except Exception as e:
             print(f"DEBUG - Error opening folder: {str(e)}")
@@ -1306,7 +1436,7 @@ class DownloadedVideosTab(QWidget):
         # Add "Delete file from disk" checkbox
         delete_file_checkbox = QCheckBox(self.tr_("DIALOG_DELETE_FILE_FROM_DISK"))
         delete_file_checkbox.setEnabled(file_exists)
-        delete_file_checkbox.setChecked(file_exists)
+        delete_file_checkbox.setChecked(False)  # Mặc định không chọn để tránh xóa nhầm file
         
         # Find button box to add checkbox in the same row
         button_box = msg_box.findChild(QDialogButtonBox)
@@ -1421,6 +1551,11 @@ class DownloadedVideosTab(QWidget):
             
             # Update Select All/Unselect All button state
             self.update_select_toggle_button()
+            
+            # Đảm bảo không hiển thị mũi tên chỉ báo sắp xếp sau khi tải lại dữ liệu
+            if hasattr(self, 'downloads_table') and self.downloads_table:
+                self.downloads_table.horizontalHeader().setSortIndicatorShown(False)
+                self.downloads_table.setSortingEnabled(False)
             
             # Update message in status bar
             if self.parent:
@@ -1982,6 +2117,9 @@ class DownloadedVideosTab(QWidget):
 
     def sort_table(self, column):
         """Sort the table by the clicked column"""
+        print(f"DEBUG: sort_table called with column={column}")
+        print(f"DEBUG: Before sort - current sort_column={self.sort_column}, sort_order={self.sort_order}")
+        
         # Determine correct column mapping to match the index in self.filtered_videos
         # The display column order and the index in filtered_videos may differ
         column_mapping = {
@@ -2001,26 +2139,41 @@ class DownloadedVideosTab(QWidget):
         # Skip other columns: Select(0), Status(6), Hashtags(8), Actions(9)
         sortable_columns = [1, 2, 3, 4, 5, 7]
         if column not in sortable_columns:
+            print(f"DEBUG: Column {column} is not sortable, returning")
             return
             
         # Map UI column to data column
         data_column = column_mapping[column]
+        print(f"DEBUG: Mapped UI column {column} to data column {data_column}")
             
         # Reverse the sort order if clicking on the same column
         if self.sort_column == column:
             self.sort_order = Qt.SortOrder.DescendingOrder if self.sort_order == Qt.SortOrder.AscendingOrder else Qt.SortOrder.AscendingOrder
+            print(f"DEBUG: Same column clicked, reversing sort order to {self.sort_order}")
         else:
             self.sort_column = column
             self.sort_order = Qt.SortOrder.AscendingOrder
+            print(f"DEBUG: New column clicked, setting sort_column={self.sort_column}, sort_order={self.sort_order}")
+        
+        # Update the sort indicator on the header view
+        print(f"DEBUG: Updating sort indicator in UI to column={self.sort_column}, order={self.sort_order}")
+        # Không hiển thị indicator nhưng vẫn cài đặt giá trị sort indicator
+        self.downloads_table.horizontalHeader().setSortIndicator(self.sort_column, self.sort_order)
+        # Chắc chắn rằng indicator không hiển thị
+        self.downloads_table.horizontalHeader().setSortIndicatorShown(False)
         
         # Sort the video list with the mapped column
         self.sort_videos(data_column)
         
         # Display the list again
         self.display_videos()
+        print(f"DEBUG: sort_table completed")
 
     def sort_videos(self, column):
         """Sort the video list by column"""
+        print(f"DEBUG: sort_videos called with column={column}, sort_order={self.sort_order}")
+        print(f"DEBUG: Before sorting - filtered_videos count: {len(self.filtered_videos)}")
+        
         def get_sort_key(video):
             value = video[column]
             
@@ -2077,8 +2230,11 @@ class DownloadedVideosTab(QWidget):
         # Sort the list
         try:
             self.filtered_videos.sort(key=get_sort_key, reverse=(self.sort_order == Qt.SortOrder.DescendingOrder))
+            print(f"DEBUG: After sorting - Success, sorted by column {column} with order {self.sort_order}")
+            if len(self.filtered_videos) > 0:
+                print(f"DEBUG: First item after sort: {self.filtered_videos[0][column]}")
         except Exception as e:
-            print(f"Error sorting videos: {e}")
+            print(f"ERROR: Error sorting videos: {e}")
 
     def show_full_text_tooltip(self, row, column):
         """Show tooltip with full text when hovering over a cell"""
@@ -2116,6 +2272,11 @@ class DownloadedVideosTab(QWidget):
                 # Format tooltip text for better readability
                 if tooltip_text:
                     formatted_text = self.format_tooltip_text(tooltip_text)
+                    
+                    # Force tooltip to use current theme by hiding any existing tooltip first
+                    QToolTip.hideText()
+                    
+                    # Show new tooltip with formatted text
                     QToolTip.showText(QCursor.pos(), formatted_text)
                 else:
                     QToolTip.hideText()
@@ -3071,6 +3232,9 @@ class DownloadedVideosTab(QWidget):
         # Create context menu with options to filter by date
         date_menu = QMenu(self)
         
+        # Add Clear filter option at the top
+        action_clear = QAction(self.tr_("FILTER_CLEAR"), self)
+        
         # Add options to filter by date
         action_today = QAction(self.tr_("FILTER_TODAY"), self)
         action_yesterday = QAction(self.tr_("FILTER_YESTERDAY"), self)
@@ -3078,26 +3242,27 @@ class DownloadedVideosTab(QWidget):
         action_last_30_days = QAction(self.tr_("FILTER_LAST_30_DAYS"), self)
         action_this_month = QAction(self.tr_("FILTER_THIS_MONTH"), self)
         action_last_month = QAction(self.tr_("FILTER_LAST_MONTH"), self)
-        action_clear = QAction(self.tr_("FILTER_ALL"), self)
         
         # Connect actions to filter by date function
+        action_clear.triggered.connect(lambda: self.filter_by_date_range("Clear filter"))
         action_today.triggered.connect(lambda: self.filter_by_date_range("Today"))
         action_yesterday.triggered.connect(lambda: self.filter_by_date_range("Yesterday"))
         action_last_7_days.triggered.connect(lambda: self.filter_by_date_range("Last 7 days"))
         action_last_30_days.triggered.connect(lambda: self.filter_by_date_range("Last 30 days"))
         action_this_month.triggered.connect(lambda: self.filter_by_date_range("This month"))
         action_last_month.triggered.connect(lambda: self.filter_by_date_range("Last month"))
-        action_clear.triggered.connect(lambda: self.filter_by_date_range(self.tr_("FILTER_ALL")))
         
-        # Add actions to menu
+        # Add clear action first with separator
+        date_menu.addAction(action_clear)
+        date_menu.addSeparator()
+        
+        # Add other actions to menu
         date_menu.addAction(action_today)
         date_menu.addAction(action_yesterday)
         date_menu.addAction(action_last_7_days)
         date_menu.addAction(action_last_30_days)
         date_menu.addAction(action_this_month)
         date_menu.addAction(action_last_month)
-        date_menu.addSeparator()
-        date_menu.addAction(action_clear)
         
         # Show menu at header position
         date_menu.exec(header_pos)
@@ -3117,6 +3282,24 @@ class DownloadedVideosTab(QWidget):
             date_column_index = 7  # Default date column index if not found
             print(f"DEBUG: Using default date column index: {date_column_index}")
         
+        # Check for clear filter first
+        if date_range.lower() == "clear filter" or date_range.lower() == self.tr_("FILTER_CLEAR").lower():
+            # Clear filter
+            if date_column_index in self.active_filters:
+                del self.active_filters[date_column_index]
+            self.update_filter_icon(date_column_index, False)
+            
+            # If no filters left, show ready message
+            if not self.active_filters and self.parent:
+                self.parent.status_bar.showMessage(self.tr_("STATUS_READY"))
+            else:
+                # Update status message with remaining filters
+                self.update_filter_status_message()
+            
+            self.filter_videos()
+            print(f"DEBUG: Filter cleared for date column")
+            return
+        
         # Determine time range based on selection
         date_range_lower = date_range.lower()
         if date_range_lower == "today" or date_range_lower == "hôm nay":
@@ -3124,8 +3307,9 @@ class DownloadedVideosTab(QWidget):
             end_date = now
             filter_name = "Hôm nay"
         elif date_range_lower == "yesterday" or date_range_lower == "hôm qua":
-            start_date = now.replace(day=now.day-1, hour=0, minute=0, second=0, microsecond=0)
-            end_date = now.replace(day=now.day-1, hour=23, minute=59, second=59, microsecond=999999)
+            from datetime import timedelta
+            start_date = (now - timedelta(days=1)).replace(hour=0, minute=0, second=0, microsecond=0)
+            end_date = (now - timedelta(days=1)).replace(hour=23, minute=59, second=59, microsecond=999999)
             filter_name = "Hôm qua"
         elif date_range_lower == "last 7 days" or date_range_lower == "last_7_days" or date_range_lower == "7 ngày qua":
             from datetime import timedelta
@@ -3153,22 +3337,6 @@ class DownloadedVideosTab(QWidget):
                 last_day = calendar.monthrange(now.year, now.month-1)[1]
                 end_date = now.replace(month=now.month-1, day=last_day, hour=23, minute=59, second=59, microsecond=999999)
             filter_name = "Tháng trước"
-        elif date_range_lower == "clear filter" or date_range_lower == self.tr_("FILTER_ALL").lower():
-            # Clear filter
-            if date_column_index in self.active_filters:
-                del self.active_filters[date_column_index]
-            self.update_filter_icon(date_column_index, False)
-            
-            # If no filters left, show ready message
-            if not self.active_filters and self.parent:
-                self.parent.status_bar.showMessage(self.tr_("STATUS_READY"))
-            else:
-                # Update status message with remaining filters
-                self.update_filter_status_message()
-            
-            self.filter_videos()
-            print(f"DEBUG: Filter cleared for date column")
-            return
         else:
             # No filter applied
             print(f"DEBUG: Unknown date filter: {date_range}")
@@ -3270,3 +3438,19 @@ class DownloadedVideosTab(QWidget):
                 self.video_count_label.setText(f"{filtered_count}/{total_count} {self.tr_('LABEL_VIDEOS')}")
             else:
                 self.video_count_label.setText(f"{total_count} {self.tr_('LABEL_VIDEOS')}")
+
+    def handle_cell_clicked(self, row, column):
+        """Handle when a cell is clicked in the table"""
+        # Check if row is valid
+        if row >= 0 and row < len(self.filtered_videos):
+            video = self.filtered_videos[row]
+            
+            # If we already have selected video information and it matches the current video
+            if self.selected_video == video:
+                # Show the detail information box if it's hidden
+                if not self.video_details_frame.isVisible():
+                    self.video_details_frame.setVisible(True)
+                    # No need to update information as it was already updated when previously selected
+            else:
+                # New video selected, updated in handle_selection_changed
+                pass
