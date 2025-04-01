@@ -140,4 +140,12 @@ If you encounter issues with missing icons or images in the packaged application
 3. Try rebuilding with a clean build:
    ```
    python build.py clean
-   ``` 
+   ```
+
+## Contributing
+
+Pull requests are welcome. For major changes, please open an issue first to discuss what you would like to change.
+
+## License
+
+[MIT](https://choosealicense.com/licenses/mit/)
