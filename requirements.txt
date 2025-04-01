@@ -1,0 +1,4 @@
+PyQt6==6.6.1
+yt-dlp==2025.3.31
+packaging>=23.2
+requests>=2.31.0 

@@ -1,0 +1,10 @@
+{
+  "version": "1.2.1",
+  "release_notes": "- Fixed connection reset issues with TikTok downloads\n- Improved error handling for network issues\n- Added better logging for download failures\n- Fixed sorting issues in Downloaded Videos tab\n- Optimized column sizes for Vietnamese language\n- Fixed command prompt flashing when opening files\n- Improved user experience for delete operations",
+  "release_date": "2025-04-01",
+  "download_url": {
+    "windows": "https://github.com/shin315/social-download-manager/releases/download/v1.2.1/Social_Download_Manager_1.2.1.zip",
+    "mac": "https://github.com/shin315/social-download-manager/releases/download/v1.2.1/Social_Download_Manager_1.2.1_mac.zip",
+    "linux": "https://github.com/shin315/social-download-manager/releases/download/v1.2.1/Social_Download_Manager_1.2.1_linux.zip"
+  }
+} 
