@@ -76,23 +76,33 @@ class Downloader(QObject):
             self.info_signal.emit(url, info)
             return info
     
-    def download_video(self, url, format_id=None, output_template=None, audio_only=False, force_overwrite=False):
+    def download_video(self, url, output_dir=None, quality=None, format_type=None, custom_title=None, download_subtitles=False, subtitle_language=None):
         """
         Download video from URL using the appropriate platform handler
         
         Args:
             url: Video URL
-            format_id: Format ID to download (if None, best quality will be chosen)
-            output_template: Output filename template
-            audio_only: Whether to download audio only
-            force_overwrite: Overwrite if file exists
+            output_dir: Output directory
+            quality: Video quality (e.g. 1080p, 720p)
+            format_type: Video format (e.g. mp4, mp3)
+            custom_title: Custom title for the file
+            download_subtitles: Whether to download subtitles
+            subtitle_language: Language code for subtitles (e.g. en, vi)
         """
         # Get the appropriate handler for this URL
         handler = PlatformFactory.get_handler_for_url(url)
         
         if handler:
             # Use the handler to download the video
-            handler.download_video(url, format_id, output_template, audio_only, force_overwrite)
+            handler.download_video(
+                url, 
+                output_dir, 
+                quality, 
+                format_type, 
+                custom_title, 
+                download_subtitles, 
+                subtitle_language
+            )
         else:
             # No handler found for this URL
             self.api_error_signal.emit(url, "No handler found for URL. Supported platforms: " + 

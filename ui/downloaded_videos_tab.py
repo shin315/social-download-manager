@@ -68,6 +68,7 @@ class DownloadedVideosTab(QWidget):
         self.selected_video = None  # Currently selected video
         self.sort_column = 7  # Default sort by download date (descending)
         self.sort_order = Qt.SortOrder.DescendingOrder  # Default sort order is descending
+        self.subtitle_info_label = None  # Label to display subtitle information
         
         print(f"DEBUG: Initial sort_column={self.sort_column}, sort_order={self.sort_order}")
         
@@ -2070,6 +2071,35 @@ class DownloadedVideosTab(QWidget):
         creator = video[1] if len(video) > 1 else "Unknown"
         self.desc_label.setText(f"Creator: {creator}")
         
+        # Add subtitle information if available
+        if len(video) > 12 and video[12] is not None:
+            has_subtitle = bool(video[12])  # has_subtitle is at index 12
+            subtitle_language = video[13] if len(video) > 13 else ""  # subtitle_language at index 13
+            subtitle_type = video[14] if len(video) > 14 else ""  # subtitle_type at index 14
+            
+            if has_subtitle and self.subtitle_info_label is None:
+                # Create subtitle info label if it doesn't exist yet
+                self.subtitle_info_label = QLabel()
+                self.subtitle_info_label.setWordWrap(True)
+                self.subtitle_info_label.setStyleSheet("padding: 5px; border-radius: 4px; background-color: rgba(80, 80, 80, 0.1);")
+                self.video_details_layout.addWidget(self.subtitle_info_label)
+            
+            if has_subtitle and self.subtitle_info_label is not None:
+                # Update subtitle info label
+                type_text = self.tr_("SUBTITLE_TYPE_OFFICIAL") if subtitle_type == "official" else self.tr_("SUBTITLE_TYPE_AUTO")
+                self.subtitle_info_label.setText(
+                    f"🗣️ {self.tr_('LABEL_HAS_SUBTITLES').format('✓')}\n"
+                    f"🌐 {self.tr_('LABEL_SUBTITLE_LANGUAGE').format(subtitle_language.upper())}\n"
+                    f"📝 {self.tr_('LABEL_SUBTITLE_TYPE').format(type_text)}"
+                )
+                self.subtitle_info_label.setVisible(True)
+            elif self.subtitle_info_label is not None:
+                self.subtitle_info_label.setVisible(False)
+        elif self.subtitle_info_label is not None:
+            self.subtitle_info_label.setVisible(False)
+        
+        # Update thumbnail
+        # Reset pixmap first to ensure clean state
         # Update thumbnail
         # Reset pixmap first to ensure clean state
         default_pixmap = QPixmap(150, 150)

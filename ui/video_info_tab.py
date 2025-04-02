@@ -1,7 +1,7 @@
 ﻿from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QLineEdit, QPushButton, QTableWidget, QComboBox,
                              QFileDialog, QCheckBox, QHeaderView, QMessageBox,
-                             QTableWidgetItem, QProgressBar, QApplication, QDialog, QTextEdit, QMenu, QInputDialog, QSpacerItem, QSizePolicy, QDialogButtonBox)
+                             QTableWidgetItem, QProgressBar, QApplication, QDialog, QTextEdit, QMenu, QInputDialog, QSpacerItem, QSizePolicy, QDialogButtonBox, QFrame)
 from PyQt6.QtCore import Qt, pyqtSignal, QSize
 import os
 import json
@@ -29,6 +29,7 @@ class VideoInfoTab(QWidget):
     """Tab displaying video information and downloading videos"""
 
     def __init__(self, parent=None):
+        """Initialize the tab"""
         super().__init__(parent)
         self.parent = parent
         
@@ -43,12 +44,14 @@ class VideoInfoTab(QWidget):
         
         # Counter for videos being downloaded
         self.downloading_count = 0
+        self.success_downloads = 0
+        self.downloading_videos = {}
         
         # Variable to track if all items are selected
         self.all_selected = False
         
-        # Current platform (default to TikTok)
-        self.current_platform = "TikTok"
+        # Current platform (default to empty, will be set by caller)
+        self.current_platform = ""
         
         # Set up UI
         self.setup_ui()
@@ -77,45 +80,48 @@ class VideoInfoTab(QWidget):
         # Update UI state
         self.update_button_states()
         
-        # Initialize clipboard monitoring
-        self.last_clipboard_text = ""
-        # Check clipboard on init
-        try:
-            clipboard = QApplication.clipboard()
-            if clipboard:
-                self.last_clipboard_text = clipboard.text()
-        except Exception as e:
-            print(f"Error initializing clipboard: {e}")
-            
     def set_current_platform(self, platform_name):
         """Set current platform and update UI accordingly"""
         if platform_name not in ["TikTok", "YouTube"]:
             return
             
-        # Update current platform
-        self.current_platform = platform_name
+        # Call set_platform which has the complete implementation
+        self.set_platform(platform_name)
         
-        # Update URL placeholder based on platform
-        if platform_name == "YouTube":
-            self.url_input.setPlaceholderText("https://www.youtube.com/watch?v=...")
-        else:
-            self.url_input.setPlaceholderText("https://www.tiktok.com/@username/video/...")
-            
-        # Update table headers for the platform
-        self.configure_headers_by_platform(platform_name)
-            
     def configure_headers_by_platform(self, platform_name):
-        """Configure table headers based on platform"""
+        """Configure table headers based on the platform"""
+        # Set platform name first
+        self.current_platform = platform_name
+
+        # Reset column widths
+        if self.video_table.columnCount() > 0:
+            for i in range(self.video_table.columnCount()):
+                self.video_table.setColumnWidth(i, 100)  # Default width
+        
+        # Update headers based on platform
         if platform_name == "YouTube":
-            # YouTube headers
-            self.video_table.setColumnCount(9)  # Add Playlist column for YouTube
             self.update_table_headers_youtube()
-        else:
-            # TikTok headers (default)
-            self.video_table.setColumnCount(8)
+            # Enable subtitle options for YouTube
+            if hasattr(self, 'subtitle_frame'):
+                self.subtitle_frame.setVisible(True)
+                print("YouTube selected - Showing subtitle options")
+        elif platform_name == "TikTok":
             self.update_table_headers_tiktok()
-            
-        # Update column widths
+            # Disable subtitle options for TikTok
+            if hasattr(self, 'subtitle_frame'):
+                self.subtitle_frame.setVisible(False)
+                self.subtitle_checkbox.setChecked(False)
+                print("TikTok selected - Hiding subtitle options")
+        else:
+            # Default headers
+            self.update_table_headers()
+            # Disable subtitle options for other platforms
+            if hasattr(self, 'subtitle_frame'):
+                self.subtitle_frame.setVisible(False)
+                self.subtitle_checkbox.setChecked(False)
+                print("Other platform selected - Hiding subtitle options")
+        
+        # Update column widths after setting headers
         self.update_column_widths()
 
     def update_table_headers(self):
@@ -541,6 +547,14 @@ class VideoInfoTab(QWidget):
         
         if reply == QMessageBox.StandardButton.No:
             return
+        
+        # Get subtitle options
+        download_subtitles = False
+        subtitle_language = "en"
+        
+        if self.current_platform == "YouTube" and self.subtitle_checkbox.isChecked():
+            download_subtitles = True
+            subtitle_language = self.subtitle_language_combo.currentData()
             
         # Start download for each selected video
         for row in selected_rows:
@@ -579,14 +593,24 @@ class VideoInfoTab(QWidget):
                     output_folder,
                     quality,
                     format_type,
-                    custom_title
+                    custom_title,
+                    download_subtitles,
+                    subtitle_language
                 )
                 
         # Update UI
         if self.parent and self.parent.status_bar:
-            self.parent.status_bar.showMessage(
-                self.tr_("STATUS_DOWNLOAD_STARTED").format(len(selected_rows))
-            )
+            if download_subtitles:
+                self.parent.status_bar.showMessage(
+                    self.tr_("STATUS_DOWNLOAD_WITH_SUBS_STARTED").format(
+                        len(selected_rows), 
+                        self.subtitle_language_combo.currentText()
+                    )
+                )
+            else:
+                self.parent.status_bar.showMessage(
+                    self.tr_("STATUS_DOWNLOAD_STARTED").format(len(selected_rows))
+                )
             
         # Update button states
         self.update_button_states()
@@ -2024,8 +2048,40 @@ class VideoInfoTab(QWidget):
         # Add left button group to layout
         options_layout.addLayout(left_buttons_layout)
         
-        # Add stretch to push Download button all the way to the right
+        # Add stretch to push Subtitle options and Download button to the right
         options_layout.addStretch(1)
+        
+        # Subtitle options - Create them directly in the main options layout
+        # Create a frame for subtitle options with a border
+        self.subtitle_frame = QFrame()
+        self.subtitle_frame.setFrameShape(QFrame.Shape.StyledPanel)
+        self.subtitle_frame.setFrameShadow(QFrame.Shadow.Raised)
+        subtitle_layout = QHBoxLayout(self.subtitle_frame)
+        subtitle_layout.setContentsMargins(8, 4, 8, 4)  # Smaller margins for compact display
+        
+        # Checkbox for downloading subtitles
+        self.subtitle_checkbox = QCheckBox(self.tr_("CHECKBOX_DOWNLOAD_SUBTITLES"))
+        self.subtitle_checkbox.setChecked(False)
+        self.subtitle_checkbox.setToolTip(self.tr_("TOOLTIP_DOWNLOAD_SUBTITLES"))
+        self.subtitle_checkbox.stateChanged.connect(self.on_subtitle_checkbox_changed)
+        subtitle_layout.addWidget(self.subtitle_checkbox)
+        
+        # Dropdown for subtitle language
+        self.subtitle_language_combo = QComboBox()
+        self.subtitle_language_combo.addItem("English", "en")
+        self.subtitle_language_combo.addItem("Vietnamese", "vi")
+        self.subtitle_language_combo.addItem("Korean", "ko")
+        self.subtitle_language_combo.addItem("Japanese", "ja")
+        self.subtitle_language_combo.addItem("Indonesian", "id")
+        self.subtitle_language_combo.setEnabled(False)  # Disabled by default
+        self.subtitle_language_combo.setFixedWidth(100)
+        subtitle_layout.addWidget(self.subtitle_language_combo)
+        
+        # Add subtitle frame to main options layout
+        options_layout.addWidget(self.subtitle_frame)
+        
+        # Show subtitle options only for YouTube
+        self.subtitle_frame.setVisible(self.current_platform == "YouTube")
         
         # Download button on the right
         self.download_btn = QPushButton(self.tr_("BUTTON_DOWNLOAD"))
@@ -2223,3 +2279,69 @@ class VideoInfoTab(QWidget):
                     self.tr_("DIALOG_ERROR"), 
                     self.tr_("DIALOG_INVALID_NAME")
                 )
+
+    def on_subtitle_checkbox_changed(self):
+        """Handle change in subtitle checkbox state"""
+        # Enable/disable the language dropdown based on checkbox state
+        is_checked = self.subtitle_checkbox.isChecked()
+        self.subtitle_language_combo.setEnabled(is_checked)
+        
+        # Add logging for debugging
+        print(f"Subtitle checkbox changed: {is_checked}")
+        print(f"Language combo enabled: {self.subtitle_language_combo.isEnabled()}")
+        
+        # Show a message box for debugging
+        QMessageBox.information(
+            self,
+            "Subtitle Option Changed",
+            f"Subtitle downloading is now {'enabled' if is_checked else 'disabled'}\n"
+            f"Language: {self.subtitle_language_combo.currentText()}"
+        )
+        
+        # Update UI to reflect changes
+        if is_checked:
+            # Show a tooltip or status message
+            if self.parent and self.parent.status_bar:
+                language = self.subtitle_language_combo.currentText()
+                self.parent.status_bar.showMessage(f"Selected subtitles in {language}")
+        else:
+            # Clear any status message
+            if self.parent and self.parent.status_bar:
+                self.parent.status_bar.showMessage(self.tr_("STATUS_READY"))
+
+    def set_platform(self, platform):
+        """Set the current platform and update UI accordingly"""
+        print(f"Setting platform to: {platform}")
+        self.current_platform = platform
+        
+        # Configure placeholder based on platform
+        if platform == "TikTok":
+            self.url_input.setPlaceholderText("Enter TikTok URL(s) - separate multiple URLs with spaces")
+        elif platform == "YouTube":
+            self.url_input.setPlaceholderText("Enter YouTube URL(s) - separate multiple URLs with spaces")
+        else:
+            self.url_input.setPlaceholderText("Enter URL(s) - separate multiple URLs with spaces")
+        
+        # Update the column headers for the new platform
+        self.update_table_headers()
+        
+        # Show/hide subtitle options based on platform
+        # Only YouTube supports subtitles for now
+        self.subtitle_frame.setVisible(platform == "YouTube")
+        
+        # Reset checkbox when switching platforms
+        if platform != "YouTube":
+            self.subtitle_checkbox.setChecked(False)
+            self.subtitle_language_combo.setEnabled(False)
+        
+        # Clear the table when changing platforms
+        self.clear_table()
+        
+        # Reset URL input and disable download button
+        self.url_input.clear()
+        self.update_button_states()
+
+    def clear_table(self):
+        """Clear all rows in the video table"""
+        self.video_table.setRowCount(0)
+        self.video_info_dict.clear()

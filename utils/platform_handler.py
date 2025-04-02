@@ -41,16 +41,18 @@ class PlatformHandler(QObject, ABC, metaclass=ABCQObjectMeta):
         pass
     
     @abstractmethod
-    def download_video(self, url, format_id=None, output_template=None, audio_only=False, force_overwrite=False):
+    def download_video(self, url, output_dir=None, quality=None, format_type=None, custom_title=None, download_subtitles=False, subtitle_language=None):
         """
         Download video from URL
         
         Args:
             url: Video URL
-            format_id: Format ID to download (if None, best quality will be chosen)
-            output_template: Output filename template
-            audio_only: Whether to download audio only
-            force_overwrite: Overwrite if file exists
+            output_dir: Output directory
+            quality: Video quality (e.g. 1080p, 720p)
+            format_type: Video format (e.g. mp4, mp3)
+            custom_title: Custom title for the file
+            download_subtitles: Whether to download subtitles
+            subtitle_language: Language code for subtitles (e.g. en, vi)
         """
         pass
     

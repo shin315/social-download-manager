@@ -41,6 +41,8 @@ Thumbs.db
 
 # Log files
 *.log
+app_debug.log
+api_errors.log
 error_report*.txt
 crash*.txt
 

@@ -236,16 +236,18 @@ class YouTubeHandler(PlatformHandler):
                 
         return False
     
-    def download_video(self, url, format_id=None, output_template=None, audio_only=False, force_overwrite=False):
+    def download_video(self, url, output_dir=None, quality=None, format_type=None, custom_title=None, download_subtitles=False, subtitle_language=None):
         """
         Download YouTube video
         
         Args:
             url: YouTube video URL
-            format_id: Format ID to download (if None, best quality will be chosen)
-            output_template: Output filename template
-            audio_only: Whether to download audio only
-            force_overwrite: Overwrite if file exists
+            output_dir: Output directory
+            quality: Video quality (e.g. 1080p, 720p)
+            format_type: Video format (e.g. mp4, mp3)
+            custom_title: Custom title for the file
+            download_subtitles: Whether to download subtitles
+            subtitle_language: Language code for subtitles (e.g. en, vi)
         """
         # Check if URL is valid
         if not self.is_valid_url(url):
@@ -255,46 +257,83 @@ class YouTubeHandler(PlatformHandler):
         # Mark this URL as currently downloading
         self.downloading_urls.add(url)
         
-        if not output_template:
-            if not self.output_dir:
-                self.output_dir = os.path.join(os.path.expanduser("~"), "Downloads")
-                
+        # Create output template from the parameters
+        if output_dir:
+            self.output_dir = output_dir
+        
+        if not self.output_dir:
+            self.output_dir = os.path.join(os.path.expanduser("~"), "Downloads")
+            
+        # Create filename based on custom title or original title
+        if custom_title:
+            # Sanitize custom title for use in filename
+            safe_title = slugify(custom_title)
+            output_template = os.path.join(self.output_dir, f"{safe_title}.%(ext)s")
+        else:
             output_template = os.path.join(self.output_dir, '%(title)s.%(ext)s')
         
-        # Check if this is an audio request
-        is_audio_request = audio_only or (format_id and ('audio' in format_id.lower() or 'mp3' in format_id.lower()))
+        # Determine format based on quality and format_type
+        is_audio_request = format_type and 'mp3' in format_type.lower()
+        
+        # Map quality to format_id
+        format_id = None
+        if quality:
+            if is_audio_request:
+                format_id = 'bestaudio'
+            else:
+                # Map quality strings to format_id
+                if quality == "1080p":
+                    format_id = 'bestvideo[height<=1080]+bestaudio/best[height<=1080]'
+                elif quality == "720p":
+                    format_id = 'bestvideo[height<=720]+bestaudio/best[height<=720]'
+                elif quality == "480p":
+                    format_id = 'bestvideo[height<=480]+bestaudio/best[height<=480]'
+                elif quality == "360p":
+                    format_id = 'bestvideo[height<=360]+bestaudio/best[height<=360]'
+                else:
+                    # Default to best
+                    format_id = 'bestvideo+bestaudio/best'
+        else:
+            # Default to best
+            format_id = 'bestvideo+bestaudio/best'
         
         # Mark URL as being converted to MP3 if it's an audio request with MP3 format
-        if is_audio_request and (not format_id or 'mp3' in format_id.lower()):
+        if is_audio_request:
             self.converting_mp3_urls.add(url)
-            # For MP3, we'll download best audio and convert
-            format_spec = 'bestaudio'
-            if '.%(ext)s' in output_template:
-                temp_output_template = output_template.replace('.%(ext)s', '.%(ext)s')
-            else:
-                temp_output_template = output_template
-        elif is_audio_request:
-            # For other audio formats, download directly in that format
-            format_spec = format_id if format_id else 'bestaudio'
-            temp_output_template = output_template
-        else:
-            # For video, use the specified format or best
-            temp_output_template = output_template
-            if format_id:
-                format_spec = format_id
-            else:
-                format_spec = 'bestvideo+bestaudio/best'
+            # For MP3, download best audio and convert
+            format_id = 'bestaudio'
         
         ydl_opts = {
-            'format': format_spec,
-            'outtmpl': temp_output_template,
+            'format': format_id,
+            'outtmpl': output_template,
             'progress_hooks': [self._progress_hook],
             'quiet': False,
             'no_warnings': True,
         }
         
+        # Add subtitle options if requested
+        if download_subtitles:
+            subtitle_opts = {
+                # Always try to download subtitles
+                'writesubtitles': True,
+                # Convert to srt format
+                'convertsubtitles': 'srt',
+            }
+            
+            # Set language preference if specified
+            if subtitle_language:
+                subtitle_opts['subtitleslangs'] = [subtitle_language]
+            else:
+                subtitle_opts['subtitleslangs'] = ['en']
+            
+            # Also try auto-generated subtitles if available
+            subtitle_opts['writeautomaticsub'] = True
+            
+            # Add to main options
+            ydl_opts.update(subtitle_opts)
+        
         # Add postprocessor for MP3 conversion if needed
-        if is_audio_request and 'mp3' in (format_id or '').lower():
+        if is_audio_request:
             # Check if FFmpeg is installed
             ffmpeg_available, _ = check_ffmpeg_installed()
             if not ffmpeg_available:
@@ -318,47 +357,82 @@ class YouTubeHandler(PlatformHandler):
             if postprocessor_args:
                 ydl_opts['postprocessor_args'] = postprocessor_args
         
-        # Add overwrite option if requested
-        if force_overwrite:
-            ydl_opts['force_overwrites'] = True
-            ydl_opts['nooverwrites'] = False
-            ydl_opts['overwrites'] = True
-            
-            # Add postprocessor args if not already added
-            if 'postprocessor_args' not in ydl_opts:
-                ydl_opts['postprocessor_args'] = {}
-            if 'ffmpeg' not in ydl_opts['postprocessor_args']:
-                ydl_opts['postprocessor_args']['ffmpeg'] = []
-            
-            # Add -y to force overwrite with ffmpeg
-            ydl_opts['postprocessor_args']['ffmpeg'] += ['-y']
-        
         try:
-            logger.info(f"Downloading YouTube with format: {format_spec}")
+            logger.info(f"Downloading YouTube with format: {format_id}")
             with yt_dlp.YoutubeDL(ydl_opts) as ydl:
-                ydl.download([url])
+                info = ydl.extract_info(url, download=True)
+                
+                # Check if subtitles were downloaded
+                has_subtitle = False
+                subtitle_type = ""
+                subtitle_language_found = ""
+                
+                if download_subtitles and info:
+                    if 'requested_subtitles' in info and info['requested_subtitles']:
+                        # Official subtitles were found
+                        has_subtitle = True
+                        subtitle_type = "official"
+                        subtitle_language_found = next(iter(info['requested_subtitles'].keys()), "")
+                    elif 'requested_automatic_captions' in info and info['requested_automatic_captions']:
+                        # Auto-generated subtitles were found
+                        has_subtitle = True
+                        subtitle_type = "auto"
+                        subtitle_language_found = next(iter(info['requested_automatic_captions'].keys()), "")
             
             # Get the actual downloaded file path
-            downloaded_file = temp_output_template
-            
-            # If template still contains %(title)s, we need to get the title info
-            if '%(title)s' in temp_output_template:
-                # Get info to determine the actual filename
-                with yt_dlp.YoutubeDL({'quiet': True}) as ydl:
-                    info = ydl.extract_info(url, download=False)
-                    title = info.get('title', 'unknown_title').replace('/', '-')
-                    
-                    # Handle extension for MP3
-                    if is_audio_request and 'mp3' in (format_id or '').lower():
-                        ext = 'mp3'
+            if custom_title:
+                # For custom title, we use our predefined format
+                if is_audio_request:
+                    downloaded_file = os.path.join(self.output_dir, f"{safe_title}.mp3")
+                else:
+                    downloaded_file = os.path.join(self.output_dir, f"{safe_title}.mp4")
+            else:
+                # For default title, try to determine from the info
+                if 'title' in info:
+                    title = slugify(info['title'])
+                    if is_audio_request:
+                        downloaded_file = os.path.join(self.output_dir, f"{title}.mp3")
                     else:
-                        ext = info.get('ext', 'mp4')
-                        
-                    downloaded_file = temp_output_template.replace('%(title)s.%(ext)s', f"{title}.{ext}")
+                        downloaded_file = os.path.join(self.output_dir, f"{title}.mp4")
+                else:
+                    # Fallback if we can't determine the title
+                    downloaded_file = output_template.replace('%(title)s.%(ext)s', "downloaded_video.mp4")
+                    if is_audio_request:
+                        downloaded_file = downloaded_file.replace('.mp4', '.mp3')
             
             # Signal completion
             self.finished_signal.emit(url, True, downloaded_file)
-            self._add_to_downloads(url, True, downloaded_file)
+            
+            # Add to downloads with subtitle information
+            download_info = {
+                'url': url,
+                'title': custom_title or info.get('title', 'Unknown'),
+                'creator': info.get('uploader', 'Unknown'),
+                'filepath': downloaded_file,
+                'quality': quality or 'best',
+                'format': 'mp3' if is_audio_request else 'mp4',
+                'duration': info.get('duration', 0),
+                'filesize': os.path.getsize(downloaded_file) if os.path.exists(downloaded_file) else 0,
+                'status': 'Success',
+                'download_date': datetime.now().strftime("%Y/%m/%d %H:%M"),
+                'has_subtitle': has_subtitle,
+                'subtitle_language': subtitle_language_found,
+                'subtitle_type': subtitle_type
+            }
+            
+            # Add extra metadata
+            download_info['description'] = info.get('description', '')
+            download_info['thumbnail'] = info.get('thumbnail', '')
+            
+            # Add to downloads
+            from ..db_manager import DatabaseManager
+            db_manager = DatabaseManager()
+            db_manager.add_download(download_info)
+            
+            # Remove from tracking sets
+            self.downloading_urls.discard(url)
+            if is_audio_request:
+                self.converting_mp3_urls.discard(url)
             
         except Exception as e:
             logger.error(f"Error downloading YouTube video: {e}")

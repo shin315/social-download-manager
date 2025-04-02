@@ -41,9 +41,25 @@ class DatabaseManager:
             filesize TEXT,
             status TEXT,
             download_date TEXT,
-            metadata TEXT
+            metadata TEXT,
+            has_subtitle INTEGER DEFAULT 0,
+            subtitle_language TEXT,
+            subtitle_type TEXT
         )
         ''')
+        
+        # Check if subtitle columns exist, add them if they don't
+        cursor.execute("PRAGMA table_info(downloads)")
+        columns = [column[1] for column in cursor.fetchall()]
+        
+        if 'has_subtitle' not in columns:
+            cursor.execute('ALTER TABLE downloads ADD COLUMN has_subtitle INTEGER DEFAULT 0')
+        
+        if 'subtitle_language' not in columns:
+            cursor.execute('ALTER TABLE downloads ADD COLUMN subtitle_language TEXT')
+        
+        if 'subtitle_type' not in columns:
+            cursor.execute('ALTER TABLE downloads ADD COLUMN subtitle_type TEXT')
         
         conn.commit()
         conn.close()
@@ -76,8 +92,9 @@ class DatabaseManager:
         # Add new record
         cursor.execute('''
         INSERT INTO downloads (url, title, filepath, quality, format, duration, 
-                               filesize, status, download_date, metadata)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                               filesize, status, download_date, metadata,
+                               has_subtitle, subtitle_language, subtitle_type)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             download_info.get('url', ''),
             download_info.get('title', 'Unknown'),
@@ -88,7 +105,10 @@ class DatabaseManager:
             download_info.get('filesize', ''),
             download_info.get('status', 'Success'),
             download_info.get('download_date', datetime.now().strftime("%Y/%m/%d %H:%M")),
-            metadata_json
+            metadata_json,
+            1 if download_info.get('has_subtitle', False) else 0,
+            download_info.get('subtitle_language', ''),
+            download_info.get('subtitle_type', '')
         ))
         
         conn.commit()

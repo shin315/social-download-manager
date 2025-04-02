@@ -270,4 +270,20 @@ STATUS_SWITCHED_TO_TIKTOK = "Switched to TikTok mode"
 # Context menu for YouTube
 CONTEXT_COPY_CHANNEL = "Copy Channel"
 CONTEXT_COPY_PLAYLIST = "Copy Playlist"
-CONTEXT_COPY_RELEASE_DATE = "Copy Release Date" 
+CONTEXT_COPY_RELEASE_DATE = "Copy Release Date"
+
+# Subtitle options
+CHECKBOX_DOWNLOAD_SUBTITLES = "Download subtitles"
+TOOLTIP_DOWNLOAD_SUBTITLES = "Try to download subtitles for all selected videos (may not be available for all videos)"
+STATUS_DOWNLOAD_WITH_SUBS_STARTED = "Downloading {} videos with {} subtitles"
+STATUS_SUBTITLE_OFFICIAL = "Downloaded video with official subtitles"
+STATUS_SUBTITLE_AUTO = "Downloaded video with auto-generated subtitles"
+STATUS_SUBTITLE_NOT_AVAILABLE = "Video downloaded, but subtitles not available"
+STATUS_SUBTITLE_SUMMARY = "Downloaded {} videos: {} with official subtitles, {} with auto subtitles, {} without subtitles"
+
+# Downloaded Videos tab - new for subtitles
+LABEL_HAS_SUBTITLES = "Has subtitles: {}"
+LABEL_SUBTITLE_LANGUAGE = "Subtitle language: {}"
+LABEL_SUBTITLE_TYPE = "Subtitle type: {}"
+SUBTITLE_TYPE_OFFICIAL = "Official"
+SUBTITLE_TYPE_AUTO = "Auto-generated" 

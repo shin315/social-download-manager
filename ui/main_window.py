@@ -108,6 +108,9 @@ class MainWindow(QMainWindow):
         
         # Initialize donate dialog (not displayed)
         self.donate_dialog = None
+        
+        # Set the default platform to YouTube
+        QTimer.singleShot(100, lambda: self.switch_platform("YouTube"))
 
     def create_menu_bar(self):
         """Create menu bar with menus and actions"""
@@ -144,7 +147,7 @@ class MainWindow(QMainWindow):
         tiktok_icon = QIcon(get_resource_path(f"assets/platforms/tiktok{icon_suffix}.png"))
         tiktok_action = QAction(tiktok_icon, self.tr_("PLATFORM_TIKTOK"), self)
         tiktok_action.setCheckable(True)
-        tiktok_action.setChecked(True)  # Default is TikTok
+        tiktok_action.setChecked(False)  # Not default anymore
         tiktok_action.triggered.connect(lambda: self.switch_platform("TikTok"))
         platform_action_group.addAction(tiktok_action)
         platform_menu.addAction(tiktok_action)
@@ -155,6 +158,7 @@ class MainWindow(QMainWindow):
         youtube_icon = QIcon(get_resource_path(f"assets/platforms/youtube{icon_suffix}.png"))
         youtube_action = QAction(youtube_icon, self.tr_("PLATFORM_YOUTUBE"), self)
         youtube_action.setCheckable(True)
+        youtube_action.setChecked(True)  # Default is now YouTube
         youtube_action.triggered.connect(lambda: self.switch_platform("YouTube"))
         platform_action_group.addAction(youtube_action)
         platform_menu.addAction(youtube_action)

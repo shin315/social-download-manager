@@ -271,4 +271,20 @@ STATUS_SWITCHED_TO_TIKTOK = "Đã chuyển sang chế độ TikTok"
 # Context menu for YouTube
 CONTEXT_COPY_CHANNEL = "Sao chép Kênh"
 CONTEXT_COPY_PLAYLIST = "Sao chép Danh Sách Phát"
-CONTEXT_COPY_RELEASE_DATE = "Sao chép Ngày Phát Hành" 
+CONTEXT_COPY_RELEASE_DATE = "Sao chép Ngày Phát Hành"
+
+# Subtitle options
+CHECKBOX_DOWNLOAD_SUBTITLES = "Tải phụ đề"
+TOOLTIP_DOWNLOAD_SUBTITLES = "Thử tải phụ đề cho tất cả các video đã chọn (có thể không khả dụng cho tất cả video)"
+STATUS_DOWNLOAD_WITH_SUBS_STARTED = "Đang tải {} video với phụ đề {}"
+STATUS_SUBTITLE_OFFICIAL = "Đã tải video với phụ đề chính thức"
+STATUS_SUBTITLE_AUTO = "Đã tải video với phụ đề tự động"
+STATUS_SUBTITLE_NOT_AVAILABLE = "Đã tải video, nhưng không có phụ đề"
+STATUS_SUBTITLE_SUMMARY = "Đã tải {} video: {} với phụ đề chính thức, {} với phụ đề tự động, {} không có phụ đề"
+
+# Downloaded Videos tab - new for subtitles
+LABEL_HAS_SUBTITLES = "Có phụ đề: {}"
+LABEL_SUBTITLE_LANGUAGE = "Ngôn ngữ phụ đề: {}"
+LABEL_SUBTITLE_TYPE = "Loại phụ đề: {}"
+SUBTITLE_TYPE_OFFICIAL = "Chính thức"
+SUBTITLE_TYPE_AUTO = "Tự động tạo" 
