@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
+﻿from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QLineEdit, QPushButton, QTableWidget, QComboBox,
                              QFileDialog, QCheckBox, QHeaderView, QMessageBox,
                              QTableWidgetItem, QProgressBar, QApplication, QDialog, QTextEdit, QMenu, QInputDialog, QSpacerItem, QSizePolicy, QDialogButtonBox)
@@ -6,7 +6,9 @@ from PyQt6.QtCore import Qt, pyqtSignal, QSize
 import os
 import json
 from localization import get_language_manager
-from utils.downloader import TikTokDownloader, VideoInfo
+from utils.downloader import Downloader
+from utils.video_info import VideoInfo
+from utils.platform_factory import PlatformFactory
 from PyQt6.QtNetwork import QNetworkRequest, QNetworkAccessManager, QNetworkReply
 from PyQt6.QtGui import QPixmap, QCursor, QAction
 from datetime import datetime
@@ -17,6 +19,8 @@ import re
 from PyQt6.QtWidgets import QToolTip
 import sys
 import subprocess  # Added import for subprocess
+import logging
+import traceback
 
 # Path to configuration file
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
@@ -43,6 +47,9 @@ class VideoInfoTab(QWidget):
         # Variable to track if all items are selected
         self.all_selected = False
         
+        # Current platform (default to TikTok)
+        self.current_platform = "TikTok"
+        
         # Set up UI
         self.setup_ui()
         
@@ -53,7 +60,7 @@ class VideoInfoTab(QWidget):
         self.load_last_output_folder()
         
         # Initialize downloader
-        self.downloader = TikTokDownloader()
+        self.downloader = Downloader()
         self.downloader.info_signal.connect(self.handle_video_info)
         self.downloader.progress_signal.connect(self.handle_progress)
         self.downloader.finished_signal.connect(self.handle_download_finished)
@@ -79,285 +86,131 @@ class VideoInfoTab(QWidget):
                 self.last_clipboard_text = clipboard.text()
         except Exception as e:
             print(f"Error initializing clipboard: {e}")
-
-    def setup_ui(self):
-        # Main layout
-        main_layout = QVBoxLayout()
-        self.setLayout(main_layout)
-
-        # URL and Get Info section
-        url_layout = QHBoxLayout()
-        
-        # URL Label
-        self.url_label = QLabel(self.tr_("LABEL_VIDEO_URL"))
-        url_layout.addWidget(self.url_label)
-        
-        # Create spacing to align URL input with output folder
-        spacer_width = 18  # Adjusted to 70px for better alignment
-        url_layout.addSpacing(spacer_width)
-        
-        # URL Input
-        self.url_input = QLineEdit()
-        self.url_input.setFixedHeight(30)
-        # No longer setting fixed width - allow stretching with window
-        self.url_input.setMinimumWidth(500)
-        self.url_input.setPlaceholderText(self.tr_("PLACEHOLDER_VIDEO_URL"))
-        # Connect returnPressed event to get_video_info function
-        self.url_input.returnPressed.connect(self.get_video_info)
-        url_layout.addWidget(self.url_input, 1)  # stretch factor 1 to expand when maximized
-        
-        # Get Info Button
-        self.get_info_btn = QPushButton(self.tr_("BUTTON_GET_INFO"))
-        self.get_info_btn.setFixedWidth(120)  # Fixed width
-        self.get_info_btn.clicked.connect(self.get_video_info)
-        url_layout.addWidget(self.get_info_btn)
-        
-        main_layout.addLayout(url_layout)
-
-        # Output Folder section
-        output_layout = QHBoxLayout()
-        
-        # Output Folder Label
-        self.output_label = QLabel(self.tr_("LABEL_OUTPUT_FOLDER"))
-        output_layout.addWidget(self.output_label)
-        
-        # Display folder path
-        self.output_folder_display = QLineEdit()
-        self.output_folder_display.setReadOnly(True)
-        self.output_folder_display.setFixedHeight(30)
-        # No longer setting fixed width - allow stretching with window
-        self.output_folder_display.setMinimumWidth(500)
-        self.output_folder_display.setPlaceholderText(self.tr_("PLACEHOLDER_OUTPUT_FOLDER"))
-        output_layout.addWidget(self.output_folder_display, 1)  # stretch factor 1 to expand when maximized
-        
-        # Choose folder button
-        self.choose_folder_btn = QPushButton(self.tr_("BUTTON_CHOOSE_FOLDER"))
-        self.choose_folder_btn.setFixedWidth(120)  # Fixed width same as Get Info button
-        self.choose_folder_btn.clicked.connect(self.choose_output_folder)
-        output_layout.addWidget(self.choose_folder_btn)
-        
-        main_layout.addLayout(output_layout)
-
-        # Video information table
-        self.create_video_table()
-        main_layout.addWidget(self.video_table)
-
-        # Options and Download button section
-        options_layout = QHBoxLayout()
-        
-        # Group Select/Delete buttons to the left
-        left_buttons_layout = QHBoxLayout()
-        
-        # Select all / Unselect all button (combined into one)
-        self.select_toggle_btn = QPushButton(self.tr_("BUTTON_SELECT_ALL"))
-        self.select_toggle_btn.setFixedWidth(150)
-        self.select_toggle_btn.clicked.connect(self.toggle_select_all)
-        self.all_selected = False  # Current state (False: not all selected)
-        left_buttons_layout.addWidget(self.select_toggle_btn)
-        
-        # Delete Selected button
-        self.delete_selected_btn = QPushButton(self.tr_("BUTTON_DELETE_SELECTED"))
-        self.delete_selected_btn.setFixedWidth(150)
-        self.delete_selected_btn.clicked.connect(self.delete_selected_videos)
-        left_buttons_layout.addWidget(self.delete_selected_btn)
-        
-        # Delete All button
-        self.delete_all_btn = QPushButton(self.tr_("BUTTON_DELETE_ALL"))
-        self.delete_all_btn.setFixedWidth(150)
-        self.delete_all_btn.clicked.connect(self.delete_all_videos)
-        left_buttons_layout.addWidget(self.delete_all_btn)
-        
-        # Add left button group to layout
-        options_layout.addLayout(left_buttons_layout)
-        
-        # Add stretch to push Download button all the way to the right
-        options_layout.addStretch(1)
-        
-        # Download button on the right
-        self.download_btn = QPushButton(self.tr_("BUTTON_DOWNLOAD"))
-        self.download_btn.setFixedWidth(150)
-        self.download_btn.clicked.connect(self.download_videos)
-        options_layout.addWidget(self.download_btn)
-
-        main_layout.addLayout(options_layout)
-        
-        # Set up context menu for video_table
-        self.video_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-        self.video_table.customContextMenuRequested.connect(self.show_context_menu)
-        
-        # Update initial button states
-        self.update_button_states()
-
-    def show_context_menu(self, position):
-        """Display right-click menu for video table"""
-        # Get current row and column position
-        index = self.video_table.indexAt(position)
-        if not index.isValid():
+            
+    def set_current_platform(self, platform_name):
+        """Set current platform and update UI accordingly"""
+        if platform_name not in ["TikTok", "YouTube"]:
             return
             
-        row = index.row()
-        column = index.column()
+        # Update current platform
+        self.current_platform = platform_name
         
-        if row < 0 or row >= self.video_table.rowCount():
-            return
-        
-        # Create context menu
-        context_menu = QMenu(self)
-        
-        # Determine data type based on column
-        if column == 1:  # Title
-            # Get title from item
-            item = self.video_table.item(row, column)
-            if item and item.text():
-                # Get full title from video_info_dict if available
-                full_title = item.text()  # Default to displayed text
-                if row in self.video_info_dict:
-                    video_info = self.video_info_dict[row]
-                    # Prioritize caption if available as it usually contains the most complete content
-                    if hasattr(video_info, 'caption') and video_info.caption:
-                        full_title = video_info.caption
-                    # If no caption, try using original_title
-                    elif hasattr(video_info, 'original_title') and video_info.original_title:
-                        full_title = video_info.original_title
-                    # If not, use title
-                    elif hasattr(video_info, 'title'):
-                        full_title = video_info.title
-                
-                # Add Copy action
-                copy_action = QAction(self.tr_("CONTEXT_COPY_TITLE"), self)
-                copy_action.triggered.connect(lambda: self.copy_to_clipboard(full_title, "title"))
-                context_menu.addAction(copy_action)
-        
-        elif column == 2:  # Creator
-            # Get creator from item
-            item = self.video_table.item(row, column)
-            if item and item.text():
-                # Add Copy action
-                copy_action = QAction(self.tr_("CONTEXT_COPY_CREATOR"), self)
-                copy_action.triggered.connect(lambda: self.copy_to_clipboard(item.text(), "creator"))
-                context_menu.addAction(copy_action)
-        
-        elif column == 7:  # Hashtags
-            # Get hashtags from item
-            item = self.video_table.item(row, column)
-            if item and item.text():
-                # Add Copy action
-                copy_action = QAction(self.tr_("CONTEXT_COPY_HASHTAGS"), self)
-                copy_action.triggered.connect(lambda: self.copy_to_clipboard(item.text(), "hashtags"))
-                context_menu.addAction(copy_action)
-                
-        # Common functions for all columns
-        # Add separator if there are previous actions
-        if not context_menu.isEmpty():
-            context_menu.addSeparator()
-        
-        # Get video information
-        video_info = None
-        if row in self.video_info_dict:
-            video_info = self.video_info_dict[row]
-        
-        if video_info:
-            # Check if output folder has been selected
-            has_output_folder = bool(self.output_folder_display.text())
+        # Update URL placeholder based on platform
+        if platform_name == "YouTube":
+            self.url_input.setPlaceholderText("https://www.youtube.com/watch?v=...")
+        else:
+            self.url_input.setPlaceholderText("https://www.tiktok.com/@username/video/...")
             
-            # Ensure title attribute exists
-            if not hasattr(video_info, 'title') or video_info.title is None or video_info.title.strip() == "":
-                from datetime import datetime
-                default_title = f"Video_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-                setattr(video_info, 'title', default_title)
-                print(f"DEBUG - Created default title for video without title: {default_title}")
+        # Update table headers for the platform
+        self.configure_headers_by_platform(platform_name)
             
-            # Check if video has an error
-            has_error = False
-            if hasattr(video_info, 'title'):
-                has_error = video_info.title.startswith("Error:")
+    def configure_headers_by_platform(self, platform_name):
+        """Configure table headers based on platform"""
+        if platform_name == "YouTube":
+            # YouTube headers
+            self.video_table.setColumnCount(9)  # Add Playlist column for YouTube
+            self.update_table_headers_youtube()
+        else:
+            # TikTok headers (default)
+            self.video_table.setColumnCount(8)
+            self.update_table_headers_tiktok()
             
-            # Only show Rename if video has no errors and output folder is selected
-            # Removed hasattr(video_info, 'title') condition to allow renaming videos without titles
-            if not has_error and has_output_folder and hasattr(video_info, 'url'):
-                # Action Rename Video - Allow changing video name before downloading
-                rename_action = QAction(self.tr_("CONTEXT_RENAME_VIDEO"), self)
-                rename_action.triggered.connect(lambda: self.rename_video(row))
-                context_menu.addAction(rename_action)
-                
-                # Add separator
-                context_menu.addSeparator()
-        
-        # Action Delete Video - available in all cases
-        delete_action = QAction(self.tr_("CONTEXT_DELETE"), self)
-        delete_action.triggered.connect(lambda: self.delete_row(row))
-        context_menu.addAction(delete_action)
-        
-        # Show menu if it has actions
-        if not context_menu.isEmpty():
-            context_menu.exec(QCursor.pos())
+        # Update column widths
+        self.update_column_widths()
 
-    def rename_video(self, row):
-        """Allow users to rename video before downloading"""
-        # Check if video_info exists
-        if row not in self.video_info_dict:
-            return
-            
-        video_info = self.video_info_dict[row]
+    def update_table_headers(self):
+        """Update table headers based on current platform"""
+        if self.current_platform == "YouTube":
+            self.update_table_headers_youtube()
+        else:
+            self.update_table_headers_tiktok()
+
+    def update_table_headers_tiktok(self):
+        """Update table headers for TikTok"""
+        headers = [
+            self.tr_("HEADER_SELECT"),
+            self.tr_("HEADER_VIDEO_TITLE"),
+            self.tr_("HEADER_CREATOR"),
+            self.tr_("HEADER_QUALITY"),
+            self.tr_("HEADER_FORMAT"),
+            self.tr_("HEADER_DURATION"),
+            self.tr_("HEADER_SIZE"),
+            self.tr_("HEADER_HASHTAGS")
+        ]
+        self.video_table.setHorizontalHeaderLabels(headers)
         
-        # Get current title
-        current_title = video_info.title if hasattr(video_info, 'title') else ""
+    def update_table_headers_youtube(self):
+        """Update table headers for YouTube"""
+        headers = [
+            self.tr_("HEADER_SELECT"),
+            self.tr_("HEADER_VIDEO_TITLE"),
+            self.tr_("HEADER_CHANNEL"),  # Channel instead of Creator
+            self.tr_("HEADER_PLAYLIST"),  # New column for Playlist
+            self.tr_("HEADER_QUALITY"),
+            self.tr_("HEADER_FORMAT"),
+            self.tr_("HEADER_DURATION"),
+            self.tr_("HEADER_SIZE"),
+            self.tr_("HEADER_RELEASE_DATE")  # Release Date instead of Hashtags
+        ]
+        self.video_table.setHorizontalHeaderLabels(headers)
         
-        # If no title, create default title from timestamp
-        if not current_title:
-            from datetime import datetime
-            current_title = f"Video_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-            print(f"DEBUG - Creating default title for empty video title: {current_title}")
-            
-        # Show dialog to enter new name
-        new_title, ok = QInputDialog.getText(
-            self, 
-            self.tr_("DIALOG_RENAME_TITLE"),
-            self.tr_("DIALOG_ENTER_NEW_NAME"), 
-            QLineEdit.EchoMode.Normal, 
-            current_title
-        )
+    def update_column_widths(self):
+        """Update column widths based on current platform"""
+        # Common columns
+        self.video_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)  # Select
+        self.video_table.setColumnWidth(0, 50)
         
-        # Check if user clicked OK and new name is not empty
-        if ok and new_title:
-            # Clean filename to avoid invalid characters
-            import re
-            clean_title = re.sub(r'[\\/*?:"<>|]', '', new_title).strip()
+        self.video_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)  # Title
+        
+        # Platform-specific
+        if self.current_platform == "YouTube":
+            # YouTube column widths
+            self.video_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)  # Channel
+            self.video_table.setColumnWidth(2, 120)
             
-            if clean_title:
-                # Save original title to original_title variable if it doesn't exist
-                if not hasattr(video_info, 'original_title'):
-                    setattr(video_info, 'original_title', current_title)
-                    
-                # Update new name
-                setattr(video_info, 'title', clean_title)
-                
-                # Add custom_title attribute
-                setattr(video_info, 'custom_title', clean_title)
-                
-                # Update UI - title column in table
-                title_cell = self.video_table.item(row, 1)
-                if title_cell:
-                    title_cell.setText(clean_title)
-                    title_cell.setToolTip(clean_title)
-                
-                # Show success message
-                if self.parent and self.parent.status_bar:
-                    self.parent.status_bar.showMessage(self.tr_("STATUS_RENAMED_VIDEO").format(clean_title))
-                    
-                print(f"DEBUG - Renamed video from '{current_title}' to '{clean_title}'")
-            else:
-                # Show error message if new name is invalid
-                QMessageBox.warning(
-                    self, 
-                    self.tr_("DIALOG_ERROR"), 
-                    self.tr_("DIALOG_INVALID_NAME")
-                )
+            self.video_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)  # Playlist
+            self.video_table.setColumnWidth(3, 150)
+            
+            self.video_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)  # Quality
+            self.video_table.setColumnWidth(4, 85)
+            
+            self.video_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)  # Format
+            self.video_table.setColumnWidth(5, 85)
+            
+            self.video_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Duration
+            self.video_table.setColumnWidth(6, 90)
+            
+            self.video_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Fixed)  # Size
+            self.video_table.setColumnWidth(7, 75)
+            
+            self.video_table.horizontalHeader().setSectionResizeMode(8, QHeaderView.ResizeMode.Fixed)  # Release Date
+            self.video_table.setColumnWidth(8, 120)
+        else:
+            # TikTok column widths
+            self.video_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)  # Creator
+            self.video_table.setColumnWidth(2, 100)
+            
+            self.video_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)  # Quality
+            self.video_table.setColumnWidth(3, 85)
+            
+            self.video_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)  # Format
+            self.video_table.setColumnWidth(4, 85)
+            
+            self.video_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)  # Duration
+            self.video_table.setColumnWidth(5, 90)
+            
+            self.video_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Size
+            self.video_table.setColumnWidth(6, 75)
+            
+            self.video_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Stretch)  # Hashtags 
+            self.video_table.setColumnWidth(7, 150)
 
     def create_video_table(self):
         """Create table to display video information"""
         self.video_table = QTableWidget()
-        self.video_table.setColumnCount(8)  # Reduced from 9 to 8 by removing Caption column
+        
+        # Initially set up for TikTok (default)
+        self.video_table.setColumnCount(8)
         
         # Set up headers
         self.update_table_headers()
@@ -370,31 +223,8 @@ class VideoInfoTab(QWidget):
         # Set table properties
         self.video_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         
-        # Set custom column sizes
-        self.video_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)  # Select - checkbox column
-        self.video_table.setColumnWidth(0, 50)
-        
-        self.video_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)  # Title - stretches
-        
-        self.video_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)  # Creator
-        self.video_table.setColumnWidth(2, 100)
-        
-        self.video_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)  # Quality
-        self.video_table.setColumnWidth(3, 85)  # Giảm từ 80 xuống 85 để vừa đủ cho "Chất Lượng"
-        
-        self.video_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)  # Format
-        self.video_table.setColumnWidth(4, 85)  # Tăng từ 75 lên 85 để hiển thị mũi tên dropdown
-        
-        self.video_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)  # Duration
-        self.video_table.setColumnWidth(5, 90)
-        
-        self.video_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Size
-        self.video_table.setColumnWidth(6, 75)
-        
-        # Removed Caption column (index 7)
-        
-        self.video_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Stretch)  # Hashtags 
-        self.video_table.setColumnWidth(7, 150)  # Giảm từ 180 xuống 150
+        # Update column widths
+        self.update_column_widths()
         
         # Set initial row count
         self.video_table.setRowCount(0)
@@ -538,67 +368,123 @@ class VideoInfoTab(QWidget):
 
     def get_video_info(self):
         """Get video information from URL"""
-        url_input = self.url_input.text().strip()
-        if not url_input:
-            QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("DIALOG_NO_VIDEOS"))
-            return
-
-        # Check if output folder has been set
-        if not self.output_folder_display.text():
-            QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("DIALOG_NO_OUTPUT_FOLDER"))
-            return
+        # Get URL from input field
+        url = self.url_input.text().strip()
         
-        # Handle multiple URLs (separated by whitespace)
-        new_urls = url_input.split()
-        
-        # Create list of URLs already in table
-        existing_urls = []
-        for video_info in self.video_info_dict.values():
-            existing_urls.append(video_info.url)
-        
-        # Filter out new URLs not yet in the table
-        urls_to_process = []
-        for url in new_urls:
-            if url not in existing_urls:
-                urls_to_process.append(url)
-            else:
-                # Notify URL already exists
-                print(f"URL already exists in table: {url}")
-        
-        # If no new URLs to process
-        if not urls_to_process:
-            if self.parent:
-                self.parent.status_bar.showMessage(self.tr_("STATUS_NO_NEW_URLS"))
+        # Check if URL is empty
+        if not url:
+            QMessageBox.warning(
+                self,
+                self.tr_("DIALOG_WARNING"),
+                self.tr_("DIALOG_EMPTY_URL")
+            )
             return
             
-        # Reset counter
-        self.processing_count = len(urls_to_process)
+        # Detect platform from URL and set current platform
+        if "youtube.com" in url or "youtu.be" in url:
+            self.set_current_platform("YouTube")
+        elif "tiktok.com" in url:
+            self.set_current_platform("TikTok")
+        else:
+            # Show warning for unsupported URL
+            QMessageBox.warning(
+                self,
+                self.tr_("DIALOG_WARNING"),
+                self.tr_("DIALOG_INVALID_URL")
+            )
+            return
         
-        # Disable Get Info button while fetching information
+        # Check if video already exists in the table
+        for row, info in self.video_info_dict.items():
+            if hasattr(info, 'url') and info.url == url:
+                # Show confirmation dialog
+                reply = QMessageBox.question(
+                    self,
+                    self.tr_("DIALOG_ALREADY_EXISTS"),
+                    self.tr_("DIALOG_ALREADY_EXISTS_TEXT"),
+                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+                    QMessageBox.StandardButton.No
+                )
+                
+                if reply == QMessageBox.StandardButton.No:
+                    return
+                else:
+                    # Remove existing entry
+                    self.video_table.removeRow(row)
+                    self.video_info_dict.pop(row)
+                    break
+        
+        # Update UI to show that information is being processed
+        self.processing_count += 1
         self.get_info_btn.setEnabled(False)
-        self.get_info_btn.setText(self.tr_("STATUS_GETTING_INFO_SHORT"))
+        self.get_info_btn.setText(self.tr_("STATUS_GETTING_INFO"))
         self.url_input.setEnabled(False)
         
-        # Update status
         if self.parent:
-            # Display clear message on status bar
-            if len(urls_to_process) > 1:
-                self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO_MULTIPLE").format(len(urls_to_process)))
-            else:
-                self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO_SHORT"))
+            self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO"))
         
-        # Request immediate UI update to show notification
+        # Add loading row to table
+        row = self.video_table.rowCount()
+        self.video_table.insertRow(row)
+        
+        # Set row height
+        self.video_table.setRowHeight(row, 25)
+        
+        # Create checkbox for selection
+        self.create_checkbox_for_row(row)
+        
+        # Create loading placeholder
+        self.video_table.setItem(row, 1, QTableWidgetItem(self.tr_("STATUS_LOADING")))
+        
+        # Create placeholder for creator/channel
+        creator_label = self.tr_("HEADER_CHANNEL") if self.current_platform == "YouTube" else self.tr_("HEADER_CREATOR")
+        self.video_table.setItem(row, 2, QTableWidgetItem(f"{creator_label}..."))
+        
+        # Process immediately
         QApplication.processEvents()
         
-        # Start getting video information from TikTokDownloader for new URLs
-        for url in urls_to_process:
-            # Call get_video_info method of TikTokDownloader
-            # Results will be processed by on_video_info_received through the signal
-            self.downloader.get_video_info(url)
+        # Call downloader to get video info
+        try:
+            # Create VideoInfo object with URL
+            from utils.models import VideoInfo
+            video_info = VideoInfo()
+            video_info.url = url
             
-            # Update UI after each request to ensure responsiveness
-            QApplication.processEvents()
-
+            # Store in dictionary
+            self.video_info_dict[row] = video_info
+            
+            # Call downloader
+            self.downloader.get_video_info(url)
+        except Exception as e:
+            # Update UI to show error
+            error_message = f"Error: {str(e)}"
+            self.update_video_info_error(row, error_message)
+            
+            # Decrease counter
+            self.processing_count -= 1
+            
+            # Re-enable UI
+            self.get_info_btn.setEnabled(True)
+            self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
+            self.url_input.setEnabled(True)
+            
+            # Update button states
+            self.update_button_states()
+    
+    def create_checkbox_for_row(self, row):
+        """Create checkbox for a new row"""
+        checkbox = QCheckBox()
+        checkbox.setChecked(True)  # Default to checked
+        checkbox.stateChanged.connect(self.checkbox_state_changed)
+        
+        checkbox_cell = QWidget()
+        layout = QHBoxLayout(checkbox_cell)
+        layout.addWidget(checkbox)
+        layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        layout.setContentsMargins(0, 0, 0, 0)
+        
+        self.video_table.setCellWidget(row, 0, checkbox_cell)
+    
     def delete_row(self, row):
         """Delete a row from the table"""
         self.video_table.removeRow(row)
@@ -624,493 +510,86 @@ class VideoInfoTab(QWidget):
 
     def download_videos(self):
         """Download selected videos"""
-        if not self.check_output_folder():
-            return
-        
-        # Create detailed list for downloading
-        download_queue = []
-        videos_already_exist = []
-        selected_count = 0
-        
-        # Count total selected videos first
-        for row in range(self.video_table.rowCount()):
-            checkbox_cell = self.video_table.cellWidget(row, 0)
-            if checkbox_cell:
-                checkbox = checkbox_cell.findChild(QCheckBox)
-                if checkbox and checkbox.isChecked():
-                    selected_count += 1
-        
-        # Variable to store user choice for all existing files
-        overwrite_all = None  # None = not chosen, True = overwrite all, False = skip all
-        
-        # Iterate through each row in the table
-        for row in range(self.video_table.rowCount()):
-            checkbox_cell = self.video_table.cellWidget(row, 0)
-            if checkbox_cell:
-                checkbox = checkbox_cell.findChild(QCheckBox)
-                if checkbox and checkbox.isChecked():
-                    # Collect all necessary information
-                    # Check if row exists in video_info_dict
-                    if row not in self.video_info_dict:
-                        print(f"DEBUG - Error: Row {row} not found in video_info_dict, skipping this video")
-                        continue
-                        
-                    # Get URL from video_info_dict
-                    url = self.video_info_dict[row].url
-                    
-                    # Get video title to display in notification
-                    title = self.video_info_dict[row].title
-                    
-                    # Get selected quality
-                    quality_cell = self.video_table.cellWidget(row, 3)
-                    quality = quality_cell.findChild(QComboBox).currentText() if quality_cell else "720p"
-                    
-                    # Get selected format
-                    format_cell = self.video_table.cellWidget(row, 4)
-                    format_str = format_cell.findChild(QComboBox).currentText() if format_cell else self.tr_("FORMAT_VIDEO_MP4")
-                    
-                    # Check if MP3 format is selected and FFmpeg is not available
-                    is_mp3 = format_str == self.tr_("FORMAT_AUDIO_MP3")
-                    if is_mp3 and hasattr(self.parent, 'ffmpeg_available') and not self.parent.ffmpeg_available:
-                        # Show error message
-                        QMessageBox.warning(
-                            self,
-                            self.tr_("DIALOG_WARNING"),
-                            f"{self.tr_('DIALOG_FFMPEG_MISSING')}\n\n"
-                            f"{self.tr_('DIALOG_MP3_UNAVAILABLE')}\n\n"
-                            f"▶ {self.tr_('DIALOG_SEE_README')} (README.md)"
-                        )
-                        
-                        # Show status message
-                        if self.parent:
-                            self.parent.status_bar.showMessage(self.tr_("STATUS_FFMPEG_MISSING"), 5000)
-                        
-                        # Skip this video
-                        continue
-                    
-                    # Get format_id based on quality and format
-                    format_id = self.get_format_id(url, quality, format_str)
-
-                    # Determine file extension based on format
-                    is_audio = format_str == self.tr_("FORMAT_AUDIO_MP3") or "audio" in format_id.lower() or "bestaudio" in format_id.lower()
-                    ext = "mp3" if is_audio else "mp4"
-                    
-                    # Check if title is empty before continuing
-                    if not title.strip() or title.strip().startswith('#'):
-                        # Display dialog to enter new name for video
-                        default_name = f"Video_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
-                        new_title, ok = QInputDialog.getText(
-                            self, 
-                            self.tr_("DIALOG_RENAME_TITLE"),
-                            self.tr_("DIALOG_ENTER_NAME_REQUIRED"), 
-                            QLineEdit.EchoMode.Normal, 
-                            default_name
-                        )
-                        
-                        if not ok or not new_title.strip():
-                            # User canceled or didn't enter a name, skip this video
-                            print(f"DEBUG - User cancelled entering required name for video without title")
-                            continue
-                        
-                        # Clean filename to avoid invalid characters
-                        import re
-                        clean_title = re.sub(r'[\\/*?:"<>|]', '', new_title).strip()
-                        
-                        # Update title in video_info_dict
-                        if row in self.video_info_dict:
-                            self.video_info_dict[row].custom_title = new_title
-                            # Save new title to display in Downloaded Videos tab
-                            self.video_info_dict[row].title = new_title
-                            print(f"DEBUG - New title set for video without title: '{new_title}'")
-                        
-                        # Update title in download_queue
-                        title = new_title
-                    else:
-                        # Clean video name, remove hashtags to create filename
-                        clean_title = title
-                        # Remove any remaining hashtags if present
-                        import re
-                        clean_title = re.sub(r'#\S+', '', clean_title).strip()
-                        # Remove invalid characters for filename
-                        clean_title = re.sub(r'[\\/*?:"<>|]', '', clean_title).strip()
-                    
-                    # Create full file path
-                    output_dir = self.output_folder_display.text()
-                    output_file = os.path.join(output_dir, f"{clean_title}.{ext}")
-
-                    # Check if video already exists
-                    db_manager = DatabaseManager()
-                    existing_video = db_manager.get_download_by_url(url)
-                    
-                    # Check if file already exists on disk
-                    file_exists = os.path.exists(output_file)
-                    
-                    if existing_video:
-                        # Video already exists in database
-                        videos_already_exist.append(title)
-                    elif file_exists:
-                        # File exists on disk but not in database
-                        
-                        # If user has already chosen "Apply to all", use that choice
-                        if overwrite_all is not None:
-                            if overwrite_all:
-                                # User chose to overwrite all
-                                download_queue.append({
-                                    'url': url,
-                                    'title': title,
-                                    'format_id': format_id,
-                                    'clean_title': clean_title,
-                                    'ext': ext
-                                })
-                            else:
-                                # User chose to skip all
-                                continue
-                        else:
-                            # Display message asking if user wants to overwrite
-                            msg_box = QMessageBox(self)
-                            msg_box.setWindowTitle(self.tr_("DIALOG_FILE_EXISTS"))
-                            
-                            # Collect list of existing files
-                            file_name = f"{clean_title}.{ext}"
-                            file_exists_list = [file_name]
-                            remaining_files = 0
-                            
-                            # If multiple files are selected, collect list of existing files
-                            if selected_count > 1:
-                                # Iterate through other rows to check for existing files
-                                for check_row in range(self.video_table.rowCount()):
-                                    # Skip current row because it's already in the list
-                                    if check_row == row:
-                                        continue
-                                        
-                                    check_checkbox_cell = self.video_table.cellWidget(check_row, 0)
-                                    if check_checkbox_cell:
-                                        check_checkbox = check_checkbox_cell.findChild(QCheckBox)
-                                        if check_checkbox and check_checkbox.isChecked():
-                                            # Check if row exists in video_info_dict
-                                            if check_row not in self.video_info_dict:
-                                                continue
-                                                
-                                            # Get video information
-                                            check_title = self.video_info_dict[check_row].title
-                                            
-                                            # Get selected format
-                                            check_format_cell = self.video_table.cellWidget(check_row, 4)
-                                            check_format_str = check_format_cell.findChild(QComboBox).currentText() if check_format_cell else self.tr_("FORMAT_VIDEO_MP4")
-                                            
-                                            # Determine file extension
-                                            check_is_audio = check_format_str == self.tr_("FORMAT_AUDIO_MP3")
-                                            check_ext = "mp3" if check_is_audio else "mp4"
-                                            
-                                            # Clean filename
-                                            import re
-                                            check_clean_title = re.sub(r'#\S+', '', check_title).strip()
-                                            check_clean_title = re.sub(r'[\\/*?:"<>|]', '', check_clean_title).strip()
-                                            
-                                            # Create full file path
-                                            check_output_file = os.path.join(output_dir, f"{check_clean_title}.{check_ext}")
-                                            
-                                            # Check if file already exists
-                                            if os.path.exists(check_output_file):
-                                                # If there are less than 5 files, add to list
-                                                if len(file_exists_list) < 5:
-                                                    file_exists_list.append(f"{check_clean_title}.{check_ext}")
-                                                else:
-                                                    remaining_files += 1
-                            
-                            # Create confirmation message
-                            confirmation_text = self.tr_("DIALOG_FILE_EXISTS_MESSAGE")
-                            
-                            # Add list of existing files
-                            files_list = "\n".join([f"• {f}" for f in file_exists_list])
-                            # If there are remaining files, add additional information
-                            if remaining_files > 0:
-                                files_list += f"\n• ... and {remaining_files} other files"
-                            
-                            confirmation_text += f"\n\n{files_list}"
-                            
-                            msg_box = QMessageBox(self)
-                            msg_box.setWindowTitle(self.tr_("DIALOG_FILE_EXISTS"))
-                            msg_box.setText(confirmation_text)
-                            msg_box.setStandardButtons(QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No)
-                            msg_box.setDefaultButton(QMessageBox.StandardButton.No)
-                            msg_box.setIcon(QMessageBox.Icon.Question)
-                            
-                            # Set minimum size
-                            msg_box.setMinimumWidth(500)
-                            msg_box.setMinimumHeight(200)
-                            
-                            # Determine current theme
-                            current_theme = "dark"
-                            if hasattr(self, 'parent') and hasattr(self.parent, 'current_theme'):
-                                current_theme = self.parent.current_theme
-                            
-                            # Style for message box based on current theme
-                            if current_theme == "light":
-                                msg_box.setStyleSheet("""
-                                    QMessageBox {
-                                        background-color: #f0f0f0;
-                                        color: #333333;
-                                    }
-                                    QMessageBox QLabel {
-                                        color: #333333;
-                                        font-size: 13px;
-                                        min-height: 100px;
-                                    }
-                                    QPushButton {
-                                        background-color: #0078d7;
-                                        color: white;
-                                        border: none;
-                                        padding: 6px 20px;
-                                        margin: 6px;
-                                        border-radius: 4px;
-                                        min-width: 60px;
-                                    }
-                                    QPushButton:hover {
-                                        background-color: #1084d9;
-                                    }
-                                    QPushButton:pressed {
-                                        background-color: #0063b1;
-                                    }
-                                    QPushButton:default {
-                                        background-color: #0078d7;
-                                        border: 1px solid #80ccff;
-                                    }
-                                    QCheckBox {
-                                        color: #333333;
-                                        spacing: 8px;
-                                    }
-                                    QCheckBox::indicator {
-                                        width: 16px;
-                                        height: 16px;
-                                    }
-                                """)
-                            else:
-                                msg_box.setStyleSheet("""
-                                    QMessageBox {
-                                        background-color: #2d2d2d;
-                                        color: #e0e0e0;
-                                    }
-                                    QMessageBox QLabel {
-                                        color: #e0e0e0;
-                                        font-size: 13px;
-                                        min-height: 100px;
-                                    }
-                                    QPushButton {
-                                        background-color: #0078d7;
-                                        color: white;
-                                        border: none;
-                                        padding: 6px 20px;
-                                        margin: 6px;
-                                        border-radius: 4px;
-                                        min-width: 60px;
-                                    }
-                                    QPushButton:hover {
-                                        background-color: #1084d9;
-                                    }
-                                    QPushButton:pressed {
-                                        background-color: #0063b1;
-                                    }
-                                    QPushButton:default {
-                                        background-color: #0078d7;
-                                        border: 1px solid #80ccff;
-                                    }
-                                    QCheckBox {
-                                        color: #e0e0e0;
-                                        spacing: 8px;
-                                    }
-                                    QCheckBox::indicator {
-                                        width: 16px;
-                                        height: 16px;
-                                    }
-                                """)
-                            
-                            # Add "Apply to all" checkbox if more than one video is selected
-                            apply_all_checkbox = None
-                            if selected_count > 1:
-                                apply_all_checkbox = QCheckBox(self.tr_("DIALOG_APPLY_TO_ALL"))
-                                # Add checkbox to button box (same row as buttons)
-                                button_box = msg_box.findChild(QDialogButtonBox)
-                                if button_box:
-                                    # Add checkbox to left side of button box
-                                    button_layout = button_box.layout()
-                                    button_layout.insertWidget(0, apply_all_checkbox, 0, Qt.AlignmentFlag.AlignLeft)
-                                    # Add extra space between checkbox and buttons
-                                    button_layout.insertSpacing(1, 50)
-                                    # Style checkbox to be more visually appealing (not using bold font)
-                                    apply_all_checkbox.setStyleSheet("QCheckBox { margin-right: 15px; }")
-                            
-                            # Show message box
-                            reply = msg_box.exec()
-                            
-                            if reply == QMessageBox.StandardButton.No:
-                                # User chose not to overwrite
-                                if apply_all_checkbox and apply_all_checkbox.isChecked():
-                                    overwrite_all = False  # Apply "not overwrite" to all
-                                continue
-                            
-                            elif reply == QMessageBox.StandardButton.Yes:
-                                # User chose to overwrite
-                                if apply_all_checkbox and apply_all_checkbox.isChecked():
-                                    overwrite_all = True  # Apply "overwrite" to all
-                                
-                                # Add to download queue
-                                download_queue.append({
-                                    'url': url,
-                                    'title': title,
-                                    'format_id': format_id,
-                                    'clean_title': clean_title,
-                                    'ext': ext
-                                })
-                    else:
-                        # Video doesn't exist yet, add to download queue
-                        download_queue.append({
-                            'url': url,
-                            'title': title,
-                            'format_id': format_id,
-                            'clean_title': clean_title,
-                            'ext': ext
-                        })
-        
-        # If any videos already exist, show notification
-        if videos_already_exist:
-            existing_titles = "\n".join([f"- {title}" for title in videos_already_exist])
-            msg = f"{self.tr_('DIALOG_VIDEOS_ALREADY_EXIST')}\n{existing_titles}"
-            QMessageBox.information(self, self.tr_("DIALOG_VIDEOS_EXIST"), msg)
-        
-        # If no videos are selected for download
-        if selected_count == 0:
-            if not videos_already_exist:
-                QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), self.tr_("DIALOG_NO_VIDEOS_SELECTED"))
+        # Check if any videos are selected
+        selected_rows = self.get_selected_rows()
+        if not selected_rows:
+            QMessageBox.warning(
+                self,
+                self.tr_("DIALOG_WARNING"),
+                self.tr_("DIALOG_NO_VIDEOS_SELECTED")
+            )
             return
             
-        # If all selected videos already exist (no new videos to download)
-        if not download_queue:
-            if self.parent:
-                self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_ALREADY_EXIST"))
+        # Check if output folder is selected
+        output_folder = self.output_folder_display.text()
+        if not output_folder:
+            QMessageBox.warning(
+                self,
+                self.tr_("DIALOG_WARNING"),
+                self.tr_("DIALOG_SELECT_OUTPUT_FOLDER")
+            )
             return
             
-        # Reset download count
-        self.downloading_count = len(download_queue)
+        # Confirm download
+        reply = QMessageBox.question(
+            self,
+            self.tr_("DIALOG_CONFIRM_DOWNLOAD"),
+            self.tr_("DIALOG_CONFIRM_DOWNLOAD_TEXT").format(len(selected_rows)),
+            QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
+            QMessageBox.StandardButton.Yes
+        )
         
-        # Set total video count
-        self.total_videos = len(download_queue)
+        if reply == QMessageBox.StandardButton.No:
+            return
             
-        # Reset successful downloads count
-        self.success_downloads = 0
-            
-        # Disable Download button while downloading
-        self.download_btn.setEnabled(False)
-        self.download_btn.setText(self.tr_("STATUS_DOWNLOADING_SHORT"))
-            
-        # Show notification about number of videos being downloaded
-        if self.parent:
-            if self.downloading_count > 1:
-                self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOADING_MULTIPLE").format(self.downloading_count))
-            else:
-                video_title = download_queue[0]['title']
-                self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOADING_WITH_TITLE").format(video_title))
+        # Start download for each selected video
+        for row in selected_rows:
+            if row in self.video_info_dict:
+                video_info = self.video_info_dict[row]
                 
-        # Update UI immediately to show notification
-        QApplication.processEvents()
-                    
-        # Iterate through each video in the queue to download
-        for video_info in download_queue:
-            # Always remove watermark
-            remove_watermark = True
-            
-            # Get pre-calculated information
-            clean_title = video_info.get('clean_title', '')
-            ext = video_info.get('ext', 'mp4')
-            
-            # If no information, recalculate (using old code)
-            if not clean_title:
-                # Clean video name, remove hashtags to create filename
-                clean_title = video_info['title']
-                # Remove any remaining hashtags if present
-                import re
-                clean_title = re.sub(r'#\S+', '', clean_title).strip()
-                # Remove invalid characters for filenames
-                clean_title = re.sub(r'[\\/*?:"<>|]', '', clean_title).strip()
+                # Get quality
+                quality_col = 4 if self.current_platform == "YouTube" else 3
+                quality_cell = self.video_table.cellWidget(row, quality_col)
+                quality = "720p"  # Default quality
+                if quality_cell:
+                    quality_combo = quality_cell.findChild(QComboBox)
+                    if quality_combo:
+                        quality = quality_combo.currentText()
+                        
+                # Get format
+                format_col = 5 if self.current_platform == "YouTube" else 4
+                format_cell = self.video_table.cellWidget(row, format_col)
+                format_type = "mp4"  # Default format
+                if format_cell:
+                    format_combo = format_cell.findChild(QComboBox)
+                    if format_combo:
+                        format_text = format_combo.currentText()
+                        if self.tr_("FORMAT_AUDIO_MP3") in format_text:
+                            format_type = "mp3"
                 
-                # Determine file extension based on format
-                is_audio = "audio" in video_info['format_id'].lower() or "bestaudio" in video_info['format_id'].lower()
-                ext = "mp3" if is_audio else "mp4"
-            
-            # CHECK IF TITLE IS EMPTY AND MOVED TO THE TOP
-            # AND CHECK BEFORE ADDING TO DOWNLOAD_QUEUE
-            
-            # Set output template with cleaned title
-            output_dir = self.output_folder_display.text()
-            
-            # Create full file path
-            output_file = os.path.join(output_dir, f"{clean_title}.{ext}")
-            output_template = os.path.join(output_dir, f"{clean_title}.%(ext)s")
-            
-            # Start downloading with yt-dlp
-            try:
-                # First, check if thumbnail already exists
-                thumbnails_dir = os.path.join(output_dir, "thumbnails")
-                if not os.path.exists(thumbnails_dir):
-                    os.makedirs(thumbnails_dir)
+                # Get custom title if available
+                custom_title = None
+                if hasattr(video_info, 'custom_title'):
+                    custom_title = video_info.custom_title
                 
-                # Get video ID from URL (part before '?')
-                video_id = video_info['url'].split('/')[-1].split('?')[0]
-                
-                # Variable for download
-                format_id = video_info['format_id']
-                remove_watermark = True
-                url = video_info['url']
-                
-                # Check if file already exists to decide if force overwrite is needed
-                force_overwrite = True  # User has confirmed this earlier
-                
-                # If file exists, delete old file before downloading
-                if os.path.exists(output_file):
-                    try:
-                        os.remove(output_file)
-                        print(f"Removed existing file: {output_file}")
-                    except Exception as e:
-                        print(f"Error removing existing file: {str(e)}")
-                
-                # Call download method
+                # Start download
+                self.downloading_count += 1
                 self.downloader.download_video(
-                    url=url, 
-                    output_template=output_template, 
-                    format_id=format_id, 
-                    remove_watermark=remove_watermark,
-                    audio_only=(ext == "mp3"),
-                    force_overwrite=force_overwrite
+                    video_info.url,
+                    output_folder,
+                    quality,
+                    format_type,
+                    custom_title
                 )
                 
-                # Update download count if there's an error
-                if self.parent:
-                    if self.downloading_count > 1:
-                        self.parent.status_bar.showMessage(
-                            self.tr_("STATUS_DOWNLOADING_MULTIPLE_PROGRESS").format(
-                                self.success_downloads, 
-                                self.total_videos, 
-                                video_info['title']
-                            )
-                        )
-                    else:
-                        self.parent.status_bar.showMessage(
-                            self.tr_("STATUS_DOWNLOADING_WITH_TITLE").format(video_info['title'])
-                        )
-            except Exception as e:
-                print(f"Error starting download: {e}")
-                self.downloading_count -= 1
-                if self.parent:
-                    self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOAD_ERROR").format(str(e)))
-        
-        # If all videos have finished downloading, re-enable Download button
-        if self.downloading_count <= 0:
-            self.download_btn.setEnabled(True)
-            self.download_btn.setText(self.tr_("BUTTON_DOWNLOAD"))
-            print(f"DEBUG - All downloads finished, reset download button")
-            # Reset status bar when all downloads are complete
-            if self.parent and self.parent.status_bar:
-                self.parent.status_bar.showMessage(self.tr_("STATUS_DOWNLOAD_SUCCESS"))
+        # Update UI
+        if self.parent and self.parent.status_bar:
+            self.parent.status_bar.showMessage(
+                self.tr_("STATUS_DOWNLOAD_STARTED").format(len(selected_rows))
+            )
+            
+        # Update button states
+        self.update_button_states()
 
     def check_output_folder(self):
         """Check if output folder exists"""
@@ -1255,20 +734,6 @@ class VideoInfoTab(QWidget):
         # Force update of the UI
         self.update()
 
-    def update_table_headers(self):
-        """Update table headers based on current language"""
-        headers = [
-            self.tr_("HEADER_SELECT"),
-            self.tr_("HEADER_VIDEO_TITLE"),
-            self.tr_("HEADER_CREATOR"),
-            self.tr_("HEADER_QUALITY"),
-            self.tr_("HEADER_FORMAT"),
-            self.tr_("HEADER_DURATION"),
-            self.tr_("HEADER_SIZE"),
-            self.tr_("HEADER_HASHTAGS")
-        ]
-        self.video_table.setHorizontalHeaderLabels(headers)
-
     # New method to apply colors based on theme
     def apply_theme_colors(self, theme):
         """Apply colors based on theme"""
@@ -1377,275 +842,124 @@ class VideoInfoTab(QWidget):
                 }}
             """) 
 
-    def handle_video_info(self, url, video_info):
-        """Handle video information received"""
+    def handle_video_info(self, video_info):
+        """Handle video information received from the worker thread"""
         try:
-            print(f"Received video info for URL: {url}, title: {video_info.title}")
+            # Get row index
+            row = self.get_row_for_url(video_info.url)
             
-            # Update UI to show that information is being processed
-            if self.parent and self.processing_count > 1:
-                self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO_MULTIPLE").format(self.processing_count))
-                QApplication.processEvents()
+            if row < 0:
+                # If row not found, no further processing needed
+                return
+                
+            # Log received info
+            logging.debug(f"Received video info for {video_info.url}")
+            if hasattr(video_info, 'title'):
+                logging.debug(f"Title: {video_info.title}")
+            if hasattr(video_info, 'username'):
+                logging.debug(f"Username: {video_info.username}")
             
-            # Process title - remove hashtags
-            if video_info.title:
-                # Remove hashtags from title
-                import re
-                # Remove extra spaces
-                cleaned_title = re.sub(r'#\S+', '', video_info.title).strip()
-                # Remove multiple spaces
-                cleaned_title = re.sub(r'\s+', ' ', cleaned_title).strip()
-                video_info.original_title = video_info.title  # Save original title
-                video_info.title = cleaned_title  # Save new title
-            
-            # Save video information in dictionary
-            row = self.video_table.rowCount()
+            # Store video info in dictionary
             self.video_info_dict[row] = video_info
             
-            # Add new row for this video
-            self.video_table.insertRow(row)
+            # Update video details (title and channel/creator)
+            self.update_video_title(row, video_info)
+            self.update_video_creator(row, video_info)
             
-            # Set row height for single-line display
-            self.video_table.setRowHeight(row, 25)  # Set height for single-line display
+            # Update platform-specific columns
+            if self.current_platform == "YouTube":
+                self.update_youtube_specific_columns(row, video_info)
+            else:
+                self.update_tiktok_specific_columns(row, video_info)
             
-            # Check for errors in title
-            has_error = video_info.title.startswith("Error:")
+            # Update common columns
+            self.setup_video_qualities(row, video_info)
+            self.setup_video_formats(row, video_info)
+            self.update_video_duration(row, video_info)
+            self.update_video_size(row, video_info)
             
-            # Check if content is unsupported (DIALOG_UNSUPPORTED_CONTENT)
-            unsupported_content = "DIALOG_UNSUPPORTED_CONTENT" in video_info.title
-            
-            try:
-                # Select (Checkbox)
-                checkbox = QCheckBox()
-                checkbox.setChecked(not has_error)  # Uncheck if there's an error
-                
-                # Allow selection if content is unsupported
-                if unsupported_content:
-                    checkbox.setEnabled(True)
-                else:
-                    checkbox.setEnabled(not has_error)  # Disable if there's an error
-                
-                # Connect stateChanged signal to checkbox_state_changed method
-                checkbox.stateChanged.connect(self.checkbox_state_changed)
-                
-                checkbox_cell = QWidget()
-                layout = QHBoxLayout(checkbox_cell)
-                layout.addWidget(checkbox)
-                layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-                layout.setContentsMargins(0, 0, 0, 0)
-                self.video_table.setCellWidget(row, 0, checkbox_cell)
-                
-                # Title
-                if unsupported_content:
-                    # Show error message from language file
-                    title_text = self.tr_("DIALOG_UNSUPPORTED_CONTENT")
-                else:
-                    title_text = video_info.title
-                    
-                title_item = QTableWidgetItem(title_text)
-                # Save original title to UserRole for later retrieval
-                if hasattr(video_info, 'original_title') and video_info.original_title:
-                    title_item.setData(Qt.ItemDataRole.UserRole, video_info.original_title)
-                else:
-                    title_item.setData(Qt.ItemDataRole.UserRole, title_text)
-                # Format tooltip text for better readability
-                tooltip_text = self.format_tooltip_text(title_text)
-                title_item.setToolTip(tooltip_text)
-                # Disable editing
-                title_item.setFlags(title_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-                self.video_table.setItem(row, 1, title_item)
-                
-                # Creator (Move to after Title)
-                creator = video_info.creator if hasattr(video_info, 'creator') and video_info.creator else ""
-                creator_item = QTableWidgetItem(creator)
-                creator_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                # Format tooltip text for better readability
-                creator_tooltip = self.format_tooltip_text(creator)
-                creator_item.setToolTip(creator_tooltip)  # Add tooltip on hover
-                # Disable editing
-                creator_item.setFlags(creator_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-                self.video_table.setItem(row, 2, creator_item)
-                
-                # Quality (Combobox)
-                quality_combo = QComboBox()
-                # Set fixed width for combobox
-                quality_combo.setFixedWidth(80)
-                
-                # Get list of qualities from formats
-                qualities = []
-                video_qualities = []
-                audio_quality = None
-                
-                if hasattr(video_info, 'formats') and video_info.formats:
-                    for fmt in video_info.formats:
-                        if 'quality' in fmt:
-                            quality = fmt['quality']
-                            if fmt.get('is_audio', False):
-                                audio_quality = quality
-                            elif quality not in video_qualities:
-                                video_qualities.append(quality)
-                
-                # Sort qualities from high to low
-                def quality_to_number(q):
-                    try:
-                        return int(q.replace('p', ''))
-                    except:
-                        return 0
-                
-                video_qualities.sort(key=quality_to_number, reverse=True)
-                qualities = video_qualities
-                
-                if not qualities:
-                    qualities = ['1080p', '720p', '480p', '360p']  # Default if not found
-                    
-                quality_combo.addItems(qualities)
-                quality_combo.setEnabled(not has_error)  # Disable if there's an error
-                quality_cell = QWidget()
-                quality_layout = QHBoxLayout(quality_cell)
-                quality_layout.addWidget(quality_combo)
-                quality_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-                quality_layout.setContentsMargins(0, 0, 0, 0)
-                self.video_table.setCellWidget(row, 3, quality_cell)
-                
-                # Format (Combobox)
-                format_combo = QComboBox()
-                # Set fixed width for combobox
-                format_combo.setFixedWidth(75)
-                
-                # If it's a video, only show two options: Video and Audio
-                format_combo.addItem(self.tr_("FORMAT_VIDEO_MP4"))
-                format_combo.addItem(self.tr_("FORMAT_AUDIO_MP3"))
-                format_combo.setEnabled(not has_error)  # Disable if there's an error
-                format_cell = QWidget()
-                format_layout = QHBoxLayout(format_cell)
-                format_layout.addWidget(format_combo)
-                format_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
-                format_layout.setContentsMargins(0, 0, 0, 0)
-                self.video_table.setCellWidget(row, 4, format_cell)
-                
-                # Connect signal for format change to handle_format_change method
-                format_combo.currentIndexChanged.connect(
-                    lambda index, combo=format_combo, q_combo=quality_combo, audio=audio_quality, video_qs=qualities: 
-                    self.on_format_changed(index, combo, q_combo, audio, video_qs)
-                )
-                
-                # Duration
-                duration_str = self.format_duration(video_info.duration)
-                duration_item = QTableWidgetItem(duration_str)
-                duration_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                # Disable editing
-                duration_item.setFlags(duration_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-                self.video_table.setItem(row, 5, duration_item)
-                
-                # Size (estimated based on format)
-                size_str = self.estimate_size(video_info.formats)
-                size_item = QTableWidgetItem(size_str)
-                size_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-                # Disable editing
-                size_item.setFlags(size_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-                self.video_table.setItem(row, 6, size_item)
-                
-                # Hashtags
-                hashtags = []
-                # Extract hashtags from caption if available
-                if video_info.caption:
-                    import re
-                    # Find all hashtags starting with # in caption, supporting both Vietnamese and special characters
-                    found_hashtags = re.findall(r'#([^\s#]+)', video_info.caption)
-                    if found_hashtags:
-                        hashtags.extend(found_hashtags)
-                
-                # Combine with existing hashtags in video_info
-                if hasattr(video_info, 'hashtags') and video_info.hashtags:
-                    for tag in video_info.hashtags:
-                        if tag not in hashtags:
-                            hashtags.append(tag)
-                
-                hashtags_str = " ".join([f"#{tag}" for tag in hashtags]) if hashtags else ""
-                hashtags_item = QTableWidgetItem(hashtags_str)
-                # Format tooltip text for better readability
-                hashtags_tooltip = self.format_tooltip_text(hashtags_str)
-                hashtags_item.setToolTip(hashtags_tooltip)  # Add tooltip on hover
-                hashtags_item.setToolTip(hashtags_tooltip)  # Add tooltip on hover
-                # Disable editing
-                hashtags_item.setFlags(hashtags_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-                self.video_table.setItem(row, 7, hashtags_item)
-                
-                # Add tooltip for title
-                title_item = self.video_table.item(row, 1)
-                if title_item:
-                    title_item.setToolTip(video_info.title)
-            except Exception as cell_error:
-                print(f"Error creating UI cells: {cell_error}")
-                # Ensure row is created correctly
-                while self.video_table.columnCount() > self.video_table.item(row, 0).column() + 1:
-                    self.video_table.setItem(row, self.video_table.item(row, 0).column() + 1, QTableWidgetItem("Error"))
-            
-            # Update status
-            if self.parent:
-                if has_error:
-                    if unsupported_content:
-                        # Display friendly error message from language file
-                        self.parent.status_bar.showMessage(self.tr_("DIALOG_UNSUPPORTED_CONTENT"))
-                    else:
-                        # Display other errors
-                        self.parent.status_bar.showMessage(video_info.title)
-                else:
-                    # Display notification that video info has been received
-                    if self.processing_count > 1:
-                        self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO_MULTIPLE").format(self.processing_count))
-                    else:
-                        self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEO_INFO"))
-                    
-            # Decrease counter and check if all processing is complete
+            # Update processing count
             self.processing_count -= 1
-            if self.processing_count <= 0:
-                # Re-enable UI
-                self.get_info_btn.setEnabled(True)
-                self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
-                self.url_input.setEnabled(True)
+            
+            # Enable download button if all videos are processed
+            if self.processing_count == 0:
+                self.update_button_states()
+                # Show status message if none are currently downloading
+                if self.downloading_count == 0 and self.parent and self.parent.status_bar:
+                    self.parent.status_bar.showMessage(self.tr_("STATUS_READY_TO_DOWNLOAD"))
+            
+            # Download thumbnail in the background
+            if hasattr(video_info, 'thumbnail_url') and video_info.thumbnail_url:
+                self.load_thumbnail(video_info.thumbnail_url, row)
                 
-                # Update status message
-                total_videos = self.video_table.rowCount()
-                if self.parent:
-                    self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_LOADED").format(total_videos))
-                    
-                # Update UI immediately
-                QApplication.processEvents()
-                
-                # Update Select All/Unselect All button status based on checkboxes
-                self.update_select_toggle_button()
-            
-            # Don't hard reset status, let the update_select_toggle_button function determine the correct value based on checkbox states
-            # self.all_selected = False
-            # self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
-            
-            # Update UI
-            self.get_info_btn.setEnabled(True)
-            self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
-            self.url_input.setEnabled(True)
-            self.url_input.clear()
-            
-            # Update button states
-            self.update_button_states()
-            
-            # Display notification on status bar
-            if self.parent:
-                self.parent.status_bar.showMessage(self.tr_("STATUS_INFO_RECEIVED"))
         except Exception as e:
-            print(f"Critical error in on_video_info_received: {e}")
-            # Ensure counter is decreased
-            self.processing_count -= 1
-            if self.processing_count <= 0:
-                # Re-enable UI
-                self.get_info_btn.setEnabled(True)
-                self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
-                self.url_input.setEnabled(True)
+            # Log error
+            logging.error(f"Error handling video info: {str(e)}")
+            traceback.print_exc()
             
-            # Display error in status bar
-            if self.parent:
-                self.parent.status_bar.showMessage(self.tr_("STATUS_ERROR").format(str(e)))
+            # Update UI to show error
+            self.update_video_info_error(row, f"Error: {str(e)}")
     
+    def update_youtube_specific_columns(self, row, video_info):
+        """Update YouTube-specific columns in the video table"""
+        # Playlist column
+        playlist_name = ""
+        if hasattr(video_info, 'playlist') and video_info.playlist:
+            playlist_name = video_info.playlist
+            
+        playlist_item = QTableWidgetItem(playlist_name)
+        playlist_item.setToolTip(playlist_name)
+        self.video_table.setItem(row, 3, playlist_item)
+        
+        # Release Date column (instead of Hashtags)
+        release_date = ""
+        if hasattr(video_info, 'release_date') and video_info.release_date:
+            release_date = video_info.release_date
+            
+        date_item = QTableWidgetItem(release_date)
+        date_item.setToolTip(release_date)
+        self.video_table.setItem(row, 8, date_item)
+    
+    def update_tiktok_specific_columns(self, row, video_info):
+        """Update TikTok-specific columns in the video table"""
+        # Hashtags column
+        hashtags = ""
+        if hasattr(video_info, 'hashtags') and video_info.hashtags:
+            if isinstance(video_info.hashtags, list):
+                hashtags = " ".join(video_info.hashtags)
+            else:
+                hashtags = str(video_info.hashtags)
+                
+        hashtag_item = QTableWidgetItem(hashtags)
+        hashtag_item.setToolTip(self.format_tooltip_text(hashtags))
+        self.video_table.setItem(row, 7, hashtag_item)
+    
+    def update_video_title(self, row, video_info):
+        """Update video title in the video table"""
+        title = ""
+        if hasattr(video_info, 'title'):
+            title = video_info.title
+            
+        title_item = QTableWidgetItem(title)
+        title_item.setToolTip(self.format_tooltip_text(title))
+        self.video_table.setItem(row, 1, title_item)
+    
+    def update_video_creator(self, row, video_info):
+        """Update video creator/channel in the video table"""
+        creator = ""
+        
+        # Get creator name based on platform
+        if self.current_platform == "YouTube":
+            if hasattr(video_info, 'channel'):
+                creator = video_info.channel
+        else:
+            if hasattr(video_info, 'username'):
+                creator = video_info.username
+                
+        creator_item = QTableWidgetItem(creator)
+        creator_item.setToolTip(creator)
+        self.video_table.setItem(row, 2, creator_item)
+
     def handle_progress(self, url, progress, speed):
         """Update download progress"""
         # Find row containing this URL
@@ -2252,30 +1566,35 @@ class VideoInfoTab(QWidget):
         # Set focus back to search input
         self.url_input.setFocus()
         
-    def copy_to_clipboard(self, text, column_name=None):
-        """Copy text to clipboard with special handling for certain columns"""
+    def copy_to_clipboard(self, text, text_type="text"):
+        """Copy text to clipboard and show notification"""
         if not text:
             return
-        
-        # Special handling for title column - remove hashtags
-        if column_name == "title":
-            # Remove hashtags from title
-            text = re.sub(r'#\w+', '', text).strip()
-            # Remove double spaces
-            text = re.sub(r'\s+', ' ', text)
+            
+        # Get clipboard
+        clipboard = QApplication.clipboard()
         
         # Set text to clipboard
-        clipboard = QApplication.clipboard()
         clipboard.setText(text)
         
-        # Display notification
-        show_message = True
-        if hasattr(self, 'parent') and hasattr(self.parent, 'settings'):
-            show_message = self.parent.settings.value("show_copy_message", "true") == "true"
-        
-        if show_message:
-            copied_text = text[:50] + "..." if len(text) > 50 else text
-            self.parent.status_bar.showMessage(self.tr_("STATUS_TEXT_COPIED").format(copied_text), 3000)
+        # Show notification
+        if self.parent and self.parent.status_bar:
+            # Different messages based on text type
+            if text_type == "title":
+                self.parent.status_bar.showMessage(self.tr_("STATUS_TITLE_COPIED"))
+            elif text_type == "creator":
+                if self.current_platform == "YouTube":
+                    self.parent.status_bar.showMessage(self.tr_("STATUS_CHANNEL_COPIED"))
+                else:
+                    self.parent.status_bar.showMessage(self.tr_("STATUS_CREATOR_COPIED"))
+            elif text_type == "hashtags":
+                self.parent.status_bar.showMessage(self.tr_("STATUS_HASHTAGS_COPIED"))
+            elif text_type == "playlist":
+                self.parent.status_bar.showMessage(self.tr_("STATUS_PLAYLIST_COPIED"))
+            elif text_type == "release_date":
+                self.parent.status_bar.showMessage(self.tr_("STATUS_RELEASE_DATE_COPIED"))
+            else:
+                self.parent.status_bar.showMessage(self.tr_("STATUS_TEXT_COPIED"))
 
     # New method to select or deselect all videos in the table
     def toggle_select_all(self):
@@ -2432,3 +1751,475 @@ class VideoInfoTab(QWidget):
         # Update status bar
         if self.parent:
             self.parent.status_bar.showMessage(self.tr_("DIALOG_YTDLP_OUTDATED"), 10000)
+
+    def setup_video_qualities(self, row, video_info):
+        """Set up quality dropdown for video"""
+        # Create combobox for quality selection
+        quality_combo = QComboBox()
+        quality_combo.setFixedWidth(80)
+        
+        # Get list of qualities
+        qualities = []
+        video_qualities = []
+        audio_quality = None
+        
+        if hasattr(video_info, 'formats') and video_info.formats:
+            for fmt in video_info.formats:
+                if 'quality' in fmt:
+                    quality = fmt['quality']
+                    if fmt.get('is_audio', False):
+                        audio_quality = quality
+                    elif quality not in video_qualities:
+                        video_qualities.append(quality)
+        
+        # Sort qualities from high to low
+        def quality_to_number(q):
+            try:
+                return int(q.replace('p', ''))
+            except:
+                return 0
+        
+        video_qualities.sort(key=quality_to_number, reverse=True)
+        qualities = video_qualities
+        
+        # If no qualities found, use defaults
+        if not qualities:
+            qualities = ['1080p', '720p', '480p', '360p']
+            
+        # Add items to combobox
+        quality_combo.addItems(qualities)
+        
+        # Check for errors
+        has_error = False
+        if hasattr(video_info, 'title'):
+            has_error = video_info.title.startswith("Error:")
+        
+        quality_combo.setEnabled(not has_error)
+        
+        # Set up cell widget
+        quality_cell = QWidget()
+        quality_layout = QHBoxLayout(quality_cell)
+        quality_layout.addWidget(quality_combo)
+        quality_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        quality_layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Determine column index based on platform
+        quality_col = 4 if self.current_platform == "YouTube" else 3
+        self.video_table.setCellWidget(row, quality_col, quality_cell)
+        
+        return quality_combo, audio_quality, qualities
+    
+    def setup_video_formats(self, row, video_info):
+        """Set up format dropdown for video"""
+        # Create combobox for format selection
+        format_combo = QComboBox()
+        format_combo.setFixedWidth(75)
+        
+        # Add standard format options
+        format_combo.addItem(self.tr_("FORMAT_VIDEO_MP4"))
+        format_combo.addItem(self.tr_("FORMAT_AUDIO_MP3"))
+        
+        # Check for errors
+        has_error = False
+        if hasattr(video_info, 'title'):
+            has_error = video_info.title.startswith("Error:")
+        
+        format_combo.setEnabled(not has_error)
+        
+        # Set up cell widget
+        format_cell = QWidget()
+        format_layout = QHBoxLayout(format_cell)
+        format_layout.addWidget(format_combo)
+        format_layout.setAlignment(Qt.AlignmentFlag.AlignCenter)
+        format_layout.setContentsMargins(0, 0, 0, 0)
+        
+        # Determine column index based on platform
+        format_col = 5 if self.current_platform == "YouTube" else 4
+        self.video_table.setCellWidget(row, format_col, format_cell)
+        
+        # Get quality combo for connecting signals
+        quality_col = 4 if self.current_platform == "YouTube" else 3
+        quality_cell = self.video_table.cellWidget(row, quality_col)
+        if quality_cell:
+            quality_combo = quality_cell.findChild(QComboBox)
+            # Get results from setup_video_qualities
+            quality_combo_data = self.video_info_dict.get(row, {})
+            audio_quality = None
+            video_qualities = []
+            
+            if hasattr(quality_combo_data, 'formats') and quality_combo_data.formats:
+                for fmt in quality_combo_data.formats:
+                    if 'quality' in fmt:
+                        if fmt.get('is_audio', False):
+                            audio_quality = fmt['quality']
+                        elif fmt['quality'] not in video_qualities:
+                            video_qualities.append(fmt['quality'])
+            
+            # Connect format change signal
+            format_combo.currentIndexChanged.connect(
+                lambda index, combo=format_combo, q_combo=quality_combo, 
+                       audio=audio_quality, video_qs=video_qualities: 
+                self.on_format_changed(index, combo, q_combo, audio, video_qs)
+            )
+    
+    def update_video_duration(self, row, video_info):
+        """Update duration cell in the video table"""
+        duration_str = ""
+        if hasattr(video_info, 'duration'):
+            duration_str = self.format_duration(video_info.duration)
+            
+        duration_item = QTableWidgetItem(duration_str)
+        duration_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        # Determine column index based on platform
+        duration_col = 6 if self.current_platform == "YouTube" else 5
+        self.video_table.setItem(row, duration_col, duration_item)
+    
+    def update_video_size(self, row, video_info):
+        """Update size cell in the video table"""
+        size_str = ""
+        if hasattr(video_info, 'formats'):
+            size_str = self.estimate_size(video_info.formats)
+            
+        size_item = QTableWidgetItem(size_str)
+        size_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+        
+        # Determine column index based on platform
+        size_col = 7 if self.current_platform == "YouTube" else 6
+        self.video_table.setItem(row, size_col, size_item)
+    
+    def get_row_for_url(self, url):
+        """Find row index for a given URL"""
+        # Look through video_info_dict to find matching URL
+        for row, info in self.video_info_dict.items():
+            if hasattr(info, 'url') and info.url == url:
+                return row
+        return -1
+    
+    def update_video_info_error(self, row, error_message):
+        """Update UI to show error for a video"""
+        if row < 0 or row >= self.video_table.rowCount():
+            return
+            
+        # Update title cell with error
+        title_item = QTableWidgetItem(error_message)
+        title_item.setToolTip(error_message)
+        self.video_table.setItem(row, 1, title_item)
+        
+        # Disable checkbox
+        checkbox_cell = self.video_table.cellWidget(row, 0)
+        if checkbox_cell:
+            checkbox = checkbox_cell.findChild(QCheckBox)
+            if checkbox:
+                checkbox.setChecked(False)
+                checkbox.setEnabled(False)
+        
+        # Update status bar
+        if self.parent and self.parent.status_bar:
+            self.parent.status_bar.showMessage(error_message)
+            
+        # Update button states
+        self.update_button_states()
+
+    def get_selected_rows(self):
+        """Get a list of rows that have checkboxes selected"""
+        selected_rows = []
+        
+        for row in range(self.video_table.rowCount()):
+            checkbox_cell = self.video_table.cellWidget(row, 0)
+            if checkbox_cell:
+                checkbox = checkbox_cell.findChild(QCheckBox)
+                if checkbox and checkbox.isChecked():
+                    selected_rows.append(row)
+                    
+        return selected_rows
+
+    def setup_ui(self):
+        # Main layout
+        main_layout = QVBoxLayout()
+        self.setLayout(main_layout)
+
+        # URL and Get Info section
+        url_layout = QHBoxLayout()
+        
+        # URL Label
+        self.url_label = QLabel(self.tr_("LABEL_VIDEO_URL"))
+        url_layout.addWidget(self.url_label)
+        
+        # Create spacing to align URL input with output folder
+        spacer_width = 18  # Adjusted for better alignment
+        url_layout.addSpacing(spacer_width)
+        
+        # URL Input
+        self.url_input = QLineEdit()
+        self.url_input.setFixedHeight(30)
+        # No longer setting fixed width - allow stretching with window
+        self.url_input.setMinimumWidth(500)
+        self.url_input.setPlaceholderText(self.tr_("PLACEHOLDER_VIDEO_URL"))
+        # Connect returnPressed event to get_video_info function
+        self.url_input.returnPressed.connect(self.get_video_info)
+        url_layout.addWidget(self.url_input, 1)  # stretch factor 1 to expand when maximized
+        
+        # Get Info Button
+        self.get_info_btn = QPushButton(self.tr_("BUTTON_GET_INFO"))
+        self.get_info_btn.setFixedWidth(120)  # Fixed width
+        self.get_info_btn.clicked.connect(self.get_video_info)
+        url_layout.addWidget(self.get_info_btn)
+        
+        main_layout.addLayout(url_layout)
+
+        # Output Folder section
+        output_layout = QHBoxLayout()
+        
+        # Output Folder Label
+        self.output_label = QLabel(self.tr_("LABEL_OUTPUT_FOLDER"))
+        output_layout.addWidget(self.output_label)
+        
+        # Display folder path
+        self.output_folder_display = QLineEdit()
+        self.output_folder_display.setReadOnly(True)
+        self.output_folder_display.setFixedHeight(30)
+        # No longer setting fixed width - allow stretching with window
+        self.output_folder_display.setMinimumWidth(500)
+        self.output_folder_display.setPlaceholderText(self.tr_("PLACEHOLDER_OUTPUT_FOLDER"))
+        output_layout.addWidget(self.output_folder_display, 1)  # stretch factor 1 to expand when maximized
+        
+        # Choose folder button
+        self.choose_folder_btn = QPushButton(self.tr_("BUTTON_CHOOSE_FOLDER"))
+        self.choose_folder_btn.setFixedWidth(120)  # Fixed width same as Get Info button
+        self.choose_folder_btn.clicked.connect(self.choose_output_folder)
+        output_layout.addWidget(self.choose_folder_btn)
+        
+        main_layout.addLayout(output_layout)
+
+        # Video information table
+        self.create_video_table()
+        main_layout.addWidget(self.video_table)
+
+        # Options and Download button section
+        options_layout = QHBoxLayout()
+        
+        # Group Select/Delete buttons to the left
+        left_buttons_layout = QHBoxLayout()
+        
+        # Select all / Unselect all button (combined into one)
+        self.select_toggle_btn = QPushButton(self.tr_("BUTTON_SELECT_ALL"))
+        self.select_toggle_btn.setFixedWidth(150)
+        self.select_toggle_btn.clicked.connect(self.toggle_select_all)
+        self.all_selected = False  # Current state (False: not all selected)
+        left_buttons_layout.addWidget(self.select_toggle_btn)
+        
+        # Delete Selected button
+        self.delete_selected_btn = QPushButton(self.tr_("BUTTON_DELETE_SELECTED"))
+        self.delete_selected_btn.setFixedWidth(150)
+        self.delete_selected_btn.clicked.connect(self.delete_selected_videos)
+        left_buttons_layout.addWidget(self.delete_selected_btn)
+        
+        # Delete All button
+        self.delete_all_btn = QPushButton(self.tr_("BUTTON_DELETE_ALL"))
+        self.delete_all_btn.setFixedWidth(150)
+        self.delete_all_btn.clicked.connect(self.delete_all_videos)
+        left_buttons_layout.addWidget(self.delete_all_btn)
+        
+        # Add left button group to layout
+        options_layout.addLayout(left_buttons_layout)
+        
+        # Add stretch to push Download button all the way to the right
+        options_layout.addStretch(1)
+        
+        # Download button on the right
+        self.download_btn = QPushButton(self.tr_("BUTTON_DOWNLOAD"))
+        self.download_btn.setFixedWidth(150)
+        self.download_btn.clicked.connect(self.download_videos)
+        options_layout.addWidget(self.download_btn)
+
+        main_layout.addLayout(options_layout)
+        
+        # Set up context menu for video_table
+        self.video_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.video_table.customContextMenuRequested.connect(self.show_context_menu)
+        
+        # Update initial button states
+        self.update_button_states()
+
+    def show_context_menu(self, position):
+        """Display right-click menu for video table"""
+        # Get current row and column position
+        index = self.video_table.indexAt(position)
+        if not index.isValid():
+            return
+            
+        row = index.row()
+        column = index.column()
+        
+        if row < 0 or row >= self.video_table.rowCount():
+            return
+        
+        # Create context menu
+        context_menu = QMenu(self)
+        
+        # Determine data type based on column
+        # Title column (always index 1, regardless of platform)
+        if column == 1:  
+            # Get title from item
+            item = self.video_table.item(row, column)
+            if item and item.text():
+                # Get full title from video_info_dict if available
+                full_title = item.text()  # Default to displayed text
+                if row in self.video_info_dict:
+                    video_info = self.video_info_dict[row]
+                    # Prioritize caption if available as it usually contains the most complete content
+                    if hasattr(video_info, 'caption') and video_info.caption:
+                        full_title = video_info.caption
+                    # If no caption, try using original_title
+                    elif hasattr(video_info, 'original_title') and video_info.original_title:
+                        full_title = video_info.original_title
+                    # If not, use title
+                    elif hasattr(video_info, 'title'):
+                        full_title = video_info.title
+                
+                # Add Copy action
+                copy_action = QAction(self.tr_("CONTEXT_COPY_TITLE"), self)
+                copy_action.triggered.connect(lambda: self.copy_to_clipboard(full_title, "title"))
+                context_menu.addAction(copy_action)
+        
+        # Creator/Channel column (always index 2, regardless of platform)
+        elif column == 2:  
+            # Get creator from item
+            item = self.video_table.item(row, column)
+            if item and item.text():
+                # Add Copy action
+                creator_label = self.tr_("CONTEXT_COPY_CHANNEL") if self.current_platform == "YouTube" else self.tr_("CONTEXT_COPY_CREATOR")
+                copy_action = QAction(creator_label, self)
+                copy_action.triggered.connect(lambda: self.copy_to_clipboard(item.text(), "creator"))
+                context_menu.addAction(copy_action)
+        
+        # Platform-specific columns
+        elif self.current_platform == "YouTube" and column == 3:  # Playlist column
+            # Get playlist from item
+            item = self.video_table.item(row, column)
+            if item and item.text():
+                # Add Copy action
+                copy_action = QAction(self.tr_("CONTEXT_COPY_PLAYLIST"), self)
+                copy_action.triggered.connect(lambda: self.copy_to_clipboard(item.text(), "playlist"))
+                context_menu.addAction(copy_action)
+                
+        elif (self.current_platform == "TikTok" and column == 7) or \
+             (self.current_platform == "YouTube" and column == 8):  # Hashtags or Release Date
+            # Get text from item
+            item = self.video_table.item(row, column)
+            if item and item.text():
+                # Add Copy action based on platform
+                if self.current_platform == "TikTok":
+                    copy_action = QAction(self.tr_("CONTEXT_COPY_HASHTAGS"), self)
+                    copy_action.triggered.connect(lambda: self.copy_to_clipboard(item.text(), "hashtags"))
+                else:  # YouTube
+                    copy_action = QAction(self.tr_("CONTEXT_COPY_RELEASE_DATE"), self)
+                    copy_action.triggered.connect(lambda: self.copy_to_clipboard(item.text(), "release_date"))
+                context_menu.addAction(copy_action)
+                
+        # Common functions for all columns
+        # Add separator if there are previous actions
+        if not context_menu.isEmpty():
+            context_menu.addSeparator()
+        
+        # Get video information
+        video_info = None
+        if row in self.video_info_dict:
+            video_info = self.video_info_dict[row]
+        
+        if video_info:
+            # Check if output folder has been selected
+            has_output_folder = bool(self.output_folder_display.text())
+            
+            # Ensure title attribute exists
+            if not hasattr(video_info, 'title') or video_info.title is None or video_info.title.strip() == "":
+                from datetime import datetime
+                default_title = f"Video_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+                setattr(video_info, 'title', default_title)
+            
+            # Check if video has an error
+            has_error = False
+            if hasattr(video_info, 'title'):
+                has_error = video_info.title.startswith("Error:")
+            
+            # Only show Rename if video has no errors and output folder is selected
+            if not has_error and has_output_folder and hasattr(video_info, 'url'):
+                # Action Rename Video - Allow changing video name before downloading
+                rename_action = QAction(self.tr_("CONTEXT_RENAME_VIDEO"), self)
+                rename_action.triggered.connect(lambda: self.rename_video(row))
+                context_menu.addAction(rename_action)
+                
+                # Add separator
+                context_menu.addSeparator()
+        
+        # Action Delete Video - available in all cases
+        delete_action = QAction(self.tr_("CONTEXT_DELETE"), self)
+        delete_action.triggered.connect(lambda: self.delete_row(row))
+        context_menu.addAction(delete_action)
+        
+        # Show menu if it has actions
+        if not context_menu.isEmpty():
+            context_menu.exec(QCursor.pos())
+
+    def rename_video(self, row):
+        """Allow users to rename video before downloading"""
+        # Check if video_info exists
+        if row not in self.video_info_dict:
+            return
+            
+        video_info = self.video_info_dict[row]
+        
+        # Get current title
+        current_title = video_info.title if hasattr(video_info, 'title') else ""
+        
+        # If no title, create default title from timestamp
+        if not current_title:
+            from datetime import datetime
+            current_title = f"Video_{datetime.now().strftime('%Y%m%d_%H%M%S')}"
+            print(f"DEBUG - Creating default title for empty video title: {current_title}")
+            
+        # Show dialog to enter new name
+        new_title, ok = QInputDialog.getText(
+            self, 
+            self.tr_("DIALOG_RENAME_TITLE"),
+            self.tr_("DIALOG_ENTER_NEW_NAME"), 
+            QLineEdit.EchoMode.Normal, 
+            current_title
+        )
+        
+        # Check if user clicked OK and new name is not empty
+        if ok and new_title:
+            # Clean filename to avoid invalid characters
+            import re
+            clean_title = re.sub(r'[\\/*?:"<>|]', '', new_title).strip()
+            
+            if clean_title:
+                # Save original title to original_title variable if it doesn't exist
+                if not hasattr(video_info, 'original_title'):
+                    setattr(video_info, 'original_title', current_title)
+                    
+                # Update new name
+                setattr(video_info, 'title', clean_title)
+                
+                # Add custom_title attribute
+                setattr(video_info, 'custom_title', clean_title)
+                
+                # Update UI - title column in table
+                title_cell = self.video_table.item(row, 1)
+                if title_cell:
+                    title_cell.setText(clean_title)
+                    title_cell.setToolTip(clean_title)
+                
+                # Show success message
+                if self.parent and self.parent.status_bar:
+                    self.parent.status_bar.showMessage(self.tr_("STATUS_RENAMED_VIDEO").format(clean_title))
+                    
+                print(f"DEBUG - Renamed video from '{current_title}' to '{clean_title}'")
+            else:
+                # Show error message if new name is invalid
+                QMessageBox.warning(
+                    self, 
+                    self.tr_("DIALOG_ERROR"), 
+                    self.tr_("DIALOG_INVALID_NAME")
+                )

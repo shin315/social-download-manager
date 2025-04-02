@@ -30,7 +30,7 @@ MENU_BUY_COFFEE = "Ủng Hộ Tác Giả"
 
 # Platform menu items
 PLATFORM_TIKTOK = "TikTok"
-PLATFORM_YOUTUBE = "YouTube (Sắp Ra Mắt)"
+PLATFORM_YOUTUBE = "YouTube"
 PLATFORM_INSTAGRAM = "Instagram (Sắp Ra Mắt)"
 PLATFORM_FACEBOOK = "Facebook (Sắp Ra Mắt)"
 
@@ -257,4 +257,18 @@ DIALOG_VIDEO_REGION_RESTRICTED = "Video này không khả dụng tại khu vực
 DIALOG_YTDLP_OUTDATED = "Công cụ tải video đã lỗi thời. Vui lòng cập nhật ứng dụng."
 DIALOG_API_ERROR_TITLE = "Lỗi API"
 DIALOG_UPDATE_NEEDED = "Yêu Cầu Cập Nhật"
-DIALOG_UPDATE_NEEDED_MESSAGE = "Một phiên bản mới của ứng dụng là cần thiết để tải xuống video. Phiên bản hiện tại không tương thích với những thay đổi gần đây của TikTok." 
+DIALOG_UPDATE_NEEDED_MESSAGE = "Một phiên bản mới của ứng dụng là cần thiết để tải xuống video. Phiên bản hiện tại không tương thích với những thay đổi gần đây của TikTok."
+
+# Video Info tab - YouTube specific
+HEADER_CHANNEL = "Kênh"
+HEADER_PLAYLIST = "Danh Sách Phát"
+HEADER_RELEASE_DATE = "Ngày Phát Hành"
+
+# Status for platform switching
+STATUS_SWITCHED_TO_YOUTUBE = "Đã chuyển sang chế độ YouTube"
+STATUS_SWITCHED_TO_TIKTOK = "Đã chuyển sang chế độ TikTok"
+
+# Context menu for YouTube
+CONTEXT_COPY_CHANNEL = "Sao chép Kênh"
+CONTEXT_COPY_PLAYLIST = "Sao chép Danh Sách Phát"
+CONTEXT_COPY_RELEASE_DATE = "Sao chép Ngày Phát Hành" 

@@ -1,0 +1,1044 @@
+[2025-04-02 00:25:53.012324] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:25:53.012324] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:25:53.012324] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 00:25:53.012324] Config file exists, reading existing content
+[2025-04-02 00:25:53.013326] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark'}
+[2025-04-02 00:25:53.013326] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark'}
+[2025-04-02 00:25:53.013326] Successfully saved config
+[2025-04-02 00:25:53.014828] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark"}
+[2025-04-02 00:25:53.012324] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:25:53.012324] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:25:53.012324] Executable path: Not running as exe
+[2025-04-02 00:25:53.012324] Config file exists, reading content
+[2025-04-02 00:25:53.012324] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark"}
+[2025-04-02 00:25:53.012324] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 00:25:53.012324] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 00:25:53.015332] Setting language to: english
+[2025-04-02 00:25:53.016338] Setting theme to: dark
+[2025-04-02 00:25:53.059295] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:25:53.059295] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:25:53.059295] Key: theme, Value: dark
+[2025-04-02 00:25:53.059295] Config file exists, reading existing content
+[2025-04-02 00:25:53.060296] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark'}
+[2025-04-02 00:25:53.060296] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark'}
+[2025-04-02 00:25:53.061295] Successfully saved config
+[2025-04-02 00:25:53.062295] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark"}
+[2025-04-02 00:25:53.062295] Theme changed to: dark
+[2025-04-02 00:26:10.272138] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:26:10.272138] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:26:10.272138] Key: theme, Value: light
+[2025-04-02 00:26:10.272138] Config file exists, reading existing content
+[2025-04-02 00:26:10.272138] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark'}
+[2025-04-02 00:26:10.272138] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:26:10.272138] Successfully saved config
+[2025-04-02 00:26:10.278165] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:26:10.278165] Theme changed to: light
+[2025-04-02 00:26:43.075218] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:26:43.075218] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:26:43.075218] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 00:26:43.075218] Config file exists, reading existing content
+[2025-04-02 00:26:43.075218] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:26:43.075218] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:26:43.075218] Successfully saved config
+[2025-04-02 00:26:43.077230] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:26:43.074209] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:26:43.074209] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:26:43.074209] Executable path: Not running as exe
+[2025-04-02 00:26:43.074209] Config file exists, reading content
+[2025-04-02 00:26:43.074209] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:26:43.074209] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 00:26:43.074209] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 00:26:43.077230] Setting language to: english
+[2025-04-02 00:26:43.080736] Setting theme to: light
+[2025-04-02 00:26:43.144300] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:26:43.144300] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:26:43.144300] Key: theme, Value: light
+[2025-04-02 00:26:43.144300] Config file exists, reading existing content
+[2025-04-02 00:26:43.145311] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:26:43.145311] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:26:43.146164] Successfully saved config
+[2025-04-02 00:26:43.147316] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:26:43.147316] Theme changed to: light
+[2025-04-02 00:27:19.468306] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:27:19.468306] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:27:19.468306] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 00:27:19.468306] Config file exists, reading existing content
+[2025-04-02 00:27:19.468306] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:27:19.468306] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:27:19.469316] Successfully saved config
+[2025-04-02 00:27:19.470307] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:27:19.468306] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:27:19.468306] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:27:19.468306] Executable path: Not running as exe
+[2025-04-02 00:27:19.468306] Config file exists, reading content
+[2025-04-02 00:27:19.468306] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:27:19.468306] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 00:27:19.468306] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 00:27:19.470307] Setting language to: english
+[2025-04-02 00:27:19.472305] Setting theme to: light
+[2025-04-02 00:27:19.506694] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:27:19.506694] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:27:19.506694] Key: theme, Value: light
+[2025-04-02 00:27:19.506694] Config file exists, reading existing content
+[2025-04-02 00:27:19.507693] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:27:19.507693] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:27:19.507693] Successfully saved config
+[2025-04-02 00:27:19.508693] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:27:19.508693] Theme changed to: light
+[2025-04-02 00:54:03.871453] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:54:03.871453] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:54:03.871453] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 00:54:03.871453] Config file exists, reading existing content
+[2025-04-02 00:54:03.872452] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:54:03.872452] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:54:03.872452] Successfully saved config
+[2025-04-02 00:54:03.878453] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:54:03.871453] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:54:03.871453] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:54:03.871453] Executable path: Not running as exe
+[2025-04-02 00:54:03.871453] Config file exists, reading content
+[2025-04-02 00:54:03.871453] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:54:03.871453] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 00:54:03.871453] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 00:54:03.878453] Setting language to: english
+[2025-04-02 00:54:03.880458] Setting theme to: light
+[2025-04-02 00:54:21.833365] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:54:21.833365] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:54:21.833365] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 00:54:21.833365] Config file exists, reading existing content
+[2025-04-02 00:54:21.833365] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:54:21.834366] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:54:21.834366] Successfully saved config
+[2025-04-02 00:54:21.835365] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:54:21.832364] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:54:21.832364] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:54:21.832364] Executable path: Not running as exe
+[2025-04-02 00:54:21.832364] Config file exists, reading content
+[2025-04-02 00:54:21.832364] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:54:21.832364] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 00:54:21.832364] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 00:54:21.836367] Setting language to: english
+[2025-04-02 00:54:21.838364] Setting theme to: light
+[2025-04-02 00:54:21.881884] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:54:21.881884] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:54:21.881884] Key: theme, Value: light
+[2025-04-02 00:54:21.881884] Config file exists, reading existing content
+[2025-04-02 00:54:21.882884] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:54:21.882884] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:54:21.882884] Successfully saved config
+[2025-04-02 00:54:21.883884] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:54:21.883884] Theme changed to: light
+[2025-04-02 00:54:51.898780] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:54:51.898780] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:54:51.898780] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 00:54:51.898780] Config file exists, reading existing content
+[2025-04-02 00:54:51.898780] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:54:51.898780] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:54:51.899780] Successfully saved config
+[2025-04-02 00:54:51.899780] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:54:51.898780] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:54:51.898780] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:54:51.898780] Executable path: Not running as exe
+[2025-04-02 00:54:51.898780] Config file exists, reading content
+[2025-04-02 00:54:51.898780] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:54:51.898780] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 00:54:51.898780] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 00:54:51.901286] Setting language to: english
+[2025-04-02 00:54:51.903769] Setting theme to: light
+[2025-04-02 00:54:51.946337] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:54:51.946337] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:54:51.946337] Key: theme, Value: light
+[2025-04-02 00:54:51.946337] Config file exists, reading existing content
+[2025-04-02 00:54:51.948337] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:54:51.948337] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:54:51.948337] Successfully saved config
+[2025-04-02 00:54:51.949338] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:54:51.949338] Theme changed to: light
+[2025-04-02 00:55:38.624795] Platform changed to: YouTube
+[2025-04-02 00:57:12.303513] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:57:12.303513] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:57:12.303513] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 00:57:12.303513] Config file exists, reading existing content
+[2025-04-02 00:57:12.303513] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:57:12.303513] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:57:12.304513] Successfully saved config
+[2025-04-02 00:57:12.305514] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:57:12.303513] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:57:12.303513] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:57:12.303513] Executable path: Not running as exe
+[2025-04-02 00:57:12.303513] Config file exists, reading content
+[2025-04-02 00:57:12.303513] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:57:12.303513] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 00:57:12.303513] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 00:57:12.305514] Setting language to: english
+[2025-04-02 00:57:12.308513] Setting theme to: light
+[2025-04-02 00:57:12.346021] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:57:12.347021] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:57:12.347021] Key: theme, Value: light
+[2025-04-02 00:57:12.347021] Config file exists, reading existing content
+[2025-04-02 00:57:12.347021] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:57:12.347021] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:57:12.348022] Successfully saved config
+[2025-04-02 00:57:12.348022] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:57:12.349023] Theme changed to: light
+[2025-04-02 00:57:32.517553] Platform changed to: YouTube
+[2025-04-02 00:58:48.984905] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:58:48.984905] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:58:48.984905] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 00:58:48.984905] Config file exists, reading existing content
+[2025-04-02 00:58:48.984905] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:58:48.984905] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:58:48.985905] Successfully saved config
+[2025-04-02 00:58:48.986905] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:58:48.984905] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:58:48.984905] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:58:48.984905] Executable path: Not running as exe
+[2025-04-02 00:58:48.984905] Config file exists, reading content
+[2025-04-02 00:58:48.984905] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:58:48.984905] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 00:58:48.984905] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 00:58:48.986905] Setting language to: english
+[2025-04-02 00:58:48.989906] Setting theme to: light
+[2025-04-02 00:58:49.032924] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:58:49.032924] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:58:49.032924] Key: theme, Value: light
+[2025-04-02 00:58:49.032924] Config file exists, reading existing content
+[2025-04-02 00:58:49.033923] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:58:49.033923] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:58:49.034923] Successfully saved config
+[2025-04-02 00:58:49.034923] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:58:49.034923] Theme changed to: light
+[2025-04-02 00:58:52.196198] Platform changed to: YouTube
+[2025-04-02 00:59:57.284105] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:59:57.284105] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:59:57.284105] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 00:59:57.284105] Config file exists, reading existing content
+[2025-04-02 00:59:57.284105] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:59:57.284105] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:59:57.284105] Successfully saved config
+[2025-04-02 00:59:57.285104] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:59:57.283104] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:59:57.283104] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:59:57.283104] Executable path: Not running as exe
+[2025-04-02 00:59:57.283104] Config file exists, reading content
+[2025-04-02 00:59:57.283104] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:59:57.283104] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 00:59:57.283104] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 00:59:57.285104] Setting language to: english
+[2025-04-02 00:59:57.287108] Setting theme to: light
+[2025-04-02 00:59:57.325620] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 00:59:57.325620] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 00:59:57.325620] Key: theme, Value: light
+[2025-04-02 00:59:57.325620] Config file exists, reading existing content
+[2025-04-02 00:59:57.326622] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:59:57.326622] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 00:59:57.326622] Successfully saved config
+[2025-04-02 00:59:57.327622] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 00:59:57.328621] Theme changed to: light
+[2025-04-02 01:00:02.186610] Platform changed to: YouTube
+[2025-04-02 01:00:43.557536] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:00:43.557536] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:00:43.557536] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 01:00:43.557536] Config file exists, reading existing content
+[2025-04-02 01:00:43.557536] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:00:43.558530] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:00:43.558530] Successfully saved config
+[2025-04-02 01:00:43.559532] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:00:43.557536] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:00:43.557536] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:00:43.557536] Executable path: Not running as exe
+[2025-04-02 01:00:43.557536] Config file exists, reading content
+[2025-04-02 01:00:43.557536] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:00:43.557536] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 01:00:43.557536] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 01:00:43.560530] Setting language to: english
+[2025-04-02 01:00:43.562530] Setting theme to: light
+[2025-04-02 01:00:43.612509] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:00:43.613509] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:00:43.613509] Key: theme, Value: light
+[2025-04-02 01:00:43.613509] Config file exists, reading existing content
+[2025-04-02 01:00:43.614510] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:00:43.614510] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:00:43.614510] Successfully saved config
+[2025-04-02 01:00:43.615509] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:00:43.616510] Theme changed to: light
+[2025-04-02 01:00:46.539491] Platform changed to: YouTube
+[2025-04-02 01:01:18.061107] Platform changed to: TikTok
+[2025-04-02 01:01:33.362342] Platform changed to: YouTube
+[2025-04-02 01:01:35.680363] Platform changed to: TikTok
+[2025-04-02 01:05:01.823353] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:05:01.823353] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:05:01.823353] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 01:05:01.823353] Config file exists, reading existing content
+[2025-04-02 01:05:01.823353] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:05:01.823353] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:05:01.823353] Successfully saved config
+[2025-04-02 01:05:01.824353] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:05:01.821354] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:05:01.821354] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:05:01.821354] Executable path: Not running as exe
+[2025-04-02 01:05:01.821354] Config file exists, reading content
+[2025-04-02 01:05:01.822354] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:05:01.822354] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 01:05:01.822354] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 01:05:01.825353] Setting language to: english
+[2025-04-02 01:05:01.828354] Setting theme to: light
+[2025-04-02 01:05:01.870865] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:05:01.870865] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:05:01.870865] Key: theme, Value: light
+[2025-04-02 01:05:01.870865] Config file exists, reading existing content
+[2025-04-02 01:05:01.871864] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:05:01.871864] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:05:01.871864] Successfully saved config
+[2025-04-02 01:05:01.872864] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:05:01.872864] Theme changed to: light
+[2025-04-02 01:05:05.486417] Platform changed to: YouTube
+[2025-04-02 01:05:06.886024] Platform changed to: TikTok
+[2025-04-02 01:05:25.779482] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:05:25.779482] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:05:25.779482] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 01:05:25.779482] Config file exists, reading existing content
+[2025-04-02 01:05:25.779482] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:05:25.779482] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:05:25.780484] Successfully saved config
+[2025-04-02 01:05:25.781483] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:05:25.778483] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:05:25.778483] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:05:25.778483] Executable path: Not running as exe
+[2025-04-02 01:05:25.778483] Config file exists, reading content
+[2025-04-02 01:05:25.779482] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:05:25.779482] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 01:05:25.779482] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 01:05:25.781483] Setting language to: english
+[2025-04-02 01:05:25.784815] Setting theme to: light
+[2025-04-02 01:05:25.830816] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:05:25.830816] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:05:25.830816] Key: theme, Value: light
+[2025-04-02 01:05:25.830816] Config file exists, reading existing content
+[2025-04-02 01:05:25.831817] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:05:25.831817] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:05:25.832815] Successfully saved config
+[2025-04-02 01:05:25.832815] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:05:25.833815] Theme changed to: light
+[2025-04-02 01:05:28.157036] Platform changed to: YouTube
+[2025-04-02 01:05:29.892942] Platform changed to: TikTok
+[2025-04-02 01:07:25.269572] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:07:25.269572] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:07:25.269572] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 01:07:25.269572] Config file exists, reading existing content
+[2025-04-02 01:07:25.270570] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:07:25.270570] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:07:25.270570] Successfully saved config
+[2025-04-02 01:07:25.271570] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:07:25.269572] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:07:25.269572] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:07:25.269572] Executable path: Not running as exe
+[2025-04-02 01:07:25.269572] Config file exists, reading content
+[2025-04-02 01:07:25.269572] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:07:25.269572] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 01:07:25.269572] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 01:07:25.271570] Setting language to: english
+[2025-04-02 01:07:25.273571] Setting theme to: light
+[2025-04-02 01:07:25.326571] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:07:25.326571] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:07:25.326571] Key: theme, Value: light
+[2025-04-02 01:07:25.326571] Config file exists, reading existing content
+[2025-04-02 01:07:25.326571] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:07:25.326571] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:07:25.326571] Successfully saved config
+[2025-04-02 01:07:25.327571] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:07:25.327571] Theme changed to: light
+[2025-04-02 01:07:28.128222] Platform changed to: YouTube
+[2025-04-02 01:07:29.491339] Platform changed to: TikTok
+[2025-04-02 01:08:06.049342] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:08:06.049342] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:08:06.049342] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 01:08:06.049342] Config file exists, reading existing content
+[2025-04-02 01:08:06.049342] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:08:06.049342] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:08:06.049342] Successfully saved config
+[2025-04-02 01:08:06.050341] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:08:06.048341] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:08:06.048341] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:08:06.048341] Executable path: Not running as exe
+[2025-04-02 01:08:06.048341] Config file exists, reading content
+[2025-04-02 01:08:06.048341] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:08:06.048341] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 01:08:06.048341] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 01:08:06.050341] Setting language to: english
+[2025-04-02 01:08:06.052339] Setting theme to: light
+[2025-04-02 01:08:06.096341] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:08:06.096341] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:08:06.096341] Key: theme, Value: light
+[2025-04-02 01:08:06.096341] Config file exists, reading existing content
+[2025-04-02 01:08:06.097339] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:08:06.097339] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:08:06.097339] Successfully saved config
+[2025-04-02 01:08:06.098339] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:08:06.098339] Theme changed to: light
+[2025-04-02 01:08:10.973181] Platform changed to: YouTube
+[2025-04-02 01:08:14.427411] Platform changed to: TikTok
+[2025-04-02 01:09:35.952948] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:09:35.952948] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:09:35.952948] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 01:09:35.952948] Config file exists, reading existing content
+[2025-04-02 01:09:35.952948] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:09:35.952948] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:09:35.953947] Successfully saved config
+[2025-04-02 01:09:35.954947] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:09:35.952948] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:09:35.952948] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:09:35.952948] Executable path: Not running as exe
+[2025-04-02 01:09:35.952948] Config file exists, reading content
+[2025-04-02 01:09:35.952948] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:09:35.952948] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 01:09:35.952948] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 01:09:35.954947] Setting language to: english
+[2025-04-02 01:09:35.956948] Setting theme to: light
+[2025-04-02 01:09:35.996952] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:09:35.996952] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:09:35.996952] Key: theme, Value: light
+[2025-04-02 01:09:35.996952] Config file exists, reading existing content
+[2025-04-02 01:09:35.997952] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:09:35.997952] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:09:35.997952] Successfully saved config
+[2025-04-02 01:09:35.998951] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:09:35.998951] Theme changed to: light
+[2025-04-02 01:09:39.078111] Platform changed to: YouTube
+[2025-04-02 01:09:40.151310] Platform changed to: TikTok
+[2025-04-02 01:21:46.356731] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:21:46.356731] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:21:46.356731] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 01:21:46.356731] Config file exists, reading existing content
+[2025-04-02 01:21:46.356731] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:21:46.356731] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:21:46.356731] Successfully saved config
+[2025-04-02 01:21:46.357736] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:21:46.356731] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:21:46.356731] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:21:46.356731] Executable path: Not running as exe
+[2025-04-02 01:21:46.356731] Config file exists, reading content
+[2025-04-02 01:21:46.356731] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:21:46.356731] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 01:21:46.356731] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 01:21:46.358736] Setting language to: english
+[2025-04-02 01:21:46.359737] Setting theme to: light
+[2025-04-02 01:21:46.398244] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:21:46.398244] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:21:46.398244] Key: theme, Value: light
+[2025-04-02 01:21:46.398244] Config file exists, reading existing content
+[2025-04-02 01:21:46.398244] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:21:46.398244] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:21:46.398244] Successfully saved config
+[2025-04-02 01:21:46.399246] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:21:46.399246] Theme changed to: light
+[2025-04-02 01:22:43.295295] Platform changed to: YouTube
+[2025-04-02 01:22:44.592945] Platform changed to: TikTok
+[2025-04-02 01:23:16.524190] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:23:16.524190] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:23:16.524190] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 01:23:16.524190] Config file exists, reading existing content
+[2025-04-02 01:23:16.524190] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:23:16.524190] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:23:16.524190] Successfully saved config
+[2025-04-02 01:23:16.525190] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:23:16.523189] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:23:16.523189] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:23:16.523189] Executable path: Not running as exe
+[2025-04-02 01:23:16.523189] Config file exists, reading content
+[2025-04-02 01:23:16.523189] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:23:16.523189] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 01:23:16.523189] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 01:23:16.526188] Setting language to: english
+[2025-04-02 01:23:16.527191] Setting theme to: light
+[2025-04-02 01:23:16.565188] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 01:23:16.565188] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 01:23:16.565188] Key: theme, Value: light
+[2025-04-02 01:23:16.565188] Config file exists, reading existing content
+[2025-04-02 01:23:16.566189] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:23:16.566189] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 01:23:16.566189] Successfully saved config
+[2025-04-02 01:23:16.567190] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 01:23:16.567190] Theme changed to: light
+[2025-04-02 10:08:34.451171] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:08:34.451171] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:08:34.451171] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 10:08:34.451171] Config file exists, reading existing content
+[2025-04-02 10:08:34.451171] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 10:08:34.451171] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 10:08:34.451171] Successfully saved config
+[2025-04-02 10:08:34.453192] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 10:08:34.451171] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:08:34.451171] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:08:34.451171] Executable path: Not running as exe
+[2025-04-02 10:08:34.451171] Config file exists, reading content
+[2025-04-02 10:08:34.451171] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 10:08:34.451171] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 10:08:34.451171] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 10:08:34.453192] Setting language to: english
+[2025-04-02 10:08:34.455199] Setting theme to: light
+[2025-04-02 10:08:34.497362] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:08:34.497362] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:08:34.497362] Key: theme, Value: light
+[2025-04-02 10:08:34.497362] Config file exists, reading existing content
+[2025-04-02 10:08:34.498363] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 10:08:34.498363] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 10:08:34.498363] Successfully saved config
+[2025-04-02 10:08:34.499362] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 10:08:34.499362] Theme changed to: light
+[2025-04-02 10:09:19.774308] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:09:19.774308] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:09:19.774308] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 10:09:19.774308] Config file exists, reading existing content
+[2025-04-02 10:09:19.774308] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 10:09:19.774308] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 10:09:19.775309] Successfully saved config
+[2025-04-02 10:09:19.776310] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 10:09:19.774308] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:09:19.774308] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:09:19.774308] Executable path: Not running as exe
+[2025-04-02 10:09:19.774308] Config file exists, reading content
+[2025-04-02 10:09:19.774308] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 10:09:19.774308] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 10:09:19.774308] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 10:09:19.776310] Setting language to: english
+[2025-04-02 10:09:19.779308] Setting theme to: light
+[2025-04-02 10:09:19.824340] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:09:19.824340] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:09:19.824340] Key: theme, Value: light
+[2025-04-02 10:09:19.824340] Config file exists, reading existing content
+[2025-04-02 10:09:19.824340] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 10:09:19.824340] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 10:09:19.825565] Successfully saved config
+[2025-04-02 10:09:19.826565] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light"}
+[2025-04-02 10:09:19.826565] Theme changed to: light
+[2025-04-02 10:09:22.869625] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:09:22.869625] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:09:22.869625] Key: current_platform, Value: YouTube
+[2025-04-02 10:09:22.869625] Config file exists, reading existing content
+[2025-04-02 10:09:22.869625] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light'}
+[2025-04-02 10:09:22.869625] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'YouTube'}
+[2025-04-02 10:09:22.869625] Successfully saved config
+[2025-04-02 10:09:22.875641] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light", "current_platform": "YouTube"}
+[2025-04-02 10:09:22.875641] Platform changed to: YouTube
+[2025-04-02 10:09:28.844485] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:09:28.844485] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:09:28.844485] Key: current_platform, Value: TikTok
+[2025-04-02 10:09:28.844485] Config file exists, reading existing content
+[2025-04-02 10:09:28.844485] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'YouTube'}
+[2025-04-02 10:09:28.844485] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:09:28.845484] Successfully saved config
+[2025-04-02 10:09:28.850483] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light", "current_platform": "TikTok"}
+[2025-04-02 10:09:28.851487] Platform changed to: TikTok
+[2025-04-02 10:11:18.648288] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:11:18.648288] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:11:18.648288] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 10:11:18.648288] Config file exists, reading existing content
+[2025-04-02 10:11:18.648288] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:11:18.648288] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:11:18.649288] Successfully saved config
+[2025-04-02 10:11:18.649288] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light", "current_platform": "TikTok"}
+[2025-04-02 10:11:18.648288] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:11:18.648288] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:11:18.648288] Executable path: Not running as exe
+[2025-04-02 10:11:18.648288] Config file exists, reading content
+[2025-04-02 10:11:18.648288] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light", "current_platform": "TikTok"}
+[2025-04-02 10:11:18.648288] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 10:11:18.648288] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 10:11:18.650288] Setting language to: english
+[2025-04-02 10:11:18.652288] Setting theme to: light
+[2025-04-02 10:11:18.689378] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:11:18.689378] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:11:18.689378] Key: theme, Value: light
+[2025-04-02 10:11:18.689378] Config file exists, reading existing content
+[2025-04-02 10:11:18.690377] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:11:18.690377] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:11:18.690377] Successfully saved config
+[2025-04-02 10:11:18.690377] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light", "current_platform": "TikTok"}
+[2025-04-02 10:11:18.691378] Theme changed to: light
+[2025-04-02 10:12:00.514292] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:12:00.514292] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:12:00.514292] Key: current_platform, Value: YouTube
+[2025-04-02 10:12:00.514292] Config file exists, reading existing content
+[2025-04-02 10:12:00.515301] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:12:00.515301] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'YouTube'}
+[2025-04-02 10:12:00.515301] Successfully saved config
+[2025-04-02 10:12:00.517294] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light", "current_platform": "YouTube"}
+[2025-04-02 10:12:00.517294] Platform changed to: YouTube
+[2025-04-02 10:12:14.215905] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:12:14.215905] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:12:14.215905] Key: current_platform, Value: TikTok
+[2025-04-02 10:12:14.215905] Config file exists, reading existing content
+[2025-04-02 10:12:14.215905] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'YouTube'}
+[2025-04-02 10:12:14.215905] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:12:14.215905] Successfully saved config
+[2025-04-02 10:12:14.216910] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light", "current_platform": "TikTok"}
+[2025-04-02 10:12:14.216910] Platform changed to: TikTok
+[2025-04-02 10:12:16.147890] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:12:16.147890] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:12:16.147890] Key: current_platform, Value: YouTube
+[2025-04-02 10:12:16.147890] Config file exists, reading existing content
+[2025-04-02 10:12:16.147890] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:12:16.147890] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'YouTube'}
+[2025-04-02 10:12:16.147890] Successfully saved config
+[2025-04-02 10:12:16.149893] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light", "current_platform": "YouTube"}
+[2025-04-02 10:12:16.149893] Platform changed to: YouTube
+[2025-04-02 10:12:18.078154] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:12:18.078154] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:12:18.078154] Key: current_platform, Value: TikTok
+[2025-04-02 10:12:18.078154] Config file exists, reading existing content
+[2025-04-02 10:12:18.078154] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'YouTube'}
+[2025-04-02 10:12:18.078154] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:12:18.078154] Successfully saved config
+[2025-04-02 10:12:18.079151] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light", "current_platform": "TikTok"}
+[2025-04-02 10:12:18.080151] Platform changed to: TikTok
+[2025-04-02 10:15:45.819842] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:15:45.819842] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:15:45.819842] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 10:15:45.819842] Config file exists, reading existing content
+[2025-04-02 10:15:45.819842] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:15:45.819842] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:15:45.819842] Successfully saved config
+[2025-04-02 10:15:45.821850] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light", "current_platform": "TikTok"}
+[2025-04-02 10:15:45.819842] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:15:45.819842] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:15:45.819842] Executable path: Not running as exe
+[2025-04-02 10:15:45.819842] Config file exists, reading content
+[2025-04-02 10:15:45.819842] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light", "current_platform": "TikTok"}
+[2025-04-02 10:15:45.819842] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 10:15:45.819842] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 10:15:45.821850] Setting language to: english
+[2025-04-02 10:15:45.823856] Setting theme to: light
+[2025-04-02 10:15:45.865355] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:15:45.865355] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:15:45.865355] Key: theme, Value: light
+[2025-04-02 10:15:45.865355] Config file exists, reading existing content
+[2025-04-02 10:15:45.866355] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:15:45.866355] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:15:45.866355] Successfully saved config
+[2025-04-02 10:15:45.867355] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light", "current_platform": "TikTok"}
+[2025-04-02 10:15:45.868357] Theme changed to: light
+[2025-04-02 10:18:27.416463] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:18:27.416463] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:18:27.416463] Key: current_platform, Value: YouTube
+[2025-04-02 10:18:27.416463] Config file exists, reading existing content
+[2025-04-02 10:18:27.416463] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:18:27.416463] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'YouTube'}
+[2025-04-02 10:18:27.417464] Successfully saved config
+[2025-04-02 10:18:27.418464] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light", "current_platform": "YouTube"}
+[2025-04-02 10:18:27.418464] Platform changed to: YouTube
+[2025-04-02 10:18:29.871762] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:18:29.871762] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:18:29.871762] Key: current_platform, Value: TikTok
+[2025-04-02 10:18:29.871762] Config file exists, reading existing content
+[2025-04-02 10:18:29.871762] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'YouTube'}
+[2025-04-02 10:18:29.871762] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:18:29.872766] Successfully saved config
+[2025-04-02 10:18:29.874265] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "light", "current_platform": "TikTok"}
+[2025-04-02 10:18:29.874265] Platform changed to: TikTok
+[2025-04-02 10:18:34.661535] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:18:34.661535] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:18:34.661535] Key: theme, Value: dark
+[2025-04-02 10:18:34.661535] Config file exists, reading existing content
+[2025-04-02 10:18:34.661535] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'light', 'current_platform': 'TikTok'}
+[2025-04-02 10:18:34.661535] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:18:34.661535] Successfully saved config
+[2025-04-02 10:18:34.668536] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "TikTok"}
+[2025-04-02 10:18:34.668536] Theme changed to: dark
+[2025-04-02 10:18:37.063233] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:18:37.063233] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:18:37.063233] Key: language, Value: vietnamese
+[2025-04-02 10:18:37.063233] Config file exists, reading existing content
+[2025-04-02 10:18:37.068234] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'vietnamese', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:18:37.068234] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'vietnamese', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:18:37.068234] Successfully saved config
+[2025-04-02 10:18:37.069235] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "vietnamese", "theme": "dark", "current_platform": "TikTok"}
+[2025-04-02 10:18:37.069235] Language changed to: vietnamese
+[2025-04-02 10:18:37.768023] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:18:37.768023] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:18:37.768023] Key: language, Value: english
+[2025-04-02 10:18:37.768023] Config file exists, reading existing content
+[2025-04-02 10:18:37.769024] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:18:37.769024] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:18:37.769024] Successfully saved config
+[2025-04-02 10:18:37.770023] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "TikTok"}
+[2025-04-02 10:18:37.771023] Language changed to: english
+[2025-04-02 10:18:38.870920] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:18:38.870920] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:18:38.870920] Key: language, Value: english
+[2025-04-02 10:18:38.870920] Config file exists, reading existing content
+[2025-04-02 10:18:38.872063] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:18:38.872063] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:18:38.872063] Successfully saved config
+[2025-04-02 10:18:38.873062] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "TikTok"}
+[2025-04-02 10:18:38.873062] Language changed to: english
+[2025-04-02 10:18:39.762902] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:18:39.762902] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:18:39.762902] Key: language, Value: vietnamese
+[2025-04-02 10:18:39.762902] Config file exists, reading existing content
+[2025-04-02 10:18:39.763904] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'vietnamese', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:18:39.763904] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'vietnamese', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:18:39.763904] Successfully saved config
+[2025-04-02 10:18:39.764903] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "vietnamese", "theme": "dark", "current_platform": "TikTok"}
+[2025-04-02 10:18:39.764903] Language changed to: vietnamese
+[2025-04-02 10:18:41.068949] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:18:41.068949] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:18:41.068949] Key: current_platform, Value: YouTube
+[2025-04-02 10:18:41.068949] Config file exists, reading existing content
+[2025-04-02 10:18:41.068949] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'vietnamese', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:18:41.068949] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'vietnamese', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:18:41.068949] Successfully saved config
+[2025-04-02 10:18:41.073947] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "vietnamese", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:18:41.074948] Platform changed to: YouTube
+[2025-04-02 10:18:47.103865] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:18:47.103865] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:18:47.103865] Key: language, Value: english
+[2025-04-02 10:18:47.103865] Config file exists, reading existing content
+[2025-04-02 10:18:47.109867] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:18:47.109867] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:18:47.109867] Successfully saved config
+[2025-04-02 10:18:47.110867] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:18:47.110867] Language changed to: english
+[2025-04-02 10:19:15.234338] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:19:15.234338] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:19:15.234338] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 10:19:15.234338] Config file exists, reading existing content
+[2025-04-02 10:19:15.234338] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:19:15.234338] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:19:15.235340] Successfully saved config
+[2025-04-02 10:19:15.236342] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:19:15.234338] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:19:15.234338] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:19:15.234338] Executable path: Not running as exe
+[2025-04-02 10:19:15.234338] Config file exists, reading content
+[2025-04-02 10:19:15.234338] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:19:15.234338] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 10:19:15.234338] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 10:19:15.236342] Setting language to: english
+[2025-04-02 10:19:15.238341] Setting theme to: dark
+[2025-04-02 10:19:15.284855] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:19:15.284855] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:19:15.284855] Key: theme, Value: dark
+[2025-04-02 10:19:15.284855] Config file exists, reading existing content
+[2025-04-02 10:19:15.285855] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:19:15.285855] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:19:15.285855] Successfully saved config
+[2025-04-02 10:19:15.286856] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:19:15.286856] Theme changed to: dark
+[2025-04-02 10:19:18.668195] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:19:18.668195] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:19:18.668195] Key: current_platform, Value: YouTube
+[2025-04-02 10:19:18.668195] Config file exists, reading existing content
+[2025-04-02 10:19:18.668195] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:19:18.668195] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:19:18.668195] Successfully saved config
+[2025-04-02 10:19:18.669238] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:19:18.669238] Platform changed to: YouTube
+[2025-04-02 10:21:09.257664] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:21:09.257664] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:21:09.257664] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 10:21:09.257664] Config file exists, reading existing content
+[2025-04-02 10:21:09.257664] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:21:09.257664] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:21:09.257664] Successfully saved config
+[2025-04-02 10:21:09.258669] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:21:09.257664] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:21:09.257664] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:21:09.257664] Executable path: Not running as exe
+[2025-04-02 10:21:09.257664] Config file exists, reading content
+[2025-04-02 10:21:09.257664] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:21:09.257664] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 10:21:09.257664] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 10:21:09.258669] Setting language to: english
+[2025-04-02 10:21:09.261077] Setting theme to: dark
+[2025-04-02 10:21:09.304587] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:21:09.304587] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:21:09.304587] Key: theme, Value: dark
+[2025-04-02 10:21:09.304587] Config file exists, reading existing content
+[2025-04-02 10:21:09.305587] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:21:09.305587] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:21:09.306587] Successfully saved config
+[2025-04-02 10:21:09.306587] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:21:09.306587] Theme changed to: dark
+[2025-04-02 10:21:28.109222] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:21:28.109222] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:21:28.109222] Key: current_platform, Value: YouTube
+[2025-04-02 10:21:28.109222] Config file exists, reading existing content
+[2025-04-02 10:21:28.109222] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:21:28.109222] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:21:28.109222] Successfully saved config
+[2025-04-02 10:21:28.110221] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:21:28.110221] Platform changed to: YouTube
+[2025-04-02 10:21:30.044541] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:21:30.044541] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:21:30.044541] Key: current_platform, Value: TikTok
+[2025-04-02 10:21:30.044541] Config file exists, reading existing content
+[2025-04-02 10:21:30.044541] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:21:30.044541] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:21:30.045540] Successfully saved config
+[2025-04-02 10:21:30.046542] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "TikTok"}
+[2025-04-02 10:21:30.047540] Platform changed to: TikTok
+[2025-04-02 10:21:34.617912] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:21:34.617912] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:21:34.617912] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 10:21:34.617912] Config file exists, reading existing content
+[2025-04-02 10:21:34.618913] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:21:34.618913] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:21:34.618913] Successfully saved config
+[2025-04-02 10:21:34.619914] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "TikTok"}
+[2025-04-02 10:21:34.617912] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:21:34.617912] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:21:34.617912] Executable path: Not running as exe
+[2025-04-02 10:21:34.617912] Config file exists, reading content
+[2025-04-02 10:21:34.617912] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "TikTok"}
+[2025-04-02 10:21:34.617912] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 10:21:34.617912] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 10:21:34.619914] Setting language to: english
+[2025-04-02 10:21:34.621913] Setting theme to: dark
+[2025-04-02 10:21:34.662913] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:21:34.662913] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:21:34.662913] Key: theme, Value: dark
+[2025-04-02 10:21:34.662913] Config file exists, reading existing content
+[2025-04-02 10:21:34.663913] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:21:34.663913] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:21:34.664912] Successfully saved config
+[2025-04-02 10:21:34.664912] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "TikTok"}
+[2025-04-02 10:21:34.665912] Theme changed to: dark
+[2025-04-02 10:21:39.557004] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:21:39.557004] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:21:39.557004] Key: current_platform, Value: YouTube
+[2025-04-02 10:21:39.557004] Config file exists, reading existing content
+[2025-04-02 10:21:39.557004] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:21:39.557004] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:21:39.557004] Successfully saved config
+[2025-04-02 10:21:39.558004] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:21:39.558004] Platform changed to: YouTube
+[2025-04-02 10:21:40.815014] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:21:40.815014] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:21:40.815014] Key: current_platform, Value: TikTok
+[2025-04-02 10:21:40.815014] Config file exists, reading existing content
+[2025-04-02 10:21:40.815014] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:21:40.815014] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:21:40.816013] Successfully saved config
+[2025-04-02 10:21:40.816013] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "TikTok"}
+[2025-04-02 10:21:40.817012] Platform changed to: TikTok
+[2025-04-02 10:21:41.815544] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:21:41.815544] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:21:41.815544] Key: current_platform, Value: YouTube
+[2025-04-02 10:21:41.815544] Config file exists, reading existing content
+[2025-04-02 10:21:41.815544] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:21:41.816549] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:21:41.816549] Successfully saved config
+[2025-04-02 10:21:41.817548] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:21:41.817548] Platform changed to: YouTube
+[2025-04-02 10:22:34.046743] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:22:34.046743] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:22:34.046743] Key: current_platform, Value: TikTok
+[2025-04-02 10:22:34.046743] Config file exists, reading existing content
+[2025-04-02 10:22:34.046743] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:22:34.046743] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:22:34.047743] Successfully saved config
+[2025-04-02 10:22:34.048746] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "TikTok"}
+[2025-04-02 10:22:34.049742] Platform changed to: TikTok
+[2025-04-02 10:24:23.315097] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:24:23.315097] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:24:23.315097] Key: current_platform, Value: YouTube
+[2025-04-02 10:24:23.316097] Config file exists, reading existing content
+[2025-04-02 10:24:23.316097] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:24:23.316097] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:24:23.316097] Successfully saved config
+[2025-04-02 10:24:23.317099] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:24:23.317099] Platform changed to: YouTube
+[2025-04-02 10:24:36.650233] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:24:36.650233] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:24:36.650233] Key: current_platform, Value: TikTok
+[2025-04-02 10:24:36.650233] Config file exists, reading existing content
+[2025-04-02 10:24:36.650233] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:24:36.650233] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:24:36.650233] Successfully saved config
+[2025-04-02 10:24:36.651233] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "TikTok"}
+[2025-04-02 10:24:36.651233] Platform changed to: TikTok
+[2025-04-02 10:24:38.241009] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:24:38.241009] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:24:38.241009] Key: current_platform, Value: YouTube
+[2025-04-02 10:24:38.241009] Config file exists, reading existing content
+[2025-04-02 10:24:38.241009] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:24:38.241009] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:24:38.241009] Successfully saved config
+[2025-04-02 10:24:38.242657] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:24:38.242657] Platform changed to: YouTube
+[2025-04-02 10:26:16.559358] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:26:16.559358] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:26:16.559358] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 10:26:16.559358] Config file exists, reading existing content
+[2025-04-02 10:26:16.559358] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:26:16.559358] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:26:16.559863] Successfully saved config
+[2025-04-02 10:26:16.560758] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:26:16.558854] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:26:16.558854] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:26:16.558854] Executable path: Not running as exe
+[2025-04-02 10:26:16.558854] Config file exists, reading content
+[2025-04-02 10:26:16.558854] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:26:16.558854] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 10:26:16.558854] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 10:26:16.560758] Setting language to: english
+[2025-04-02 10:26:16.562812] Setting platform to: YouTube
+[2025-04-02 10:26:16.562812] Setting theme to: dark
+[2025-04-02 10:26:16.604715] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:26:16.604715] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:26:16.604715] Key: theme, Value: dark
+[2025-04-02 10:26:16.604715] Config file exists, reading existing content
+[2025-04-02 10:26:16.605715] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:26:16.605715] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:26:16.606716] Successfully saved config
+[2025-04-02 10:26:16.606716] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:26:16.607717] Theme changed to: dark
+[2025-04-02 10:26:21.611170] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:26:21.611170] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:26:21.611170] Key: current_platform, Value: TikTok
+[2025-04-02 10:26:21.611170] Config file exists, reading existing content
+[2025-04-02 10:26:21.611170] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:26:21.611170] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:26:21.612170] Successfully saved config
+[2025-04-02 10:26:21.612170] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "TikTok"}
+[2025-04-02 10:26:21.613170] Platform changed to: TikTok
+[2025-04-02 10:26:36.719642] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 10:26:36.719642] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 10:26:36.719642] Key: current_platform, Value: YouTube
+[2025-04-02 10:26:36.719642] Config file exists, reading existing content
+[2025-04-02 10:26:36.719642] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'TikTok'}
+[2025-04-02 10:26:36.719642] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 10:26:36.719642] Successfully saved config
+[2025-04-02 10:26:36.720643] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 10:26:36.720643] Platform changed to: YouTube
+[2025-04-02 11:08:27.299796] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 11:08:27.300796] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 11:08:27.300796] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 11:08:27.300796] Config file exists, reading existing content
+[2025-04-02 11:08:27.300796] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:08:27.300796] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:08:27.300796] Successfully saved config
+[2025-04-02 11:08:27.301797] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 11:08:27.298796] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 11:08:27.298796] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 11:08:27.298796] Executable path: Not running as exe
+[2025-04-02 11:08:27.299796] Config file exists, reading content
+[2025-04-02 11:08:27.299796] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 11:08:27.299796] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 11:08:27.299796] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 11:08:27.301797] Setting language to: english
+[2025-04-02 11:08:27.303796] Setting theme to: dark
+[2025-04-02 11:08:27.342795] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 11:08:27.342795] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 11:08:27.342795] Key: theme, Value: dark
+[2025-04-02 11:08:27.342795] Config file exists, reading existing content
+[2025-04-02 11:08:27.343796] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:08:27.343796] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:08:27.343796] Successfully saved config
+[2025-04-02 11:08:27.344797] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 11:08:27.344797] Theme changed to: dark
+[2025-04-02 11:19:20.034674] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 11:19:20.034674] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 11:19:20.034674] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 11:19:20.034674] Config file exists, reading existing content
+[2025-04-02 11:19:20.034674] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:19:20.034674] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:19:20.034674] Successfully saved config
+[2025-04-02 11:19:20.035675] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 11:19:20.033675] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 11:19:20.033675] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 11:19:20.033675] Executable path: Not running as exe
+[2025-04-02 11:19:20.033675] Config file exists, reading content
+[2025-04-02 11:19:20.033675] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 11:19:20.033675] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 11:19:20.033675] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 11:19:20.035675] Setting language to: english
+[2025-04-02 11:19:20.037674] Setting theme to: dark
+[2025-04-02 11:19:20.082762] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 11:19:20.082762] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 11:19:20.082762] Key: theme, Value: dark
+[2025-04-02 11:19:20.082762] Config file exists, reading existing content
+[2025-04-02 11:19:20.083760] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:19:20.083760] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:19:20.083760] Successfully saved config
+[2025-04-02 11:19:20.084762] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 11:19:20.084762] Theme changed to: dark
+[2025-04-02 11:19:43.154340] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 11:19:43.154340] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 11:19:43.154340] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 11:19:43.154340] Config file exists, reading existing content
+[2025-04-02 11:19:43.154340] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:19:43.154340] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:19:43.154340] Successfully saved config
+[2025-04-02 11:19:43.155337] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 11:19:43.153336] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 11:19:43.153336] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 11:19:43.153336] Executable path: Not running as exe
+[2025-04-02 11:19:43.153336] Config file exists, reading content
+[2025-04-02 11:19:43.153336] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 11:19:43.153336] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 11:19:43.153336] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 11:19:43.156336] Setting language to: english
+[2025-04-02 11:19:43.158337] Setting theme to: dark
+[2025-04-02 11:19:43.197393] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 11:19:43.197393] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 11:19:43.197393] Key: theme, Value: dark
+[2025-04-02 11:19:43.197393] Config file exists, reading existing content
+[2025-04-02 11:19:43.198393] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:19:43.198393] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:19:43.198393] Successfully saved config
+[2025-04-02 11:19:43.199395] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 11:19:43.200395] Theme changed to: dark
+[2025-04-02 11:21:38.897406] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 11:21:38.897406] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 11:21:38.897406] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 11:21:38.897406] Config file exists, reading existing content
+[2025-04-02 11:21:38.898409] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:21:38.898409] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:21:38.898409] Successfully saved config
+[2025-04-02 11:21:38.899405] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 11:21:38.897406] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 11:21:38.897406] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 11:21:38.897406] Executable path: Not running as exe
+[2025-04-02 11:21:38.897406] Config file exists, reading content
+[2025-04-02 11:21:38.897406] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 11:21:38.897406] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 11:21:38.897406] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 11:21:38.899405] Setting language to: english
+[2025-04-02 11:21:38.901408] Setting theme to: dark
+[2025-04-02 11:21:38.941405] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 11:21:38.941405] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 11:21:38.941405] Key: theme, Value: dark
+[2025-04-02 11:21:38.941405] Config file exists, reading existing content
+[2025-04-02 11:21:38.942405] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:21:38.942405] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:21:38.942405] Successfully saved config
+[2025-04-02 11:21:38.943406] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 11:21:38.944404] Theme changed to: dark
+[2025-04-02 11:21:45.753361] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 11:21:45.753361] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 11:21:45.753361] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-02 11:21:45.753361] Config file exists, reading existing content
+[2025-04-02 11:21:45.753361] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:21:45.753361] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:21:45.754361] Successfully saved config
+[2025-04-02 11:21:45.755363] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 11:21:45.753361] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 11:21:45.753361] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 11:21:45.753361] Executable path: Not running as exe
+[2025-04-02 11:21:45.753361] Config file exists, reading content
+[2025-04-02 11:21:45.753361] Config content: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 11:21:45.753361] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-02 11:21:45.753361] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-02 11:21:45.755363] Setting language to: english
+[2025-04-02 11:21:45.757362] Setting theme to: dark
+[2025-04-02 11:21:45.795365] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-02 11:21:45.795365] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-02 11:21:45.795365] Key: theme, Value: dark
+[2025-04-02 11:21:45.795365] Config file exists, reading existing content
+[2025-04-02 11:21:45.796368] Existing config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:21:45.796368] Updated config: {'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english', 'theme': 'dark', 'current_platform': 'YouTube'}
+[2025-04-02 11:21:45.796368] Successfully saved config
+[2025-04-02 11:21:45.797366] Verification - Config content after save: {"last_output_folder": "I:/Product Apps/Test Zone", "language": "english", "theme": "dark", "current_platform": "YouTube"}
+[2025-04-02 11:21:45.798368] Theme changed to: dark

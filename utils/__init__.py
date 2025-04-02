@@ -1,4 +1,4 @@
-from utils.downloader import TikTokDownloader, VideoInfo
+from utils.downloader import Downloader, VideoInfo
 from utils.db_manager import DatabaseManager
 
-__all__ = ['TikTokDownloader', 'VideoInfo', 'DatabaseManager'] 
+__all__ = ['Downloader', 'VideoInfo', 'DatabaseManager'] 

@@ -17,7 +17,7 @@ from ui.donate_tab import DonateTab
 from ui.update_dialog import UpdateDialog, UpdateCheckerThread
 from localization import get_language_manager
 from utils.update_checker import UpdateChecker
-from utils.downloader import TikTokDownloader
+from utils.downloader import Downloader
 
 def get_resource_path(relative_path):
     """Get absolute path to resource, works for dev and for PyInstaller"""
@@ -136,11 +136,17 @@ class MainWindow(QMainWindow):
         # Choose icon suffix based on current theme
         icon_suffix = "-outlined" if self.current_theme == "dark" else "-bw"
         
+        # Create action group for platforms so only one can be selected
+        platform_action_group = QActionGroup(self)
+        platform_action_group.setExclusive(True)
+        
         # Action: TikTok (Current)
         tiktok_icon = QIcon(get_resource_path(f"assets/platforms/tiktok{icon_suffix}.png"))
         tiktok_action = QAction(tiktok_icon, self.tr_("PLATFORM_TIKTOK"), self)
         tiktok_action.setCheckable(True)
         tiktok_action.setChecked(True)  # Default is TikTok
+        tiktok_action.triggered.connect(lambda: self.switch_platform("TikTok"))
+        platform_action_group.addAction(tiktok_action)
         platform_menu.addAction(tiktok_action)
         
         platform_menu.addSeparator()
@@ -148,19 +154,25 @@ class MainWindow(QMainWindow):
         # Action: YouTube
         youtube_icon = QIcon(get_resource_path(f"assets/platforms/youtube{icon_suffix}.png"))
         youtube_action = QAction(youtube_icon, self.tr_("PLATFORM_YOUTUBE"), self)
-        youtube_action.triggered.connect(self.show_developing_feature)
+        youtube_action.setCheckable(True)
+        youtube_action.triggered.connect(lambda: self.switch_platform("YouTube"))
+        platform_action_group.addAction(youtube_action)
         platform_menu.addAction(youtube_action)
         
         # Action: Instagram
         instagram_icon = QIcon(get_resource_path(f"assets/platforms/instagram{icon_suffix}.png"))
         instagram_action = QAction(instagram_icon, self.tr_("PLATFORM_INSTAGRAM"), self)
+        instagram_action.setCheckable(True)
         instagram_action.triggered.connect(self.show_developing_feature)
+        platform_action_group.addAction(instagram_action)
         platform_menu.addAction(instagram_action)
         
         # Action: Facebook
         facebook_icon = QIcon(get_resource_path(f"assets/platforms/facebook{icon_suffix}.png"))
         facebook_action = QAction(facebook_icon, self.tr_("PLATFORM_FACEBOOK"), self)
+        facebook_action.setCheckable(True)
         facebook_action.triggered.connect(self.show_developing_feature)
+        platform_action_group.addAction(facebook_action)
         platform_menu.addAction(facebook_action)
         
         # Store actions in dictionary to update icons when theme changes
@@ -887,7 +899,7 @@ class MainWindow(QMainWindow):
 
     def check_ffmpeg_availability(self):
         """Check if FFmpeg is installed at startup and inform the user if it is not."""
-        ffmpeg_installed, error_message = TikTokDownloader.check_ffmpeg_installed()
+        ffmpeg_installed, error_message = Downloader.check_ffmpeg_installed()
         
         if not ffmpeg_installed:
             # Show a message in the status bar
@@ -1098,3 +1110,18 @@ class MainWindow(QMainWindow):
             if hasattr(self.downloaded_videos_tab, 'downloads_table'):
                 self.downloaded_videos_tab.downloads_table.horizontalHeader().setSortIndicatorShown(False)
                 self.downloaded_videos_tab.downloads_table.setSortingEnabled(False)
+
+    def switch_platform(self, platform):
+        """Switch to a different platform"""
+        # Update the video info tab to display the selected platform
+        if hasattr(self, 'video_info_tab') and hasattr(self.video_info_tab, 'set_current_platform'):
+            self.video_info_tab.set_current_platform(platform)
+            
+            # Update status bar
+            if platform == "YouTube":
+                self.status_bar.showMessage(self.tr_("STATUS_SWITCHED_TO_YOUTUBE"))
+            elif platform == "TikTok":
+                self.status_bar.showMessage(self.tr_("STATUS_SWITCHED_TO_TIKTOK"))
+                
+            # Switch to Video Info tab if we're not already there
+            self.tab_widget.setCurrentIndex(0)

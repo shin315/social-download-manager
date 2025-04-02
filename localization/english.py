@@ -30,7 +30,7 @@ MENU_CHECK_UPDATES = "Check for Updates"
 
 # Platform menu items
 PLATFORM_TIKTOK = "TikTok"
-PLATFORM_YOUTUBE = "YouTube (Coming Soon)"
+PLATFORM_YOUTUBE = "YouTube"
 PLATFORM_INSTAGRAM = "Instagram (Coming Soon)"
 PLATFORM_FACEBOOK = "Facebook (Coming Soon)"
 
@@ -49,6 +49,11 @@ BUTTON_SELECT_ALL = "Select All"
 BUTTON_UNSELECT_ALL = "Unselect All"
 BUTTON_DELETE_ALL = "Delete All"
 BUTTON_DOWNLOAD = "Download"
+
+# Video Info tab - YouTube specific
+HEADER_CHANNEL = "Channel"
+HEADER_PLAYLIST = "Playlist"
+HEADER_RELEASE_DATE = "Release Date"
 
 # Video table headers
 HEADER_SELECT = "Select"
@@ -256,4 +261,13 @@ DIALOG_DOWNLOAD_ERROR = "Error downloading update"
 DIALOG_DOWNLOAD_COMPLETE = "Download Complete"
 DIALOG_DOWNLOAD_COMPLETE_MSG = "Update downloaded to:\n{}\n\nThe folder will open automatically."
 DIALOG_SELECT_DOWNLOAD_FOLDER = "Select Download Folder"
-DIALOG_DOWNLOADING = "Downloading update..." 
+DIALOG_DOWNLOADING = "Downloading update..."
+
+# Status for platform switching
+STATUS_SWITCHED_TO_YOUTUBE = "Switched to YouTube mode"
+STATUS_SWITCHED_TO_TIKTOK = "Switched to TikTok mode"
+
+# Context menu for YouTube
+CONTEXT_COPY_CHANNEL = "Copy Channel"
+CONTEXT_COPY_PLAYLIST = "Copy Playlist"
+CONTEXT_COPY_RELEASE_DATE = "Copy Release Date" 
