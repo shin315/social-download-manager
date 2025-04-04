@@ -1086,7 +1086,7 @@ class DownloadedVideosTab(QWidget):
 
     def filter_by_platform(self, platform):
         """Filter videos by platform"""
-        print(f"DEBUG: Filtering videos by platform: {platform}")
+        print(f"DEBUG: filter_by_platform called with platform = {platform}")
         
         try:
             # Save current platform
@@ -1094,8 +1094,13 @@ class DownloadedVideosTab(QWidget):
             
             # Reset table columns based on platform
             if platform == "TikTok":
+                print(f"DEBUG: Calling setup_tiktok_table_columns() from filter_by_platform")
                 self.setup_tiktok_table_columns()
+            elif platform == "YouTube":
+                print(f"DEBUG: Calling setup_youtube_table_columns() from filter_by_platform")
+                self.setup_youtube_table_columns()
             else:
+                print(f"DEBUG: Calling setup_default_table_columns() from filter_by_platform")
                 self.setup_default_table_columns()
                 
             # Define column index for platform filtering
@@ -1164,6 +1169,9 @@ class DownloadedVideosTab(QWidget):
         was_sorting_enabled = self.downloads_table.isSortingEnabled()
         self.downloads_table.setSortingEnabled(False)
         
+        # Print current platform and column count before clearing
+        print(f"DEBUG: display_videos - current_platform={self.current_platform}, columnCount={self.downloads_table.columnCount()}")
+        
         # Clear table
         self.downloads_table.clearContents()
         self.downloads_table.setRowCount(0)
@@ -1185,7 +1193,7 @@ class DownloadedVideosTab(QWidget):
             
             self.downloads_table.setCellWidget(idx, 0, select_widget)
             
-            # Check if we're using the TikTok view or default view
+            # Check which platform-specific view to use
             if self.current_platform == "TikTok":
                 # TikTok-specific view without platform column
                 
@@ -1306,6 +1314,118 @@ class DownloadedVideosTab(QWidget):
                 date_item.setFlags(date_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.downloads_table.setItem(idx, self.date_col, date_item)
                 
+            elif self.current_platform == "YouTube":
+                # YouTube-specific view with playlist and release date columns
+                print(f"DEBUG: Processing YouTube view for video {idx}")
+                
+                # Title column (index 1 in YouTube view)
+                title_item = QTableWidgetItem(video[0])
+                # Save full title in UserRole for later use
+                if len(video) > 9 and video[9]:
+                    title_item.setData(Qt.ItemDataRole.UserRole, video[9])  # Save original_title
+                else:
+                    title_item.setData(Qt.ItemDataRole.UserRole, video[0])  # Fallback save short title
+                # Prefer using full title for tooltip if available
+                if len(video) > 9 and video[9]:
+                    # Format tooltip more readable with line breaks
+                    tooltip_text = self.format_tooltip_text(video[9])
+                    title_item.setToolTip(tooltip_text)  # Tooltip with full title formatted
+                else:
+                    # Format tooltip more readable with line breaks
+                    tooltip_text = self.format_tooltip_text(video[0]) 
+                    title_item.setToolTip(tooltip_text)  # Fallback with short title formatted
+                # Disable editing
+                title_item.setFlags(title_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+                self.downloads_table.setItem(idx, self.title_col, title_item)
+                
+                # Channel column (index 2 in YouTube view)
+                creator_item = QTableWidgetItem(video[1])
+                creator_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                creator_item.setToolTip(video[1])  # Add tooltip for full text
+                # Disable editing
+                creator_item.setFlags(creator_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+                self.downloads_table.setItem(idx, self.creator_col, creator_item)
+                
+                # Playlist column (index 3 in YouTube view)
+                # Extract playlist info from platform_data if available (placeholder for now)
+                playlist_value = "N/A"  # Default value
+                # In the future, this will extract from platform_data in the database
+                
+                playlist_item = QTableWidgetItem(playlist_value)
+                playlist_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                # Disable editing
+                playlist_item.setFlags(playlist_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+                self.downloads_table.setItem(idx, self.playlist_col, playlist_item)
+                
+                # Quality column (index 4 in YouTube view)
+                quality_item = QTableWidgetItem(video[2])
+                quality_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                quality_item.setToolTip(video[2])  # Add tooltip for full text
+                # Disable editing
+                quality_item.setFlags(quality_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+                self.downloads_table.setItem(idx, self.quality_col, quality_item)
+                
+                # Format column (index 5 in YouTube view)
+                format_value = video[3]
+                # Ensure correct format is displayed as text (MP4 or MP3)
+                if format_value == "1080p" or format_value == "720p" or format_value == "480p" or format_value == "360p" or format_value == "Video (mp4)":
+                    format_value = self.tr_("FORMAT_VIDEO_MP4")
+                elif format_value == "320kbps" or format_value == "192kbps" or format_value == "128kbps" or format_value == "Audio (mp3)":
+                    format_value = self.tr_("FORMAT_AUDIO_MP3")
+                # If it's an MP3 file but format is incorrect, fix it
+                filepath = os.path.join(video[8], video[0]) if video[8] and video[0] else ""
+                if filepath and filepath.lower().endswith('.mp3'):
+                    format_value = self.tr_("FORMAT_AUDIO_MP3")
+                format_item = QTableWidgetItem(format_value)
+                format_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                # Disable editing
+                format_item.setFlags(format_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+                self.downloads_table.setItem(idx, self.format_col, format_item)
+                
+                # Duration column (index 6 in YouTube view)
+                duration_value = video[10] if len(video) > 10 else "Unknown"
+                # Format duration in a user-friendly way if it's in seconds
+                try:
+                    if duration_value and duration_value != "Unknown" and str(duration_value).isdigit():
+                        # Convert seconds to MM:SS format
+                        duration_secs = int(duration_value)
+                        minutes = duration_secs // 60
+                        seconds = duration_secs % 60
+                        duration_value = f"{minutes}:{seconds:02d}"
+                except:
+                    pass  # Keep original value if conversion fails
+                
+                duration_item = QTableWidgetItem(str(duration_value))
+                duration_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                # Disable editing
+                duration_item.setFlags(duration_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+                self.downloads_table.setItem(idx, self.duration_col, duration_item)
+                
+                # Size column (index 7 in YouTube view)
+                size_item = QTableWidgetItem(video[4])
+                size_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                # Disable editing
+                size_item.setFlags(size_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+                self.downloads_table.setItem(idx, self.size_col, size_item)
+                
+                # Release Date column (index 8 in YouTube view)
+                # Extract release date info from platform_data if available (placeholder for now)
+                release_date_value = "N/A"  # Default value
+                # In the future, this will extract from upload_date in platform_data in the database
+                
+                release_date_item = QTableWidgetItem(release_date_value)
+                release_date_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                # Disable editing
+                release_date_item.setFlags(release_date_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+                self.downloads_table.setItem(idx, self.release_date_col, release_date_item)
+                
+                # Download Date column (index 9 in YouTube view)
+                date_item = QTableWidgetItem(video[6])
+                date_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                # Disable editing
+                date_item.setFlags(date_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+                self.downloads_table.setItem(idx, self.date_col, date_item)
+                
             else:
                 # Default view with platform column
                 
@@ -1402,15 +1522,26 @@ class DownloadedVideosTab(QWidget):
                 date_item.setFlags(date_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.downloads_table.setItem(idx, self.date_col, date_item)
         
-        # Restore sorting if it was enabled
+        # Finished adding data to table
+        
+        # Re-enable sorting if it was enabled previously
         if was_sorting_enabled:
             self.downloads_table.setSortingEnabled(True)
             
-        # Update button states
-        self.update_button_states()
-        
-        # Update statistics
+        # Update row count and total size
         self.update_statistics()
+        
+        # Restore current selected item (if any)
+        if self.selected_video and self.selected_video in videos:
+            # Find index of selected video
+            try:
+                selected_idx = videos.index(self.selected_video)
+                # Select row in table
+                self.downloads_table.selectRow(selected_idx)
+            except ValueError:
+                # Video not found in current list, clear selection
+                self.selected_video = None
+                self.video_details_frame.hide()
 
     def open_folder_and_select(self, path, row=None):
         """Open folder and select corresponding row"""
@@ -1685,6 +1816,10 @@ class DownloadedVideosTab(QWidget):
             if self.parent:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_REFRESHING"))
             
+            # Save current platform
+            current_platform = self.current_platform
+            print(f"DEBUG: Saving current platform before refresh: {current_platform}")
+            
             # Clear current filters
             self.active_filters = {}
             self.update_all_filter_icons()
@@ -1699,8 +1834,13 @@ class DownloadedVideosTab(QWidget):
             # Check thumbnails for all downloaded videos
             self.check_and_update_thumbnails()
             
-            # Display the newly loaded video list
-            self.display_videos()
+            # Re-apply platform filter if needed
+            if current_platform != "All":
+                print(f"DEBUG: Re-applying platform filter: {current_platform}")
+                self.filter_by_platform(current_platform)
+            else:
+                # Display the newly loaded video list
+                self.display_videos()
             
             # Hide video details if currently displayed
             self.video_details_frame.setVisible(False)
@@ -2322,6 +2462,22 @@ class DownloadedVideosTab(QWidget):
             }
             # Define sortable columns for TikTok view
             sortable_columns = [1, 2, 3, 4, 5, 6, 7, 8]  # All columns except checkbox
+        elif self.current_platform == "YouTube":
+            # YouTube view column mapping
+            column_mapping = {
+                0: 0,  # Select (no sorting)
+                1: 0,  # Title (index 0 in filtered_videos)
+                2: 1,  # Channel (index 1 in filtered_videos)
+                3: -1, # Playlist (placeholder in filtered_videos for now)
+                4: 2,  # Quality (index 2 in filtered_videos)
+                5: 3,  # Format (index 3 in filtered_videos)
+                6: 10, # Duration (index 10 in filtered_videos)
+                7: 4,  # Size (index 4 in filtered_videos)
+                8: -1, # Release Date (placeholder in filtered_videos for now)
+                9: 6   # Download Date (index 6 in filtered_videos)
+            }
+            # Define sortable columns for YouTube view
+            sortable_columns = [1, 2, 3, 4, 5, 6, 7, 8, 9]  # All columns except checkbox
         else:
             # Default view with Platform column
             column_mapping = {
@@ -2337,232 +2493,145 @@ class DownloadedVideosTab(QWidget):
             }
             # Define sortable columns for default view
             sortable_columns = [1, 2, 3, 4, 5, 6, 7, 8]  # All columns except checkbox
-        
-        # Only allow sorting on sortable columns
+
+        # Skip if column is not sortable (e.g., checkbox column)
         if column not in sortable_columns:
-            print(f"DEBUG: Column {column} is not sortable, returning")
+            print(f"DEBUG: Column {column} is not sortable, skipping")
             return
             
-        # Map UI column to data column
-        mapped_column = column_mapping[column]
-        print(f"DEBUG: Mapped UI column {column} to data column {mapped_column}")
+        # Get corresponding data column in filtered_videos
+        data_column = column_mapping.get(column, -1)
+        if data_column < 0:
+            print(f"DEBUG: Column {column} mapping not found or invalid")
+            return
+            
+        # Log sorted column information
+        print(f"DEBUG: Table column {column} maps to data column {data_column}")
         
-        # If same column as current sort, flip sort order
-        if column == self.sort_column:
-            if self.sort_order == Qt.SortOrder.AscendingOrder:
-                self.sort_order = Qt.SortOrder.DescendingOrder
-                print(f"DEBUG: Same column clicked, reversing sort order to {self.sort_order}")
-            else:
-                self.sort_order = Qt.SortOrder.AscendingOrder
-                print(f"DEBUG: Same column clicked, reversing sort order to {self.sort_order}")
+        # Toggle sort order if the same column is clicked again
+        if self.sort_column == column:
+            self.sort_order = Qt.SortOrder.AscendingOrder if self.sort_order == Qt.SortOrder.DescendingOrder else Qt.SortOrder.DescendingOrder
         else:
-            # New column, sort ascending by default
             self.sort_column = column
             self.sort_order = Qt.SortOrder.AscendingOrder
-            print(f"DEBUG: New column clicked, setting sort_column={self.sort_column}, sort_order={self.sort_order}")
+            
+        print(f"DEBUG: After sort - sort_column={self.sort_column}, sort_order={self.sort_order}")
+            
+        # Sort videos by the selected column
+        self.sort_videos(data_column, self.sort_order)
         
-        # Update UI sort indicator
-        print(f"DEBUG: Updating sort indicator in UI to column={column}, order={self.sort_order}")
-        self.downloads_table.horizontalHeader().setSortIndicator(column, self.sort_order)
+        # Update the table header to show sort indicator
+        header = self.downloads_table.horizontalHeader()
+        header.setSortIndicator(column, self.sort_order)
         
-        # Actually sort the videos by the appropriate data column
-        self.sort_videos(mapped_column, self.sort_order)
+        # Put sort indicator only on the sorted column
+        if was_sorting_enabled:
+            self.downloads_table.setSortingEnabled(True)
         
-        print(f"DEBUG: sort_table completed")
+        print(f"DEBUG: Sorted videos by column {column} / data column {data_column}")
 
     def sort_videos(self, column, sort_order):
-        """Sort videos by the given column index"""
-        print(f"DEBUG: sort_videos called with column={column}, sort_order={sort_order}")
-        
-        # Check if we need to sort by hashtags (which may require specialized handling)
-        if column == 7:  # Hashtags
-            self.sort_by_hashtags(sort_order)
-            return
+        """Sort the videos list by the specified column and order"""
+        # Disable table sorting to avoid triggering sort signals during update
+        was_sorting_enabled = self.downloads_table.isSortingEnabled()
+        self.downloads_table.setSortingEnabled(False)
         
         try:
-            # Always sort based on filtered_videos to maintain filter state
-            # Clone the filtered videos to avoid modifying original during sorting
-            sorted_videos = self.filtered_videos.copy()
+            # Handle special case for column index 7 (hashtags) in TikTok view
+            if self.current_platform == "TikTok" and column == 7:
+                self.sort_by_hashtags(sort_order)
+                return
             
-            # Use key function to handle specific columns
+            # Define a sort key function based on the column
             def sort_key(video):
                 # Ensure column index is valid for the video
-                if column >= len(video):
-                    return ""  # Return empty string for columns that don't exist
-                    
-                # Handle special columns with custom sorting logic
-                if column == 4:  # Size column
-                    # Extract numeric part and convert to float, handle "MB" and "KB"
-                    size_str = str(video[column]) if video[column] else "0 MB"
+                if len(video) <= column or video[column] is None:
+                    return ""  # Return empty string for invalid or empty values
+                
+                # Get the value at the specified column
+                value = video[column]
+                
+                # Special case for date (column 6)
+                if column == 6:  # Download date
+                    # Try to convert date string to a sortable format
                     try:
-                        # Clean up the size string and handle different formats
-                        size_str = size_str.strip().upper()
+                        # Check if it's a timestamp or a date string
+                        if isinstance(value, (int, float)):
+                            return value
                         
-                        # Extract numeric part
-                        if "MB" in size_str:
-                            value_str = size_str.replace("MB", "").strip()
-                            size_value = float(value_str)
-                            # Keep as MB
-                        elif "KB" in size_str:
-                            value_str = size_str.replace("KB", "").strip()
-                            size_value = float(value_str) / 1024.0  # Convert KB to MB
-                        elif "GB" in size_str:
-                            value_str = size_str.replace("GB", "").strip()
-                            size_value = float(value_str) * 1024.0  # Convert GB to MB
-                        elif "B" in size_str:
-                            value_str = size_str.replace("B", "").strip()
-                            size_value = float(value_str) / (1024.0 * 1024.0)  # Convert B to MB
-                        else:
-                            # Try to extract numeric part if no unit is found
-                            import re
-                            numeric_match = re.search(r'(\d+\.?\d*)', size_str)
-                            if numeric_match:
-                                size_value = float(numeric_match.group(1))
-                            else:
-                                size_value = 0.0
-                                
-                        print(f"DEBUG Size sort: '{size_str}' parsed as {size_value} MB")
-                        return size_value
-                    except Exception as e:
-                        print(f"DEBUG Size sort: Error parsing '{size_str}': {e}")
-                        return 0.0  # Default to 0 if parsing fails
-                        
-                elif column == 6:  # Date column
-                    # Parse date for proper sorting
-                    from datetime import datetime
-                    date_str = str(video[column])
-                    try:
-                        # Try different date formats with explicit handling
-                        date_formats = [
-                            "%Y-%m-%d %H:%M:%S",  # 2025-04-04 17:15:39
-                            "%Y-%m-%d %H:%M",     # 2025-04-04 17:15
-                            "%Y/%m/%d %H:%M:%S",  # 2025/04/04 17:15:39
-                            "%Y/%m/%d %H:%M",     # 2025/04/04 17:15
-                            "%d/%m/%Y %H:%M:%S",  # 04/04/2025 17:15:39
-                            "%d/%m/%Y %H:%M",     # 04/04/2025 17:15
-                            "%d-%m-%Y %H:%M:%S",  # 04-04-2025 17:15:39
-                            "%d-%m-%Y %H:%M"      # 04-04-2025 17:15
-                        ]
-                        
-                        for fmt in date_formats:
+                        # Try different date formats
+                        for fmt in ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d", "%m/%d/%Y %H:%M:%S", "%m/%d/%Y"]:
                             try:
-                                # Clean the date string to ensure it's properly formatted
-                                cleaned_date_str = date_str.strip()
-                                date_obj = datetime.strptime(cleaned_date_str, fmt)
-                                print(f"DEBUG Date sort: Successfully parsed '{cleaned_date_str}' with format '{fmt}'")
-                                return date_obj  # Return datetime object for proper sorting
+                                return datetime.strptime(value, fmt)
                             except ValueError:
                                 continue
-                        
-                        # If we get here, none of the formats worked
-                        print(f"DEBUG Date sort: Could not parse date '{date_str}' with any format")
-                        return datetime(1900, 1, 1)  # Return a very old date as fallback
-                    except Exception as e:
-                        print(f"DEBUG Date sort: Exception parsing date: {e}")
-                        return datetime(1900, 1, 1)  # Return a very old date as fallback
-                        
-                elif column == 10:  # Duration column
-                    # Convert duration to seconds for sorting
-                    duration_str = str(video[column]) if video[column] else "0"
+                            
+                        # If all formats fail, return the original string
+                        return value
+                    except Exception:
+                        return value
+                
+                # Special case for size (column 4) - convert to bytes for sorting
+                if column == 4:  # Size column
                     try:
-                        # Clean the duration string
-                        duration_str = duration_str.strip()
-                        
-                        # If duration is already in seconds (numeric)
-                        if duration_str.isdigit():
-                            seconds = int(duration_str)
-                            print(f"DEBUG Duration sort: '{duration_str}' parsed as {seconds} seconds")
-                            return seconds
+                        # Extract numeric value from size string (e.g., "10.5 MB" -> 10.5)
+                        size_parts = value.split()
+                        if len(size_parts) == 2:
+                            size_value = float(size_parts[0])
+                            size_unit = size_parts[1].upper()
                             
-                        # If duration is in MM:SS or HH:MM:SS format
-                        elif ":" in duration_str:
-                            parts = duration_str.split(":")
-                            
-                            # Handle different formats
-                            if len(parts) == 2:  # MM:SS
-                                minutes = int(parts[0])
-                                seconds = int(parts[1])
-                                total_seconds = minutes * 60 + seconds
-                                print(f"DEBUG Duration sort: '{duration_str}' parsed as {total_seconds} seconds")
-                                return total_seconds
-                            elif len(parts) == 3:  # HH:MM:SS
-                                hours = int(parts[0])
-                                minutes = int(parts[1])
-                                seconds = int(parts[2])
-                                total_seconds = hours * 3600 + minutes * 60 + seconds
-                                print(f"DEBUG Duration sort: '{duration_str}' parsed as {total_seconds} seconds")
-                                return total_seconds
-                        
-                        # Handle text descriptions of duration
-                        elif any(unit in duration_str.lower() for unit in ["min", "sec", "hour", "hr"]):
-                            # Extract numbers from strings like "5 min", "3 hours", "2 hr 15 min", etc.
-                            import re
-                            
-                            total_seconds = 0
-                            
-                            # Look for hours
-                            hour_match = re.search(r'(\d+\.?\d*)\s*(?:hour|hr)s?', duration_str.lower())
-                            if hour_match:
-                                hours = float(hour_match.group(1))
-                                total_seconds += int(hours * 3600)
-                            
-                            # Look for minutes
-                            min_match = re.search(r'(\d+\.?\d*)\s*(?:min)(?:ute)?s?', duration_str.lower())
-                            if min_match:
-                                minutes = float(min_match.group(1))
-                                total_seconds += int(minutes * 60)
-                            
-                            # Look for seconds
-                            sec_match = re.search(r'(\d+\.?\d*)\s*(?:sec)(?:ond)?s?', duration_str.lower())
-                            if sec_match:
-                                seconds = float(sec_match.group(1))
-                                total_seconds += int(seconds)
-                            
-                            # If we found any time units, return the total
-                            if total_seconds > 0:
-                                print(f"DEBUG Duration sort: '{duration_str}' parsed as {total_seconds} seconds")
-                                return total_seconds
-                            
-                            # If no specific time units, but there's a number, assume it's minutes
-                            general_match = re.search(r'(\d+\.?\d*)', duration_str)
-                            if general_match:
-                                minutes = float(general_match.group(1))
-                                seconds = int(minutes * 60)
-                                print(f"DEBUG Duration sort: '{duration_str}' parsed as {seconds} seconds (assuming minutes)")
-                                return seconds
-                        
-                        # Unknown format
-                        print(f"DEBUG Duration sort: Could not parse '{duration_str}'")
-                        return 0
-                        
-                    except Exception as e:
-                        print(f"DEBUG Duration sort: Error parsing '{duration_str}': {e}")
-                        return 0
+                            # Convert to bytes based on unit
+                            if size_unit == "KB":
+                                return size_value * 1024
+                            elif size_unit == "MB":
+                                return size_value * 1024 * 1024
+                            elif size_unit == "GB":
+                                return size_value * 1024 * 1024 * 1024
+                            else:
+                                return size_value
+                        else:
+                            return 0  # Default if format is not recognized
+                    except Exception:
+                        return 0  # Default value on error
                 
-                # Default case: return the value itself for normal sorting
-                return video[column]
-            
-            # Sort the videos with reverse parameter based on sort_order
-            # For ascending order (default), reverse=False
-            # For descending order, reverse=True
-            sorted_videos.sort(key=sort_key, reverse=(sort_order == Qt.SortOrder.DescendingOrder))
-            
-            # Check if sort was successful
-            if len(sorted_videos) > 0:
-                self.filtered_videos = sorted_videos
-                print(f"DEBUG: After sorting - Success, sorted by column {column} with order {sort_order}")
-                print(f"DEBUG: First item after sort: {str(sorted_videos[0][column]) if column < len(sorted_videos[0]) else 'Unknown'}")
-            else:
-                print(f"DEBUG: After sorting - No items to sort")
+                # Special case for duration (column 10)
+                if column == 10:  # Duration
+                    # Try to convert duration in formats like "5:30" to seconds
+                    try:
+                        if isinstance(value, (int, float)):
+                            return value  # Already in seconds
+                        
+                        # Check if in MM:SS format
+                        if ":" in value:
+                            parts = value.split(":")
+                            if len(parts) == 2:
+                                return int(parts[0]) * 60 + int(parts[1])
+                        
+                        # Try to convert directly to int if possible
+                        return int(value)
+                    except:
+                        return 0  # Default value on error
                 
-            # Display the sorted videos
+                # Default case - return the value as is
+                return value
+
+            # Sort the filtered videos list
+            self.filtered_videos.sort(
+                key=sort_key,
+                reverse=(sort_order == Qt.SortOrder.DescendingOrder)
+            )
+            
+            # Update the table to show sorted data
             self.display_videos()
             
         except Exception as e:
             print(f"Error sorting videos: {e}")
-            import traceback
             traceback.print_exc()
-            
+        
+        # Restore sorting if it was enabled
+        if was_sorting_enabled:
+            self.downloads_table.setSortingEnabled(True)
+
     def sort_by_hashtags(self, sort_order):
         """Special sorting method for hashtags"""
         try:
@@ -4096,6 +4165,8 @@ class DownloadedVideosTab(QWidget):
             # Store different widths for different views
             if self.current_platform == "TikTok":
                 config['column_widths']['tiktok'] = column_widths
+            elif self.current_platform == "YouTube":
+                config['column_widths']['youtube'] = column_widths
             else:
                 config['column_widths']['all'] = column_widths
             
@@ -4127,7 +4198,7 @@ class DownloadedVideosTab(QWidget):
                 return
                 
             # Determine which set of widths to use
-            widths_key = 'tiktok' if self.current_platform == "TikTok" else 'all'
+            widths_key = 'tiktok' if self.current_platform == "TikTok" else 'youtube' if self.current_platform == "YouTube" else 'all'
             
             if widths_key not in config['column_widths']:
                 print(f"DEBUG: No column_widths for {widths_key} view, using default column widths")
@@ -4168,6 +4239,8 @@ class DownloadedVideosTab(QWidget):
             # Special case for TikTok to show hashtags column
             if platform == "TikTok":
                 self.setup_tiktok_table_columns()
+            elif platform == "YouTube":
+                self.setup_youtube_table_columns()
             else:
                 self.setup_default_table_columns()
                 
@@ -4185,3 +4258,95 @@ class DownloadedVideosTab(QWidget):
             
         # Continue with normal close event
         super().closeEvent(event)
+
+    def setup_youtube_table_columns(self):
+        """Set up table columns specifically for YouTube"""
+        print(f"DEBUG: >>> setup_youtube_table_columns called, current_platform={self.current_platform}")
+        # Save current column widths before switching view
+        if self.current_platform != "YouTube":  # Only if changing to a different view
+            self.save_column_widths()
+        
+        # Disable sorting temporarily
+        was_sorting_enabled = self.downloads_table.isSortingEnabled()
+        self.downloads_table.setSortingEnabled(False)
+        
+        # Save current selection before clearing
+        selected_rows = set()
+        for index in self.downloads_table.selectedIndexes():
+            selected_rows.add(index.row())
+        
+        # Clear current content
+        self.downloads_table.clearContents()
+        self.downloads_table.setRowCount(0)
+        
+        # Configure table for YouTube
+        self.downloads_table.setColumnCount(10)  # 10 columns for YouTube view (including playlist and release date)
+        
+        # Update column indices for YouTube view
+        self.select_col = 0
+        self.title_col = 1
+        self.creator_col = 2       # Channel in YouTube context
+        self.playlist_col = 3      # New column for YouTube
+        self.quality_col = 4
+        self.format_col = 5
+        self.duration_col = 6
+        self.size_col = 7
+        self.release_date_col = 8  # New column for YouTube
+        self.date_col = 9
+        
+        # Set header labels
+        header_labels = [
+            "",  # Selection checkbox
+            self.tr_("HEADER_TITLE"),
+            self.tr_("HEADER_CHANNEL"),      # Channel instead of Creator
+            self.tr_("HEADER_PLAYLIST"),     # New column
+            self.tr_("HEADER_QUALITY"),
+            self.tr_("HEADER_FORMAT"),
+            self.tr_("HEADER_DURATION"),
+            self.tr_("HEADER_SIZE"),
+            self.tr_("HEADER_RELEASE_DATE"), # New column
+            self.tr_("HEADER_COMPLETED_ON")
+        ]
+        self.downloads_table.setHorizontalHeaderLabels(header_labels)
+        
+        # Set column widths for YouTube view
+        self.downloads_table.setColumnWidth(self.select_col, 30)          # Checkbox column
+        self.downloads_table.setColumnWidth(self.title_col, 250)          # Title column
+        self.downloads_table.setColumnWidth(self.creator_col, 120)        # Channel name
+        self.downloads_table.setColumnWidth(self.playlist_col, 120)       # Playlist
+        self.downloads_table.setColumnWidth(self.quality_col, 85)         # Quality
+        self.downloads_table.setColumnWidth(self.format_col, 75)          # Format
+        self.downloads_table.setColumnWidth(self.duration_col, 80)        # Duration
+        self.downloads_table.setColumnWidth(self.size_col, 75)            # Size
+        self.downloads_table.setColumnWidth(self.release_date_col, 120)   # Release Date
+        self.downloads_table.setColumnWidth(self.date_col, 120)           # Download Date
+        
+        # Update current platform
+        self.current_platform = "YouTube"
+        
+        # Calculate minimum column widths based on header text
+        self.calculate_min_column_widths()
+        
+        # Set resize mode for columns
+        self.downloads_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)  # Select
+        self.downloads_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)  # Title - Stretch
+        self.downloads_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Interactive)  # Channel
+        self.downloads_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Interactive)  # Playlist
+        self.downloads_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Interactive)  # Quality
+        self.downloads_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Interactive)  # Format
+        self.downloads_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Interactive)  # Duration
+        self.downloads_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Interactive)  # Size
+        self.downloads_table.horizontalHeader().setSectionResizeMode(8, QHeaderView.ResizeMode.Interactive)  # Release Date
+        self.downloads_table.horizontalHeader().setSectionResizeMode(9, QHeaderView.ResizeMode.Interactive)  # Download Date
+        
+        # Load saved column widths if available
+        self.load_column_widths()
+        
+        # Restore sorting if it was enabled
+        if was_sorting_enabled:
+            self.downloads_table.setSortingEnabled(True)
+        
+        # Update statistics
+        self.update_statistics()
+        
+        print(f"DEBUG: <<< YouTube table columns set up with playlist and release date")
