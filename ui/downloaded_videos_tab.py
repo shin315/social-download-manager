@@ -1,11 +1,13 @@
 ﻿from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
-                             QLineEdit, QPushButton, QTableWidget, QHeaderView,
-                             QTableWidgetItem, QMessageBox, QFrame, QScrollArea, QApplication, QDialog, QTextEdit, QCheckBox,
-                             QMenu, QDialogButtonBox, QToolTip, QAbstractItemView,
-                             QStyledItemDelegate, QSizePolicy, QListWidget, QListWidgetItem,
+                             QPushButton, QTableWidget, QTableWidgetItem,
+                             QHeaderView, QAbstractItemView, QProgressBar,
+                             QCheckBox, QFrame, QScrollArea, QSizePolicy,
+                             QComboBox, QLineEdit, QToolBar, QToolButton,
+                             QMenu, QDialogButtonBox, QToolTip,
+                             QStyledItemDelegate, QListWidget, QListWidgetItem,
                              QFileDialog)
 from PyQt6.QtCore import Qt, QSize, QTimer, QPoint, QEvent, pyqtSignal, QCoreApplication
-from PyQt6.QtGui import QPixmap, QCursor, QIcon, QColor, QPainter, QPen, QMouseEvent, QAction
+from PyQt6.QtGui import QPixmap, QCursor, QIcon, QColor, QPainter, QPen, QMouseEvent, QAction, QFontMetrics
 import os
 import subprocess
 import math
@@ -282,12 +284,36 @@ class DownloadedVideosTab(QWidget):
 
     def create_downloads_table(self):
         """Create table for displaying downloaded videos"""
-        # Create table widget
         self.downloads_table = QTableWidget()
-        self.downloads_table.setObjectName("downloads_table")
         
-        # Configure table properties
-        self.downloads_table.setColumnCount(9)  # 9 columns for our new layout with Platform
+        # Set selection style
+        self.downloads_table.setAlternatingRowColors(True)
+        
+        # Set table to fill the available space
+        self.downloads_table.horizontalHeader().setStretchLastSection(False)
+        
+        # Default TikTok view will have hashtags column visible
+        # Default view with platform column (use QFlags to set default sort order)
+        self.current_platform = ""  # Default is All platforms
+        
+        # Set up default column indices
+        self.select_col = 0
+        self.platform_col = 1
+        self.title_col = 2
+        self.creator_col = 3
+        self.quality_col = 4
+        self.format_col = 5
+        self.duration_col = 6
+        self.size_col = 7
+        self.hashtags_col = -1  # Not shown by default
+        self.date_col = 8
+        
+        # Initialize sort column/order
+        self.sort_column = self.date_col
+        self.sort_order = Qt.SortOrder.DescendingOrder
+        
+        # Configure table for default view
+        self.downloads_table.setColumnCount(9)  # 9 columns with platform column by default
         
         # Set header labels
         header_labels = [
@@ -298,41 +324,39 @@ class DownloadedVideosTab(QWidget):
             self.tr_("HEADER_QUALITY"),
             self.tr_("HEADER_FORMAT"),
             self.tr_("HEADER_DURATION"),
-            self.tr_("HEADER_SIZE"),
+            self.tr_("HEADER_SIZE"), 
             self.tr_("HEADER_COMPLETED_ON")
         ]
         self.downloads_table.setHorizontalHeaderLabels(header_labels)
         
-        # Style header - bỏ bold font để tiết kiệm không gian
-        header_font = self.downloads_table.horizontalHeader().font()
-        header_font.setBold(False)  # Bỏ in đậm để tiết kiệm không gian
-        self.downloads_table.horizontalHeader().setFont(header_font)
-        
-        # Set custom column widths
-        self.downloads_table.setColumnWidth(self.select_col, 30)      # Checkbox column
-        self.downloads_table.setColumnWidth(self.platform_col, 100)   # Increased width for platform column
-        self.downloads_table.setColumnWidth(self.title_col, 250)      # Increased width for title column
-        self.downloads_table.setColumnWidth(self.creator_col, 100)    # Keep at 100
-        self.downloads_table.setColumnWidth(self.quality_col, 85)     # Reduced from 100 to 85
-        self.downloads_table.setColumnWidth(self.format_col, 75)      # Keep at 75
-        self.downloads_table.setColumnWidth(self.duration_col, 80)    # New duration column
-        self.downloads_table.setColumnWidth(self.size_col, 75)        # Keep at 75
+        # Set initial column widths
+        self.downloads_table.setColumnWidth(self.select_col, 30)      # Checkbox column - keep small
+        self.downloads_table.setColumnWidth(self.platform_col, 100)   # Platform column
+        self.downloads_table.setColumnWidth(self.title_col, 250)      # Title column - can stretch
+        self.downloads_table.setColumnWidth(self.creator_col, 100)    # Creator
+        self.downloads_table.setColumnWidth(self.quality_col, 85)     # Quality
+        self.downloads_table.setColumnWidth(self.format_col, 75)      # Format
+        self.downloads_table.setColumnWidth(self.duration_col, 80)    # Duration
+        self.downloads_table.setColumnWidth(self.size_col, 75)        # Size
         self.downloads_table.setColumnWidth(self.date_col, 120)       # Keep at 120
         
         # Set row selection mode
         self.downloads_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
         self.downloads_table.setSelectionMode(QTableWidget.SelectionMode.SingleSelection)
         
+        # Calculate minimum column widths based on header text
+        self.calculate_min_column_widths()
+        
         # Set resize mode for columns
         self.downloads_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)  # Select
-        self.downloads_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)  # Platform - Fixed
+        self.downloads_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Interactive)  # Platform - Interactive
         self.downloads_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)  # Title - Stretch
-        self.downloads_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)  # Creator
-        self.downloads_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)  # Quality
-        self.downloads_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)  # Format
-        self.downloads_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Duration
-        self.downloads_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Fixed)  # Size
-        self.downloads_table.horizontalHeader().setSectionResizeMode(8, QHeaderView.ResizeMode.Fixed)  # Date
+        self.downloads_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Interactive)  # Creator
+        self.downloads_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Interactive)  # Quality
+        self.downloads_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Interactive)  # Format
+        self.downloads_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Interactive)  # Duration
+        self.downloads_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Interactive)  # Size
+        self.downloads_table.horizontalHeader().setSectionResizeMode(8, QHeaderView.ResizeMode.Interactive)  # Date
         
         # Show sort indicator
         self.downloads_table.horizontalHeader().setSortIndicatorShown(False)  # Changed from True to False
@@ -349,6 +373,9 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.horizontalHeader().setSectionsClickable(True)
         # Connect header click event to sort method
         self.downloads_table.horizontalHeader().sectionClicked.connect(self.sort_table)
+        
+        # Load saved column widths if available
+        self.load_column_widths()
         
         # Connect selection changed event instead of itemClicked
         # Use safer way to disconnect signal
@@ -421,6 +448,37 @@ class DownloadedVideosTab(QWidget):
         
         # Install event filter to handle clicks outside the table
         self.installEventFilter(self)
+        
+    def calculate_min_column_widths(self):
+        """Calculate minimum column widths based on header text"""
+        print("DEBUG: Calculating minimum column widths")
+        
+        # Get the font metrics to calculate text width
+        font_metrics = QFontMetrics(self.downloads_table.font())
+        
+        # Calculate width for each header with padding
+        padding = 20  # Pixels of padding
+        
+        # Calculate for each column
+        for col in range(1, self.downloads_table.columnCount()):  # Skip checkbox column
+            header_item = self.downloads_table.horizontalHeaderItem(col)
+            if header_item:
+                header_text = header_item.text()
+                text_width = font_metrics.horizontalAdvance(header_text)
+                min_width = text_width + padding
+                
+                # Set minimum width based on column type
+                current_width = self.downloads_table.columnWidth(col)
+                
+                # Apply minimum width only if it's larger than current width
+                if min_width > current_width:
+                    print(f"DEBUG: Setting min width for column {col} ({header_text}) from {current_width} to {min_width}")
+                    self.downloads_table.setColumnWidth(col, min_width)
+                else:
+                    print(f"DEBUG: Keeping current width for column {col} ({header_text}): {current_width}")
+                    
+        # Always ensure select column is narrow
+        self.downloads_table.setColumnWidth(0, 30)
 
     def create_video_details_area(self):
         """Create area to display detailed video information"""
@@ -1051,21 +1109,22 @@ class DownloadedVideosTab(QWidget):
 
     def display_videos(self, videos=None):
         """Display list of downloaded videos in the table"""
+        # Check if videos are provided, if not use filtered_videos
         if videos is None:
             videos = self.filtered_videos
-        
-        # Debug: Check videos and original_title
-        for idx, video in enumerate(videos[:3]):  # Debug only first 3 videos to avoid excessive logging
-            has_original = len(video) > 9 and video[9]
-            original_value = video[9] if len(video) > 9 else "N/A"
-            print(f"DEBUG - Video {idx}: has_original={has_original}, title='{video[0]}', original_title='{original_value}'")
-        
-        # Disable sorting temporarily while updating the table content
+            
+        # If no videos to display, just clear the table and return
+        if not videos:
+            self.downloads_table.clearContents()
+            self.downloads_table.setRowCount(0)
+            self.video_details_frame.hide()
+            return
+            
+        # Disable sorting temporarily to avoid triggering while updating
         was_sorting_enabled = self.downloads_table.isSortingEnabled()
         self.downloads_table.setSortingEnabled(False)
-        print(f"DEBUG: Temporarily disabled sorting for table update")
         
-        # Clear current content and set new row count
+        # Clear table
         self.downloads_table.clearContents()
         self.downloads_table.setRowCount(0)
         
@@ -1113,6 +1172,7 @@ class DownloadedVideosTab(QWidget):
                 # Creator column (index 2 in TikTok view)
                 creator_item = QTableWidgetItem(video[1])
                 creator_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                creator_item.setToolTip(video[1])  # Add tooltip for full text
                 # Disable editing
                 creator_item.setFlags(creator_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.downloads_table.setItem(idx, self.creator_col, creator_item)
@@ -1120,6 +1180,7 @@ class DownloadedVideosTab(QWidget):
                 # Quality column (index 3 in TikTok view)
                 quality_item = QTableWidgetItem(video[2])
                 quality_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+                quality_item.setToolTip(video[2])  # Add tooltip for full text
                 # Disable editing
                 quality_item.setFlags(quality_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
                 self.downloads_table.setItem(idx, self.quality_col, quality_item)
@@ -2515,40 +2576,48 @@ class DownloadedVideosTab(QWidget):
 
     def show_full_text_tooltip(self, row, column):
         """Show tooltip with full text when hovering over a cell"""
-        # Only show tooltip for text columns
-        if column in [1, 2, 8]:  # Title, Creator, Hashtags columns
-            item = self.downloads_table.item(row, column)
-            if item and 0 <= row < len(self.filtered_videos):
-                video = self.filtered_videos[row]
-                tooltip_text = ""
+        # Don't process for checkbox column
+        if column == self.select_col:
+            QToolTip.hideText()
+            return
+            
+        # Get table item
+        item = self.downloads_table.item(row, column)
+        if item and 0 <= row < len(self.filtered_videos):
+            # Get text content
+            text = item.text()
+            tooltip_text = text
+            
+            # Special processing for certain columns
+            video = self.filtered_videos[row]
+            
+            # Title column - use full title if available
+            if (column == self.title_col) and len(video) > 9 and video[9]:
+                tooltip_text = video[9]
+            
+            # Creator column - add "Creator: " prefix
+            elif column == self.creator_col:
+                tooltip_text = f"Creator: {text}"
+            
+            # Hashtags column - convert to better format
+            elif (column == self.hashtags_col) and video[7]:
+                hashtags = video[7]
+                # Ensure hashtags are properly formatted
+                if ' ' in hashtags and not all(tag.startswith('#') for tag in hashtags.split()):
+                    tooltip_text = ' '.join(['#' + tag.strip() if not tag.strip().startswith('#') else tag.strip() 
+                               for tag in hashtags.split()])
+                else:
+                    tooltip_text = hashtags
+            
+            # Format tooltip for better readability
+            if tooltip_text:
+                formatted_text = self.format_tooltip_text(tooltip_text)
                 
-                # Process tooltip based on column type
-                if column == 1:  # Title
-                    # If full title is available show it, otherwise show short title
-                    if len(video) > 9 and video[9]:
-                        tooltip_text = video[9]
-                    else:
-                        tooltip_text = video[0]
-                elif column == 2:  # Creator
-                    # Display full creator name
-                    tooltip_text = f"Creator: {video[1]}"
-                elif column == 8:  # Hashtags
-                    # Display full hashtags with proper formatting
-                    if video[7]:
-                        # Clean hashtag data for better display
-                        hashtags = video[7]
-                        # Convert to a list of hashtags for better readability
-                        if ' ' in hashtags and not all(tag.startswith('#') for tag in hashtags.split()):
-                            tooltip_text = ' '.join(['#' + tag.strip() if not tag.strip().startswith('#') else tag.strip() 
-                                           for tag in hashtags.split()])
-                        else:
-                            tooltip_text = hashtags
-                    else:
-                        tooltip_text = "No hashtags"
-                
-                # Format tooltip text for better readability
-                if tooltip_text:
-                    formatted_text = self.format_tooltip_text(tooltip_text)
+                # Only show tooltip if text is actually truncated or contains multiple lines
+                rect = self.downloads_table.visualItemRect(item)
+                font_metrics = QFontMetrics(item.font())
+                if (font_metrics.horizontalAdvance(text) > rect.width() or '\n' in formatted_text or 
+                    (column == self.title_col and len(video) > 9 and video[9] != text)):
                     
                     # Force tooltip to use current theme by hiding any existing tooltip first
                     QToolTip.hideText()
@@ -3480,7 +3549,18 @@ class DownloadedVideosTab(QWidget):
         index = self.downloads_table.horizontalHeader().logicalIndexAt(pos)
         print(f"DEBUG: show_header_context_menu called for column index {index}")
         
-        # Show menu only for columns that can be filtered
+        # Create context menu
+        context_menu = QMenu(self)
+        
+        # Add Reset Column Widths option to the menu
+        action_reset_widths = QAction(self.tr_("MENU_RESET_COLUMN_WIDTHS"), self)
+        action_reset_widths.triggered.connect(self.reset_column_widths)
+        context_menu.addAction(action_reset_widths)
+        
+        # Add separator
+        context_menu.addSeparator()
+        
+        # Show filter options only for filterable columns
         filterable_columns = []
         
         # Determine filterable columns based on current view
@@ -3512,6 +3592,10 @@ class DownloadedVideosTab(QWidget):
             # Show menu at cursor position
             header_pos = self.downloads_table.horizontalHeader().mapToGlobal(pos)
             filter_menu.exec(header_pos)
+        else:
+            # Just show the Reset Column Widths option
+            header_pos = self.downloads_table.horizontalHeader().mapToGlobal(pos)
+            context_menu.exec(header_pos)
 
     def show_date_filter_menu(self, pos):
         """Show filter menu for date with different options"""
@@ -3787,6 +3871,10 @@ class DownloadedVideosTab(QWidget):
 
     def setup_tiktok_table_columns(self):
         """Set up table columns specifically for TikTok"""
+        # Save current column widths before switching view
+        if self.current_platform != "TikTok":  # Only if changing to a different view
+            self.save_column_widths()
+        
         # Disable sorting temporarily
         was_sorting_enabled = self.downloads_table.isSortingEnabled()
         self.downloads_table.setSortingEnabled(False)
@@ -3839,16 +3927,25 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.setColumnWidth(self.hashtags_col, 150)   # Hashtags
         self.downloads_table.setColumnWidth(self.date_col, 120)       # Date
         
+        # Update current platform
+        self.current_platform = "TikTok"
+        
+        # Calculate minimum column widths based on header text
+        self.calculate_min_column_widths()
+        
         # Set resize mode for columns
         self.downloads_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)  # Select
         self.downloads_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)  # Title - Stretch
-        self.downloads_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)  # Creator
-        self.downloads_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)  # Quality
-        self.downloads_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)  # Format
-        self.downloads_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)  # Duration
-        self.downloads_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Size
-        self.downloads_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Fixed)  # Hashtags
-        self.downloads_table.horizontalHeader().setSectionResizeMode(8, QHeaderView.ResizeMode.Fixed)  # Date
+        self.downloads_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Interactive)  # Creator
+        self.downloads_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Interactive)  # Quality
+        self.downloads_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Interactive)  # Format
+        self.downloads_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Interactive)  # Duration
+        self.downloads_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Interactive)  # Size
+        self.downloads_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Interactive)  # Hashtags
+        self.downloads_table.horizontalHeader().setSectionResizeMode(8, QHeaderView.ResizeMode.Interactive)  # Date
+        
+        # Load saved column widths if available
+        self.load_column_widths()
         
         # Restore sorting if it was enabled
         if was_sorting_enabled:
@@ -3861,6 +3958,10 @@ class DownloadedVideosTab(QWidget):
 
     def setup_default_table_columns(self):
         """Reset table to default columns with platform visible"""
+        # Save current column widths before switching view
+        if self.current_platform == "TikTok":  # Only if changing to a different view
+            self.save_column_widths()
+        
         # Disable sorting temporarily
         was_sorting_enabled = self.downloads_table.isSortingEnabled()
         self.downloads_table.setSortingEnabled(False)
@@ -3907,23 +4008,32 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.setColumnWidth(self.select_col, 30)      # Checkbox column
         self.downloads_table.setColumnWidth(self.platform_col, 100)   # Platform column
         self.downloads_table.setColumnWidth(self.title_col, 250)      # Title column
-        self.downloads_table.setColumnWidth(self.creator_col, 100)    # Creator
+        self.downloads_table.setColumnWidth(self.creator_col, 100)
         self.downloads_table.setColumnWidth(self.quality_col, 85)     # Quality
         self.downloads_table.setColumnWidth(self.format_col, 75)      # Format
         self.downloads_table.setColumnWidth(self.duration_col, 80)    # Duration
         self.downloads_table.setColumnWidth(self.size_col, 75)        # Size
         self.downloads_table.setColumnWidth(self.date_col, 120)       # Date
         
+        # Update current platform
+        self.current_platform = ""  # Empty string means "All" platforms
+        
+        # Calculate minimum column widths based on header text
+        self.calculate_min_column_widths()
+        
         # Set resize mode for columns
         self.downloads_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)  # Select
-        self.downloads_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)  # Platform
+        self.downloads_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Interactive)  # Platform
         self.downloads_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)  # Title - Stretch
-        self.downloads_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)  # Creator
-        self.downloads_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)  # Quality
-        self.downloads_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)  # Format
-        self.downloads_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Duration
-        self.downloads_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Fixed)  # Size
-        self.downloads_table.horizontalHeader().setSectionResizeMode(8, QHeaderView.ResizeMode.Fixed)  # Date
+        self.downloads_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Interactive)  # Creator
+        self.downloads_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Interactive)  # Quality
+        self.downloads_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Interactive)  # Format
+        self.downloads_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Interactive)  # Duration
+        self.downloads_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Interactive)  # Size
+        self.downloads_table.horizontalHeader().setSectionResizeMode(8, QHeaderView.ResizeMode.Interactive)  # Date
+        
+        # Load saved column widths if available
+        self.load_column_widths()
         
         # Restore sorting if it was enabled
         if was_sorting_enabled:
@@ -3933,3 +4043,198 @@ class DownloadedVideosTab(QWidget):
         self.update_statistics()
         
         print(f"DEBUG: Reset to default table columns")
+
+    def save_column_widths(self):
+        """Save current column widths to app settings"""
+        try:
+            # Read existing config
+            config_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
+            config = {}
+            
+            if os.path.exists(config_file):
+                with open(config_file, 'r') as f:
+                    config = json.load(f)
+            
+            # Create or update column_widths section in config
+            if 'column_widths' not in config:
+                config['column_widths'] = {}
+            
+            # Store width for each column based on current view
+            column_widths = {}
+            for col in range(self.downloads_table.columnCount()):
+                column_widths[str(col)] = self.downloads_table.columnWidth(col)
+            
+            # Store different widths for different views
+            if self.current_platform == "TikTok":
+                config['column_widths']['tiktok'] = column_widths
+            else:
+                config['column_widths']['all'] = column_widths
+            
+            print(f"DEBUG: Saving column widths: {column_widths}")
+            
+            # Save updated config
+            with open(config_file, 'w') as f:
+                json.dump(config, f, indent=4)
+                
+        except Exception as e:
+            print(f"Error saving column widths: {e}")
+    
+    def load_column_widths(self):
+        """Load column widths from app settings"""
+        try:
+            # Read existing config
+            config_file = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
+            
+            if not os.path.exists(config_file):
+                print("DEBUG: Config file does not exist, using default column widths")
+                return
+            
+            with open(config_file, 'r') as f:
+                config = json.load(f)
+            
+            # Check if column_widths section exists
+            if 'column_widths' not in config:
+                print("DEBUG: No column_widths in config, using default column widths")
+                return
+            
+            # Determine which set of widths to use
+            widths_key = 'tiktok' if self.current_platform == "TikTok" else 'all'
+            
+            if widths_key not in config['column_widths']:
+                print(f"DEBUG: No column_widths for {widths_key} view, using default column widths")
+                return
+            
+            # Load width for each column
+            column_widths = config['column_widths'][widths_key]
+            print(f"DEBUG: Loading column widths for {widths_key} view: {column_widths}")
+            
+            for col_str, width in column_widths.items():
+                col = int(col_str)
+                if col < self.downloads_table.columnCount():
+                    self.downloads_table.setColumnWidth(col, width)
+                    print(f"DEBUG: Set column {col} width to {width}")
+            
+        except Exception as e:
+            print(f"Error loading column widths: {e}")
+    
+    def reset_column_widths(self):
+        """Reset column widths to default values"""
+        # Default widths based on column type
+        default_widths = {
+            self.select_col: 30,
+            self.title_col: 250
+        }
+        
+        # Specific default widths for different views
+        if self.current_platform == "TikTok":
+            # TikTok view defaults
+            default_widths.update({
+                self.creator_col: 120,
+                self.quality_col: 85,
+                self.format_col: 75,
+                self.duration_col: 80,
+                self.size_col: 75,
+                self.hashtags_col: 150,
+                self.date_col: 120
+            })
+        else:
+            # Default view with platform
+            default_widths.update({
+                self.platform_col: 100,
+                self.creator_col: 100,
+                self.quality_col: 85,
+                self.format_col: 75,
+                self.duration_col: 80,
+                self.size_col: 75,
+                self.date_col: 120
+            })
+        
+        # Apply default widths
+        for col, width in default_widths.items():
+            if 0 <= col < self.downloads_table.columnCount():
+                self.downloads_table.setColumnWidth(col, width)
+        
+        # Recalculate minimum widths based on text
+        self.calculate_min_column_widths()
+        
+        # Save the reset widths
+        self.save_column_widths()
+        
+        print("DEBUG: Reset column widths to defaults")
+
+    def set_platform(self, platform):
+        """Set platform to filter videos"""
+        print(f"DEBUG: Setting platform filter to: {platform}")
+        
+        # Save current column widths before switching view
+        self.save_column_widths()
+        
+        if platform == "All":
+            # Reset to default table columns showing platform
+            self.setup_default_table_columns()
+            self.current_platform = ""  # Empty string means "All" platforms
+            
+            # Remove platform filter
+            self.active_platform_filter = None
+            
+            # Update platform filter status
+            if self.platform_filter_status:
+                self.platform_filter_status.setText("")
+                self.platform_filter_status.hide()
+            
+            # Apply normal filters
+            self.filter_videos()
+            
+            # Log
+            if self.status_bar:
+                self.status_bar.showMessage(self.tr_("STATUS_SHOWING_ALL_PLATFORMS"))
+        elif platform == "TikTok":
+            # First set current_platform so filtering works correctly
+            self.current_platform = "TikTok"
+            
+            # Apply TikTok-specific table setup
+            self.setup_tiktok_table_columns()
+            
+            # Set platform filter
+            self.active_platform_filter = "TikTok"
+            
+            # Apply filtering rules
+            self.filter_videos()
+            
+            # Update platform filter status
+            if self.platform_filter_status:
+                status_text = f"🔍 {platform} {self.tr_('LABEL_VIDEOS')}"
+                self.platform_filter_status.setText(status_text)
+                self.platform_filter_status.show()
+            
+            # Log
+            if self.status_bar:
+                self.status_bar.showMessage(self.tr_("STATUS_SWITCHED_TO_TIKTOK"))
+        else:
+            # For other platforms, use default view but with platform filter
+            self.setup_default_table_columns()
+            self.current_platform = ""  # Empty string for default view
+            
+            # Set platform filter
+            self.active_platform_filter = platform
+            
+            # Update platform filter status
+            if self.platform_filter_status:
+                status_text = f"🔍 {platform} {self.tr_('LABEL_VIDEOS')}"
+                self.platform_filter_status.setText(status_text)
+                self.platform_filter_status.show()
+            
+            # Filter videos
+            self.filter_videos()
+            
+            # Log
+            if self.status_bar:
+                self.status_bar.showMessage(self.tr_("STATUS_FILTERED_BY_PLATFORM").format(platform))
+                
+    def closeEvent(self, event):
+        """Handle close event to save settings"""
+        # Save current column widths before closing
+        self.save_column_widths()
+        
+        # Let the event propagate
+        event.accept()

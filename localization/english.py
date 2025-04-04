@@ -291,4 +291,7 @@ SUBTITLE_TYPE_AUTO = "Auto-generated"
 
 # Common labels
 LABEL_PLATFORM = "Platform"
-LABEL_VIDEOS = "videos" 
+LABEL_VIDEOS = "videos"
+
+# Menu items
+MENU_RESET_COLUMN_WIDTHS = "Reset Column Widths" 
