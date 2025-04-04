@@ -157,6 +157,10 @@ STATUS_NO_NEW_URLS = "All URLs already exist in the list"
 STATUS_RENAMED_VIDEO = "Renamed video to: {}"
 STATUS_INFO_RECEIVED = "Video information received"
 STATUS_FFMPEG_MISSING = "FFmpeg not found: MP3 downloads unavailable"
+STATUS_SWITCHED_TO_YOUTUBE = "Switched to YouTube platform"
+STATUS_SWITCHED_TO_TIKTOK = "Switched to TikTok platform"
+STATUS_SHOWING_ALL_PLATFORMS = "Showing videos from all platforms"
+STATUS_FILTERED_BY_PLATFORM = "Showing {} videos only"
 
 # Dialogs
 DIALOG_CONFIRM_DELETION = "Confirm Deletion"
@@ -263,10 +267,6 @@ DIALOG_DOWNLOAD_COMPLETE_MSG = "Update downloaded to:\n{}\n\nThe folder will ope
 DIALOG_SELECT_DOWNLOAD_FOLDER = "Select Download Folder"
 DIALOG_DOWNLOADING = "Downloading update..."
 
-# Status for platform switching
-STATUS_SWITCHED_TO_YOUTUBE = "Switched to YouTube mode"
-STATUS_SWITCHED_TO_TIKTOK = "Switched to TikTok mode"
-
 # Context menu for YouTube
 CONTEXT_COPY_CHANNEL = "Copy Channel"
 CONTEXT_COPY_PLAYLIST = "Copy Playlist"
@@ -286,4 +286,8 @@ LABEL_HAS_SUBTITLES = "Has subtitles: {}"
 LABEL_SUBTITLE_LANGUAGE = "Subtitle language: {}"
 LABEL_SUBTITLE_TYPE = "Subtitle type: {}"
 SUBTITLE_TYPE_OFFICIAL = "Official"
-SUBTITLE_TYPE_AUTO = "Auto-generated" 
+SUBTITLE_TYPE_AUTO = "Auto-generated"
+
+# Common labels
+LABEL_PLATFORM = "Platform"
+LABEL_VIDEOS = "videos" 

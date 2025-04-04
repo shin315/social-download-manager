@@ -44,7 +44,8 @@ class DatabaseManager:
             metadata TEXT,
             has_subtitle INTEGER DEFAULT 0,
             subtitle_language TEXT,
-            subtitle_type TEXT
+            subtitle_type TEXT,
+            platform TEXT
         )
         ''')
         
@@ -60,6 +61,9 @@ class DatabaseManager:
         
         if 'subtitle_type' not in columns:
             cursor.execute('ALTER TABLE downloads ADD COLUMN subtitle_type TEXT')
+            
+        if 'platform' not in columns:
+            cursor.execute('ALTER TABLE downloads ADD COLUMN platform TEXT')
         
         conn.commit()
         conn.close()
@@ -89,12 +93,25 @@ class DatabaseManager:
         
         metadata_json = json.dumps(metadata)
         
+        # Determine platform from URL if not provided
+        platform = download_info.get('platform', '')
+        if not platform and 'url' in download_info:
+            url = download_info.get('url', '')
+            if 'tiktok.com' in url:
+                platform = 'TikTok'
+            elif 'youtube.com' in url or 'youtu.be' in url:
+                platform = 'YouTube'
+            elif 'instagram.com' in url:
+                platform = 'Instagram'
+            elif 'facebook.com' in url:
+                platform = 'Facebook'
+        
         # Add new record
         cursor.execute('''
         INSERT INTO downloads (url, title, filepath, quality, format, duration, 
                                filesize, status, download_date, metadata,
-                               has_subtitle, subtitle_language, subtitle_type)
-        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
+                               has_subtitle, subtitle_language, subtitle_type, platform)
+        VALUES (?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?, ?)
         ''', (
             download_info.get('url', ''),
             download_info.get('title', 'Unknown'),
@@ -108,7 +125,8 @@ class DatabaseManager:
             metadata_json,
             1 if download_info.get('has_subtitle', False) else 0,
             download_info.get('subtitle_language', ''),
-            download_info.get('subtitle_type', '')
+            download_info.get('subtitle_type', ''),
+            platform
         ))
         
         conn.commit()
@@ -139,6 +157,20 @@ class DatabaseManager:
                     download.update(metadata)
                 except:
                     pass
+            
+            # Determine platform if not present
+            if 'platform' not in download or not download['platform']:
+                url = download.get('url', '')
+                if 'tiktok.com' in url:
+                    download['platform'] = 'TikTok'
+                elif 'youtube.com' in url or 'youtu.be' in url:
+                    download['platform'] = 'YouTube'
+                elif 'instagram.com' in url:
+                    download['platform'] = 'Instagram'
+                elif 'facebook.com' in url:
+                    download['platform'] = 'Facebook'
+                else:
+                    download['platform'] = 'Unknown'
                     
             result.append(download)
             

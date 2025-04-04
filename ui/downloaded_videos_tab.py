@@ -17,6 +17,7 @@ import json
 import sqlite3
 import re
 import logging
+import traceback
 
 
 class FilterPopup(QMenu):
@@ -720,113 +721,84 @@ class DownloadedVideosTab(QWidget):
             
         return text
         
-    def filter_videos(self):
-        """Filter videos based on filters and search keywords"""
-        if not hasattr(self, 'all_videos'):
-            return
-            
-        # Start with all videos
-        filtered_videos = self.all_videos.copy()
+    def filter_videos(self, skip_platform=False):
+        """Filter videos based on search text and active filters"""
+        filtered_videos = []
+        search_text = self.search_input.text().lower()
         
-        # Apply filtering by search keywords if any
-        search_text = self.search_input.text().strip().lower()
-        if search_text:
-            # Create non-accented version of search keyword
-            search_text_no_accent = self.remove_vietnamese_accents(search_text).lower()
+        # Define platform column index outside of conditions
+        platform_column_index = 12  # Platform is stored at index 12 in video_info
+        
+        # Start with all videos if we're not skipping platform filter
+        if skip_platform:
+            source_videos = self.filtered_videos
+        else:
+            source_videos = self.all_videos
             
-            # Filter videos by keyword (supporting both accented and non-accented)
-            filtered_videos = []
-            for video in self.all_videos:
-                # Check each field in the video
-                match_found = False
-                for value in video:
-                    if isinstance(value, (str, int, float)):
-                        str_value = str(value).lower()
-                        str_value_no_accent = self.remove_vietnamese_accents(str_value).lower()
+            # If we have a platform filter active and not skipping it
+            if platform_column_index in self.active_filters:
+                platform = self.active_filters[platform_column_index]
+                # Pre-filter by platform
+                source_videos = [v for v in source_videos if len(v) > platform_column_index and v[platform_column_index] == platform]
+        
+        # Apply search filter and column filters
+        for video in source_videos:
+            # Skip if video doesn't match search filter
+            if search_text and not self.video_matches_search(video, search_text):
+                continue
+                
+            # Check column filters
+            skip_video = False
+            for column_index, filter_value in self.active_filters.items():
+                # Skip platform filter if we're already handling it separately
+                if skip_platform and column_index == platform_column_index:
+                    continue
+                
+                # Handle date range filter differently
+                if column_index == 7 and isinstance(filter_value, tuple) and len(filter_value) == 3:
+                    # Date range filter has (start_date, end_date, filter_name)
+                    start_date, end_date, _ = filter_value
+                    
+                    # Get the date string for the current video
+                    date_str = ""
+                    if len(video) > 6:
+                        date_str = video[6]  # Date is at index 6
+                    
+                    # Parse date string to datetime
+                    try:
+                        date_obj = datetime.strptime(date_str, "%Y-%m-%d %H:%M:%S")
                         
-                        # Check accented version
-                        if search_text in str_value:
-                            match_found = True
+                        # Check if date is in range
+                        if not (start_date <= date_obj <= end_date):
+                            skip_video = True
                             break
-                            
-                        # Check non-accented version
-                        if search_text_no_accent in str_value_no_accent:
-                            match_found = True
-                            break
-                
-                if match_found:
-                    filtered_videos.append(video)
-        
-        # Mapping from UI column index to data index in video list
-        column_mapping = {
-            1: 0,   # Title
-            2: 1,   # Creator
-            3: 2,   # Quality
-            4: 3,   # Format
-            5: 4,   # Size
-            6: 5,   # Status
-            7: 6,   # Date
-            8: 7    # Hashtags
-        }
-        
-        # Debug to see all active filters
-        print(f"DEBUG: Active filters: {self.active_filters}")
-        
-        # Apply active filters
-        for ui_column_index, filter_value in self.active_filters.items():
-            # Only process columns in mapping
-            if ui_column_index in column_mapping:
-                data_index = column_mapping[ui_column_index]
-                
-                # Special case for Date column
-                date_column_ui_index = self.get_column_index_by_name(self.tr_("HEADER_DATE"))
-                if ui_column_index == date_column_ui_index and isinstance(filter_value, tuple) and len(filter_value) == 3:
-                    start_date, end_date, filter_name = filter_value
-                    
-                    # Debug output
-                    print(f"DEBUG: Filtering by date range: {filter_name} - {start_date} to {end_date}")
-                    print(f"DEBUG: Date column UI index: {ui_column_index}, data index: {data_index}")
-                    
-                    # Filter videos by date range
-                    before_count = len(filtered_videos)
-                    filtered_videos = [
-                        video for video in filtered_videos
-                        if self.is_date_in_range(video[data_index], start_date, end_date)
-                    ]
-                    after_count = len(filtered_videos)
-                    
-                    # Show number of videos filtered out
-                    print(f"DEBUG: Date filter resulted in {before_count - after_count} videos filtered out")
-                    print(f"DEBUG: First few dates to check: {[video[data_index] for video in self.all_videos[:5]]}")
+                    except Exception as e:
+                        print(f"Error parsing date: {e}")
+                        skip_video = True
+                        break
                 else:
-                    # Regular filtering - only keep videos with values matching the filter
-                    print(f"DEBUG: Normal filter on column {ui_column_index} (data index {data_index}): '{filter_value}'")
-                    
-                    # Create non-accented version of filter_value
-                    filter_value_lower = str(filter_value).lower()
-                    filter_value_no_accent = self.remove_vietnamese_accents(filter_value_lower)
-                    
-                    # Filter videos by value (supporting both accented and non-accented)
-                    before_count = len(filtered_videos)
-                    filtered_videos = [
-                        video for video in filtered_videos
-                        if (str(video[data_index]).lower() == filter_value_lower) or 
-                           (self.remove_vietnamese_accents(str(video[data_index])).lower() == filter_value_no_accent)
-                    ]
-                    after_count = len(filtered_videos)
-                    
-                    # Show number of videos filtered out
-                    print(f"DEBUG: Normal filter resulted in {before_count - after_count} videos filtered out")
-            else:
-                print(f"DEBUG: Column index {ui_column_index} not in mapping, skipping")
+                    # Regular column filter - check if value matches
+                    if column_index < len(video):
+                        cell_value = video[column_index]
+                        if cell_value != filter_value:
+                            skip_video = True
+                            break
+            
+            if not skip_video:
+                filtered_videos.append(video)
         
-        # Save filtered list
+        # Update the filtered list
         self.filtered_videos = filtered_videos
-        print(f"DEBUG: Final filtered videos count: {len(filtered_videos)}")
         
-        # Display filtered list
+        # Update the display
         self.display_videos(filtered_videos)
         
+        # Update statistics
+        self.update_statistics()
+        
+        # Update video count label
+        self.update_video_count_label()
+
     def is_date_in_range(self, date_string, start_date, end_date):
         """Check if date is within the given time range"""
         from datetime import datetime
@@ -874,28 +846,25 @@ class DownloadedVideosTab(QWidget):
     def load_downloaded_videos(self):
         """Load list of downloaded videos from database"""
         try:
-            # Clear old data
-            self.all_videos = []
-            self.filtered_videos = []
-            
-            # Clear current filters
-            self.active_filters = {}
-            self.update_all_filter_icons()
-            
-            # Get data from database
+            # Create database manager
             db_manager = DatabaseManager()
+            
+            # Get list of downloaded videos
             downloads = db_manager.get_downloads()
             
-            if not downloads:
-                print("No downloads found in database")
-                return
-                
-            print(f"Loaded {len(downloads)} videos from database")
+            # Clear current list
+            self.all_videos = []
             
-            # Process each downloaded record
+            # Process each download
             for download in downloads:
-                # Process hashtags - ensure they are displayed with #
-                hashtags = download.get('hashtags', [])
+                # Extract hashtags from description or separate hashtags column
+                hashtags = download.get('hashtags', '')
+                if not hashtags and 'description' in download:
+                    # Extract hashtags from description
+                    description = download.get('description', '')
+                    hashtags = ' '.join(re.findall(r'#\w+', description))
+                
+                # Convert hashtags to proper format if it's a list
                 if isinstance(hashtags, list):
                     hashtags_str = ' '.join(['#' + tag for tag in hashtags])
                 else:
@@ -949,6 +918,19 @@ class DownloadedVideosTab(QWidget):
                     except Exception as e:
                         print(f"Error getting file size: {e}")
                 
+                # Determine platform from URL or platform field
+                platform = download.get('platform', 'Unknown')
+                if platform == 'Unknown' and 'url' in download:
+                    url = download.get('url', '')
+                    if 'tiktok.com' in url:
+                        platform = 'TikTok'
+                    elif 'youtube.com' in url or 'youtu.be' in url:
+                        platform = 'YouTube'
+                    elif 'instagram.com' in url:
+                        platform = 'Instagram'
+                    elif 'facebook.com' in url:
+                        platform = 'Facebook'
+                
                 # Create video info with complete information
                 video_info = [
                     download.get('title', 'Unknown'),            # 0 - Title
@@ -962,7 +944,8 @@ class DownloadedVideosTab(QWidget):
                     os.path.dirname(download.get('filepath', '')), # 8 - Folder
                     download.get('description', 'Unknown'),      # 9 - Description
                     download.get('duration', 'Unknown'),         # 10 - Duration
-                    download.get('thumbnail', '')                # 11 - Thumbnail
+                    download.get('thumbnail', ''),               # 11 - Thumbnail
+                    platform                                     # 12 - Platform
                 ]
                 self.all_videos.append(video_info)
             
@@ -984,6 +967,60 @@ class DownloadedVideosTab(QWidget):
             
         except Exception as e:
             print(f"Error loading downloaded videos: {e}")
+            if self.parent:
+                self.parent.status_bar.showMessage(self.tr_("STATUS_ERROR").format(str(e)))
+
+    def filter_by_platform(self, platform):
+        """Filter videos by platform"""
+        print(f"DEBUG: Filtering videos by platform: {platform}")
+        
+        try:
+            # Define column index for platform filtering
+            platform_column_index = 12  # Platform is stored at index 12 in video_info
+            
+            # If platform is "All", show all videos
+            if platform == "All":
+                # Reset any existing platform filter
+                if platform_column_index in self.active_filters:
+                    del self.active_filters[platform_column_index]
+                
+                # Apply all other active filters
+                self.filter_videos()
+                
+                print(f"DEBUG: Showing all platforms, total videos: {len(self.filtered_videos)}")
+                return
+                
+            # Apply platform filter
+            # Filter videos by platform (all_videos is the source of truth)
+            filtered_platform_videos = []
+            
+            print(f"DEBUG: All videos count: {len(self.all_videos)}")
+            # Print platform value for each video for debugging
+            for idx, video in enumerate(self.all_videos[:5]):  # Print first 5 for brevity
+                platform_value = video[platform_column_index] if len(video) > platform_column_index else "Unknown"
+                print(f"DEBUG: Video {idx} platform: {platform_value}")
+            
+            for video in self.all_videos:
+                # Check if video has platform info
+                if len(video) > platform_column_index:
+                    video_platform = video[platform_column_index]
+                    if video_platform == platform:
+                        filtered_platform_videos.append(video)
+                        
+            # Update the active_filters to include platform filter
+            self.active_filters[platform_column_index] = platform
+            
+            # Update filtered_videos list
+            self.filtered_videos = filtered_platform_videos
+            
+            # Apply other active filters
+            self.filter_videos(skip_platform=True)
+            
+            print(f"DEBUG: Filtered to {platform} platform, total videos: {len(self.filtered_videos)}")
+            
+        except Exception as e:
+            print(f"Error filtering videos by platform: {e}")
+            print(traceback.format_exc())
             if self.parent:
                 self.parent.status_bar.showMessage(self.tr_("STATUS_ERROR").format(str(e)))
 
@@ -1746,7 +1783,8 @@ class DownloadedVideosTab(QWidget):
                 os.path.dirname(download_info.get('filepath', '')), # 8 - Folder
                 download_info.get('description', 'Unknown'),     # 9 - Description
                 download_info.get('duration', 'Unknown'),        # 10 - Duration
-                download_info.get('thumbnail', '')               # 11 - Thumbnail
+                download_info.get('thumbnail', ''),               # 11 - Thumbnail
+                download_info.get('platform', 'Unknown')          # 12 - Platform
             ]
             
             # Add new video to the beginning of the list instead of the end
@@ -2082,7 +2120,7 @@ class DownloadedVideosTab(QWidget):
                 self.subtitle_info_label = QLabel()
                 self.subtitle_info_label.setWordWrap(True)
                 self.subtitle_info_label.setStyleSheet("padding: 5px; border-radius: 4px; background-color: rgba(80, 80, 80, 0.1);")
-                self.video_details_layout.addWidget(self.subtitle_info_label)
+                self.video_details_frame.layout().addWidget(self.subtitle_info_label)
             
             if has_subtitle and self.subtitle_info_label is not None:
                 # Update subtitle info label
@@ -3483,3 +3521,27 @@ class DownloadedVideosTab(QWidget):
             else:
                 # New video selected, updated in handle_selection_changed
                 pass
+
+    def video_matches_search(self, video, search_text):
+        """Check if video matches search text"""
+        if not search_text:
+            return True
+            
+        # Create non-accented version of search keyword
+        search_text_no_accent = self.remove_vietnamese_accents(search_text).lower()
+        
+        # Check each field in the video
+        for value in video:
+            if isinstance(value, (str, int, float)):
+                str_value = str(value).lower()
+                str_value_no_accent = self.remove_vietnamese_accents(str_value).lower()
+                
+                # Check accented version
+                if search_text in str_value:
+                    return True
+                    
+                # Check non-accented version
+                if search_text_no_accent in str_value_no_accent:
+                    return True
+                    
+        return False

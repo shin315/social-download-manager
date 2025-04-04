@@ -153,6 +153,10 @@ STATUS_NO_NEW_URLS = "Tất cả URL đã tồn tại trong danh sách"
 STATUS_RENAMED_VIDEO = "Đã đổi tên video thành: {}"
 STATUS_INFO_RECEIVED = "Đã nhận thông tin video"
 STATUS_FFMPEG_MISSING = "Không tìm thấy FFmpeg: Tính năng tải MP3 không khả dụng"
+STATUS_SWITCHED_TO_YOUTUBE = "Đã chuyển sang nền tảng YouTube"
+STATUS_SWITCHED_TO_TIKTOK = "Đã chuyển sang nền tảng TikTok"
+STATUS_SHOWING_ALL_PLATFORMS = "Hiển thị video từ tất cả nền tảng"
+STATUS_FILTERED_BY_PLATFORM = "Chỉ hiển thị video từ {}"
 
 # Dialogs
 DIALOG_CONFIRM_DELETION = "Xác Nhận Xóa"
@@ -264,10 +268,6 @@ HEADER_CHANNEL = "Kênh"
 HEADER_PLAYLIST = "Danh Sách Phát"
 HEADER_RELEASE_DATE = "Ngày Phát Hành"
 
-# Status for platform switching
-STATUS_SWITCHED_TO_YOUTUBE = "Đã chuyển sang chế độ YouTube"
-STATUS_SWITCHED_TO_TIKTOK = "Đã chuyển sang chế độ TikTok"
-
 # Context menu for YouTube
 CONTEXT_COPY_CHANNEL = "Sao chép Kênh"
 CONTEXT_COPY_PLAYLIST = "Sao chép Danh Sách Phát"
@@ -287,4 +287,8 @@ LABEL_HAS_SUBTITLES = "Có phụ đề: {}"
 LABEL_SUBTITLE_LANGUAGE = "Ngôn ngữ phụ đề: {}"
 LABEL_SUBTITLE_TYPE = "Loại phụ đề: {}"
 SUBTITLE_TYPE_OFFICIAL = "Chính thức"
-SUBTITLE_TYPE_AUTO = "Tự động tạo" 
+SUBTITLE_TYPE_AUTO = "Tự động tạo"
+
+# Common labels
+LABEL_PLATFORM = "Nền tảng"
+LABEL_VIDEOS = "video" 

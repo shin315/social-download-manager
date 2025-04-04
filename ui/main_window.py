@@ -2,7 +2,8 @@ from PyQt6.QtWidgets import (QMainWindow, QTabWidget, QWidget, QVBoxLayout,
                              QHBoxLayout, QLabel, QLineEdit, QPushButton,
                              QTableWidget, QTableWidgetItem, QComboBox,
                              QFileDialog, QCheckBox, QHeaderView, QMessageBox,
-                             QStatusBar, QMenu, QProgressBar, QDialog, QToolTip)
+                             QStatusBar, QMenu, QProgressBar, QDialog, QToolTip,
+                             QTabBar)
 from PyQt6.QtCore import Qt, QSize, pyqtSignal, QTimer
 from PyQt6.QtGui import QAction, QIcon, QActionGroup, QFont, QFontDatabase, QKeySequence
 from PyQt6.QtWidgets import QApplication
@@ -83,23 +84,57 @@ class MainWindow(QMainWindow):
         main_widget = QWidget()
         self.setCentralWidget(main_widget)
         main_layout = QVBoxLayout(main_widget)
+        main_layout.setContentsMargins(0, 0, 0, 0)  # No margins for main layout
 
         # Create menu bar
         self.create_menu_bar()
-
-        # Create tab widget and tabs
+        
+        # Create tabs with platform filter
         self.tab_widget = QTabWidget()
         
-        # Video Info Tab
+        # Add Video Info tab
         self.video_info_tab = VideoInfoTab(self)
         self.tab_widget.addTab(self.video_info_tab, self.tr_("TAB_VIDEO_INFO"))
-
-        # Downloaded Videos Tab
+        
+        # Add Downloaded Videos tab
+        # First create a container for the tab content
+        self.downloaded_tab_container = QWidget()
+        downloaded_container_layout = QVBoxLayout(self.downloaded_tab_container)
+        downloaded_container_layout.setContentsMargins(0, 0, 0, 0)
+        downloaded_container_layout.setSpacing(0)
+        
+        # Create a toolbar for platform filtering
+        platform_toolbar = QWidget()
+        platform_toolbar_layout = QHBoxLayout(platform_toolbar)
+        platform_toolbar_layout.setContentsMargins(10, 5, 10, 5)
+        
+        # Add Platform label and combo box
+        platform_toolbar_layout.addWidget(QLabel(self.tr_("LABEL_PLATFORM") + ":"))
+        
+        self.platform_filter_combo = QComboBox()
+        self.platform_filter_combo.addItem("All")
+        self.platform_filter_combo.addItem("TikTok")
+        self.platform_filter_combo.addItem("YouTube")
+        self.platform_filter_combo.currentIndexChanged.connect(self.on_platform_filter_changed)
+        platform_toolbar_layout.addWidget(self.platform_filter_combo)
+        
+        platform_toolbar_layout.addStretch()
+        
+        # Create the Downloaded Videos tab itself
         self.downloaded_videos_tab = DownloadedVideosTab(self)
-        self.tab_widget.addTab(self.downloaded_videos_tab, self.tr_("TAB_DOWNLOADED_VIDEOS"))
-
-        # Set tab widget as central widget
+        
+        # Add the toolbar and tab to the container
+        downloaded_container_layout.addWidget(platform_toolbar)
+        downloaded_container_layout.addWidget(self.downloaded_videos_tab)
+        
+        # Add the container as a tab
+        self.tab_widget.addTab(self.downloaded_tab_container, self.tr_("TAB_DOWNLOADED_VIDEOS"))
+        
+        # Add tab widget to main layout
         main_layout.addWidget(self.tab_widget)
+        
+        # Connect tab changed signal
+        self.tab_widget.currentChanged.connect(self.on_tab_changed)
 
         # Create status bar
         self.status_bar = QStatusBar()
@@ -163,28 +198,10 @@ class MainWindow(QMainWindow):
         platform_action_group.addAction(youtube_action)
         platform_menu.addAction(youtube_action)
         
-        # Action: Instagram
-        instagram_icon = QIcon(get_resource_path(f"assets/platforms/instagram{icon_suffix}.png"))
-        instagram_action = QAction(instagram_icon, self.tr_("PLATFORM_INSTAGRAM"), self)
-        instagram_action.setCheckable(True)
-        instagram_action.triggered.connect(self.show_developing_feature)
-        platform_action_group.addAction(instagram_action)
-        platform_menu.addAction(instagram_action)
-        
-        # Action: Facebook
-        facebook_icon = QIcon(get_resource_path(f"assets/platforms/facebook{icon_suffix}.png"))
-        facebook_action = QAction(facebook_icon, self.tr_("PLATFORM_FACEBOOK"), self)
-        facebook_action.setCheckable(True)
-        facebook_action.triggered.connect(self.show_developing_feature)
-        platform_action_group.addAction(facebook_action)
-        platform_menu.addAction(facebook_action)
-        
         # Store actions in dictionary to update icons when theme changes
         self.platform_actions = {
             "tiktok": tiktok_action,
             "youtube": youtube_action,
-            "instagram": instagram_action,
-            "facebook": facebook_action
         }
         
         # Theme Menu (Dark/Light)
@@ -1102,7 +1119,6 @@ class MainWindow(QMainWindow):
         # Set tabs as central widget
         self.setCentralWidget(self.tabs)
     
-    # Thêm phương thức mới để xử lý khi chuyển tab
     def on_tab_changed(self, tab_index):
         """Handle tab change event"""
         # Ensure no sort indicators are shown in any tables
@@ -1129,3 +1145,25 @@ class MainWindow(QMainWindow):
                 
             # Switch to Video Info tab if we're not already there
             self.tab_widget.setCurrentIndex(0)
+
+    def on_platform_filter_changed(self, index):
+        """Handle platform filter changes"""
+        platforms = ["All", "TikTok", "YouTube"]
+        if index < 0 or index >= len(platforms):
+            return
+            
+        platform = platforms[index]
+        print(f"Setting platform to: {platform}")
+        
+        # Check if we're on the Downloaded Videos tab (index 1)
+        if self.tab_widget.currentIndex() == 1:
+            # Check if the Downloaded Videos tab has the filter_by_platform method
+            if hasattr(self.downloaded_videos_tab, 'filter_by_platform'):
+                # Call filter_by_platform with the selected platform
+                self.downloaded_videos_tab.filter_by_platform(platform)
+                
+                # Update status message
+                if platform == "All":
+                    self.status_bar.showMessage(self.tr_("STATUS_SHOWING_ALL_PLATFORMS"))
+                else:
+                    self.status_bar.showMessage(self.tr_("STATUS_FILTERED_BY_PLATFORM").format(platform))
