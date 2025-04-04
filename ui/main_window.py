@@ -76,7 +76,7 @@ class MainWindow(QMainWindow):
 
     def init_ui(self):
         """Initialize user interface"""
-        self.setWindowTitle("Social Download Manager")
+        self.setWindowTitle("Social Download Manager - YouTube")  # Default platform is YouTube
         self.setGeometry(100, 100, 1000, 700)  # Adjust window size to be larger
         self.setWindowIcon(QIcon(get_resource_path("assets/Logo_new_32x32.png")))
         
@@ -1142,6 +1142,9 @@ class MainWindow(QMainWindow):
                 self.status_bar.showMessage(self.tr_("STATUS_SWITCHED_TO_YOUTUBE"))
             elif platform == "TikTok":
                 self.status_bar.showMessage(self.tr_("STATUS_SWITCHED_TO_TIKTOK"))
+            
+            # Update window title to include platform
+            self.setWindowTitle(f"Social Download Manager - {platform}")
                 
             # Switch to Video Info tab if we're not already there
             self.tab_widget.setCurrentIndex(0)
@@ -1156,14 +1159,14 @@ class MainWindow(QMainWindow):
         print(f"Setting platform to: {platform}")
         
         # Check if we're on the Downloaded Videos tab (index 1)
-        if self.tab_widget.currentIndex() == 1:
-            # Check if the Downloaded Videos tab has the filter_by_platform method
-            if hasattr(self.downloaded_videos_tab, 'filter_by_platform'):
-                # Call filter_by_platform with the selected platform
-                self.downloaded_videos_tab.filter_by_platform(platform)
-                
-                # Update status message
-                if platform == "All":
-                    self.status_bar.showMessage(self.tr_("STATUS_SHOWING_ALL_PLATFORMS"))
-                else:
-                    self.status_bar.showMessage(self.tr_("STATUS_FILTERED_BY_PLATFORM").format(platform))
+        current_tab_index = self.tab_widget.currentIndex()
+        
+        if hasattr(self.downloaded_videos_tab, 'filter_by_platform'):
+            # Call filter_by_platform with the selected platform
+            self.downloaded_videos_tab.filter_by_platform(platform)
+            
+            # Update status message
+            if platform == "All":
+                self.status_bar.showMessage(self.tr_("STATUS_SHOWING_ALL_PLATFORMS"))
+            else:
+                self.status_bar.showMessage(self.tr_("STATUS_FILTERED_BY_PLATFORM").format(platform))

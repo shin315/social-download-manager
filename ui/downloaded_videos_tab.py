@@ -75,14 +75,14 @@ class DownloadedVideosTab(QWidget):
         
         # Column indices
         self.select_col = 0
-        self.title_col = 1
-        self.creator_col = 2
-        self.quality_col = 3
-        self.format_col = 4
-        self.duration_col = 5  # New duration column
-        self.size_col = 6      # Changed from 5 to 6
-        self.date_col = 7      # Changed from 7 to 8
-        # Removed hashtags_col and status_col
+        self.platform_col = 1  # New platform column
+        self.title_col = 2     # Changed from 1 to 2
+        self.creator_col = 3   # Changed from 2 to 3
+        self.quality_col = 4   # Changed from 3 to 4
+        self.format_col = 5    # Changed from 4 to 5
+        self.duration_col = 6  # Changed from 5 to 6
+        self.size_col = 7      # Changed from 6 to 7
+        self.date_col = 8      # Changed from 7 to 8
         
         # Filter storage variables
         self.active_filters = {}  # {column_index: [allowed_values]}
@@ -157,6 +157,7 @@ class DownloadedVideosTab(QWidget):
         """Update table headers based on current language"""
         headers = [
             "",  # Select column has no title
+            self.tr_("LABEL_PLATFORM"),
             self.tr_("HEADER_TITLE"), 
             self.tr_("HEADER_CREATOR"), 
             self.tr_("HEADER_QUALITY"), 
@@ -275,18 +276,19 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.setObjectName("downloads_table")
         
         # Configure table properties
-        self.downloads_table.setColumnCount(8)  # 8 columns for our new layout
+        self.downloads_table.setColumnCount(9)  # 9 columns for our new layout with Platform
         
         # Set header labels
         header_labels = [
             "",  # Selection checkbox
-            self.tr_("TABLE_TITLE"),
-            self.tr_("TABLE_CREATOR"),
-            self.tr_("TABLE_QUALITY"),
-            self.tr_("TABLE_FORMAT"),
-            self.tr_("TABLE_DURATION"),
-            self.tr_("TABLE_SIZE"),
-            self.tr_("TABLE_DATE")
+            self.tr_("LABEL_PLATFORM"),
+            self.tr_("HEADER_TITLE"),
+            self.tr_("HEADER_CREATOR"),
+            self.tr_("HEADER_QUALITY"),
+            self.tr_("HEADER_FORMAT"),
+            self.tr_("HEADER_DURATION"),
+            self.tr_("HEADER_SIZE"),
+            self.tr_("HEADER_DATE")
         ]
         self.downloads_table.setHorizontalHeaderLabels(header_labels)
         
@@ -297,6 +299,7 @@ class DownloadedVideosTab(QWidget):
         
         # Set custom column widths
         self.downloads_table.setColumnWidth(self.select_col, 30)      # Checkbox column
+        self.downloads_table.setColumnWidth(self.platform_col, 100)   # Increased width for platform column
         self.downloads_table.setColumnWidth(self.title_col, 250)      # Increased width for title column
         self.downloads_table.setColumnWidth(self.creator_col, 100)    # Keep at 100
         self.downloads_table.setColumnWidth(self.quality_col, 85)     # Reduced from 100 to 85
@@ -311,13 +314,14 @@ class DownloadedVideosTab(QWidget):
         
         # Set resize mode for columns
         self.downloads_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)  # Select
-        self.downloads_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)  # Title - Stretch
-        self.downloads_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)  # Creator
-        self.downloads_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)  # Quality
-        self.downloads_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)  # Format
-        self.downloads_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)  # Duration
-        self.downloads_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Size
-        self.downloads_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Fixed)  # Date
+        self.downloads_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Fixed)  # Platform - Fixed
+        self.downloads_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Stretch)  # Title - Stretch
+        self.downloads_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)  # Creator
+        self.downloads_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)  # Quality
+        self.downloads_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)  # Format
+        self.downloads_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Duration
+        self.downloads_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Fixed)  # Size
+        self.downloads_table.horizontalHeader().setSectionResizeMode(8, QHeaderView.ResizeMode.Fixed)  # Date
         
         # Show sort indicator
         self.downloads_table.horizontalHeader().setSortIndicatorShown(False)  # Changed from True to False
@@ -361,7 +365,7 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.horizontalHeader().customContextMenuRequested.connect(self.show_header_context_menu)
         
         # Add tooltip for filterable headers
-        filterable_columns = [3, 4, 5, 7]  # Quality, Format, Duration, Date
+        filterable_columns = [1, 4, 5, 6, 8]  # Platform, Quality, Format, Duration, Date
         
         # Set tooltips for filterable columns
         for i in filterable_columns:
@@ -1043,6 +1047,14 @@ class DownloadedVideosTab(QWidget):
             
             self.downloads_table.setCellWidget(idx, 0, select_widget)
             
+            # Platform column
+            platform_value = video[12] if len(video) > 12 else "Unknown"
+            platform_item = QTableWidgetItem(platform_value)
+            platform_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            # Disable editing
+            platform_item.setFlags(platform_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+            self.downloads_table.setItem(idx, 1, platform_item)
+            
             # Title column
             title_item = QTableWidgetItem(video[0])
             # Save full title in UserRole for later use
@@ -1061,21 +1073,21 @@ class DownloadedVideosTab(QWidget):
                 title_item.setToolTip(tooltip_text)  # Fallback with short title formatted
             # Disable editing
             title_item.setFlags(title_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(idx, 1, title_item)
+            self.downloads_table.setItem(idx, 2, title_item)
             
             # Creator column
             creator_item = QTableWidgetItem(video[1])
             creator_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # Disable editing
             creator_item.setFlags(creator_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(idx, 2, creator_item)
+            self.downloads_table.setItem(idx, 3, creator_item)
             
             # Quality column
             quality_item = QTableWidgetItem(video[2])
             quality_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # Disable editing
             quality_item.setFlags(quality_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(idx, 3, quality_item)
+            self.downloads_table.setItem(idx, 4, quality_item)
             
             # Format column
             format_value = video[3]
@@ -1092,7 +1104,7 @@ class DownloadedVideosTab(QWidget):
             format_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # Disable editing
             format_item.setFlags(format_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(idx, 4, format_item)
+            self.downloads_table.setItem(idx, 5, format_item)
             
             # Duration column
             duration_value = video[10] if len(video) > 10 else "Unknown"
@@ -1111,14 +1123,14 @@ class DownloadedVideosTab(QWidget):
             duration_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # Disable editing
             duration_item.setFlags(duration_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(idx, 5, duration_item)
+            self.downloads_table.setItem(idx, 6, duration_item)
             
             # Size column
             size_item = QTableWidgetItem(video[4])
             size_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # Disable editing
             size_item.setFlags(size_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(idx, 6, size_item)
+            self.downloads_table.setItem(idx, 7, size_item)
             
             # Date column - Format as two lines with date on top and time below
             date_string = video[6]
@@ -1158,7 +1170,7 @@ class DownloadedVideosTab(QWidget):
             date_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # Disable editing
             date_item.setFlags(date_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(idx, 7, date_item)
+            self.downloads_table.setItem(idx, 8, date_item)
             
             # Removed Status and Hashtags columns
         
@@ -1501,7 +1513,7 @@ class DownloadedVideosTab(QWidget):
     def update_all_filter_icons(self):
         """Update all filter icons on headers"""
         # Clear all filter icons
-        filterable_columns = [3, 4, 5, 7]  # Quality, Format, Duration, Date (excluding Size)
+        filterable_columns = [1, 4, 5, 6, 8]  # Platform, Quality, Format, Duration, Date
         for column_index in filterable_columns:
             self.update_filter_icon(column_index, False)
         
@@ -2085,17 +2097,18 @@ class DownloadedVideosTab(QWidget):
         # The display column order and the index in filtered_videos may differ
         column_mapping = {
             0: 0,  # Select (no sorting)
-            1: 0,  # Title (index 0 in filtered_videos)
-            2: 1,  # Creator (index 1 in filtered_videos)
-            3: 2,  # Quality (index 2 in filtered_videos)
-            4: 3,  # Format (index 3 in filtered_videos)
-            5: 10, # Duration (index 10 in filtered_videos)
-            6: 4,  # Size (index 4 in filtered_videos)
-            7: 6   # Date (index 6 in filtered_videos)
+            1: 12, # Platform (index 12 in filtered_videos)
+            2: 0,  # Title (index 0 in filtered_videos)
+            3: 1,  # Creator (index 1 in filtered_videos)
+            4: 2,  # Quality (index 2 in filtered_videos)
+            5: 3,  # Format (index 3 in filtered_videos)
+            6: 10, # Duration (index 10 in filtered_videos)
+            7: 4,  # Size (index 4 in filtered_videos)
+            8: 6   # Date (index 6 in filtered_videos)
         }
         
-        # Only allow sorting on columns: Title(1), Creator(2), Quality(3), Format(4), Duration(5), Size(6), Date(7)
-        sortable_columns = [1, 2, 3, 4, 5, 6, 7]
+        # Only allow sorting on columns: Platform(1), Title(2), Creator(3), Quality(4), Format(5), Duration(6), Size(7), Date(8)
+        sortable_columns = [1, 2, 3, 4, 5, 6, 7, 8]
         if column not in sortable_columns:
             print(f"DEBUG: Column {column} is not sortable, returning")
             return
@@ -2223,6 +2236,20 @@ class DownloadedVideosTab(QWidget):
                             except ValueError:
                                 continue
                     return 0  # Default to epoch time if parsing fails
+                elif column == 12:  # Platform
+                    # Get platform value and sort alphabetically
+                    platform = video[12] if len(video) > 12 else "Unknown"
+                    # Prioritize popular platforms
+                    if platform == "YouTube":
+                        return "A"  # Sort first
+                    elif platform == "TikTok":
+                        return "B"  # Sort second
+                    elif platform == "Instagram":
+                        return "C"  # Sort third
+                    elif platform == "Facebook":
+                        return "D"  # Sort fourth
+                    else:
+                        return platform.lower()  # Other platforms sort alphabetically
                 else:
                     # Default to sorting by the exact column value
                     if column < len(video):
@@ -3205,7 +3232,7 @@ class DownloadedVideosTab(QWidget):
         index = self.downloads_table.horizontalHeader().logicalIndexAt(pos)
         
         # Show menu only for columns that can be filtered
-        filterable_columns = [3, 4, 5, 7]  # Quality, Format, Duration, Date (excluding Size)
+        filterable_columns = [1, 4, 5, 6, 8]  # Platform, Quality, Format, Duration, Date
         
         if index in filterable_columns:
             # Handle special case for Date column
