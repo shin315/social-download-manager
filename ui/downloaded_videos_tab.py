@@ -30,6 +30,9 @@ class FilterPopup(QMenu):
         self.column_index = column_index
         self.unique_values = unique_values or []
         self.header_text = header_text
+        self.parent = parent
+        
+        print(f"DEBUG: FilterPopup initialized for column {column_index}, header='{header_text}', values={self.unique_values}")
         
         # Create actions for each unique value
         self.create_filter_items()
@@ -37,7 +40,11 @@ class FilterPopup(QMenu):
     def create_filter_items(self):
         """Create a list of unique values for filtering"""
         # Add "Clear Filter" option at the top of the menu
-        all_action = self.addAction("Clear Filter")
+        clear_filter_text = "Clear Filter"
+        if hasattr(self.parent, 'tr_'):
+            clear_filter_text = self.parent.tr_("FILTER_CLEAR")
+            
+        all_action = self.addAction(clear_filter_text)
         all_action.triggered.connect(lambda: self.apply_filter(None))
         
         self.addSeparator()
@@ -46,11 +53,13 @@ class FilterPopup(QMenu):
         for value in sorted(self.unique_values):
             display_value = str(value) if value is not None else "Empty"
             action = self.addAction(display_value)
+            print(f"DEBUG: Adding filter option: '{display_value}'")
             # Use lambda with default value to avoid closure issues
             action.triggered.connect(lambda checked=False, val=value: self.apply_filter(val))
     
     def apply_filter(self, value):
         """Apply filter for the selected value"""
+        print(f"DEBUG: FilterPopup.apply_filter called with value='{value}'")
         # Emit signal with the selected value (None = all)
         self.filterChanged.emit(self.column_index, value)
         self.close()
@@ -367,7 +376,7 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.horizontalHeader().customContextMenuRequested.connect(self.show_header_context_menu)
         
         # Add tooltip for filterable headers
-        filterable_columns = [1, 4, 5, 6, 8]  # Platform, Quality, Format, Duration, Date
+        filterable_columns = [self.platform_col, self.quality_col, self.format_col, self.date_col]  # Platform, Quality, Format, Date
         
         # Set tooltips for filterable columns
         for i in filterable_columns:
@@ -714,6 +723,18 @@ class DownloadedVideosTab(QWidget):
         filtered_videos = []
         search_text = self.search_input.text().lower()
         
+        # Map from column UI index to data index in filtered_videos
+        column_mapping = {
+            self.platform_col: 12,  # Platform (index 12 in video_info)
+            self.title_col: 0,      # Title (index 0 in video_info)
+            self.creator_col: 1,    # Creator (index 1 in video_info)
+            self.quality_col: 2,    # Quality (index 2 in video_info)
+            self.format_col: 3,     # Format (index 3 in video_info)
+            self.duration_col: 10,  # Duration (index 10 in video_info)
+            self.size_col: 4,       # Size (index 4 in video_info)
+            self.date_col: 6,       # Date (index 6 in video_info)
+        }
+        
         # Define platform column index outside of conditions
         platform_column_index = 12  # Platform is stored at index 12 in video_info
         
@@ -769,8 +790,12 @@ class DownloadedVideosTab(QWidget):
                         break
                 else:
                     # Regular column filter - check if value matches
-                    if column_index < len(video):
-                        cell_value = video[column_index]
+                    # Map UI column index to data index
+                    data_index = column_mapping.get(column_index, column_index)
+                    
+                    if data_index < len(video):
+                        cell_value = video[data_index]
+                        print(f"DEBUG Filter: Comparing column {column_index}=>{data_index}, value='{cell_value}' with filter='{filter_value}'")
                         if cell_value != filter_value:
                             skip_video = True
                             break
@@ -3424,11 +3449,14 @@ class DownloadedVideosTab(QWidget):
         """Get list of unique values for a column"""
         # Map from column UI index to data index in filtered_videos
         column_mapping = {
-            3: 2,  # Quality (index 2 in filtered_videos)
-            4: 3,  # Format (index 3 in filtered_videos)
-            5: 4,  # Duration (index 4 in filtered_videos)
-            6: 5,  # Size (index 5 in filtered_videos)
-            7: 6,  # Date (index 6 in filtered_videos)
+            self.platform_col: 12,  # Platform (index 12 in video_info)
+            self.title_col: 0,      # Title (index 0 in video_info)
+            self.creator_col: 1,    # Creator (index 1 in video_info)
+            self.quality_col: 2,    # Quality (index 2 in video_info)
+            self.format_col: 3,     # Format (index 3 in video_info)
+            self.duration_col: 10,  # Duration (index 10 in video_info)
+            self.size_col: 4,       # Size (index 4 in video_info)
+            self.date_col: 6,       # Date (index 6 in video_info)
         }
         
         # If column_index is not in mapping, return empty list
@@ -3450,17 +3478,20 @@ class DownloadedVideosTab(QWidget):
         """Show context menu when header is right-clicked"""
         # Get header index at position
         index = self.downloads_table.horizontalHeader().logicalIndexAt(pos)
+        print(f"DEBUG: show_header_context_menu called for column index {index}")
         
         # Show menu only for columns that can be filtered
         filterable_columns = []
         
         # Determine filterable columns based on current view
         if self.current_platform == "TikTok":
-            # For TikTok view: Creator, Quality, Format, Duration, Date
-            filterable_columns = [self.creator_col, self.quality_col, self.format_col, self.duration_col, self.date_col]
+            # For TikTok view: Quality, Format, Completed On (date)
+            filterable_columns = [self.quality_col, self.format_col, self.date_col]
         else:
-            # Default view: Platform, Creator, Quality, Format, Duration, Date
-            filterable_columns = [self.platform_col, self.creator_col, self.quality_col, self.format_col, self.duration_col, self.date_col]
+            # Default view: Platform, Quality, Format, Completed On (date)
+            filterable_columns = [self.platform_col, self.quality_col, self.format_col, self.date_col]
+        
+        print(f"DEBUG: Filterable columns: {filterable_columns}")
         
         if index in filterable_columns:
             # Handle special case for Date column
@@ -3470,9 +3501,12 @@ class DownloadedVideosTab(QWidget):
                 
             # Get list of unique values for this column
             unique_values = self.get_unique_column_values(index)
+            print(f"DEBUG: Unique values for column {index}: {unique_values}")
             
             # Show filter menu
-            filter_menu = FilterPopup(self, index, unique_values, self.downloads_table.horizontalHeaderItem(index).text())
+            header_text = self.downloads_table.horizontalHeaderItem(index).text()
+            print(f"DEBUG: Creating FilterPopup for column {index} with header text '{header_text}'")
+            filter_menu = FilterPopup(self, index, unique_values, header_text)
             filter_menu.filterChanged.connect(self.apply_column_filter)
             
             # Show menu at cursor position
@@ -3612,6 +3646,8 @@ class DownloadedVideosTab(QWidget):
 
     def apply_column_filter(self, column_index, selected_value):
         """Apply filter to a specific column"""
+        print(f"DEBUG: apply_column_filter called with column_index={column_index}, selected_value='{selected_value}'")
+        
         # If no value is selected, remove filter for this column
         if not selected_value:
             if column_index in self.active_filters:

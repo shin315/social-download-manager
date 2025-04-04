@@ -863,3 +863,88 @@
 [2025-04-04 21:19:41.414853] Successfully saved config
 [2025-04-04 21:19:41.415852] Verification - Config content after save: {"theme": "dark"}
 [2025-04-04 21:19:41.415852] Theme changed to: dark
+[2025-04-04 22:33:40.003776] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 22:33:40.003776] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 22:33:40.003776] Executable path: Not running as exe
+[2025-04-04 22:33:40.003776] Config file exists, reading content
+[2025-04-04 22:33:40.003776] Config content: {"theme": "dark"}
+[2025-04-04 22:33:40.003776] Read last_output_folder from config: ''
+[2025-04-04 22:33:40.003776] Output folder doesn't exist or is empty: ''
+[2025-04-04 22:33:40.003776] Setting theme to: dark
+[2025-04-04 22:33:40.080035] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 22:33:40.080035] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 22:33:40.080035] Key: theme, Value: dark
+[2025-04-04 22:33:40.080035] Config file exists, reading existing content
+[2025-04-04 22:33:40.080035] Existing config: {'theme': 'dark'}
+[2025-04-04 22:33:40.080035] Updated config: {'theme': 'dark'}
+[2025-04-04 22:33:40.080035] Successfully saved config
+[2025-04-04 22:33:40.081037] Verification - Config content after save: {"theme": "dark"}
+[2025-04-04 22:33:40.081037] Theme changed to: dark
+[2025-04-04 22:37:22.671422] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 22:37:22.671422] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 22:37:22.671422] Executable path: Not running as exe
+[2025-04-04 22:37:22.671422] Config file exists, reading content
+[2025-04-04 22:37:22.671422] Config content: {"theme": "dark"}
+[2025-04-04 22:37:22.671422] Read last_output_folder from config: ''
+[2025-04-04 22:37:22.671422] Output folder doesn't exist or is empty: ''
+[2025-04-04 22:37:22.671422] Setting theme to: dark
+[2025-04-04 22:37:22.734577] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 22:37:22.734577] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 22:37:22.734577] Key: theme, Value: dark
+[2025-04-04 22:37:22.734577] Config file exists, reading existing content
+[2025-04-04 22:37:22.734577] Existing config: {'theme': 'dark'}
+[2025-04-04 22:37:22.735581] Updated config: {'theme': 'dark'}
+[2025-04-04 22:37:22.735581] Successfully saved config
+[2025-04-04 22:37:22.736577] Verification - Config content after save: {"theme": "dark"}
+[2025-04-04 22:37:22.736577] Theme changed to: dark
+[2025-04-04 22:41:26.609664] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 22:41:26.609664] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 22:41:26.609664] Executable path: Not running as exe
+[2025-04-04 22:41:26.609664] Config file exists, reading content
+[2025-04-04 22:41:26.609664] Config content: {"theme": "dark"}
+[2025-04-04 22:41:26.609664] Read last_output_folder from config: ''
+[2025-04-04 22:41:26.609664] Output folder doesn't exist or is empty: ''
+[2025-04-04 22:41:26.609664] Setting theme to: dark
+[2025-04-04 22:41:26.676389] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 22:41:26.676389] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 22:41:26.676389] Key: theme, Value: dark
+[2025-04-04 22:41:26.676389] Config file exists, reading existing content
+[2025-04-04 22:41:26.676389] Existing config: {'theme': 'dark'}
+[2025-04-04 22:41:26.676389] Updated config: {'theme': 'dark'}
+[2025-04-04 22:41:26.677392] Successfully saved config
+[2025-04-04 22:41:26.678389] Verification - Config content after save: {"theme": "dark"}
+[2025-04-04 22:41:26.678389] Theme changed to: dark
+[2025-04-04 22:48:13.616812] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 22:48:13.616812] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 22:48:13.616812] Executable path: Not running as exe
+[2025-04-04 22:48:13.616812] Config file exists, reading content
+[2025-04-04 22:48:13.616812] Config content: {"theme": "dark"}
+[2025-04-04 22:48:13.616812] Read last_output_folder from config: ''
+[2025-04-04 22:48:13.616812] Output folder doesn't exist or is empty: ''
+[2025-04-04 22:48:13.616812] Setting theme to: dark
+[2025-04-04 22:48:13.690324] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 22:48:13.690324] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 22:48:13.690324] Key: theme, Value: dark
+[2025-04-04 22:48:13.690324] Config file exists, reading existing content
+[2025-04-04 22:48:13.690324] Existing config: {'theme': 'dark'}
+[2025-04-04 22:48:13.690324] Updated config: {'theme': 'dark'}
+[2025-04-04 22:48:13.691324] Successfully saved config
+[2025-04-04 22:48:13.691324] Verification - Config content after save: {"theme": "dark"}
+[2025-04-04 22:48:13.692324] Theme changed to: dark
+[2025-04-04 22:50:20.059352] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 22:50:20.059352] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 22:50:20.059352] Executable path: Not running as exe
+[2025-04-04 22:50:20.059352] Config file exists, reading content
+[2025-04-04 22:50:20.059352] Config content: {"theme": "dark"}
+[2025-04-04 22:50:20.059352] Read last_output_folder from config: ''
+[2025-04-04 22:50:20.059352] Output folder doesn't exist or is empty: ''
+[2025-04-04 22:50:20.059352] Setting theme to: dark
+[2025-04-04 22:50:20.138865] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 22:50:20.138865] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 22:50:20.138865] Key: theme, Value: dark
+[2025-04-04 22:50:20.138865] Config file exists, reading existing content
+[2025-04-04 22:50:20.138865] Existing config: {'theme': 'dark'}
+[2025-04-04 22:50:20.138865] Updated config: {'theme': 'dark'}
+[2025-04-04 22:50:20.139865] Successfully saved config
+[2025-04-04 22:50:20.139865] Verification - Config content after save: {"theme": "dark"}
+[2025-04-04 22:50:20.140865] Theme changed to: dark
