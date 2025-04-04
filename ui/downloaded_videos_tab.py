@@ -2267,47 +2267,150 @@ class DownloadedVideosTab(QWidget):
                 # Handle special columns with custom sorting logic
                 if column == 4:  # Size column
                     # Extract numeric part and convert to float, handle "MB" and "KB"
-                    size_str = video[column]
+                    size_str = str(video[column]) if video[column] else "0 MB"
                     try:
-                        size_value = float(size_str.split()[0])
-                        if "KB" in size_str:
-                            size_value /= 1024  # Convert KB to MB for sorting
+                        # Clean up the size string and handle different formats
+                        size_str = size_str.strip().upper()
+                        
+                        # Extract numeric part
+                        if "MB" in size_str:
+                            value_str = size_str.replace("MB", "").strip()
+                            size_value = float(value_str)
+                            # Keep as MB
+                        elif "KB" in size_str:
+                            value_str = size_str.replace("KB", "").strip()
+                            size_value = float(value_str) / 1024.0  # Convert KB to MB
+                        elif "GB" in size_str:
+                            value_str = size_str.replace("GB", "").strip()
+                            size_value = float(value_str) * 1024.0  # Convert GB to MB
+                        elif "B" in size_str:
+                            value_str = size_str.replace("B", "").strip()
+                            size_value = float(value_str) / (1024.0 * 1024.0)  # Convert B to MB
+                        else:
+                            # Try to extract numeric part if no unit is found
+                            import re
+                            numeric_match = re.search(r'(\d+\.?\d*)', size_str)
+                            if numeric_match:
+                                size_value = float(numeric_match.group(1))
+                            else:
+                                size_value = 0.0
+                                
+                        print(f"DEBUG Size sort: '{size_str}' parsed as {size_value} MB")
                         return size_value
-                    except (ValueError, IndexError):
+                    except Exception as e:
+                        print(f"DEBUG Size sort: Error parsing '{size_str}': {e}")
                         return 0.0  # Default to 0 if parsing fails
                         
                 elif column == 6:  # Date column
                     # Parse date for proper sorting
                     from datetime import datetime
-                    date_str = video[column]
+                    date_str = str(video[column])
                     try:
-                        # Try different date formats
-                        for date_format in ["%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%Y/%m/%d %H:%M", "%d/%m/%Y %H:%M"]:
+                        # Try different date formats with explicit handling
+                        date_formats = [
+                            "%Y-%m-%d %H:%M:%S",  # 2025-04-04 17:15:39
+                            "%Y-%m-%d %H:%M",     # 2025-04-04 17:15
+                            "%Y/%m/%d %H:%M:%S",  # 2025/04/04 17:15:39
+                            "%Y/%m/%d %H:%M",     # 2025/04/04 17:15
+                            "%d/%m/%Y %H:%M:%S",  # 04/04/2025 17:15:39
+                            "%d/%m/%Y %H:%M",     # 04/04/2025 17:15
+                            "%d-%m-%Y %H:%M:%S",  # 04-04-2025 17:15:39
+                            "%d-%m-%Y %H:%M"      # 04-04-2025 17:15
+                        ]
+                        
+                        for fmt in date_formats:
                             try:
-                                return datetime.strptime(date_str, date_format)
+                                # Clean the date string to ensure it's properly formatted
+                                cleaned_date_str = date_str.strip()
+                                date_obj = datetime.strptime(cleaned_date_str, fmt)
+                                print(f"DEBUG Date sort: Successfully parsed '{cleaned_date_str}' with format '{fmt}'")
+                                return date_obj  # Return datetime object for proper sorting
                             except ValueError:
                                 continue
-                        # If all formats fail, return original string
-                        return date_str
-                    except Exception:
-                        return date_str
+                        
+                        # If we get here, none of the formats worked
+                        print(f"DEBUG Date sort: Could not parse date '{date_str}' with any format")
+                        return datetime(1900, 1, 1)  # Return a very old date as fallback
+                    except Exception as e:
+                        print(f"DEBUG Date sort: Exception parsing date: {e}")
+                        return datetime(1900, 1, 1)  # Return a very old date as fallback
                         
                 elif column == 10:  # Duration column
                     # Convert duration to seconds for sorting
-                    duration_str = str(video[column])
+                    duration_str = str(video[column]) if video[column] else "0"
                     try:
+                        # Clean the duration string
+                        duration_str = duration_str.strip()
+                        
                         # If duration is already in seconds (numeric)
                         if duration_str.isdigit():
-                            return int(duration_str)
-                        # If duration is in MM:SS format
+                            seconds = int(duration_str)
+                            print(f"DEBUG Duration sort: '{duration_str}' parsed as {seconds} seconds")
+                            return seconds
+                            
+                        # If duration is in MM:SS or HH:MM:SS format
                         elif ":" in duration_str:
                             parts = duration_str.split(":")
-                            minutes = int(parts[0])
-                            seconds = int(parts[1])
-                            return minutes * 60 + seconds
+                            
+                            # Handle different formats
+                            if len(parts) == 2:  # MM:SS
+                                minutes = int(parts[0])
+                                seconds = int(parts[1])
+                                total_seconds = minutes * 60 + seconds
+                                print(f"DEBUG Duration sort: '{duration_str}' parsed as {total_seconds} seconds")
+                                return total_seconds
+                            elif len(parts) == 3:  # HH:MM:SS
+                                hours = int(parts[0])
+                                minutes = int(parts[1])
+                                seconds = int(parts[2])
+                                total_seconds = hours * 3600 + minutes * 60 + seconds
+                                print(f"DEBUG Duration sort: '{duration_str}' parsed as {total_seconds} seconds")
+                                return total_seconds
+                        
+                        # Handle text descriptions of duration
+                        elif any(unit in duration_str.lower() for unit in ["min", "sec", "hour", "hr"]):
+                            # Extract numbers from strings like "5 min", "3 hours", "2 hr 15 min", etc.
+                            import re
+                            
+                            total_seconds = 0
+                            
+                            # Look for hours
+                            hour_match = re.search(r'(\d+\.?\d*)\s*(?:hour|hr)s?', duration_str.lower())
+                            if hour_match:
+                                hours = float(hour_match.group(1))
+                                total_seconds += int(hours * 3600)
+                            
+                            # Look for minutes
+                            min_match = re.search(r'(\d+\.?\d*)\s*(?:min)(?:ute)?s?', duration_str.lower())
+                            if min_match:
+                                minutes = float(min_match.group(1))
+                                total_seconds += int(minutes * 60)
+                            
+                            # Look for seconds
+                            sec_match = re.search(r'(\d+\.?\d*)\s*(?:sec)(?:ond)?s?', duration_str.lower())
+                            if sec_match:
+                                seconds = float(sec_match.group(1))
+                                total_seconds += int(seconds)
+                            
+                            # If we found any time units, return the total
+                            if total_seconds > 0:
+                                print(f"DEBUG Duration sort: '{duration_str}' parsed as {total_seconds} seconds")
+                                return total_seconds
+                            
+                            # If no specific time units, but there's a number, assume it's minutes
+                            general_match = re.search(r'(\d+\.?\d*)', duration_str)
+                            if general_match:
+                                minutes = float(general_match.group(1))
+                                seconds = int(minutes * 60)
+                                print(f"DEBUG Duration sort: '{duration_str}' parsed as {seconds} seconds (assuming minutes)")
+                                return seconds
+                        
                         # Unknown format
+                        print(f"DEBUG Duration sort: Could not parse '{duration_str}'")
                         return 0
-                    except (ValueError, IndexError):
+                        
+                    except Exception as e:
+                        print(f"DEBUG Duration sort: Error parsing '{duration_str}': {e}")
                         return 0
                 
                 # Default case: return the value itself for normal sorting
@@ -2345,19 +2448,29 @@ class DownloadedVideosTab(QWidget):
                 # Get hashtags at index 7
                 hashtags = video[7] if len(video) > 7 else ""
                 
-                # Count hashtags
+                # Prepare hashtags for sorting
+                if not hashtags:
+                    return ("", 0)  # Empty hashtags sort first (or last when reversed)
+                
+                # Normalize hashtags to ensure consistent sorting
                 if isinstance(hashtags, str):
-                    # Count either space-separated hashtags or just the string itself
-                    if ' ' in hashtags:
-                        count = len([h for h in hashtags.split() if h.strip()])
-                    else:
-                        count = 1 if hashtags.strip() else 0
-                else:
-                    count = 0
+                    # Clean and normalize hashtags
+                    normalized = hashtags.lower().strip()
                     
-                return count
+                    # Count hashtags
+                    if ' ' in normalized:
+                        tags = [tag.strip() for tag in normalized.split() if tag.strip()]
+                        count = len(tags)
+                        # First sort by count, then by the actual hashtag content
+                        return (normalized, count)
+                    else:
+                        # Single hashtag
+                        return (normalized, 1)
+                else:
+                    return ("", 0)
             
-            # Sort by hashtag count
+            # Sort by normalized hashtags and count
+            # Primary sort by hashtag text, secondary by count
             sorted_videos.sort(key=hashtag_sort_key, reverse=(sort_order == Qt.SortOrder.DescendingOrder))
             
             # Update and display
