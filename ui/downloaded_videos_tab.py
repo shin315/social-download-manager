@@ -1,4 +1,4 @@
-from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
+﻿from PyQt6.QtWidgets import (QWidget, QVBoxLayout, QHBoxLayout, QLabel,
                              QLineEdit, QPushButton, QTableWidget, QHeaderView,
                              QTableWidgetItem, QMessageBox, QFrame, QScrollArea, QApplication, QDialog, QTextEdit, QCheckBox,
                              QMenu, QDialogButtonBox, QToolTip, QAbstractItemView,
@@ -79,11 +79,10 @@ class DownloadedVideosTab(QWidget):
         self.creator_col = 2
         self.quality_col = 3
         self.format_col = 4
-        self.size_col = 5
-        self.status_col = 6
-        self.date_col = 7
-        self.hashtags_col = 8
-        self.actions_col = 9
+        self.duration_col = 5  # New duration column
+        self.size_col = 6      # Changed from 5 to 6
+        self.date_col = 7      # Changed from 7 to 8
+        # Removed hashtags_col and status_col
         
         # Filter storage variables
         self.active_filters = {}  # {column_index: [allowed_values]}
@@ -162,27 +161,16 @@ class DownloadedVideosTab(QWidget):
             self.tr_("HEADER_CREATOR"), 
             self.tr_("HEADER_QUALITY"), 
             self.tr_("HEADER_FORMAT"), 
+            self.tr_("HEADER_DURATION"),
             self.tr_("HEADER_SIZE"), 
-            self.tr_("HEADER_STATUS"), 
-            self.tr_("HEADER_DATE"), 
-            self.tr_("HEADER_HASHTAGS"), 
-            self.tr_("HEADER_ACTIONS")
+            self.tr_("HEADER_DATE")
         ]
         self.downloads_table.setHorizontalHeaderLabels(headers)
         
     def update_table_buttons(self):
         """Update buttons in the table"""
-        for row in range(self.downloads_table.rowCount()):
-            # Get widget in the Action column
-            action_widget = self.downloads_table.cellWidget(row, 9)
-            if action_widget:
-                # Find buttons in the widget
-                for child in action_widget.findChildren(QPushButton):
-                    # Update based on current button text
-                    if "Open" in child.text() or "Mở" in child.text():
-                        child.setText(self.tr_("BUTTON_OPEN"))
-                    elif "Delete" in child.text() or "Xóa" in child.text():
-                        child.setText(self.tr_("BUTTON_DELETE"))
+        # Removed since there are no buttons in the Actions column anymore
+        pass
 
     def init_ui(self):
         # Main layout
@@ -287,7 +275,7 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.setObjectName("downloads_table")
         
         # Configure table properties
-        self.downloads_table.setColumnCount(10)  # Include selection column
+        self.downloads_table.setColumnCount(8)  # 8 columns for our new layout
         
         # Set header labels
         header_labels = [
@@ -296,11 +284,9 @@ class DownloadedVideosTab(QWidget):
             self.tr_("TABLE_CREATOR"),
             self.tr_("TABLE_QUALITY"),
             self.tr_("TABLE_FORMAT"),
+            self.tr_("TABLE_DURATION"),
             self.tr_("TABLE_SIZE"),
-            self.tr_("TABLE_STATUS"),
-            self.tr_("TABLE_DATE"),
-            self.tr_("TABLE_HASHTAGS"),
-            self.tr_("TABLE_ACTIONS")
+            self.tr_("TABLE_DATE")
         ]
         self.downloads_table.setHorizontalHeaderLabels(header_labels)
         
@@ -310,16 +296,14 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.horizontalHeader().setFont(header_font)
         
         # Set custom column widths
-        self.downloads_table.setColumnWidth(self.select_col, 30)     # Checkbox column
-        self.downloads_table.setColumnWidth(self.title_col, 225)     # Increased title from 220 to 225
-        self.downloads_table.setColumnWidth(self.creator_col, 100)   # Keep at 100
-        self.downloads_table.setColumnWidth(self.quality_col, 85)    # Reduced from 100 to 85 (just enough for "Quality")
-        self.downloads_table.setColumnWidth(self.format_col, 75)     # Increased from 70 to 75 for better display
-        self.downloads_table.setColumnWidth(self.size_col, 75)       # Increased from 70 to 75 for better display
-        self.downloads_table.setColumnWidth(self.status_col, 80)     # Keep at 80
-        self.downloads_table.setColumnWidth(self.date_col, 120)      # Keep at 120
-        self.downloads_table.setColumnWidth(self.hashtags_col, 100)  # Keep at 100
-        self.downloads_table.setColumnWidth(self.actions_col, 130)   # Keep at 130
+        self.downloads_table.setColumnWidth(self.select_col, 30)      # Checkbox column
+        self.downloads_table.setColumnWidth(self.title_col, 250)      # Increased width for title column
+        self.downloads_table.setColumnWidth(self.creator_col, 100)    # Keep at 100
+        self.downloads_table.setColumnWidth(self.quality_col, 85)     # Reduced from 100 to 85
+        self.downloads_table.setColumnWidth(self.format_col, 75)      # Keep at 75
+        self.downloads_table.setColumnWidth(self.duration_col, 80)    # New duration column
+        self.downloads_table.setColumnWidth(self.size_col, 75)        # Keep at 75
+        self.downloads_table.setColumnWidth(self.date_col, 120)       # Keep at 120
         
         # Set row selection mode
         self.downloads_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
@@ -331,11 +315,9 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)  # Creator
         self.downloads_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)  # Quality
         self.downloads_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)  # Format
-        self.downloads_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)  # Size
-        self.downloads_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Status
+        self.downloads_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)  # Duration
+        self.downloads_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Size
         self.downloads_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Fixed)  # Date
-        self.downloads_table.horizontalHeader().setSectionResizeMode(8, QHeaderView.ResizeMode.Fixed)  # Hashtags
-        self.downloads_table.horizontalHeader().setSectionResizeMode(9, QHeaderView.ResizeMode.Fixed)  # Actions
         
         # Show sort indicator
         self.downloads_table.horizontalHeader().setSortIndicatorShown(False)  # Changed from True to False
@@ -379,7 +361,7 @@ class DownloadedVideosTab(QWidget):
         self.downloads_table.horizontalHeader().customContextMenuRequested.connect(self.show_header_context_menu)
         
         # Add tooltip for filterable headers
-        filterable_columns = [3, 4, 6, 7]  # Quality, Format, Status, Date
+        filterable_columns = [3, 4, 5, 7]  # Quality, Format, Duration, Date
         
         # Set tooltips for filterable columns
         for i in filterable_columns:
@@ -1112,26 +1094,31 @@ class DownloadedVideosTab(QWidget):
             format_item.setFlags(format_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
             self.downloads_table.setItem(idx, 4, format_item)
             
+            # Duration column
+            duration_value = video[10] if len(video) > 10 else "Unknown"
+            # Format duration in a user-friendly way if it's in seconds
+            try:
+                if duration_value and duration_value != "Unknown" and str(duration_value).isdigit():
+                    # Convert seconds to MM:SS format
+                    duration_secs = int(duration_value)
+                    minutes = duration_secs // 60
+                    seconds = duration_secs % 60
+                    duration_value = f"{minutes}:{seconds:02d}"
+            except:
+                pass  # Keep original value if conversion fails
+            
+            duration_item = QTableWidgetItem(str(duration_value))
+            duration_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
+            # Disable editing
+            duration_item.setFlags(duration_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
+            self.downloads_table.setItem(idx, 5, duration_item)
+            
             # Size column
             size_item = QTableWidgetItem(video[4])
             size_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
             # Disable editing
             size_item.setFlags(size_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(idx, 5, size_item)
-            
-            # Status column
-            status_value = video[5]  
-            # Ensure status is always "Successful" if file exists
-            filepath = os.path.join(video[8], video[0]) if video[8] and video[0] else ""
-            if filepath and os.path.exists(filepath):
-                status_value = "Successful"
-            elif status_value == "Download successful":
-                status_value = "Successful"
-            status_item = QTableWidgetItem(status_value)
-            status_item.setTextAlignment(Qt.AlignmentFlag.AlignCenter)
-            # Disable editing
-            status_item.setFlags(status_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(idx, 6, status_item)
+            self.downloads_table.setItem(idx, 6, size_item)
             
             # Date column - Format as two lines with date on top and time below
             date_string = video[6]
@@ -1173,100 +1160,7 @@ class DownloadedVideosTab(QWidget):
             date_item.setFlags(date_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
             self.downloads_table.setItem(idx, 7, date_item)
             
-            # Hashtags column - ensure there's a #
-            hashtags = video[7]
-            # If hashtags don't have a #, add one
-            if hashtags and not hashtags.startswith('#'):
-                if ' ' in hashtags and not '#' in hashtags:
-                    hashtags = ' '.join(['#' + tag.strip() for tag in hashtags.split()])
-            
-            hashtags_item = QTableWidgetItem(hashtags)
-            hashtags_item.setToolTip(hashtags)  # Tooltip when hovered
-            # Set text elision (ellipsis) to false to display full text
-            hashtags_item.setTextAlignment(Qt.AlignmentFlag.AlignLeft | Qt.AlignmentFlag.AlignVCenter)
-            # Set word wrap to true to allow text to wrap if necessary
-            hashtags_item.setFlags(hashtags_item.flags() & ~Qt.ItemFlag.ItemIsEditable)
-            self.downloads_table.setItem(idx, 8, hashtags_item)
-            
-            # Remove Saved Folder column (index 8)
-            
-            # Action (Open and Delete) column
-            action_widget = QWidget()
-            action_layout = QHBoxLayout(action_widget)
-            action_layout.setContentsMargins(0, 0, 0, 0)
-            
-            # Open - open file instead of just folder
-            open_btn = QPushButton(self.tr_("BUTTON_OPEN"))
-            
-            # Determine full file path based on title and format
-            directory_path = video[8]
-            title = video[0]
-            format_str = video[3]
-            
-            # Determine file extension from format_str
-            ext = "mp3" if format_str == "MP3" or "mp3" in format_str.lower() else "mp4"
-            
-            # Create full file path
-            full_filepath = ""
-            if directory_path and title:
-                # Create file path
-                possible_filepath = os.path.join(directory_path, f"{title}.{ext}")
-                
-                # Check if file exists
-                if os.path.exists(possible_filepath):
-                    full_filepath = possible_filepath
-                else:
-                    # If file doesn't exist, try to find a similar file
-                    try:
-                        files = os.listdir(directory_path)
-                        best_match = None
-                        
-                        # Remove special characters from title for comparison
-                        clean_title = title.replace('?', '').replace('!', '').replace(':', '').strip()
-                        
-                        for file in files:
-                            # Only check MP3 or MP4 files
-                            if file.endswith('.mp3') or file.endswith('.mp4'):
-                                file_name = os.path.splitext(file)[0]
-                                
-                                # Check if title is in file name or vice versa
-                                if clean_title in file_name or file_name in clean_title:
-                                    best_match = file
-                                    break
-                        
-                        if best_match:
-                            full_filepath = os.path.join(directory_path, best_match)
-                        else:
-                            # If no file found, use folder
-                            full_filepath = directory_path
-                    except Exception as e:
-                        print(f"DEBUG - Error finding file for Open button: {str(e)}")
-                        full_filepath = directory_path
-            else:
-                # If not enough information, use folder
-                full_filepath = directory_path
-                
-            # Save full path for lambda
-            final_path = full_filepath if full_filepath else directory_path
-            
-            # Connect Open button to open_folder method
-            open_btn.clicked.connect(lambda checked, path=final_path, row_idx=idx: self.open_folder_and_select(path, row_idx))
-            open_btn.setMinimumWidth(60)  # Đảm bảo đủ chiều rộng hiển thị text
-            open_btn.setStyleSheet("padding: 4px 8px;")
-            action_layout.addWidget(open_btn)
-            
-            # Delete button
-            delete_btn = QPushButton(self.tr_("BUTTON_DELETE"))
-            delete_btn.clicked.connect(lambda checked, row_idx=idx: self.delete_video_and_select(row_idx))
-            delete_btn.setMinimumWidth(60)  # Đảm bảo đủ chiều rộng hiển thị text
-            delete_btn.setStyleSheet("padding: 4px 8px;")
-            action_layout.addWidget(delete_btn)
-            
-            # Đảm bảo layout không co lại
-            action_layout.setSpacing(4)  # Thêm khoảng cách giữa các nút
-            action_widget.setLayout(action_layout)
-            
-            self.downloads_table.setCellWidget(idx, 9, action_widget)
+            # Removed Status and Hashtags columns
         
         # Re-enable sorting if it was enabled
         if was_sorting_enabled:
@@ -1607,7 +1501,7 @@ class DownloadedVideosTab(QWidget):
     def update_all_filter_icons(self):
         """Update all filter icons on headers"""
         # Clear all filter icons
-        filterable_columns = [3, 4, 6, 7]  # Quality, Format, Status, Date (excluding Size)
+        filterable_columns = [3, 4, 5, 7]  # Quality, Format, Duration, Date (excluding Size)
         for column_index in filterable_columns:
             self.update_filter_icon(column_index, False)
         
@@ -2195,16 +2089,13 @@ class DownloadedVideosTab(QWidget):
             2: 1,  # Creator (index 1 in filtered_videos)
             3: 2,  # Quality (index 2 in filtered_videos)
             4: 3,  # Format (index 3 in filtered_videos)
-            5: 4,  # Size (index 4 in filtered_videos)
-            6: 5,  # Status (index 5 in filtered_videos)
-            7: 6,  # Date (index 6 in filtered_videos)
-            8: 7,  # Hashtags (index 7 in filtered_videos)
-            9: 8   # Action (no sorting)
+            5: 10, # Duration (index 10 in filtered_videos)
+            6: 4,  # Size (index 4 in filtered_videos)
+            7: 6   # Date (index 6 in filtered_videos)
         }
         
-        # Only allow sorting on columns: Title(1), Creator(2), Quality(3), Format(4), Size(5), Date(7)
-        # Skip other columns: Select(0), Status(6), Hashtags(8), Actions(9)
-        sortable_columns = [1, 2, 3, 4, 5, 7]
+        # Only allow sorting on columns: Title(1), Creator(2), Quality(3), Format(4), Duration(5), Size(6), Date(7)
+        sortable_columns = [1, 2, 3, 4, 5, 6, 7]
         if column not in sortable_columns:
             print(f"DEBUG: Column {column} is not sortable, returning")
             return
@@ -2237,62 +2128,109 @@ class DownloadedVideosTab(QWidget):
         print(f"DEBUG: sort_table completed")
 
     def sort_videos(self, column):
-        """Sort the video list by column"""
+        """Sort videos by the given column index"""
         print(f"DEBUG: sort_videos called with column={column}, sort_order={self.sort_order}")
-        print(f"DEBUG: Before sorting - filtered_videos count: {len(self.filtered_videos)}")
         
         def get_sort_key(video):
-            value = video[column]
-            
-            if column == 2:  # Quality
-                # Convert quality to number for sorting
-                quality_order = {
-                    "1080p": 10,
-                    "720p": 9,
-                    "480p": 8,
-                    "360p": 7,
-                    "320kbps": 3,  # Audio quality
-                    "192kbps": 2,
-                    "128kbps": 1,
-                    "Unknown": 0
-                }
-                return quality_order.get(value, 0)
-            
-            elif column == 3:  # Format
-                # Sort format (MP4 first, MP3 second)
-                format_order = {
-                    "MP4": 1,
-                    "MP3": 2,
-                    "Video (mp4)": 1,  # For backward compatibility
-                    "Audio (mp3)": 2,  # For backward compatibility
-                    "Unknown": 3
-                }
-                return format_order.get(value, 3)
-                
-            elif column == 4:  # Size
-                try:
-                    # Convert MB, KB to numbers
-                    if 'MB' in value:
-                        return float(value.replace('MB', '').strip())
-                    elif 'KB' in value:
-                        return float(value.replace('KB', '').strip()) / 1024
-                    return 0
-                except Exception as e:
-                    print(f"Error converting size: {e}")
-                    return 0
+            """Get sort key for the given video based on column"""
+            try:
+                if column == 0:  # Title
+                    return video[0].lower()
+                elif column == 1:  # Creator
+                    return video[1].lower()
+                elif column == 2:  # Quality
+                    # Sort by resolution or quality
+                    quality = video[2].lower()
+                    # Convert common resolutions to numeric values for better sorting
+                    if quality == "1080p":
+                        return 1080
+                    elif quality == "720p":
+                        return 720
+                    elif quality == "480p":
+                        return 480
+                    elif quality == "360p":
+                        return 360
+                    elif quality == "320kbps":
+                        return 320
+                    elif quality == "192kbps":
+                        return 192
+                    elif quality == "128kbps":
+                        return 128
+                    else:
+                        # Try to extract numeric part
+                        match = re.search(r'(\d+)', quality)
+                        if match:
+                            return int(match.group(1))
+                        return quality  # Fallback to string sorting
+                elif column == 3:  # Format
+                    return video[3].lower()
+                elif column == 10:  # Duration
+                    # Get duration value
+                    duration = video[10] if len(video) > 10 else "Unknown"
                     
-            elif column == 0 or column == 1:  # Title or Creator
-                # Normalize text before sorting
-                try:
-                    return unicodedata.normalize('NFKD', value.lower())
-                except Exception as e:
-                    print(f"Error normalizing text: {e}")
-                    return value.lower()
+                    # If it's already a number (seconds), use it directly
+                    if isinstance(duration, (int, float)):
+                        return duration
                     
-            # Default sort text case-insensitively
-            if isinstance(value, str):
-                return value.lower()
-            return value
+                    # If it's a string but represents a number, convert it
+                    if duration and duration != "Unknown" and str(duration).isdigit():
+                        return int(duration)
+                        
+                    # If it's in MM:SS format, convert to seconds
+                    if duration and ":" in duration:
+                        try:
+                            parts = duration.split(":")
+                            if len(parts) == 2:  # MM:SS
+                                minutes, seconds = map(int, parts)
+                                return minutes * 60 + seconds
+                            elif len(parts) == 3:  # HH:MM:SS
+                                hours, minutes, seconds = map(int, parts)
+                                return hours * 3600 + minutes * 60 + seconds
+                        except:
+                            pass
+                    
+                    # Fallback to lowest value
+                    return -1
+                elif column == 4:  # Size
+                    # Convert file size (e.g., "10.5 MB") to numeric value
+                    size_str = video[4].lower()
+                    try:
+                        # Extract numeric part
+                        match = re.search(r'([\d.]+)', size_str)
+                        if match:
+                            size_value = float(match.group(1))
+                            
+                            # Adjust value based on unit (MB, KB, GB)
+                            if "kb" in size_str:
+                                return size_value / 1024  # Convert KB to MB
+                            elif "gb" in size_str:
+                                return size_value * 1024  # Convert GB to MB
+                            else:
+                                return size_value  # Assume MB
+                        return 0  # Default to 0 if no match
+                    except:
+                        return 0  # Default to 0 if parsing fails
+                elif column == 6:  # Date
+                    # Parse date for sorting
+                    date_str = video[6]
+                    if date_str and date_str != "Unknown":
+                        # Try multiple formats
+                        for date_format in ["%Y/%m/%d %H:%M", "%Y-%m-%d %H:%M:%S", "%Y-%m-%d %H:%M", "%d/%m/%Y %H:%M"]:
+                            try:
+                                from datetime import datetime
+                                dt = datetime.strptime(date_str, date_format)
+                                return dt  # Return datetime object for proper sorting
+                            except ValueError:
+                                continue
+                    return 0  # Default to epoch time if parsing fails
+                else:
+                    # Default to sorting by the exact column value
+                    if column < len(video):
+                        return video[column]
+                    return ""  # Default empty string if column doesn't exist
+            except Exception as e:
+                print(f"Error calculating sort key: {e}")
+                return ""  # Default value on error
         
         # Sort the list
         try:
@@ -3241,8 +3179,8 @@ class DownloadedVideosTab(QWidget):
         column_mapping = {
             3: 2,  # Quality (index 2 in filtered_videos)
             4: 3,  # Format (index 3 in filtered_videos)
-            5: 4,  # Size (index 4 in filtered_videos)
-            6: 5,  # Status (index 5 in filtered_videos)
+            5: 4,  # Duration (index 4 in filtered_videos)
+            6: 5,  # Size (index 5 in filtered_videos)
             7: 6,  # Date (index 6 in filtered_videos)
         }
         
@@ -3267,7 +3205,7 @@ class DownloadedVideosTab(QWidget):
         index = self.downloads_table.horizontalHeader().logicalIndexAt(pos)
         
         # Show menu only for columns that can be filtered
-        filterable_columns = [3, 4, 6, 7]  # Quality, Format, Status, Date (excluding Size)
+        filterable_columns = [3, 4, 5, 7]  # Quality, Format, Duration, Date (excluding Size)
         
         if index in filterable_columns:
             # Handle special case for Date column
