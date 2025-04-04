@@ -70,6 +70,7 @@ HEADER_ACTIONS = "Actions"
 HEADER_STATUS = "Status"
 HEADER_DOWNLOAD_DATE = "Download Date"
 HEADER_DATE = "Date"
+HEADER_COMPLETED_ON = "Completed On"
 HEADER_SAVED_FOLDER = "Saved Folder"
 HEADER_TITLE = "Title"
 

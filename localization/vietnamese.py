@@ -66,6 +66,7 @@ HEADER_ACTIONS = "Thao Tác"
 HEADER_STATUS = "Trạng Thái"
 HEADER_DOWNLOAD_DATE = "Ngày Tải"
 HEADER_DATE = "Ngày Tải"
+HEADER_COMPLETED_ON = "Hoàn Thành Lúc"
 HEADER_SAVED_FOLDER = "Thư Mục Lưu"
 HEADER_TITLE = "Tiêu Đề"
 
