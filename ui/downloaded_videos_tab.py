@@ -456,29 +456,69 @@ class DownloadedVideosTab(QWidget):
         # Get the font metrics to calculate text width
         font_metrics = QFontMetrics(self.downloads_table.font())
         
-        # Calculate width for each header with padding
-        padding = 20  # Pixels of padding
+        # Set padding for different column types
+        padding = 30  # Default padding in pixels
+        icon_padding = 1  # Additional padding for columns with filter icons
         
-        # Calculate for each column
-        for col in range(1, self.downloads_table.columnCount()):  # Skip checkbox column
+        # Get horizontal header
+        header = self.downloads_table.horizontalHeader()
+        
+        # Make sure the minimum width enforcement is in place
+        if not header.signalsBlocked():
+            try:
+                # Disconnect any existing connection to avoid multiple connections
+                header.sectionResized.disconnect(self.enforce_min_column_width)
+            except:
+                pass  # If no connection existed, that's fine
+            
+            # Connect resize signal to our minimum width enforcer
+            header.sectionResized.connect(self.enforce_min_column_width)
+        
+        # Calculate and store minimum width for each column
+        for col in range(self.downloads_table.columnCount()):
             header_item = self.downloads_table.horizontalHeaderItem(col)
             if header_item:
+                # Get header text
                 header_text = header_item.text()
+                
+                # Calculate text width
                 text_width = font_metrics.horizontalAdvance(header_text)
-                min_width = text_width + padding
                 
-                # Set minimum width based on column type
+                # Add appropriate padding based on column type
+                if col == 0:  # Checkbox column
+                    min_width = 30  # Fixed width for checkbox column
+                elif col in [1, 4, 5, 8]:  # Columns with filter icons (Platform, Quality, Format, Date)
+                    min_width = text_width + padding + icon_padding  # Extra padding for filter icon
+                else:
+                    min_width = text_width + padding
+                
+                # Store minimum width in header item's user data
+                header_item.setData(Qt.ItemDataRole.UserRole, min_width)
+                
+                # Apply minimum width if current width is smaller
                 current_width = self.downloads_table.columnWidth(col)
-                
-                # Apply minimum width only if it's larger than current width
                 if min_width > current_width:
                     print(f"DEBUG: Setting min width for column {col} ({header_text}) from {current_width} to {min_width}")
                     self.downloads_table.setColumnWidth(col, min_width)
                 else:
                     print(f"DEBUG: Keeping current width for column {col} ({header_text}): {current_width}")
-                    
-        # Always ensure select column is narrow
+        
+        # Always ensure select column is narrow but visible
         self.downloads_table.setColumnWidth(0, 30)
+    
+    def enforce_min_column_width(self, column_index, old_size, new_size):
+        """Enforce minimum column width when user tries to resize below minimum"""
+        header_item = self.downloads_table.horizontalHeaderItem(column_index)
+        if header_item:
+            # Get the stored minimum width from user data
+            min_width = header_item.data(Qt.ItemDataRole.UserRole)
+            if min_width and new_size < min_width:
+                print(f"DEBUG: Enforcing min width for column {column_index}: {min_width}")
+                # Temporarily block signals to avoid recursion
+                header = self.downloads_table.horizontalHeader()
+                header.blockSignals(True)
+                header.resizeSection(column_index, min_width)
+                header.blockSignals(False)
 
     def create_video_details_area(self):
         """Create area to display detailed video information"""
@@ -3544,58 +3584,43 @@ class DownloadedVideosTab(QWidget):
         return list(unique_values)
 
     def show_header_context_menu(self, pos):
-        """Show context menu when header is right-clicked"""
-        # Get header index at position
-        index = self.downloads_table.horizontalHeader().logicalIndexAt(pos)
-        print(f"DEBUG: show_header_context_menu called for column index {index}")
-        
-        # Create context menu
-        context_menu = QMenu(self)
-        
-        # Add Reset Column Widths option to the menu
-        action_reset_widths = QAction(self.tr_("MENU_RESET_COLUMN_WIDTHS"), self)
-        action_reset_widths.triggered.connect(self.reset_column_widths)
-        context_menu.addAction(action_reset_widths)
-        
-        # Add separator
-        context_menu.addSeparator()
-        
-        # Show filter options only for filterable columns
-        filterable_columns = []
-        
-        # Determine filterable columns based on current view
+        """Show context menu for header when right-clicked"""
+        column_index = self.downloads_table.horizontalHeader().logicalIndexAt(pos)
+        print(f"DEBUG: show_header_context_menu called for column index {column_index}")
+
+        # Get the filterable columns
         if self.current_platform == "TikTok":
-            # For TikTok view: Quality, Format, Completed On (date)
-            filterable_columns = [self.quality_col, self.format_col, self.date_col]
+            filterable_columns = [3, 4, 8]  # Quality, Format, Date for TikTok
         else:
-            # Default view: Platform, Quality, Format, Completed On (date)
-            filterable_columns = [self.platform_col, self.quality_col, self.format_col, self.date_col]
+            filterable_columns = [1, 4, 5, 8]  # Platform, Quality, Format, Date for all modes
         
         print(f"DEBUG: Filterable columns: {filterable_columns}")
         
-        if index in filterable_columns:
-            # Handle special case for Date column
-            if index == self.date_col:  # Date column
-                self.show_date_filter_menu(pos)
-                return
+        menu = QMenu(self)
+        
+        # Only show filter options for filterable columns
+        if column_index in filterable_columns:
+            if column_index == 8:  # Date column
+                date_action = menu.addAction(self.tr_("TOOLTIP_FILTER_BY").format(self.downloads_table.horizontalHeaderItem(column_index).text()))
+                date_action.triggered.connect(lambda: self.show_date_filter_menu(self.downloads_table.horizontalHeader().mapToGlobal(pos)))
+            else:
+                unique_values = self.get_unique_column_values(column_index)
+                print(f"DEBUG: Unique values for column {column_index}: {unique_values}")
                 
-            # Get list of unique values for this column
-            unique_values = self.get_unique_column_values(index)
-            print(f"DEBUG: Unique values for column {index}: {unique_values}")
-            
-            # Show filter menu
-            header_text = self.downloads_table.horizontalHeaderItem(index).text()
-            print(f"DEBUG: Creating FilterPopup for column {index} with header text '{header_text}'")
-            filter_menu = FilterPopup(self, index, unique_values, header_text)
-            filter_menu.filterChanged.connect(self.apply_column_filter)
-            
-            # Show menu at cursor position
-            header_pos = self.downloads_table.horizontalHeader().mapToGlobal(pos)
-            filter_menu.exec(header_pos)
-        else:
-            # Just show the Reset Column Widths option
-            header_pos = self.downloads_table.horizontalHeader().mapToGlobal(pos)
-            context_menu.exec(header_pos)
+                if unique_values:
+                    # Create and show the filter popup menu
+                    header_text = self.downloads_table.horizontalHeaderItem(column_index).text()
+                    filter_popup = FilterPopup(self, column_index, unique_values, header_text)
+                    print(f"DEBUG: Creating FilterPopup for column {column_index} with header text '{header_text}'")
+                    filter_popup.filterChanged.connect(self.apply_column_filter)
+                    filter_popup.exec(self.downloads_table.horizontalHeader().mapToGlobal(pos))
+                    return  # Return early as we're using a popup menu
+        
+        # Skip adding "Reset Column Widths" option - removed as per client request
+        
+        # Show the menu if it has actions
+        if not menu.isEmpty():
+            menu.exec(self.downloads_table.horizontalHeader().mapToGlobal(pos))
 
     def show_date_filter_menu(self, pos):
         """Show filter menu for date with different options"""
@@ -4061,8 +4086,12 @@ class DownloadedVideosTab(QWidget):
             
             # Store width for each column based on current view
             column_widths = {}
-            for col in range(self.downloads_table.columnCount()):
-                column_widths[str(col)] = self.downloads_table.columnWidth(col)
+            header = self.downloads_table.horizontalHeader()
+            
+            for i in range(1, self.downloads_table.columnCount()):  # Skip the first checkbox column
+                column_widths[str(i)] = header.sectionSize(i)
+            
+            print(f"DEBUG: Saving column widths: {column_widths}")
             
             # Store different widths for different views
             if self.current_platform == "TikTok":
@@ -4070,14 +4099,14 @@ class DownloadedVideosTab(QWidget):
             else:
                 config['column_widths']['all'] = column_widths
             
-            print(f"DEBUG: Saving column widths: {column_widths}")
-            
             # Save updated config
             with open(config_file, 'w') as f:
                 json.dump(config, f, indent=4)
                 
+            return True
         except Exception as e:
             print(f"Error saving column widths: {e}")
+            return False
     
     def load_column_widths(self):
         """Load column widths from app settings"""
@@ -4096,7 +4125,7 @@ class DownloadedVideosTab(QWidget):
             if 'column_widths' not in config:
                 print("DEBUG: No column_widths in config, using default column widths")
                 return
-            
+                
             # Determine which set of widths to use
             widths_key = 'tiktok' if self.current_platform == "TikTok" else 'all'
             
@@ -4108,133 +4137,51 @@ class DownloadedVideosTab(QWidget):
             column_widths = config['column_widths'][widths_key]
             print(f"DEBUG: Loading column widths for {widths_key} view: {column_widths}")
             
+            header = self.downloads_table.horizontalHeader()
             for col_str, width in column_widths.items():
                 col = int(col_str)
                 if col < self.downloads_table.columnCount():
-                    self.downloads_table.setColumnWidth(col, width)
+                    header.resizeSection(col, width)
                     print(f"DEBUG: Set column {col} width to {width}")
             
+            return True
         except Exception as e:
             print(f"Error loading column widths: {e}")
+            return False
     
-    def reset_column_widths(self):
-        """Reset column widths to default values"""
-        # Default widths based on column type
-        default_widths = {
-            self.select_col: 30,
-            self.title_col: 250
-        }
-        
-        # Specific default widths for different views
-        if self.current_platform == "TikTok":
-            # TikTok view defaults
-            default_widths.update({
-                self.creator_col: 120,
-                self.quality_col: 85,
-                self.format_col: 75,
-                self.duration_col: 80,
-                self.size_col: 75,
-                self.hashtags_col: 150,
-                self.date_col: 120
-            })
-        else:
-            # Default view with platform
-            default_widths.update({
-                self.platform_col: 100,
-                self.creator_col: 100,
-                self.quality_col: 85,
-                self.format_col: 75,
-                self.duration_col: 80,
-                self.size_col: 75,
-                self.date_col: 120
-            })
-        
-        # Apply default widths
-        for col, width in default_widths.items():
-            if 0 <= col < self.downloads_table.columnCount():
-                self.downloads_table.setColumnWidth(col, width)
-        
-        # Recalculate minimum widths based on text
-        self.calculate_min_column_widths()
-        
-        # Save the reset widths
-        self.save_column_widths()
-        
-        print("DEBUG: Reset column widths to defaults")
-
     def set_platform(self, platform):
-        """Set platform to filter videos"""
-        print(f"DEBUG: Setting platform filter to: {platform}")
-        
-        # Save current column widths before switching view
+        """Set current platform and filter videos accordingly"""
+        # Save current column widths before changing platform
         self.save_column_widths()
         
         if platform == "All":
-            # Reset to default table columns showing platform
-            self.setup_default_table_columns()
-            self.current_platform = ""  # Empty string means "All" platforms
-            
-            # Remove platform filter
-            self.active_platform_filter = None
-            
-            # Update platform filter status
-            if self.platform_filter_status:
-                self.platform_filter_status.setText("")
-                self.platform_filter_status.hide()
-            
-            # Apply normal filters
-            self.filter_videos()
-            
-            # Log
-            if self.status_bar:
-                self.status_bar.showMessage(self.tr_("STATUS_SHOWING_ALL_PLATFORMS"))
-        elif platform == "TikTok":
-            # First set current_platform so filtering works correctly
-            self.current_platform = "TikTok"
-            
-            # Apply TikTok-specific table setup
-            self.setup_tiktok_table_columns()
-            
-            # Set platform filter
-            self.active_platform_filter = "TikTok"
-            
-            # Apply filtering rules
-            self.filter_videos()
-            
-            # Update platform filter status
-            if self.platform_filter_status:
-                status_text = f"🔍 {platform} {self.tr_('LABEL_VIDEOS')}"
-                self.platform_filter_status.setText(status_text)
-                self.platform_filter_status.show()
-            
-            # Log
-            if self.status_bar:
-                self.status_bar.showMessage(self.tr_("STATUS_SWITCHED_TO_TIKTOK"))
+            self.current_platform = None
+            print("DEBUG: Showing all platforms")
+            self.filter_videos()  # This will reset to show all videos
+            self.update_table_headers()  # Update headers for default view
+            self.status_bar.showMessage(self.tr_("STATUS_SHOWING_ALL_PLATFORMS"))
         else:
-            # For other platforms, use default view but with platform filter
-            self.setup_default_table_columns()
-            self.current_platform = ""  # Empty string for default view
+            self.current_platform = platform
+            print(f"DEBUG: Filtering videos by platform: {platform}")
+            self.filter_by_platform(platform)
             
-            # Set platform filter
-            self.active_platform_filter = platform
-            
-            # Update platform filter status
-            if self.platform_filter_status:
-                status_text = f"🔍 {platform} {self.tr_('LABEL_VIDEOS')}"
-                self.platform_filter_status.setText(status_text)
-                self.platform_filter_status.show()
-            
-            # Filter videos
-            self.filter_videos()
-            
-            # Log
-            if self.status_bar:
-                self.status_bar.showMessage(self.tr_("STATUS_FILTERED_BY_PLATFORM").format(platform))
+            # Special case for TikTok to show hashtags column
+            if platform == "TikTok":
+                self.setup_tiktok_table_columns()
+            else:
+                self.setup_default_table_columns()
                 
+        # Load column widths for the new platform
+        self.load_column_widths()
+
     def closeEvent(self, event):
-        """Handle close event to save settings"""
-        # Save current column widths before closing
+        """Called when tab is closed"""
+        # Save column widths before closing
         self.save_column_widths()
         
-        # Let the event propagate
-        event.accept()
+        # Close any open popup dialogs
+        if hasattr(self, 'copy_dialog') and self.copy_dialog and self.copy_dialog.isVisible():
+            self.copy_dialog.close()
+            
+        # Continue with normal close event
+        super().closeEvent(event)

@@ -1016,3 +1016,222 @@
 [2025-04-04 23:53:25.842469] Successfully saved config
 [2025-04-04 23:53:25.843469] Verification - Config content after save: {"theme": "dark"}
 [2025-04-04 23:53:25.843469] Theme changed to: dark
+[2025-04-04 23:54:55.124272] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 23:54:55.124272] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 23:54:55.124272] Executable path: Not running as exe
+[2025-04-04 23:54:55.124272] Config file exists, reading content
+[2025-04-04 23:54:55.124272] Config content: {
+    "theme": "dark",
+    "column_widths": {
+        "all": {
+            "0": 31,
+            "1": 100,
+            "2": 268,
+            "3": 100,
+            "4": 85,
+            "5": 75,
+            "6": 80,
+            "7": 75,
+            "8": 120
+        }
+    }
+}
+[2025-04-04 23:54:55.124272] Read last_output_folder from config: ''
+[2025-04-04 23:54:55.124272] Output folder doesn't exist or is empty: ''
+[2025-04-04 23:54:55.124272] Setting theme to: dark
+[2025-04-04 23:54:55.210795] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 23:54:55.210795] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 23:54:55.210795] Key: theme, Value: dark
+[2025-04-04 23:54:55.210795] Config file exists, reading existing content
+[2025-04-04 23:54:55.210795] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-04 23:54:55.210795] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-04 23:54:55.211797] Successfully saved config
+[2025-04-04 23:54:55.217794] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-04 23:54:55.217794] Theme changed to: dark
+[2025-04-04 23:57:19.168775] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 23:57:19.168775] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 23:57:19.168775] Executable path: Not running as exe
+[2025-04-04 23:57:19.168775] Config file exists, reading content
+[2025-04-04 23:57:19.168775] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-04 23:57:19.168775] Read last_output_folder from config: ''
+[2025-04-04 23:57:19.168775] Output folder doesn't exist or is empty: ''
+[2025-04-04 23:57:19.168775] Setting theme to: dark
+[2025-04-04 23:57:19.242132] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 23:57:19.242132] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 23:57:19.242132] Key: theme, Value: dark
+[2025-04-04 23:57:19.242132] Config file exists, reading existing content
+[2025-04-04 23:57:19.242132] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-04 23:57:19.242132] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-04 23:57:19.242132] Successfully saved config
+[2025-04-04 23:57:19.243134] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-04 23:57:19.244134] Theme changed to: dark
+[2025-04-04 23:58:06.464223] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 23:58:06.464223] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 23:58:06.464223] Executable path: Not running as exe
+[2025-04-04 23:58:06.464223] Config file exists, reading content
+[2025-04-04 23:58:06.464223] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-04 23:58:06.464223] Read last_output_folder from config: ''
+[2025-04-04 23:58:06.464223] Output folder doesn't exist or is empty: ''
+[2025-04-04 23:58:06.464223] Setting theme to: dark
+[2025-04-04 23:58:06.550795] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 23:58:06.550795] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 23:58:06.550795] Key: theme, Value: dark
+[2025-04-04 23:58:06.550795] Config file exists, reading existing content
+[2025-04-04 23:58:06.550795] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-04 23:58:06.550795] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-04 23:58:06.551796] Successfully saved config
+[2025-04-04 23:58:06.552798] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-04 23:58:06.553796] Theme changed to: dark
+[2025-04-04 23:59:03.598387] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 23:59:03.598387] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 23:59:03.598387] Executable path: Not running as exe
+[2025-04-04 23:59:03.598387] Config file exists, reading content
+[2025-04-04 23:59:03.598387] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-04 23:59:03.598387] Read last_output_folder from config: ''
+[2025-04-04 23:59:03.598387] Output folder doesn't exist or is empty: ''
+[2025-04-04 23:59:03.598387] Setting theme to: dark
+[2025-04-04 23:59:03.669230] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-04 23:59:03.669230] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-04 23:59:03.669230] Key: theme, Value: dark
+[2025-04-04 23:59:03.669230] Config file exists, reading existing content
+[2025-04-04 23:59:03.669230] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-04 23:59:03.669230] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-04 23:59:03.669230] Successfully saved config
+[2025-04-04 23:59:03.670234] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-04 23:59:03.670234] Theme changed to: dark
+[2025-04-05 00:02:51.104023] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 00:02:51.104023] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 00:02:51.104023] Executable path: Not running as exe
+[2025-04-05 00:02:51.104023] Config file exists, reading content
+[2025-04-05 00:02:51.104023] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 00:02:51.104023] Read last_output_folder from config: ''
+[2025-04-05 00:02:51.104023] Output folder doesn't exist or is empty: ''
+[2025-04-05 00:02:51.104023] Setting theme to: dark
+[2025-04-05 00:02:51.186279] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 00:02:51.186279] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 00:02:51.186279] Key: theme, Value: dark
+[2025-04-05 00:02:51.186279] Config file exists, reading existing content
+[2025-04-05 00:02:51.186279] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 00:02:51.186279] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 00:02:51.186279] Successfully saved config
+[2025-04-05 00:02:51.187822] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 00:02:51.187822] Theme changed to: dark
+[2025-04-05 00:49:06.052440] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 00:49:06.052440] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 00:49:06.052440] Executable path: Not running as exe
+[2025-04-05 00:49:06.052440] Config file exists, reading content
+[2025-04-05 00:49:06.052440] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 00:49:06.052440] Read last_output_folder from config: ''
+[2025-04-05 00:49:06.052440] Output folder doesn't exist or is empty: ''
+[2025-04-05 00:49:06.052440] Setting theme to: dark
+[2025-04-05 00:49:06.122802] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 00:49:06.122802] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 00:49:06.122802] Key: theme, Value: dark
+[2025-04-05 00:49:06.122802] Config file exists, reading existing content
+[2025-04-05 00:49:06.123806] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 00:49:06.123806] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 00:49:06.123806] Successfully saved config
+[2025-04-05 00:49:06.124803] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 00:49:06.124803] Theme changed to: dark
+[2025-04-05 00:53:11.269284] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 00:53:11.269284] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 00:53:11.269284] Executable path: Not running as exe
+[2025-04-05 00:53:11.269284] Config file exists, reading content
+[2025-04-05 00:53:11.269284] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 00:53:11.269284] Read last_output_folder from config: ''
+[2025-04-05 00:53:11.269284] Output folder doesn't exist or is empty: ''
+[2025-04-05 00:53:11.269284] Setting theme to: dark
+[2025-04-05 00:53:11.329285] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 00:53:11.329285] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 00:53:11.329285] Key: theme, Value: dark
+[2025-04-05 00:53:11.329285] Config file exists, reading existing content
+[2025-04-05 00:53:11.329285] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 00:53:11.329285] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 00:53:11.329285] Successfully saved config
+[2025-04-05 00:53:11.330286] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 00:53:11.331285] Theme changed to: dark
+[2025-04-05 00:55:01.303783] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 00:55:01.303783] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 00:55:01.303783] Executable path: Not running as exe
+[2025-04-05 00:55:01.303783] Config file exists, reading content
+[2025-04-05 00:55:01.304782] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 00:55:01.304782] Read last_output_folder from config: ''
+[2025-04-05 00:55:01.304782] Output folder doesn't exist or is empty: ''
+[2025-04-05 00:55:01.304782] Setting theme to: dark
+[2025-04-05 00:55:01.374622] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 00:55:01.374622] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 00:55:01.374622] Key: theme, Value: dark
+[2025-04-05 00:55:01.374622] Config file exists, reading existing content
+[2025-04-05 00:55:01.375629] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 00:55:01.375629] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 00:55:01.375629] Successfully saved config
+[2025-04-05 00:55:01.376793] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 00:55:01.376793] Theme changed to: dark
+[2025-04-05 00:55:58.767375] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 00:55:58.767375] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 00:55:58.767375] Executable path: Not running as exe
+[2025-04-05 00:55:58.767375] Config file exists, reading content
+[2025-04-05 00:55:58.767375] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 00:55:58.767375] Read last_output_folder from config: ''
+[2025-04-05 00:55:58.767375] Output folder doesn't exist or is empty: ''
+[2025-04-05 00:55:58.767375] Setting theme to: dark
+[2025-04-05 00:55:58.833553] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 00:55:58.833553] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 00:55:58.833553] Key: theme, Value: dark
+[2025-04-05 00:55:58.833553] Config file exists, reading existing content
+[2025-04-05 00:55:58.834553] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 00:55:58.834553] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 00:55:58.834553] Successfully saved config
+[2025-04-05 00:55:58.835590] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 00:55:58.835590] Theme changed to: dark
+[2025-04-05 00:57:59.377620] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 00:57:59.377620] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 00:57:59.377620] Executable path: Not running as exe
+[2025-04-05 00:57:59.377620] Config file exists, reading content
+[2025-04-05 00:57:59.377620] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 00:57:59.377620] Read last_output_folder from config: ''
+[2025-04-05 00:57:59.377620] Output folder doesn't exist or is empty: ''
+[2025-04-05 00:57:59.377620] Setting theme to: dark
+[2025-04-05 00:57:59.438347] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 00:57:59.438347] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 00:57:59.438347] Key: theme, Value: dark
+[2025-04-05 00:57:59.438347] Config file exists, reading existing content
+[2025-04-05 00:57:59.438347] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 00:57:59.438347] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 00:57:59.438347] Successfully saved config
+[2025-04-05 00:57:59.439347] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 00:57:59.440349] Theme changed to: dark
+[2025-04-05 00:59:15.000393] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 00:59:15.000393] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 00:59:15.000393] Executable path: Not running as exe
+[2025-04-05 00:59:15.000393] Config file exists, reading content
+[2025-04-05 00:59:15.000393] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 00:59:15.000393] Read last_output_folder from config: ''
+[2025-04-05 00:59:15.000393] Output folder doesn't exist or is empty: ''
+[2025-04-05 00:59:15.000393] Setting theme to: dark
+[2025-04-05 00:59:15.087425] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 00:59:15.087425] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 00:59:15.087425] Key: theme, Value: dark
+[2025-04-05 00:59:15.087425] Config file exists, reading existing content
+[2025-04-05 00:59:15.087425] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 00:59:15.087425] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 00:59:15.087425] Successfully saved config
+[2025-04-05 00:59:15.088426] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 00:59:15.088426] Theme changed to: dark
+[2025-04-05 01:00:00.293282] Loading config from: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 01:00:00.293282] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 01:00:00.293282] Executable path: Not running as exe
+[2025-04-05 01:00:00.293282] Config file exists, reading content
+[2025-04-05 01:00:00.293282] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 01:00:00.293282] Read last_output_folder from config: ''
+[2025-04-05 01:00:00.293282] Output folder doesn't exist or is empty: ''
+[2025-04-05 01:00:00.293282] Setting theme to: dark
+[2025-04-05 01:00:00.367305] Saving config to: I:\Product Apps\Clone\Social Download Manager Version 2\config.json
+[2025-04-05 01:00:00.367305] App directory: I:\Product Apps\Clone\Social Download Manager Version 2
+[2025-04-05 01:00:00.367305] Key: theme, Value: dark
+[2025-04-05 01:00:00.367305] Config file exists, reading existing content
+[2025-04-05 01:00:00.367305] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 01:00:00.367305] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}}
+[2025-04-05 01:00:00.367305] Successfully saved config
+[2025-04-05 01:00:00.368307] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}}
+[2025-04-05 01:00:00.368307] Theme changed to: dark

@@ -292,7 +292,4 @@ SUBTITLE_TYPE_AUTO = "Tự động tạo"
 
 # Common labels
 LABEL_PLATFORM = "Nền tảng"
-LABEL_VIDEOS = "video"
-
-# Menu items
-MENU_RESET_COLUMN_WIDTHS = "Đặt Lại Độ Rộng Cột" 
+LABEL_VIDEOS = "video" 
