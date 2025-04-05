@@ -288,6 +288,8 @@ STATUS_SUBTITLE_OFFICIAL = "Downloaded video with official subtitles"
 STATUS_SUBTITLE_AUTO = "Downloaded video with auto-generated subtitles"
 STATUS_SUBTITLE_NOT_AVAILABLE = "Video downloaded, but subtitles not available"
 STATUS_SUBTITLE_SUMMARY = "Downloaded {} videos: {} with official subtitles, {} with auto subtitles, {} without subtitles"
+STATUS_SUBTITLE_ENABLED = "Subtitles enabled - Language: {}"
+STATUS_SUBTITLE_LANGUAGE_CHANGED = "Subtitle language changed to: {}"
 
 # Downloaded Videos tab - new for subtitles
 LABEL_HAS_SUBTITLES = "Has subtitles: {}"

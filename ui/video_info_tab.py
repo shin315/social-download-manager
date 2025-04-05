@@ -2075,6 +2075,7 @@ class VideoInfoTab(QWidget):
         self.subtitle_language_combo.addItem("Indonesian", "id")
         self.subtitle_language_combo.setEnabled(False)  # Disabled by default
         self.subtitle_language_combo.setFixedWidth(100)
+        self.subtitle_language_combo.currentIndexChanged.connect(self.on_subtitle_language_changed)
         subtitle_layout.addWidget(self.subtitle_language_combo)
         
         # Add subtitle frame to main options layout
@@ -2290,24 +2291,27 @@ class VideoInfoTab(QWidget):
         print(f"Subtitle checkbox changed: {is_checked}")
         print(f"Language combo enabled: {self.subtitle_language_combo.isEnabled()}")
         
-        # Show a message box for debugging
-        QMessageBox.information(
-            self,
-            "Subtitle Option Changed",
-            f"Subtitle downloading is now {'enabled' if is_checked else 'disabled'}\n"
-            f"Language: {self.subtitle_language_combo.currentText()}"
-        )
-        
         # Update UI to reflect changes
         if is_checked:
-            # Show a tooltip or status message
-            if self.parent and self.parent.status_bar:
+            # Show status message
+            if self.parent and hasattr(self.parent, 'status_bar'):
                 language = self.subtitle_language_combo.currentText()
-                self.parent.status_bar.showMessage(f"Selected subtitles in {language}")
+                self.parent.status_bar.showMessage(self.tr_("STATUS_SUBTITLE_ENABLED").format(language))
         else:
             # Clear any status message
-            if self.parent and self.parent.status_bar:
+            if self.parent and hasattr(self.parent, 'status_bar'):
                 self.parent.status_bar.showMessage(self.tr_("STATUS_READY"))
+
+    def on_subtitle_language_changed(self, index):
+        """Handle change in subtitle language selection"""
+        # Only update if checkbox is checked
+        if self.subtitle_checkbox.isChecked():
+            language = self.subtitle_language_combo.currentText()
+            print(f"Subtitle language changed to: {language}")
+            
+            # Update status bar
+            if self.parent and hasattr(self.parent, 'status_bar'):
+                self.parent.status_bar.showMessage(self.tr_("STATUS_SUBTITLE_LANGUAGE_CHANGED").format(language))
 
     def set_platform(self, platform):
         """Set the current platform and update UI accordingly"""

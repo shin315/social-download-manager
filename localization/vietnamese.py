@@ -293,6 +293,8 @@ STATUS_SUBTITLE_OFFICIAL = "Đã tải video với phụ đề chính thức"
 STATUS_SUBTITLE_AUTO = "Đã tải video với phụ đề tự động"
 STATUS_SUBTITLE_NOT_AVAILABLE = "Đã tải video, nhưng không có phụ đề"
 STATUS_SUBTITLE_SUMMARY = "Đã tải {} video: {} với phụ đề chính thức, {} với phụ đề tự động, {} không có phụ đề"
+STATUS_SUBTITLE_ENABLED = "Đã bật phụ đề - Ngôn ngữ: {}"
+STATUS_SUBTITLE_LANGUAGE_CHANGED = "Đã thay đổi ngôn ngữ phụ đề thành: {}"
 
 # Downloaded Videos tab - new for subtitles
 LABEL_HAS_SUBTITLES = "Có phụ đề: {}"
