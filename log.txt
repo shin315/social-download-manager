@@ -2665,3 +2665,438 @@
 [2025-04-05 17:51:12.347583] Successfully saved config
 [2025-04-05 17:51:12.348587] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "vietnamese"}
 [2025-04-05 17:51:12.348587] Theme changed to: dark
+[2025-04-05 17:52:26.140081] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:52:26.140081] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:52:26.140081] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-05 17:52:26.140081] Config file exists, reading existing content
+[2025-04-05 17:52:26.140081] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'vietnamese'}
+[2025-04-05 17:52:26.140081] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'vietnamese'}
+[2025-04-05 17:52:26.140081] Successfully saved config
+[2025-04-05 17:52:26.141082] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "vietnamese"}
+[2025-04-05 17:52:26.139082] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:52:26.139082] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:52:26.139082] Executable path: Not running as exe
+[2025-04-05 17:52:26.139082] Config file exists, reading content
+[2025-04-05 17:52:26.139082] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "vietnamese"}
+[2025-04-05 17:52:26.139082] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-05 17:52:26.139082] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-05 17:52:26.141082] Setting language to: vietnamese
+[2025-04-05 17:52:26.147096] Setting theme to: dark
+[2025-04-05 17:52:26.215047] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:52:26.215047] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:52:26.215047] Key: theme, Value: dark
+[2025-04-05 17:52:26.215047] Config file exists, reading existing content
+[2025-04-05 17:52:26.215983] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'vietnamese'}
+[2025-04-05 17:52:26.215983] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'vietnamese'}
+[2025-04-05 17:52:26.215983] Successfully saved config
+[2025-04-05 17:52:26.217053] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "vietnamese"}
+[2025-04-05 17:52:26.217053] Theme changed to: dark
+[2025-04-05 17:53:14.731001] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:53:14.731001] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:53:14.731001] Key: language, Value: english
+[2025-04-05 17:53:14.731001] Config file exists, reading existing content
+[2025-04-05 17:53:14.737030] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:53:14.737030] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:53:14.737030] Successfully saved config
+[2025-04-05 17:53:14.738028] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 17:53:14.738028] Language changed to: english
+[2025-04-05 17:54:50.962428] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:54:50.962428] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:54:50.962428] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-05 17:54:50.962428] Config file exists, reading existing content
+[2025-04-05 17:54:50.962428] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:54:50.962428] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:54:50.962428] Successfully saved config
+[2025-04-05 17:54:50.963427] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 17:54:50.962428] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:54:50.962428] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:54:50.962428] Executable path: Not running as exe
+[2025-04-05 17:54:50.962428] Config file exists, reading content
+[2025-04-05 17:54:50.962428] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 17:54:50.962428] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-05 17:54:50.962428] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-05 17:54:50.964428] Setting language to: english
+[2025-04-05 17:54:50.968476] Setting theme to: dark
+[2025-04-05 17:54:51.051298] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:54:51.051298] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:54:51.051298] Key: theme, Value: dark
+[2025-04-05 17:54:51.051298] Config file exists, reading existing content
+[2025-04-05 17:54:51.052299] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:54:51.052299] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:54:51.052299] Successfully saved config
+[2025-04-05 17:54:51.053300] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 17:54:51.053300] Theme changed to: dark
+[2025-04-05 17:57:12.959481] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:57:12.959481] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:57:12.959481] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-05 17:57:12.959481] Config file exists, reading existing content
+[2025-04-05 17:57:12.959481] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:57:12.959481] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:57:12.959481] Successfully saved config
+[2025-04-05 17:57:12.960481] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 17:57:12.958481] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:57:12.958481] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:57:12.958481] Executable path: Not running as exe
+[2025-04-05 17:57:12.958481] Config file exists, reading content
+[2025-04-05 17:57:12.958481] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 17:57:12.959481] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-05 17:57:12.959481] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-05 17:57:12.961484] Setting language to: english
+[2025-04-05 17:57:12.966993] Setting theme to: dark
+[2025-04-05 17:57:13.026981] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:57:13.026981] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:57:13.026981] Key: theme, Value: dark
+[2025-04-05 17:57:13.026981] Config file exists, reading existing content
+[2025-04-05 17:57:13.027981] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:57:13.027981] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:57:13.028982] Successfully saved config
+[2025-04-05 17:57:13.028982] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 17:57:13.029983] Theme changed to: dark
+[2025-04-05 17:57:50.984131] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:57:50.984131] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:57:50.984131] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-05 17:57:50.984131] Config file exists, reading existing content
+[2025-04-05 17:57:50.985137] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:57:50.985137] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:57:50.985137] Successfully saved config
+[2025-04-05 17:57:50.986558] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 17:57:50.984131] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:57:50.984131] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:57:50.984131] Executable path: Not running as exe
+[2025-04-05 17:57:50.984131] Config file exists, reading content
+[2025-04-05 17:57:50.984131] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 17:57:50.984131] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-05 17:57:50.984131] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-05 17:57:50.986558] Setting language to: english
+[2025-04-05 17:57:50.994067] Setting theme to: dark
+[2025-04-05 17:57:51.069489] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:57:51.069489] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:57:51.069489] Key: theme, Value: dark
+[2025-04-05 17:57:51.069489] Config file exists, reading existing content
+[2025-04-05 17:57:51.069489] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:57:51.070487] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:57:51.070487] Successfully saved config
+[2025-04-05 17:57:51.070487] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 17:57:51.071488] Theme changed to: dark
+[2025-04-05 17:57:59.942039] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:57:59.942039] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:57:59.942039] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-05 17:57:59.942039] Config file exists, reading existing content
+[2025-04-05 17:57:59.942039] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:57:59.942039] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:57:59.942039] Successfully saved config
+[2025-04-05 17:57:59.943039] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 17:57:59.941040] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:57:59.941040] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:57:59.941040] Executable path: Not running as exe
+[2025-04-05 17:57:59.941040] Config file exists, reading content
+[2025-04-05 17:57:59.941040] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 17:57:59.941040] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-05 17:57:59.941040] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-05 17:57:59.944040] Setting language to: english
+[2025-04-05 17:57:59.949039] Setting theme to: dark
+[2025-04-05 17:58:00.023427] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 17:58:00.023427] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 17:58:00.023427] Key: theme, Value: dark
+[2025-04-05 17:58:00.023427] Config file exists, reading existing content
+[2025-04-05 17:58:00.024932] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:58:00.024932] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 17:58:00.025439] Successfully saved config
+[2025-04-05 17:58:00.026316] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 17:58:00.026316] Theme changed to: dark
+[2025-04-05 18:00:15.650086] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:00:15.650086] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:00:15.650086] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-05 18:00:15.650086] Config file exists, reading existing content
+[2025-04-05 18:00:15.650086] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:00:15.650086] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:00:15.650086] Successfully saved config
+[2025-04-05 18:00:15.651085] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:00:15.649086] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:00:15.649086] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:00:15.649086] Executable path: Not running as exe
+[2025-04-05 18:00:15.649086] Config file exists, reading content
+[2025-04-05 18:00:15.649086] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:00:15.649086] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-05 18:00:15.649086] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-05 18:00:15.651085] Setting language to: english
+[2025-04-05 18:00:15.655253] Setting theme to: dark
+[2025-04-05 18:00:15.723045] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:00:15.723045] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:00:15.723045] Key: theme, Value: dark
+[2025-04-05 18:00:15.723045] Config file exists, reading existing content
+[2025-04-05 18:00:15.724548] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:00:15.724548] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:00:15.725059] Successfully saved config
+[2025-04-05 18:00:15.725059] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:00:15.726064] Theme changed to: dark
+[2025-04-05 18:04:47.387684] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:04:47.387684] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:04:47.387684] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-05 18:04:47.387684] Config file exists, reading existing content
+[2025-04-05 18:04:47.388683] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:04:47.388683] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:04:47.388683] Successfully saved config
+[2025-04-05 18:04:47.389683] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:04:47.387684] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:04:47.387684] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:04:47.387684] Executable path: Not running as exe
+[2025-04-05 18:04:47.387684] Config file exists, reading content
+[2025-04-05 18:04:47.387684] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:04:47.387684] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-05 18:04:47.387684] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-05 18:04:47.389683] Setting language to: english
+[2025-04-05 18:04:47.394194] Setting theme to: dark
+[2025-04-05 18:04:47.459331] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:04:47.459331] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:04:47.459331] Key: theme, Value: dark
+[2025-04-05 18:04:47.460331] Config file exists, reading existing content
+[2025-04-05 18:04:47.460331] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:04:47.460331] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:04:47.461331] Successfully saved config
+[2025-04-05 18:04:47.461331] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:04:47.461331] Theme changed to: dark
+[2025-04-05 18:20:01.746507] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:20:01.746507] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:20:01.746507] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-05 18:20:01.746507] Config file exists, reading existing content
+[2025-04-05 18:20:01.746507] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:20:01.746507] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:20:01.746507] Successfully saved config
+[2025-04-05 18:20:01.747767] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:20:01.745508] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:20:01.745508] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:20:01.745508] Executable path: Not running as exe
+[2025-04-05 18:20:01.745508] Config file exists, reading content
+[2025-04-05 18:20:01.745508] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:20:01.746507] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-05 18:20:01.746507] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-05 18:20:01.747767] Setting language to: english
+[2025-04-05 18:20:01.751780] Setting theme to: dark
+[2025-04-05 18:20:01.825681] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:20:01.825681] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:20:01.825681] Key: theme, Value: dark
+[2025-04-05 18:20:01.825681] Config file exists, reading existing content
+[2025-04-05 18:20:01.826682] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:20:01.826682] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:20:01.826682] Successfully saved config
+[2025-04-05 18:20:01.827766] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:20:01.827766] Theme changed to: dark
+[2025-04-05 18:21:11.831644] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:21:11.831644] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:21:11.831644] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-05 18:21:11.831644] Config file exists, reading existing content
+[2025-04-05 18:21:11.832644] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:21:11.832644] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:21:11.832644] Successfully saved config
+[2025-04-05 18:21:11.833643] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:21:11.831644] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:21:11.831644] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:21:11.831644] Executable path: Not running as exe
+[2025-04-05 18:21:11.831644] Config file exists, reading content
+[2025-04-05 18:21:11.831644] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:21:11.831644] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-05 18:21:11.831644] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-05 18:21:11.833643] Setting language to: english
+[2025-04-05 18:21:11.837653] Setting theme to: dark
+[2025-04-05 18:21:11.901293] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:21:11.901293] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:21:11.901293] Key: theme, Value: dark
+[2025-04-05 18:21:11.901293] Config file exists, reading existing content
+[2025-04-05 18:21:11.902296] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:21:11.902296] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:21:11.902296] Successfully saved config
+[2025-04-05 18:21:11.902296] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:21:11.903296] Theme changed to: dark
+[2025-04-05 18:21:39.330719] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:21:39.330719] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:21:39.330719] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-05 18:21:39.330719] Config file exists, reading existing content
+[2025-04-05 18:21:39.330719] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:21:39.330719] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:21:39.331722] Successfully saved config
+[2025-04-05 18:21:39.332722] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:21:39.330719] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:21:39.330719] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:21:39.330719] Executable path: Not running as exe
+[2025-04-05 18:21:39.330719] Config file exists, reading content
+[2025-04-05 18:21:39.330719] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:21:39.330719] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-05 18:21:39.330719] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-05 18:21:39.332722] Setting language to: english
+[2025-04-05 18:21:39.337229] Setting theme to: dark
+[2025-04-05 18:21:39.416866] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:21:39.416866] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:21:39.416866] Key: theme, Value: dark
+[2025-04-05 18:21:39.416866] Config file exists, reading existing content
+[2025-04-05 18:21:39.417377] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:21:39.417377] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:21:39.418382] Successfully saved config
+[2025-04-05 18:21:39.418382] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:21:39.418382] Theme changed to: dark
+[2025-04-05 18:23:28.282917] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:23:28.282917] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:23:28.282917] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-05 18:23:28.282917] Config file exists, reading existing content
+[2025-04-05 18:23:28.282917] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:23:28.282917] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:23:28.282917] Successfully saved config
+[2025-04-05 18:23:28.283918] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:23:28.281918] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:23:28.281918] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:23:28.281918] Executable path: Not running as exe
+[2025-04-05 18:23:28.281918] Config file exists, reading content
+[2025-04-05 18:23:28.281918] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:23:28.281918] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-05 18:23:28.281918] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-05 18:23:28.283918] Setting language to: english
+[2025-04-05 18:23:28.288276] Setting theme to: dark
+[2025-04-05 18:23:28.360610] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 18:23:28.360610] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 18:23:28.360610] Key: theme, Value: dark
+[2025-04-05 18:23:28.360610] Config file exists, reading existing content
+[2025-04-05 18:23:28.361611] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:23:28.361611] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 18:23:28.361611] Successfully saved config
+[2025-04-05 18:23:28.363162] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 18:23:28.363162] Theme changed to: dark
+[2025-04-05 20:22:25.213161] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:22:25.213161] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:22:25.213161] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-05 20:22:25.213161] Config file exists, reading existing content
+[2025-04-05 20:22:25.213161] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:22:25.213161] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:22:25.213161] Successfully saved config
+[2025-04-05 20:22:25.214186] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 20:22:25.213161] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:22:25.213161] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:22:25.213161] Executable path: Not running as exe
+[2025-04-05 20:22:25.213161] Config file exists, reading content
+[2025-04-05 20:22:25.213161] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 20:22:25.213161] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-05 20:22:25.213161] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-05 20:22:25.215191] Setting language to: english
+[2025-04-05 20:22:25.219191] Setting theme to: dark
+[2025-04-05 20:22:25.278495] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:22:25.278495] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:22:25.278495] Key: theme, Value: dark
+[2025-04-05 20:22:25.278495] Config file exists, reading existing content
+[2025-04-05 20:22:25.279495] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:22:25.279495] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:22:25.279495] Successfully saved config
+[2025-04-05 20:22:25.279495] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 20:22:25.280496] Theme changed to: dark
+[2025-04-05 20:23:07.409335] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:23:07.409335] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:23:07.409335] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-05 20:23:07.409335] Config file exists, reading existing content
+[2025-04-05 20:23:07.409335] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:23:07.409335] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:23:07.409335] Successfully saved config
+[2025-04-05 20:23:07.410335] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 20:23:07.408337] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:23:07.408337] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:23:07.408337] Executable path: Not running as exe
+[2025-04-05 20:23:07.408337] Config file exists, reading content
+[2025-04-05 20:23:07.409335] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 20:23:07.409335] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-05 20:23:07.409335] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-05 20:23:07.410335] Setting language to: english
+[2025-04-05 20:23:07.414856] Setting theme to: dark
+[2025-04-05 20:23:07.485189] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:23:07.485189] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:23:07.485189] Key: theme, Value: dark
+[2025-04-05 20:23:07.485189] Config file exists, reading existing content
+[2025-04-05 20:23:07.486195] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:23:07.486195] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:23:07.487196] Successfully saved config
+[2025-04-05 20:23:07.488196] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 20:23:07.488196] Theme changed to: dark
+[2025-04-05 20:23:09.226406] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:23:09.226406] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:23:09.226406] Key: theme, Value: light
+[2025-04-05 20:23:09.226406] Config file exists, reading existing content
+[2025-04-05 20:23:09.226406] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:23:09.226406] Updated config: {'theme': 'light', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:23:09.226406] Successfully saved config
+[2025-04-05 20:23:09.231557] Verification - Config content after save: {"theme": "light", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 20:23:09.231557] Theme changed to: light
+[2025-04-05 20:23:10.492345] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:23:10.492345] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:23:10.492345] Key: theme, Value: dark
+[2025-04-05 20:23:10.492345] Config file exists, reading existing content
+[2025-04-05 20:23:10.492345] Existing config: {'theme': 'light', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:23:10.492345] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:23:10.492345] Successfully saved config
+[2025-04-05 20:23:10.493347] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 20:23:10.493851] Theme changed to: dark
+[2025-04-05 20:27:39.311768] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:27:39.311768] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:27:39.311768] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-05 20:27:39.311768] Config file exists, reading existing content
+[2025-04-05 20:27:39.311768] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:27:39.311768] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:27:39.311768] Successfully saved config
+[2025-04-05 20:27:39.313804] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 20:27:39.311768] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:27:39.311768] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:27:39.311768] Executable path: Not running as exe
+[2025-04-05 20:27:39.311768] Config file exists, reading content
+[2025-04-05 20:27:39.311768] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 20:27:39.311768] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-05 20:27:39.311768] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-05 20:27:39.313804] Setting language to: english
+[2025-04-05 20:27:39.318551] Setting theme to: dark
+[2025-04-05 20:27:39.384311] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:27:39.384311] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:27:39.384311] Key: theme, Value: dark
+[2025-04-05 20:27:39.384311] Config file exists, reading existing content
+[2025-04-05 20:27:39.385315] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:27:39.385315] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:27:39.385315] Successfully saved config
+[2025-04-05 20:27:39.386316] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 20:27:39.386316] Theme changed to: dark
+[2025-04-05 20:27:44.822142] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:27:44.822142] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:27:44.822142] Key: language, Value: vietnamese
+[2025-04-05 20:27:44.822142] Config file exists, reading existing content
+[2025-04-05 20:27:44.828153] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'vietnamese'}
+[2025-04-05 20:27:44.828153] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'vietnamese'}
+[2025-04-05 20:27:44.829152] Successfully saved config
+[2025-04-05 20:27:44.829152] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "vietnamese"}
+[2025-04-05 20:27:44.830153] Language changed to: vietnamese
+[2025-04-05 20:27:48.364169] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:27:48.364169] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:27:48.364169] Key: language, Value: english
+[2025-04-05 20:27:48.365173] Config file exists, reading existing content
+[2025-04-05 20:27:48.369172] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:27:48.369172] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:27:48.369172] Successfully saved config
+[2025-04-05 20:27:48.370173] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 20:27:48.370173] Language changed to: english
+[2025-04-05 20:28:29.771867] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:28:29.771867] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:28:29.771867] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-05 20:28:29.771867] Config file exists, reading existing content
+[2025-04-05 20:28:29.771867] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:28:29.771867] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:28:29.771867] Successfully saved config
+[2025-04-05 20:28:29.773371] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 20:28:29.770866] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:28:29.770866] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:28:29.770866] Executable path: Not running as exe
+[2025-04-05 20:28:29.770866] Config file exists, reading content
+[2025-04-05 20:28:29.771867] Config content: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 20:28:29.771867] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-05 20:28:29.771867] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-05 20:28:29.773884] Setting language to: english
+[2025-04-05 20:28:29.777120] Setting theme to: dark
+[2025-04-05 20:28:29.841856] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-05 20:28:29.841856] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-05 20:28:29.841856] Key: theme, Value: dark
+[2025-04-05 20:28:29.841856] Config file exists, reading existing content
+[2025-04-05 20:28:29.841856] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:28:29.843361] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 31, '1': 100, '2': 268, '3': 100, '4': 85, '5': 75, '6': 80, '7': 75, '8': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-05 20:28:29.843361] Successfully saved config
+[2025-04-05 20:28:29.843907] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 31, "1": 100, "2": 268, "3": 100, "4": 85, "5": 75, "6": 80, "7": 75, "8": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-05 20:28:29.843907] Theme changed to: dark

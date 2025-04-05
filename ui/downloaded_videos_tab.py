@@ -2462,6 +2462,10 @@ class DownloadedVideosTab(QWidget):
         print(f"DEBUG: sort_table called with column={column}")
         print(f"DEBUG: Before sort - current sort_column={self.sort_column}, sort_order={self.sort_order}")
         
+        # Disable table sorting to avoid issues during update
+        was_sorting_enabled = self.downloads_table.isSortingEnabled()
+        self.downloads_table.setSortingEnabled(False)
+        
         # Determine correct column mapping to match the index in self.filtered_videos based on current platform
         if self.current_platform == "TikTok":
             # TikTok view column mapping (without Platform column)

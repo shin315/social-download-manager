@@ -202,6 +202,13 @@ DIALOG_MP3_UNAVAILABLE = "The MP3 download feature requires FFmpeg. You can stil
 DIALOG_INSTALL_FFMPEG = "To use MP3 download feature, please install FFmpeg"
 DIALOG_SEE_README = "See README.md file for detailed installation instructions."
 
+# Add missing dialog messages
+DIALOG_EMPTY_URL = "Please enter a URL before getting info."
+DIALOG_INVALID_URL = "Invalid or unsupported URL. Please enter a valid URL."
+DIALOG_ALREADY_EXISTS = "Video Already In List"
+DIALOG_ALREADY_EXISTS_TEXT = "This video is already in the list. Do you want to add it again?"
+DIALOG_SELECT_OUTPUT_FOLDER = "Please select an output folder."
+
 # New error messages for API and video issues
 DIALOG_TIKTOK_API_CHANGED = "TikTok API has changed. Please wait for an app update."
 DIALOG_VIDEO_PRIVATE = "This video is private and cannot be accessed."
@@ -264,7 +271,7 @@ DIALOG_NO_UPDATES = "No Updates Available"
 DIALOG_LATEST_VERSION = "You're using the latest version."
 DIALOG_DOWNLOAD_ERROR = "Error downloading update"
 DIALOG_DOWNLOAD_COMPLETE = "Download Complete"
-DIALOG_DOWNLOAD_COMPLETE_MSG = "Update downloaded to:\n{}\n\nThe folder will open automatically."
+DIALOG_DOWNLOAD_COMPLETE_MSG = "Update downloaded to:\n{}\n\nFolder will open automatically."
 DIALOG_SELECT_DOWNLOAD_FOLDER = "Select Download Folder"
 DIALOG_DOWNLOADING = "Downloading update..."
 
@@ -291,4 +298,8 @@ SUBTITLE_TYPE_AUTO = "Auto-generated"
 
 # Common labels
 LABEL_PLATFORM = "Platform"
-LABEL_VIDEOS = "videos" 
+LABEL_VIDEOS = "videos"
+
+# New for OS update messages
+UPDATE_OS_NOT_SUPPORTED = "Not Supported"
+UPDATE_OS_NOT_SUPPORTED_MSG = "The operating system {0} is not supported yet." 

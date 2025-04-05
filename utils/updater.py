@@ -161,7 +161,7 @@ class UpdateDialog(QDialog):
         elif os_type == "linux":
             url = self.version_info["download_url"]["linux"]
         else:
-            QMessageBox.warning(self, "Not Supported", f"The operating system {os_type} is not supported yet.")
+            QMessageBox.warning(self, self.tr_("UPDATE_OS_NOT_SUPPORTED"), self.tr_("UPDATE_OS_NOT_SUPPORTED_MSG").format(os_type))
             return
         
         # Set status message in parent if available

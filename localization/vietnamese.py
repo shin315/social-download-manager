@@ -198,6 +198,13 @@ DIALOG_MP3_UNAVAILABLE = "Tính năng tải xuống MP3 yêu cầu FFmpeg. Bạn
 DIALOG_INSTALL_FFMPEG = "Để sử dụng tính năng tải xuống MP3, vui lòng cài đặt FFmpeg"
 DIALOG_SEE_README = "Xem file README.md để biết hướng dẫn cài đặt chi tiết."
 
+# Thêm các thông báo dialog bị thiếu
+DIALOG_EMPTY_URL = "Vui lòng nhập URL trước khi lấy thông tin."
+DIALOG_INVALID_URL = "URL không hợp lệ hoặc không được hỗ trợ. Vui lòng nhập URL hợp lệ."
+DIALOG_ALREADY_EXISTS = "Video Đã Có Trong Danh Sách"
+DIALOG_ALREADY_EXISTS_TEXT = "Video này đã có trong danh sách. Bạn có muốn thêm lại không?"
+DIALOG_SELECT_OUTPUT_FOLDER = "Vui lòng chọn thư mục lưu."
+
 # About dialog
 ABOUT_TITLE = "Giới Thiệu Social Download Manager"
 ABOUT_MESSAGE = "Social Download Manager v1.0\n\nỨng dụng đơn giản để tải video không có watermark từ nhiều nền tảng."
@@ -252,6 +259,10 @@ DIALOG_DOWNLOAD_COMPLETE = "Tải Xuống Hoàn Tất"
 DIALOG_DOWNLOAD_COMPLETE_MSG = "Đã tải bản cập nhật về:\n{}\n\nThư mục sẽ tự động mở."
 DIALOG_SELECT_DOWNLOAD_FOLDER = "Chọn Thư Mục Lưu"
 DIALOG_DOWNLOADING = "Đang tải bản cập nhật..."
+
+# Mới cho thông báo hỗ trợ hệ điều hành
+UPDATE_OS_NOT_SUPPORTED = "Không Hỗ Trợ"
+UPDATE_OS_NOT_SUPPORTED_MSG = "Hệ điều hành {0} chưa được hỗ trợ."
 
 # New error messages for API and video issues
 DIALOG_TIKTOK_API_CHANGED = "API của TikTok đã thay đổi. Vui lòng đợi bản cập nhật ứng dụng."
