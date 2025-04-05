@@ -82,6 +82,11 @@ class DownloadedVideosTab(QWidget):
         self.sort_order = Qt.SortOrder.DescendingOrder  # Default sort order is descending
         self.subtitle_info_label = None  # Label to display subtitle information
         self.current_platform = "All"  # Track current platform for UI adjustments
+        self._context_menu_active = False  # Flag to track when a context menu is active
+        
+        # For managing custom column widths
+        self.column_resize_timer = None
+        self.save_width_timeout = 500  # ms to wait after resizing before saving (prevents saving during drag)
         
         print(f"DEBUG: Initial sort_column={self.sort_column}, sort_order={self.sort_order}")
         
@@ -471,8 +476,17 @@ class DownloadedVideosTab(QWidget):
             except:
                 pass  # If no connection existed, that's fine
             
+            try:
+                # Also disconnect save_column_widths_delayed if connected
+                header.sectionResized.disconnect(self.save_column_widths_delayed)
+            except:
+                pass  # If no connection existed, that's fine
+            
             # Connect resize signal to our minimum width enforcer
             header.sectionResized.connect(self.enforce_min_column_width)
+            
+            # Connect resize signal to save column widths after a short delay
+            header.sectionResized.connect(self.save_column_widths_delayed)
         
         # Calculate and store minimum width for each column
         for col in range(self.downloads_table.columnCount()):
@@ -519,6 +533,21 @@ class DownloadedVideosTab(QWidget):
                 header.blockSignals(True)
                 header.resizeSection(column_index, min_width)
                 header.blockSignals(False)
+
+    def save_column_widths_delayed(self, column_index, old_size, new_size):
+        """Save column widths after a short delay to prevent excessive saving during resize"""
+        # If we have an existing timer, stop it
+        if self.column_resize_timer and self.column_resize_timer.isActive():
+            self.column_resize_timer.stop()
+        
+        # Create a new timer to save after delay
+        if not self.column_resize_timer:
+            self.column_resize_timer = QTimer()
+            self.column_resize_timer.setSingleShot(True)
+            self.column_resize_timer.timeout.connect(self.save_column_widths)
+        
+        # Start timer - will save column widths after timeout
+        self.column_resize_timer.start(self.save_width_timeout)
 
     def create_video_details_area(self):
         """Create area to display detailed video information"""
@@ -740,8 +769,19 @@ class DownloadedVideosTab(QWidget):
                 self.filter_videos()
                 return True
         
-        # Handle clicks outside the downloads table area to clear selection
+        # Handle mouse press events
         if event.type() == QEvent.Type.MouseButtonPress:
+            # Store the mouse button that was pressed
+            if hasattr(event, 'button'):
+                button_type = "Left" if event.button() == Qt.MouseButton.LeftButton else "Right" if event.button() == Qt.MouseButton.RightButton else "Other"
+                print(f"DEBUG: Mouse button pressed: {button_type}")
+                
+                # If right mouse button pressed, set context menu flag to prevent detail display
+                if event.button() == Qt.MouseButton.RightButton:
+                    self._context_menu_active = True
+                    print("DEBUG: Set context menu active flag from right click")
+            
+            # Handle clicks outside the downloads table area to clear selection
             if obj == self and self.downloads_table:
                 # Get click position
                 pos = event.pos()
@@ -766,11 +806,18 @@ class DownloadedVideosTab(QWidget):
         if not indexes:
             return
             
+        # Check if this was triggered by a right-click
+        # We need to check if a context menu event is in progress
+        is_right_click = hasattr(self, '_context_menu_active') and self._context_menu_active
+        
+        # Show trace message for better debugging
+        print(f"DEBUG: Selection changed - Right click: {is_right_click}, Context menu active: {self._context_menu_active}")
+        
         # Get row of first selected item
         row = indexes[0].row()
         
-        # Display detailed information of video if row is valid
-        if row >= 0 and row < len(self.filtered_videos):
+        # Display detailed information of video if row is valid and not from right-click
+        if row >= 0 and row < len(self.filtered_videos) and not is_right_click:
             video = self.filtered_videos[row]
             
             # Kiểm tra nếu video này đã được chọn trước đó và đang hiển thị chi tiết
@@ -778,12 +825,14 @@ class DownloadedVideosTab(QWidget):
                 # Nếu hiện tại không hiển thị, thì hiển thị lại
                 if not self.video_details_frame.isVisible():
                     self.video_details_frame.setVisible(True)
+                    print("DEBUG: Showing details for already selected video")
                 # Trường hợp đã hiển thị rồi thì không cần làm gì
             else:
                 # Video mới được chọn, cập nhật selected_video và hiển thị chi tiết
                 self.selected_video = video
                 self.video_details_frame.setVisible(True)
                 self.update_selected_video_details(video)
+                print("DEBUG: Showing details for newly selected video")
             
     def remove_vietnamese_accents(self, text):
         """Remove Vietnamese accents from a string"""
@@ -3198,16 +3247,22 @@ class DownloadedVideosTab(QWidget):
 
     def show_context_menu(self, position):
         """Show right-click menu for downloaded videos table"""
+        # Set flag to indicate context menu is active
+        print("DEBUG: Context menu triggered")
+        self._context_menu_active = True
+        
         # Get current row and column position
         index = self.downloads_table.indexAt(position)
         
         if not index.isValid():
+            self._context_menu_active = False
             return
             
         row = index.row()
         column = index.column()
             
         if row < 0 or row >= self.downloads_table.rowCount():
+            self._context_menu_active = False
             return
         
         # Create context menu
@@ -3384,7 +3439,16 @@ class DownloadedVideosTab(QWidget):
         
         # Show menu if there are actions
         if not context_menu.isEmpty():
+            # Connect the aboutToHide signal to reset the context menu flag
+            context_menu.aboutToHide.connect(self.reset_context_menu_flag)
             context_menu.exec(QCursor.pos())
+        else:
+            self._context_menu_active = False
+    
+    def reset_context_menu_flag(self):
+        """Reset the context menu active flag when menu hides"""
+        print("DEBUG: Context menu closed, resetting flag")
+        self._context_menu_active = False
 
     def play_video(self, row):
         """Play video using default system player"""
@@ -4008,16 +4072,20 @@ class DownloadedVideosTab(QWidget):
 
     def handle_cell_clicked(self, row, column):
         """Handle when a cell is clicked in the table"""
+        print(f"DEBUG: Cell clicked - row: {row}, column: {column}")
+        
         # Check if row is valid
         if row >= 0 and row < len(self.filtered_videos):
             video = self.filtered_videos[row]
             
+            # Show the detail information box if it's hidden
+            if not self.video_details_frame.isVisible():
+                self.video_details_frame.setVisible(True)
+            
             # If we already have selected video information and it matches the current video
             if self.selected_video == video:
-                # Show the detail information box if it's hidden
-                if not self.video_details_frame.isVisible():
-                    self.video_details_frame.setVisible(True)
-                    # No need to update information as it was already updated when previously selected
+                # No need to update information as it was already updated when previously selected
+                pass
             else:
                 # New video selected, updated in handle_selection_changed
                 pass
@@ -4240,17 +4308,21 @@ class DownloadedVideosTab(QWidget):
             column_widths = {}
             header = self.downloads_table.horizontalHeader()
             
-            for i in range(1, self.downloads_table.columnCount()):  # Skip the first checkbox column
+            # Save ALL column widths, including the checkbox column
+            for i in range(self.downloads_table.columnCount()):
                 column_widths[str(i)] = header.sectionSize(i)
             
-            print(f"DEBUG: Saving column widths: {column_widths}")
+            print(f"DEBUG: Saving column widths for {self.current_platform}: {column_widths}")
             
             # Store different widths for different views
             if self.current_platform == "TikTok":
                 config['column_widths']['tiktok'] = column_widths
             elif self.current_platform == "YouTube":
                 config['column_widths']['youtube'] = column_widths
+            elif self.current_platform == "All":
+                config['column_widths']['all'] = column_widths
             else:
+                # Default fallback
                 config['column_widths']['all'] = column_widths
             
             # Save updated config
@@ -4281,10 +4353,16 @@ class DownloadedVideosTab(QWidget):
                 return
                 
             # Determine which set of widths to use
-            widths_key = 'tiktok' if self.current_platform == "TikTok" else 'youtube' if self.current_platform == "YouTube" else 'all'
+            widths_key = None
+            if self.current_platform == "TikTok" and 'tiktok' in config['column_widths']:
+                widths_key = 'tiktok'
+            elif self.current_platform == "YouTube" and 'youtube' in config['column_widths']:
+                widths_key = 'youtube'
+            elif (self.current_platform == "" or self.current_platform == "All") and 'all' in config['column_widths']:
+                widths_key = 'all'
             
-            if widths_key not in config['column_widths']:
-                print(f"DEBUG: No column_widths for {widths_key} view, using default column widths")
+            if not widths_key:
+                print(f"DEBUG: No column_widths for {self.current_platform} view, using default column widths")
                 return
             
             # Load width for each column
@@ -4292,11 +4370,29 @@ class DownloadedVideosTab(QWidget):
             print(f"DEBUG: Loading column widths for {widths_key} view: {column_widths}")
             
             header = self.downloads_table.horizontalHeader()
+            
+            # Block signals temporarily to avoid triggering resizing events
+            header.blockSignals(True)
+            
             for col_str, width in column_widths.items():
                 col = int(col_str)
                 if col < self.downloads_table.columnCount():
-                    header.resizeSection(col, width)
-                    print(f"DEBUG: Set column {col} width to {width}")
+                    # Always respect minimum width constraints
+                    header_item = self.downloads_table.horizontalHeaderItem(col)
+                    min_width = 0
+                    if header_item:
+                        min_width = header_item.data(Qt.ItemDataRole.UserRole) or 0
+                    
+                    # Only apply if the saved width is greater than the minimum width
+                    if width >= min_width:
+                        header.resizeSection(col, width)
+                        print(f"DEBUG: Set column {col} width to {width}")
+                    else:
+                        print(f"DEBUG: Saved width {width} is less than minimum {min_width}, using minimum")
+                        header.resizeSection(col, min_width)
+            
+            # Unblock signals
+            header.blockSignals(False)
             
             return True
         except Exception as e:

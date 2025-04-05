@@ -1162,7 +1162,15 @@ class MainWindow(QMainWindow):
         current_tab_index = self.tab_widget.currentIndex()
         
         if hasattr(self.downloaded_videos_tab, 'filter_by_platform'):
-            # Call filter_by_platform with the selected platform
+            # First set up the correct table columns based on platform
+            if platform == "TikTok":
+                self.downloaded_videos_tab.setup_tiktok_table_columns()
+            elif platform == "YouTube":
+                self.downloaded_videos_tab.setup_youtube_table_columns()
+            elif platform == "All":
+                self.downloaded_videos_tab.setup_default_table_columns()
+                
+            # Then filter by platform
             self.downloaded_videos_tab.filter_by_platform(platform)
             
             # Update status message
