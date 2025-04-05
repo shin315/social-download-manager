@@ -5,7 +5,7 @@
                              QComboBox, QLineEdit, QToolBar, QToolButton,
                              QMenu, QDialogButtonBox, QToolTip,
                              QStyledItemDelegate, QListWidget, QListWidgetItem,
-                             QFileDialog)
+                             QFileDialog, QMessageBox, QApplication)
 from PyQt6.QtCore import Qt, QSize, QTimer, QPoint, QEvent, pyqtSignal, QCoreApplication
 from PyQt6.QtGui import QPixmap, QCursor, QIcon, QColor, QPainter, QPen, QMouseEvent, QAction, QFontMetrics
 import os
@@ -1077,6 +1077,9 @@ class DownloadedVideosTab(QWidget):
             # Update statistics
             self.update_statistics()
             
+            # Update button states based on whether there are videos
+            self.update_button_states()
+            
             print(f"Loaded {len(self.all_videos)} videos")
             
         except Exception as e:
@@ -1163,6 +1166,9 @@ class DownloadedVideosTab(QWidget):
             self.downloads_table.clearContents()
             self.downloads_table.setRowCount(0)
             self.video_details_frame.hide()
+            
+            # Cập nhật trạng thái nút khi không có video
+            self.update_button_states()
             return
             
         # Disable sorting temporarily to avoid triggering while updating
@@ -1531,6 +1537,9 @@ class DownloadedVideosTab(QWidget):
         # Update row count and total size
         self.update_statistics()
         
+        # Cập nhật trạng thái nút sau khi hiển thị video
+        self.update_button_states()
+        
         # Restore current selected item (if any)
         if self.selected_video and self.selected_video in videos:
             # Find index of selected video
@@ -1835,11 +1844,18 @@ class DownloadedVideosTab(QWidget):
             self.check_and_update_thumbnails()
             
             # Re-apply platform filter if needed
-            if current_platform != "All":
+            if current_platform and current_platform != "All":
                 print(f"DEBUG: Re-applying platform filter: {current_platform}")
                 self.filter_by_platform(current_platform)
             else:
+                # If current platform is empty string or "All", show all videos
+                print(f"DEBUG: Showing all videos (current_platform={current_platform})")
+                # Set current_platform properly to "All"
+                self.current_platform = "All"
+                # Setup default table columns
+                self.setup_default_table_columns()
                 # Display the newly loaded video list
+                self.filtered_videos = self.all_videos.copy()
                 self.display_videos()
             
             # Hide video details if currently displayed
@@ -3065,10 +3081,9 @@ class DownloadedVideosTab(QWidget):
                         
                     except Exception as e:
                         print(f"Error deleting file from disk: {e}")
-                        # If "Apply to all" is not checked, show error message
-                        if not apply_all_checkbox.isChecked():
-                            QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), 
-                                             self.tr_("DIALOG_CANNOT_DELETE_FILE").format(str(e)))
+                        # Show error message
+                        QMessageBox.warning(self, self.tr_("DIALOG_ERROR"), 
+                                         self.tr_("DIALOG_CANNOT_DELETE_FILE").format(str(e)))
                 
                 # Delete from database
                 try:
@@ -3541,8 +3556,27 @@ class DownloadedVideosTab(QWidget):
         self.select_toggle_btn.setEnabled(has_videos)
         self.delete_selected_btn.setEnabled(has_videos)
         
+        # Thêm debug logs chi tiết hơn
+        print(f"DEBUG: update_button_states - has_videos={has_videos}, rowCount={self.downloads_table.rowCount()}")
+        print(f"DEBUG: select_toggle_btn enabled: {self.select_toggle_btn.isEnabled()}")
+        print(f"DEBUG: delete_selected_btn enabled: {self.delete_selected_btn.isEnabled()}")
+        
+        # Đảm bảo nút được hiển thị đúng trạng thái
+        if has_videos:
+            # Bỏ style disabled
+            self.select_toggle_btn.setStyleSheet("")
+            self.delete_selected_btn.setStyleSheet("")
+        else:
+            # Áp dụng style disabled
+            self.select_toggle_btn.setStyleSheet("QPushButton { color: #999; background-color: #f0f0f0; }")
+            self.delete_selected_btn.setStyleSheet("QPushButton { color: #999; background-color: #f0f0f0; }")
+        
+        # Đảm bảo các nút được cập nhật trực quan
+        self.select_toggle_btn.update()
+        self.delete_selected_btn.update()
+        
         # No style applied as it's handled in main_window.py
-        print("DEBUG: update_button_states in downloaded_videos_tab - button states updated without applying style")
+        print("DEBUG: update_button_states in downloaded_videos_tab - button states updated")
 
     def play_selected_video(self):
         """Play currently selected video in video details area"""
@@ -3660,6 +3694,8 @@ class DownloadedVideosTab(QWidget):
         # Get the filterable columns
         if self.current_platform == "TikTok":
             filterable_columns = [3, 4, 8]  # Quality, Format, Date for TikTok
+        elif self.current_platform == "YouTube":
+            filterable_columns = [4, 5, 9]  # Quality, Format, Date for YouTube
         else:
             filterable_columns = [1, 4, 5, 8]  # Platform, Quality, Format, Date for all modes
         
@@ -3669,21 +3705,64 @@ class DownloadedVideosTab(QWidget):
         
         # Only show filter options for filterable columns
         if column_index in filterable_columns:
-            if column_index == 8:  # Date column
-                date_action = menu.addAction(self.tr_("TOOLTIP_FILTER_BY").format(self.downloads_table.horizontalHeaderItem(column_index).text()))
-                date_action.triggered.connect(lambda: self.show_date_filter_menu(self.downloads_table.horizontalHeader().mapToGlobal(pos)))
-            else:
-                unique_values = self.get_unique_column_values(column_index)
-                print(f"DEBUG: Unique values for column {column_index}: {unique_values}")
+            # Nhận date_column_index phụ thuộc vào platform hiện tại
+            date_column_index = self.date_col
+            
+            # Xử lý cột Date giống các cột khác - tạo FilterPopup trực tiếp
+            unique_values = self.get_unique_column_values(column_index)
+            print(f"DEBUG: Unique values for column {column_index}: {unique_values}")
+            
+            if unique_values:
+                # Tạo và hiển thị popup menu filter
+                header_text = self.downloads_table.horizontalHeaderItem(column_index).text()
                 
-                if unique_values:
-                    # Create and show the filter popup menu
-                    header_text = self.downloads_table.horizontalHeaderItem(column_index).text()
+                # Đối với cột date, vẫn dùng date filter menu
+                if column_index == date_column_index:
+                    # Hiển thị menu lọc theo ngày
+                    date_menu = QMenu(self)
+                    
+                    # Add Clear filter option at the top
+                    action_clear = QAction(self.tr_("FILTER_CLEAR"), self)
+                    
+                    # Add options to filter by date
+                    action_today = QAction(self.tr_("FILTER_TODAY"), self)
+                    action_yesterday = QAction(self.tr_("FILTER_YESTERDAY"), self)
+                    action_last_7_days = QAction(self.tr_("FILTER_LAST_7_DAYS"), self)
+                    action_last_30_days = QAction(self.tr_("FILTER_LAST_30_DAYS"), self)
+                    action_this_month = QAction(self.tr_("FILTER_THIS_MONTH"), self)
+                    action_last_month = QAction(self.tr_("FILTER_LAST_MONTH"), self)
+                    
+                    # Connect actions to filter by date function
+                    action_clear.triggered.connect(lambda: self.filter_by_date_range("Clear filter"))
+                    action_today.triggered.connect(lambda: self.filter_by_date_range("Today"))
+                    action_yesterday.triggered.connect(lambda: self.filter_by_date_range("Yesterday"))
+                    action_last_7_days.triggered.connect(lambda: self.filter_by_date_range("Last 7 days"))
+                    action_last_30_days.triggered.connect(lambda: self.filter_by_date_range("Last 30 days"))
+                    action_this_month.triggered.connect(lambda: self.filter_by_date_range("This month"))
+                    action_last_month.triggered.connect(lambda: self.filter_by_date_range("Last month"))
+                    
+                    # Add clear action first with separator
+                    date_menu.addAction(action_clear)
+                    date_menu.addSeparator()
+                    
+                    # Add other actions to menu
+                    date_menu.addAction(action_today)
+                    date_menu.addAction(action_yesterday)
+                    date_menu.addAction(action_last_7_days)
+                    date_menu.addAction(action_last_30_days)
+                    date_menu.addAction(action_this_month)
+                    date_menu.addAction(action_last_month)
+                    
+                    # Hiển thị menu trực tiếp tại vị trí header
+                    date_menu.exec(self.downloads_table.horizontalHeader().mapToGlobal(pos))
+                else:
+                    # Các cột khác sử dụng FilterPopup
                     filter_popup = FilterPopup(self, column_index, unique_values, header_text)
                     print(f"DEBUG: Creating FilterPopup for column {column_index} with header text '{header_text}'")
                     filter_popup.filterChanged.connect(self.apply_column_filter)
                     filter_popup.exec(self.downloads_table.horizontalHeader().mapToGlobal(pos))
-                    return  # Return early as we're using a popup menu
+                
+                return  # Return early as we're using a popup menu
         
         # Skip adding "Reset Column Widths" option - removed as per client request
         
@@ -4226,7 +4305,7 @@ class DownloadedVideosTab(QWidget):
         self.save_column_widths()
         
         if platform == "All":
-            self.current_platform = None
+            self.current_platform = "All"  # Thiết lập là "All" thay vì None
             print("DEBUG: Showing all platforms")
             self.filter_videos()  # This will reset to show all videos
             self.update_table_headers()  # Update headers for default view
