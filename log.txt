@@ -6162,3 +6162,201 @@
 [2025-04-06 15:21:26.915460] Successfully saved config
 [2025-04-06 15:21:26.915460] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 33, "1": 79, "2": 368, "3": 73, "4": 85, "5": 75, "6": 78, "7": 75, "8": 112}, "tiktok": {"0": 31, "1": 368, "2": 85, "3": 67, "4": 69, "5": 77, "6": 58, "7": 103, "8": 120}, "youtube": {"0": 31, "1": 305, "2": 89, "3": 65, "4": 68, "5": 69, "6": 76, "7": 53, "8": 102, "9": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
 [2025-04-06 15:21:26.916462] Theme changed to: dark
+[2025-04-06 15:29:18.748787] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-06 15:29:18.748787] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-06 15:29:18.748787] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-06 15:29:18.748787] Config file exists, reading existing content
+[2025-04-06 15:29:18.748787] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 33, '1': 79, '2': 324, '3': 73, '4': 85, '5': 75, '6': 78, '7': 75, '8': 112}, 'tiktok': {'0': 31, '1': 368, '2': 85, '3': 67, '4': 69, '5': 77, '6': 58, '7': 103, '8': 120}, 'youtube': {'0': 31, '1': 305, '2': 89, '3': 65, '4': 68, '5': 69, '6': 76, '7': 53, '8': 102, '9': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-06 15:29:18.748787] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 33, '1': 79, '2': 324, '3': 73, '4': 85, '5': 75, '6': 78, '7': 75, '8': 112}, 'tiktok': {'0': 31, '1': 368, '2': 85, '3': 67, '4': 69, '5': 77, '6': 58, '7': 103, '8': 120}, 'youtube': {'0': 31, '1': 305, '2': 89, '3': 65, '4': 68, '5': 69, '6': 76, '7': 53, '8': 102, '9': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-06 15:29:18.748787] Successfully saved config
+[2025-04-06 15:29:18.756791] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 33, "1": 79, "2": 324, "3": 73, "4": 85, "5": 75, "6": 78, "7": 75, "8": 112}, "tiktok": {"0": 31, "1": 368, "2": 85, "3": 67, "4": 69, "5": 77, "6": 58, "7": 103, "8": 120}, "youtube": {"0": 31, "1": 305, "2": 89, "3": 65, "4": 68, "5": 69, "6": 76, "7": 53, "8": 102, "9": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-06 15:29:18.748787] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-06 15:29:18.748787] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-06 15:29:18.748787] Executable path: Not running as exe
+[2025-04-06 15:29:18.748787] Config file exists, reading content
+[2025-04-06 15:29:18.748787] Config content: {
+    "theme": "dark",
+    "column_widths": {
+        "all": {
+            "0": 33,
+            "1": 79,
+            "2": 324,
+            "3": 73,
+            "4": 85,
+            "5": 75,
+            "6": 78,
+            "7": 75,
+            "8": 112
+        },
+        "tiktok": {
+            "0": 31,
+            "1": 368,
+            "2": 85,
+            "3": 67,
+            "4": 69,
+            "5": 77,
+            "6": 58,
+            "7": 103,
+            "8": 120
+        },
+        "youtube": {
+            "0": 31,
+            "1": 305,
+            "2": 89,
+            "3": 65,
+            "4": 68,
+            "5": 69,
+            "6": 76,
+            "7": 53,
+            "8": 102,
+            "9": 120
+        }
+    },
+    "last_output_folder": "I:/Product Apps/Test Zone",
+    "language": "english"
+}
+[2025-04-06 15:29:18.748787] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-06 15:29:18.748787] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-06 15:29:18.756791] Setting language to: english
+[2025-04-06 15:29:18.760793] Setting theme to: dark
+[2025-04-06 15:29:18.819301] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-06 15:29:18.819301] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-06 15:29:18.819301] Key: theme, Value: dark
+[2025-04-06 15:29:18.819301] Config file exists, reading existing content
+[2025-04-06 15:29:18.820300] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 33, '1': 79, '2': 324, '3': 73, '4': 85, '5': 75, '6': 78, '7': 75, '8': 112}, 'tiktok': {'0': 31, '1': 368, '2': 85, '3': 67, '4': 69, '5': 77, '6': 58, '7': 103, '8': 120}, 'youtube': {'0': 31, '1': 305, '2': 89, '3': 65, '4': 68, '5': 69, '6': 76, '7': 53, '8': 102, '9': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-06 15:29:18.820300] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 33, '1': 79, '2': 324, '3': 73, '4': 85, '5': 75, '6': 78, '7': 75, '8': 112}, 'tiktok': {'0': 31, '1': 368, '2': 85, '3': 67, '4': 69, '5': 77, '6': 58, '7': 103, '8': 120}, 'youtube': {'0': 31, '1': 305, '2': 89, '3': 65, '4': 68, '5': 69, '6': 76, '7': 53, '8': 102, '9': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-06 15:29:18.820300] Successfully saved config
+[2025-04-06 15:29:18.821300] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 33, "1": 79, "2": 324, "3": 73, "4": 85, "5": 75, "6": 78, "7": 75, "8": 112}, "tiktok": {"0": 31, "1": 368, "2": 85, "3": 67, "4": 69, "5": 77, "6": 58, "7": 103, "8": 120}, "youtube": {"0": 31, "1": 305, "2": 89, "3": 65, "4": 68, "5": 69, "6": 76, "7": 53, "8": 102, "9": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-06 15:29:18.821300] Theme changed to: dark
+[2025-04-06 15:31:37.663565] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-06 15:31:37.663565] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-06 15:31:37.663565] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-06 15:31:37.663565] Config file exists, reading existing content
+[2025-04-06 15:31:37.663565] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 33, '1': 79, '2': 332, '3': 73, '4': 85, '5': 75, '6': 78, '7': 75, '8': 112}, 'tiktok': {'0': 31, '1': 368, '2': 85, '3': 67, '4': 69, '5': 77, '6': 58, '7': 103, '8': 120}, 'youtube': {'0': 31, '1': 305, '2': 89, '3': 65, '4': 68, '5': 69, '6': 76, '7': 53, '8': 102, '9': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-06 15:31:37.663565] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 33, '1': 79, '2': 332, '3': 73, '4': 85, '5': 75, '6': 78, '7': 75, '8': 112}, 'tiktok': {'0': 31, '1': 368, '2': 85, '3': 67, '4': 69, '5': 77, '6': 58, '7': 103, '8': 120}, 'youtube': {'0': 31, '1': 305, '2': 89, '3': 65, '4': 68, '5': 69, '6': 76, '7': 53, '8': 102, '9': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-06 15:31:37.663565] Successfully saved config
+[2025-04-06 15:31:37.671564] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 33, "1": 79, "2": 332, "3": 73, "4": 85, "5": 75, "6": 78, "7": 75, "8": 112}, "tiktok": {"0": 31, "1": 368, "2": 85, "3": 67, "4": 69, "5": 77, "6": 58, "7": 103, "8": 120}, "youtube": {"0": 31, "1": 305, "2": 89, "3": 65, "4": 68, "5": 69, "6": 76, "7": 53, "8": 102, "9": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-06 15:31:37.663565] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-06 15:31:37.663565] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-06 15:31:37.663565] Executable path: Not running as exe
+[2025-04-06 15:31:37.663565] Config file exists, reading content
+[2025-04-06 15:31:37.663565] Config content: {
+    "theme": "dark",
+    "column_widths": {
+        "all": {
+            "0": 33,
+            "1": 79,
+            "2": 332,
+            "3": 73,
+            "4": 85,
+            "5": 75,
+            "6": 78,
+            "7": 75,
+            "8": 112
+        },
+        "tiktok": {
+            "0": 31,
+            "1": 368,
+            "2": 85,
+            "3": 67,
+            "4": 69,
+            "5": 77,
+            "6": 58,
+            "7": 103,
+            "8": 120
+        },
+        "youtube": {
+            "0": 31,
+            "1": 305,
+            "2": 89,
+            "3": 65,
+            "4": 68,
+            "5": 69,
+            "6": 76,
+            "7": 53,
+            "8": 102,
+            "9": 120
+        }
+    },
+    "last_output_folder": "I:/Product Apps/Test Zone",
+    "language": "english"
+}
+[2025-04-06 15:31:37.663565] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-06 15:31:37.663565] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-06 15:31:37.672566] Setting language to: english
+[2025-04-06 15:31:37.675140] Setting theme to: dark
+[2025-04-06 15:31:37.738238] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-06 15:31:37.738238] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-06 15:31:37.738238] Key: theme, Value: dark
+[2025-04-06 15:31:37.738238] Config file exists, reading existing content
+[2025-04-06 15:31:37.739239] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 33, '1': 79, '2': 332, '3': 73, '4': 85, '5': 75, '6': 78, '7': 75, '8': 112}, 'tiktok': {'0': 31, '1': 368, '2': 85, '3': 67, '4': 69, '5': 77, '6': 58, '7': 103, '8': 120}, 'youtube': {'0': 31, '1': 305, '2': 89, '3': 65, '4': 68, '5': 69, '6': 76, '7': 53, '8': 102, '9': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-06 15:31:37.739239] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 33, '1': 79, '2': 332, '3': 73, '4': 85, '5': 75, '6': 78, '7': 75, '8': 112}, 'tiktok': {'0': 31, '1': 368, '2': 85, '3': 67, '4': 69, '5': 77, '6': 58, '7': 103, '8': 120}, 'youtube': {'0': 31, '1': 305, '2': 89, '3': 65, '4': 68, '5': 69, '6': 76, '7': 53, '8': 102, '9': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-06 15:31:37.740239] Successfully saved config
+[2025-04-06 15:31:37.740239] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 33, "1": 79, "2": 332, "3": 73, "4": 85, "5": 75, "6": 78, "7": 75, "8": 112}, "tiktok": {"0": 31, "1": 368, "2": 85, "3": 67, "4": 69, "5": 77, "6": 58, "7": 103, "8": 120}, "youtube": {"0": 31, "1": 305, "2": 89, "3": 65, "4": 68, "5": 69, "6": 76, "7": 53, "8": 102, "9": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-06 15:31:37.741239] Theme changed to: dark
+[2025-04-06 15:37:20.490084] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-06 15:37:20.490084] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-06 15:37:20.490084] Key: last_output_folder, Value: I:/Product Apps/Test Zone
+[2025-04-06 15:37:20.490084] Config file exists, reading existing content
+[2025-04-06 15:37:20.490084] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 33, '1': 79, '2': 368, '3': 73, '4': 85, '5': 75, '6': 78, '7': 75, '8': 112}, 'tiktok': {'0': 31, '1': 368, '2': 85, '3': 67, '4': 69, '5': 77, '6': 58, '7': 103, '8': 120}, 'youtube': {'0': 31, '1': 305, '2': 89, '3': 65, '4': 68, '5': 69, '6': 76, '7': 53, '8': 102, '9': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-06 15:37:20.491084] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 33, '1': 79, '2': 368, '3': 73, '4': 85, '5': 75, '6': 78, '7': 75, '8': 112}, 'tiktok': {'0': 31, '1': 368, '2': 85, '3': 67, '4': 69, '5': 77, '6': 58, '7': 103, '8': 120}, 'youtube': {'0': 31, '1': 305, '2': 89, '3': 65, '4': 68, '5': 69, '6': 76, '7': 53, '8': 102, '9': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-06 15:37:20.491084] Successfully saved config
+[2025-04-06 15:37:20.491084] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 33, "1": 79, "2": 368, "3": 73, "4": 85, "5": 75, "6": 78, "7": 75, "8": 112}, "tiktok": {"0": 31, "1": 368, "2": 85, "3": 67, "4": 69, "5": 77, "6": 58, "7": 103, "8": 120}, "youtube": {"0": 31, "1": 305, "2": 89, "3": 65, "4": 68, "5": 69, "6": 76, "7": 53, "8": 102, "9": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-06 15:37:20.490084] Loading config from: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-06 15:37:20.490084] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-06 15:37:20.490084] Executable path: Not running as exe
+[2025-04-06 15:37:20.490084] Config file exists, reading content
+[2025-04-06 15:37:20.490084] Config content: {
+    "theme": "dark",
+    "column_widths": {
+        "all": {
+            "0": 33,
+            "1": 79,
+            "2": 368,
+            "3": 73,
+            "4": 85,
+            "5": 75,
+            "6": 78,
+            "7": 75,
+            "8": 112
+        },
+        "tiktok": {
+            "0": 31,
+            "1": 368,
+            "2": 85,
+            "3": 67,
+            "4": 69,
+            "5": 77,
+            "6": 58,
+            "7": 103,
+            "8": 120
+        },
+        "youtube": {
+            "0": 31,
+            "1": 305,
+            "2": 89,
+            "3": 65,
+            "4": 68,
+            "5": 69,
+            "6": 76,
+            "7": 53,
+            "8": 102,
+            "9": 120
+        }
+    },
+    "last_output_folder": "I:/Product Apps/Test Zone",
+    "language": "english"
+}
+[2025-04-06 15:37:20.490084] Read last_output_folder from config: 'I:/Product Apps/Test Zone'
+[2025-04-06 15:37:20.490084] Setting output_folder to: I:/Product Apps/Test Zone
+[2025-04-06 15:37:20.492591] Setting language to: english
+[2025-04-06 15:37:20.494102] Setting theme to: dark
+[2025-04-06 15:37:20.550403] Saving config to: I:\Product Apps\Social Download Manager Version 2\config.json
+[2025-04-06 15:37:20.550403] App directory: I:\Product Apps\Social Download Manager Version 2
+[2025-04-06 15:37:20.550403] Key: theme, Value: dark
+[2025-04-06 15:37:20.550403] Config file exists, reading existing content
+[2025-04-06 15:37:20.551405] Existing config: {'theme': 'dark', 'column_widths': {'all': {'0': 33, '1': 79, '2': 368, '3': 73, '4': 85, '5': 75, '6': 78, '7': 75, '8': 112}, 'tiktok': {'0': 31, '1': 368, '2': 85, '3': 67, '4': 69, '5': 77, '6': 58, '7': 103, '8': 120}, 'youtube': {'0': 31, '1': 305, '2': 89, '3': 65, '4': 68, '5': 69, '6': 76, '7': 53, '8': 102, '9': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-06 15:37:20.551405] Updated config: {'theme': 'dark', 'column_widths': {'all': {'0': 33, '1': 79, '2': 368, '3': 73, '4': 85, '5': 75, '6': 78, '7': 75, '8': 112}, 'tiktok': {'0': 31, '1': 368, '2': 85, '3': 67, '4': 69, '5': 77, '6': 58, '7': 103, '8': 120}, 'youtube': {'0': 31, '1': 305, '2': 89, '3': 65, '4': 68, '5': 69, '6': 76, '7': 53, '8': 102, '9': 120}}, 'last_output_folder': 'I:/Product Apps/Test Zone', 'language': 'english'}
+[2025-04-06 15:37:20.551405] Successfully saved config
+[2025-04-06 15:37:20.552405] Verification - Config content after save: {"theme": "dark", "column_widths": {"all": {"0": 33, "1": 79, "2": 368, "3": 73, "4": 85, "5": 75, "6": 78, "7": 75, "8": 112}, "tiktok": {"0": 31, "1": 368, "2": 85, "3": 67, "4": 69, "5": 77, "6": 58, "7": 103, "8": 120}, "youtube": {"0": 31, "1": 305, "2": 89, "3": 65, "4": 68, "5": 69, "6": 76, "7": 53, "8": 102, "9": 120}}, "last_output_folder": "I:/Product Apps/Test Zone", "language": "english"}
+[2025-04-06 15:37:20.553500] Theme changed to: dark

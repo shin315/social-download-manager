@@ -3186,6 +3186,10 @@ class DownloadedVideosTab(QWidget):
 
     def toggle_select_all(self):
         """Select or deselect all videos"""
+        # If there are no videos, don't do anything
+        if self.downloads_table.rowCount() == 0:
+            return
+            
         # Get current button state
         is_select_all = self.select_toggle_btn.text() == self.tr_("BUTTON_SELECT_ALL")
         
@@ -3630,17 +3634,31 @@ class DownloadedVideosTab(QWidget):
         self.select_toggle_btn.setEnabled(has_videos)
         self.delete_selected_btn.setEnabled(has_videos)
         
-        # Reset any custom styling that might interfere with global stylesheet
-        self.select_toggle_btn.setStyleSheet("")
-        self.delete_selected_btn.setStyleSheet("")
+        # Apply proper styling based on enabled state
+        if not has_videos:
+            # Update button text when no videos exist
+            self.select_toggle_btn.setText(self.tr_("BUTTON_SELECT_ALL"))
+            
+            # Apply disabled style explicitly
+            disabled_style = """
+                QPushButton:disabled {
+                    background-color: #444444;
+                    color: #888888;
+                    border-color: #555555;
+                }
+            """
+            self.select_toggle_btn.setStyleSheet(disabled_style)
+            self.delete_selected_btn.setStyleSheet(disabled_style)
+        else:
+            # Reset style when enabled
+            self.select_toggle_btn.setStyleSheet("")
+            self.delete_selected_btn.setStyleSheet("")
         
-        # Thêm debug logs chi tiết hơn
-        # Thêm debug logs chi tiết hơn
+        # Debug logs for troubleshooting
         print(f"DEBUG: update_button_states - has_videos={has_videos}, rowCount={self.downloads_table.rowCount()}")
         print(f"DEBUG: select_toggle_btn enabled: {self.select_toggle_btn.isEnabled()}")
         print(f"DEBUG: delete_selected_btn enabled: {self.delete_selected_btn.isEnabled()}")
         
-        # No style applied as it's handled in main_window.py
         print("DEBUG: update_button_states in downloaded_videos_tab - button states updated")
 
     def play_selected_video(self):
