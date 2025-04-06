@@ -85,8 +85,42 @@ class VideoInfoTab(QWidget):
         if platform_name not in ["TikTok", "YouTube"]:
             return
             
-        # Call set_platform which has the complete implementation
-        self.set_platform(platform_name)
+        # Lưu platform hiện tại
+        self.current_platform = platform_name
+        
+        # Cấu hình số cột dựa trên platform
+        if platform_name == "YouTube":
+            if self.video_table.columnCount() != 9:  # YouTube có 9 cột
+                self.video_table.setColumnCount(9)
+        elif platform_name == "TikTok":
+            if self.video_table.columnCount() != 8:  # TikTok có 8 cột
+                self.video_table.setColumnCount(8)
+            
+        # Cập nhật headers và column widths
+        self.update_table_headers()
+        self.update_column_widths()
+        
+        # Cấu hình placeholder URL input
+        if platform_name == "TikTok":
+            self.url_input.setPlaceholderText("Enter TikTok URL(s) - separate multiple URLs with spaces")
+        elif platform_name == "YouTube":
+            self.url_input.setPlaceholderText("Enter YouTube URL(s) - separate multiple URLs with spaces")
+        
+        # Hiển thị/ẩn subtitle options dựa trên platform
+        if hasattr(self, 'subtitle_frame'):
+            self.subtitle_frame.setVisible(platform_name == "YouTube")
+            if platform_name != "YouTube":
+                self.subtitle_checkbox.setChecked(False)
+                self.subtitle_language_combo.setEnabled(False)
+        
+        # Xóa table khi chuyển platform
+        self.clear_table()
+        
+        # Reset URL input và cập nhật trạng thái nút
+        self.url_input.clear()
+        self.update_button_states()
+        
+        print(f"Platform set to: {platform_name}, Column count: {self.video_table.columnCount()}")
         
     def configure_headers_by_platform(self, platform_name):
         """Configure table headers based on the platform"""
@@ -289,6 +323,10 @@ class VideoInfoTab(QWidget):
             self, self.tr_("MENU_CHOOSE_FOLDER"), start_folder)
         if folder:
             self.update_output_folder(folder)
+            
+            # Lưu thư mục output vào config
+            self.save_last_output_folder(folder)
+            
             if self.parent:
                 self.parent.output_folder = folder
                 self.parent.status_bar.showMessage(self.tr_("STATUS_FOLDER_SET").format(folder))
@@ -305,15 +343,27 @@ class VideoInfoTab(QWidget):
     def load_last_output_folder(self):
         """Load last output folder from config"""
         try:
-            if os.path.exists(CONFIG_FILE):
-                with open(CONFIG_FILE, 'r', encoding='utf-8') as f:
+            # Get application base directory (where the exe is)
+            if getattr(sys, 'frozen', False):
+                # If we're running as a PyInstaller bundle
+                app_dir = os.path.dirname(sys.executable)
+                config_file = os.path.join(app_dir, 'config.json')
+            else:
+                # If we're running in a normal Python environment
+                config_file = CONFIG_FILE
+                
+            print(f"Loading output folder from: {config_file}")
+            
+            if os.path.exists(config_file):
+                with open(config_file, 'r', encoding='utf-8') as f:
                     config = json.load(f)
-                    output_dir = config.get('output_dir', '')
+                    # Check for both keys since we have two different naming conventions in the code
+                    output_dir = config.get('last_output_folder') or config.get('output_dir', '')
                     if output_dir and os.path.exists(output_dir):
-                        self.output_dir = output_dir
-                        self.output_dir_label.setText(output_dir)
+                        self.output_folder_display.setText(output_dir)
+                        print(f"Loaded output folder: {output_dir}")
         except Exception as e:
-            print(f"Error loading config: {e}")
+            print(f"Error loading output folder config: {e}")
 
     def save_last_output_folder(self, folder):
         """Save last output folder path to configuration file"""
@@ -338,144 +388,132 @@ class VideoInfoTab(QWidget):
             # Create config file if it doesn't exist
             config = {}
             if os.path.exists(config_file):
-                with open(config_file, 'r') as f:
-                    content = f.read().strip()
-                    if content:  # Only try to parse if not empty
-                        config = json.loads(content)
+                try:
+                    with open(config_file, 'r', encoding='utf-8') as f:
+                        content = f.read().strip()
+                        if content:  # Only try to parse if not empty
+                            config = json.loads(content)
+                except Exception as e:
+                    print(f"Error reading config file: {e}")
             
-            # Update output folder
+            # Update output folder with both keys for compatibility
             config['last_output_folder'] = folder
+            config['output_dir'] = folder
             
             # Save configuration
-            with open(config_file, 'w') as f:
+            with open(config_file, 'w', encoding='utf-8') as f:
                 json.dump(config, f)
                 
-            # Verify the file was written correctly
-            with open(config_file, 'r') as f:
-                content = f.read().strip()
-                if content:
-                    try:
-                        log_file = os.path.join(os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else 
-                                              os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'log.txt')
-                        with open(log_file, 'a', encoding='utf-8') as log:
-                            log.write(f"[{datetime.now()}] save_last_output_folder verification: '{content}'\n")
-                    except:
-                        pass
+            print(f"Saved output folder to config: {folder}")
+                
         except Exception as e:
-            # Log error
-            try:
-                log_file = os.path.join(os.path.dirname(sys.executable if getattr(sys, 'frozen', False) else 
-                                      os.path.dirname(os.path.dirname(os.path.abspath(__file__)))), 'log.txt')
-                with open(log_file, 'a', encoding='utf-8') as log:
-                    log.write(f"[{datetime.now()}] Error saving last output folder: {str(e)}\n")
-            except:
-                pass
             print(f"Error saving last output folder: {e}")
 
     def get_video_info(self):
-        """Get video information from URL"""
-        # Get URL from input field
-        url = self.url_input.text().strip()
-        
-        # Check if URL is empty
-        if not url:
+        """Get video information from URL input"""
+        # Get URLs from the text box
+        urls = self.url_input.text().strip()
+        if not urls:
             QMessageBox.warning(
                 self,
                 self.tr_("DIALOG_WARNING"),
                 self.tr_("DIALOG_EMPTY_URL")
             )
             return
+        
+        # Split URLs by whitespace
+        url_list = urls.split()
+        
+        # Process each URL
+        new_url_count = 0
+        for url in url_list:
+            # Check if URL is already in the list
+            already_in_list = False
+            for row in range(self.video_table.rowCount()):
+                if row in self.video_info_dict:
+                    video_info = self.video_info_dict[row]
+                    if hasattr(video_info, 'url') and video_info.url == url:
+                        already_in_list = True
+                        break
             
-        # Detect platform from URL and set current platform
-        if "youtube.com" in url or "youtu.be" in url:
-            self.set_current_platform("YouTube")
-        elif "tiktok.com" in url:
-            self.set_current_platform("TikTok")
-        else:
-            # Show warning for unsupported URL
-            QMessageBox.warning(
-                self,
-                self.tr_("DIALOG_WARNING"),
-                self.tr_("DIALOG_INVALID_URL")
-            )
-            return
-        
-        # Check if video already exists in the table
-        for row, info in self.video_info_dict.items():
-            if hasattr(info, 'url') and info.url == url:
-                # Show confirmation dialog
-                reply = QMessageBox.question(
-                    self,
-                    self.tr_("DIALOG_ALREADY_EXISTS"),
-                    self.tr_("DIALOG_ALREADY_EXISTS_TEXT"),
-                    QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
-                    QMessageBox.StandardButton.No
-                )
+            if already_in_list:
+                continue
                 
-                if reply == QMessageBox.StandardButton.No:
-                    return
-                else:
-                    # Remove existing entry
-                    self.video_table.removeRow(row)
-                    self.video_info_dict.pop(row)
-                    break
+            new_url_count += 1
+                    
+            # Check if output folder is selected
+            if not self.output_folder_display.text():
+                QMessageBox.warning(
+                    self,
+                    self.tr_("DIALOG_WARNING"),
+                    self.tr_("DIALOG_SELECT_OUTPUT_FOLDER")
+                )
+                return
         
+        # If there are no new URLs, show message and return
+        if new_url_count == 0:
+            if self.parent:
+                self.parent.status_bar.showMessage(self.tr_("STATUS_NO_NEW_URLS"))
+            return
+                
         # Update UI to show that information is being processed
-        self.processing_count += 1
-        self.get_info_btn.setEnabled(False)
+        self.processing_count += new_url_count
+        
+        # Update Get Info button - change text and apply a different style to indicate processing
         self.get_info_btn.setText(self.tr_("STATUS_GETTING_INFO"))
+        self.get_info_btn.setStyleSheet("background-color: #0078d4; color: white;")
         self.url_input.setEnabled(False)
         
-        if self.parent:
-            self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO"))
+        # Hiển thị trạng thái trong status bar và force update
+        if self.parent and hasattr(self.parent, 'status_bar'):
+            if new_url_count > 1:
+                self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO_MULTIPLE").format(new_url_count))
+            else:
+                self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO"))
+            # Force UI update
+            QApplication.processEvents()
         
-        # Add loading row to table
-        row = self.video_table.rowCount()
-        self.video_table.insertRow(row)
-        
-        # Set row height
-        self.video_table.setRowHeight(row, 25)
-        
-        # Create checkbox for selection
-        self.create_checkbox_for_row(row)
-        
-        # Create loading placeholder
-        self.video_table.setItem(row, 1, QTableWidgetItem(self.tr_("STATUS_LOADING")))
-        
-        # Create placeholder for creator/channel
-        creator_label = self.tr_("HEADER_CHANNEL") if self.current_platform == "YouTube" else self.tr_("HEADER_CREATOR")
-        self.video_table.setItem(row, 2, QTableWidgetItem(f"{creator_label}..."))
-        
-        # Process immediately
-        QApplication.processEvents()
-        
-        # Call downloader to get video info
-        try:
-            # Create VideoInfo object with URL
-            from utils.models import VideoInfo
-            video_info = VideoInfo()
-            video_info.url = url
+        # Process each URL
+        for url in url_list:
+            # Check if URL is already in the list
+            already_in_list = False
+            for row in range(self.video_table.rowCount()):
+                if row in self.video_info_dict:
+                    video_info = self.video_info_dict[row]
+                    if hasattr(video_info, 'url') and video_info.url == url:
+                        already_in_list = True
+                        break
             
-            # Store in dictionary
-            self.video_info_dict[row] = video_info
-            
-            # Call downloader
-            self.downloader.get_video_info(url)
-        except Exception as e:
-            # Update UI to show error
-            error_message = f"Error: {str(e)}"
-            self.update_video_info_error(row, error_message)
-            
-            # Decrease counter
-            self.processing_count -= 1
-            
-            # Re-enable UI
-            self.get_info_btn.setEnabled(True)
-            self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
-            self.url_input.setEnabled(True)
-            
-            # Update button states
-            self.update_button_states()
+            if already_in_list:
+                continue
+                
+            # Call downloader to get video info
+            try:
+                # Create VideoInfo object with URL
+                from utils.video_info import VideoInfo
+                video_info = VideoInfo()
+                video_info.url = url
+                
+                # Store in temporary dictionary using URL as key instead of row
+                # Don't add to table yet until info is retrieved
+                self.video_info_dict[f"pending_{url}"] = video_info
+                
+                # Call downloader
+                self.downloader.get_video_info(url)
+            except Exception as e:
+                # Update UI to show error
+                error_message = f"Error: {str(e)}"
+                self.processing_count -= 1
+                
+                # Show error in status bar
+                if self.parent:
+                    self.parent.status_bar.showMessage(error_message)
+                    
+                # Re-enable URL input if all requests have failed
+                if self.processing_count == 0:
+                    self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
+                    self.get_info_btn.setStyleSheet("")  # Reset style
+                    self.url_input.setEnabled(True)
     
     def create_checkbox_for_row(self, row):
         """Create checkbox for a new row"""
@@ -535,12 +573,61 @@ class VideoInfoTab(QWidget):
                 self.tr_("DIALOG_SELECT_OUTPUT_FOLDER")
             )
             return
+
+        # Create DB Manager to check if videos already exist
+        try:
+            db_manager = DatabaseManager()
+        except Exception as e:
+            print(f"Error initializing database manager: {e}")
+            db_manager = None
+
+        # Check if selected videos already exist in database
+        videos_to_download = []
+        already_exists = []
+
+        for row in selected_rows:
+            if row in self.video_info_dict:
+                video_info = self.video_info_dict[row]
+                
+                # Check if video already exists in database
+                if db_manager:
+                    existing_video = db_manager.get_download_by_url(video_info.url)
+                    if existing_video:
+                        already_exists.append(video_info.title)
+                    else:
+                        videos_to_download.append(row)
+                else:
+                    videos_to_download.append(row)
+
+        # If all videos already exist, show message and return
+        if not videos_to_download and already_exists:
+            QMessageBox.information(
+                self,
+                self.tr_("DIALOG_INFO"),
+                self.tr_("STATUS_VIDEOS_ALREADY_EXIST")
+            )
+            return
+
+        # If some videos already exist, show dialog to inform user
+        if already_exists:
+            already_exists_text = "\n".join([f"• {title}" for title in already_exists])
+            message = f"{self.tr_('DIALOG_VIDEOS_ALREADY_EXIST')}\n\n{already_exists_text}"
+            
+            QMessageBox.information(
+                self,
+                self.tr_("DIALOG_INFO"),
+                message
+            )
+            
+        # If no videos to download after filtering, return
+        if not videos_to_download:
+            return
             
         # Confirm download
         reply = QMessageBox.question(
             self,
             self.tr_("DIALOG_CONFIRM_DOWNLOAD"),
-            self.tr_("DIALOG_CONFIRM_DOWNLOAD_TEXT").format(len(selected_rows)),
+            self.tr_("DIALOG_CONFIRM_DOWNLOAD_TEXT").format(len(videos_to_download)),
             QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No,
             QMessageBox.StandardButton.Yes
         )
@@ -557,7 +644,7 @@ class VideoInfoTab(QWidget):
             subtitle_language = self.subtitle_language_combo.currentData()
             
         # Start download for each selected video
-        for row in selected_rows:
+        for row in videos_to_download:
             if row in self.video_info_dict:
                 video_info = self.video_info_dict[row]
                 
@@ -603,13 +690,13 @@ class VideoInfoTab(QWidget):
             if download_subtitles:
                 self.parent.status_bar.showMessage(
                     self.tr_("STATUS_DOWNLOAD_WITH_SUBS_STARTED").format(
-                        len(selected_rows), 
+                        len(videos_to_download), 
                         self.subtitle_language_combo.currentText()
                     )
                 )
             else:
                 self.parent.status_bar.showMessage(
-                    self.tr_("STATUS_DOWNLOAD_STARTED").format(len(selected_rows))
+                    self.tr_("STATUS_DOWNLOAD_STARTED").format(len(videos_to_download))
                 )
             
         # Update button states
@@ -866,16 +953,62 @@ class VideoInfoTab(QWidget):
                 }}
             """) 
 
-    def handle_video_info(self, video_info):
+    def handle_video_info(self, url, video_info):
         """Handle video information received from the worker thread"""
         try:
-            # Get row index
-            row = self.get_row_for_url(video_info.url)
-            
-            if row < 0:
-                # If row not found, no further processing needed
-                return
+            # Check if video_info is a string (error message) or VideoInfo object
+            if isinstance(video_info, str):
+                # Handle error case where video_info is just an error string
+                logging.error(f"Error getting video info for URL {url}: {video_info}")
                 
+                # Decrease processing count
+                self.processing_count -= 1
+                
+                # Re-enable URL input if this was the last pending request
+                if self.processing_count == 0:
+                    self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
+                    self.get_info_btn.setStyleSheet("")  # Reset style
+                    self.url_input.setEnabled(True)
+                    
+                    if self.parent and self.parent.status_bar:
+                        self.parent.status_bar.showMessage(video_info)
+                
+                return
+            
+            # Check if we need to create a new row for this video
+            pending_key = f"pending_{url}"
+            new_row = False
+            
+            if pending_key in self.video_info_dict:
+                # This is a new video, add it to the table now that we have the info
+                new_row = True
+                row = self.video_table.rowCount()
+                self.video_table.insertRow(row)
+                
+                # Set row height
+                self.video_table.setRowHeight(row, 25)
+                
+                # Create checkbox for selection
+                self.create_checkbox_for_row(row)
+                
+                # Move from pending to actual row
+                self.video_info_dict[row] = self.video_info_dict.pop(pending_key)
+            else:
+                # Get row index for existing VideoInfo object
+                row = self.get_row_for_url(url)
+                
+                if row < 0:
+                    # If row not found, no further processing needed
+                    self.processing_count -= 1
+                    
+                    # Re-enable URL input if all tasks are complete
+                    if self.processing_count == 0:
+                        self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
+                        self.get_info_btn.setStyleSheet("")  # Reset style
+                        self.url_input.setEnabled(True)
+                    
+                    return
+            
             # Log received info
             logging.debug(f"Received video info for {video_info.url}")
             if hasattr(video_info, 'title'):
@@ -905,41 +1038,82 @@ class VideoInfoTab(QWidget):
             # Update processing count
             self.processing_count -= 1
             
-            # Enable download button if all videos are processed
+            # Always re-enable URL input when all videos are processed
             if self.processing_count == 0:
+                self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
+                self.get_info_btn.setStyleSheet("")  # Reset style
+                self.url_input.setEnabled(True)
+                
                 self.update_button_states()
+                
                 # Show status message if none are currently downloading
                 if self.downloading_count == 0 and self.parent and self.parent.status_bar:
                     self.parent.status_bar.showMessage(self.tr_("STATUS_READY_TO_DOWNLOAD"))
+            else:
+                # Still processing other videos, update status bar
+                if self.parent and self.parent.status_bar:
+                    self.parent.status_bar.showMessage(self.tr_("STATUS_GETTING_INFO_MULTIPLE").format(self.processing_count))
+                    # Force UI update
+                    QApplication.processEvents()
             
             # Download thumbnail in the background
-            if hasattr(video_info, 'thumbnail_url') and video_info.thumbnail_url:
-                self.load_thumbnail(video_info.thumbnail_url, row)
+            if hasattr(video_info, 'thumbnail') and video_info.thumbnail:
+                self.load_thumbnail(video_info.thumbnail, row)
                 
         except Exception as e:
             # Log error
-            logging.error(f"Error handling video info: {str(e)}")
-            traceback.print_exc()
+            logging.error(f"Error handling video info: {str(e)}", exc_info=True)
             
-            # Update UI to show error
-            self.update_video_info_error(row, f"Error: {str(e)}")
+            # Decrease processing count
+            self.processing_count -= 1
+            
+            # Always re-enable URL input when all videos are processed or on error
+            if self.processing_count == 0:
+                self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
+                self.get_info_btn.setStyleSheet("")  # Reset style
+                self.url_input.setEnabled(True)
     
     def update_youtube_specific_columns(self, row, video_info):
         """Update YouTube-specific columns in the video table"""
         # Playlist column
         playlist_name = ""
-        if hasattr(video_info, 'playlist') and video_info.playlist:
+        
+        # Kiểm tra thông tin playlist trong platform_data
+        if hasattr(video_info, 'platform_data') and video_info.platform_data:
+            if video_info.platform_data.get('is_playlist'):
+                playlist_name = video_info.platform_data.get('playlist_title', '')
+        
+        # Kiểm tra cả thuộc tính playlist trực tiếp nếu có
+        if not playlist_name and hasattr(video_info, 'playlist') and video_info.playlist:
             playlist_name = video_info.playlist
             
+        # Nếu không có playlist, hiển thị thông báo tương ứng
+        if not playlist_name:
+            playlist_name = self.tr_("STATUS_NO_PLAYLIST")
+        
         playlist_item = QTableWidgetItem(playlist_name)
         playlist_item.setToolTip(playlist_name)
         self.video_table.setItem(row, 3, playlist_item)
         
         # Release Date column (instead of Hashtags)
         release_date = ""
-        if hasattr(video_info, 'release_date') and video_info.release_date:
+        if hasattr(video_info, 'platform_data') and video_info.platform_data:
+            # Lấy thông tin upload_date từ platform_data
+            upload_date = video_info.platform_data.get('upload_date', '')
+            if upload_date:
+                # Chuyển đổi định dạng YYYYMMDD thành YYYY-MM-DD nếu có
+                if len(upload_date) == 8:
+                    try:
+                        release_date = f"{upload_date[:4]}-{upload_date[4:6]}-{upload_date[6:8]}"
+                    except:
+                        release_date = upload_date
+                else:
+                    release_date = upload_date
+        
+        # Kiểm tra cả thuộc tính release_date trực tiếp nếu có
+        if not release_date and hasattr(video_info, 'release_date') and video_info.release_date:
             release_date = video_info.release_date
-            
+        
         date_item = QTableWidgetItem(release_date)
         date_item.setToolTip(release_date)
         self.video_table.setItem(row, 8, date_item)
@@ -974,11 +1148,24 @@ class VideoInfoTab(QWidget):
         
         # Get creator name based on platform
         if self.current_platform == "YouTube":
-            if hasattr(video_info, 'channel'):
-                creator = video_info.channel
+            # Kiểm tra trong platform_data cho thông tin kênh YouTube
+            if hasattr(video_info, 'platform_data') and video_info.platform_data:
+                # Lấy channel từ platform_data trước tiên
+                if 'channel_id' in video_info.platform_data:
+                    creator = video_info.creator or video_info.platform_data.get('channel', '')
+            
+            # Nếu không tìm thấy trong platform_data, kiểm tra các thuộc tính creator/channel
+            if not creator:
+                if hasattr(video_info, 'creator') and video_info.creator:
+                    creator = video_info.creator
+                elif hasattr(video_info, 'channel') and video_info.channel:
+                    creator = video_info.channel
         else:
+            # Xử lý các nền tảng khác
             if hasattr(video_info, 'username'):
                 creator = video_info.username
+            elif hasattr(video_info, 'creator'):
+                creator = video_info.creator
                 
         creator_item = QTableWidgetItem(creator)
         creator_item.setToolTip(creator)
@@ -1921,16 +2108,27 @@ class VideoInfoTab(QWidget):
         return -1
     
     def update_video_info_error(self, row, error_message):
-        """Update UI to show error for a video"""
-        if row < 0 or row >= self.video_table.rowCount():
+        """Update a row with error information"""
+        if isinstance(row, str) and row.startswith("pending_"):
+            # Handle error for a pending row
+            self.processing_count -= 1
+            
+            # Re-enable UI if all tasks are complete
+            if self.processing_count == 0:
+                self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
+                self.get_info_btn.setStyleSheet("")  # Reset style
+                self.url_input.setEnabled(True)
+            
             return
             
-        # Update title cell with error
-        title_item = QTableWidgetItem(error_message)
-        title_item.setToolTip(error_message)
-        self.video_table.setItem(row, 1, title_item)
-        
-        # Disable checkbox
+        # Set error message in all cells
+        for col in range(1, self.video_table.columnCount()):
+            if col == 1:  # Title column
+                self.video_table.setItem(row, col, QTableWidgetItem(error_message))
+            else:
+                self.video_table.setItem(row, col, QTableWidgetItem(""))
+                
+        # Disable checkbox for this row
         checkbox_cell = self.video_table.cellWidget(row, 0)
         if checkbox_cell:
             checkbox = checkbox_cell.findChild(QCheckBox)
@@ -2349,3 +2547,19 @@ class VideoInfoTab(QWidget):
         """Clear all rows in the video table"""
         self.video_table.setRowCount(0)
         self.video_info_dict.clear()
+
+    def load_thumbnail(self, thumbnail_url, row):
+        """Store thumbnail URL for later use, but don't load it directly"""
+        if not thumbnail_url or row < 0:
+            return
+            
+        try:
+            # Lưu URL thumbnail vào video_info_dict để sử dụng khi cần
+            if row in self.video_info_dict:
+                self.video_info_dict[row].thumbnail = thumbnail_url
+                
+            # Log for debugging
+            logging.debug(f"Stored thumbnail URL for row {row}: {thumbnail_url}")
+                
+        except Exception as e:
+            logging.error(f"Error storing thumbnail URL: {str(e)}")

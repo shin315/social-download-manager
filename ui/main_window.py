@@ -46,6 +46,7 @@ class MainWindow(QMainWindow):
         super().__init__()
         self.output_folder = ""
         self.current_theme = "dark"  # Store current theme
+        self.platform_from_config = None  # Lưu platform đọc từ config
         
         # Initialize language manager
         self.lang_manager = get_language_manager()
@@ -53,16 +54,15 @@ class MainWindow(QMainWindow):
         # Store platform actions to update icons based on theme
         self.platform_actions = {}
         
+        # Load config trước khi init_ui để biết platform
+        self.load_config()
+        
+        # Setup font và UI
         self.setup_font()
         self.init_ui()
         
-        # Load output folder, language and theme from config if available
-        self.load_config()
-        
-        # Áp dụng rõ ràng theme hiện tại sau khi đã load từ config
+        # Áp dụng theme và cập nhật ngôn ngữ
         self.set_theme(self.current_theme)
-        
-        # Update UI based on current language
         self.update_ui_language()
         
         # Check for FFmpeg availability at startup
@@ -76,8 +76,12 @@ class MainWindow(QMainWindow):
 
     def init_ui(self):
         """Initialize user interface"""
-        self.setWindowTitle("Social Download Manager - YouTube")  # Default platform is YouTube
-        self.setGeometry(100, 100, 1000, 700)  # Adjust window size to be larger
+        # Sử dụng platform từ config nếu có, nếu không mới dùng mặc định
+        default_platform = self.platform_from_config if self.platform_from_config else "YouTube"
+        
+        # Khởi tạo UI với tiêu đề ban đầu
+        self.setWindowTitle(f"Social Download Manager - {default_platform}")
+        self.setGeometry(100, 100, 1000, 700)
         self.setWindowIcon(QIcon(get_resource_path("assets/Logo_new_32x32.png")))
         
         # Set up main layout
@@ -144,8 +148,8 @@ class MainWindow(QMainWindow):
         # Initialize donate dialog (not displayed)
         self.donate_dialog = None
         
-        # Set the default platform to YouTube
-        QTimer.singleShot(100, lambda: self.switch_platform("YouTube"))
+        # Đặt platform ban đầu sau khi UI đã được khởi tạo
+        QTimer.singleShot(100, lambda: self.switch_platform(default_platform))
 
     def create_menu_bar(self):
         """Create menu bar with menus and actions"""
@@ -952,76 +956,38 @@ class MainWindow(QMainWindow):
                 app_dir = os.path.dirname(os.path.dirname(os.path.abspath(__file__)))
             
             config_file = os.path.join(app_dir, 'config.json')
-            log_file = os.path.join(app_dir, 'log.txt')
             
-            with open(log_file, 'a', encoding='utf-8') as log:
-                log.write(f"[{datetime.now()}] Loading config from: {config_file}\n")
-                log.write(f"[{datetime.now()}] App directory: {app_dir}\n")
-                log.write(f"[{datetime.now()}] Executable path: {sys.executable if getattr(sys, 'frozen', False) else 'Not running as exe'}\n")
-                
-                if os.path.exists(config_file):
-                    log.write(f"[{datetime.now()}] Config file exists, reading content\n")
-                    try:
-                        with open(config_file, 'r') as f:
-                            config_content = f.read()
-                            log.write(f"[{datetime.now()}] Config content: {config_content}\n")
+            if os.path.exists(config_file):
+                try:
+                    with open(config_file, 'r') as f:
+                        content = f.read().strip()
+                        if content:  # Only try to parse if not empty
+                            config = json.loads(content)
                             
-                            if config_content.strip():  # Check if not empty
-                                config = json.loads(config_content)
-                                
-                                # Load output folder if available
-                                last_folder = config.get('last_output_folder', '')
-                                log.write(f"[{datetime.now()}] Read last_output_folder from config: '{last_folder}'\n")
-                                
-                                if last_folder and os.path.exists(last_folder):
-                                    log.write(f"[{datetime.now()}] Setting output_folder to: {last_folder}\n")
-                                    self.output_folder = last_folder
-                                    if hasattr(self, 'video_info_tab'):
-                                        self.video_info_tab.update_output_folder(last_folder)
-                                else:
-                                    log.write(f"[{datetime.now()}] Output folder doesn't exist or is empty: '{last_folder}'\n")
-                                
-                                # Load language setting
-                                language = config.get('language', '')
-                                if language:
-                                    log.write(f"[{datetime.now()}] Setting language to: {language}\n")
-                                    self.lang_manager.set_language(language)
-                                    # No need to emit signal here because it's during initialization
-                                    # Update tab names and menu after language is set
-                                    self.tab_widget.setTabText(0, self.tr_("TAB_VIDEO_INFO"))
-                                    self.tab_widget.setTabText(1, self.tr_("TAB_DOWNLOADED_VIDEOS"))
-                                    self.update_ui_language()
-                                
-                                # Load theme setting
-                                theme = config.get('theme', '')
-                                if theme in ['dark', 'light']:
-                                    log.write(f"[{datetime.now()}] Setting theme to: {theme}\n")
-                                    self.current_theme = theme
-                                    # Không áp dụng theme ở đây nữa, sẽ được áp dụng sau khi load_config() 
-                                    # để đảm bảo stylesheet được áp dụng đầy đủ
-                                    # self.set_theme(theme)  # <-- Bỏ dòng này
-                            else:
-                                log.write(f"[{datetime.now()}] Config file is empty\n")
-                    except Exception as e:
-                        log.write(f"[{datetime.now()}] Error parsing config file: {str(e)}\n")
-                else:
-                    log.write(f"[{datetime.now()}] Config file doesn't exist\n")
-                    
-                    # Try to create the config file with empty content
-                    try:
-                        with open(config_file, 'w') as f:
-                            f.write("{}")
-                        log.write(f"[{datetime.now()}] Created empty config file\n")
-                    except Exception as e:
-                        log.write(f"[{datetime.now()}] Error creating empty config file: {str(e)}\n")
+                            # Load output folder
+                            if 'last_output_folder' in config:
+                                folder = config['last_output_folder']
+                                if os.path.exists(folder):
+                                    self.output_folder = folder
+                            
+                            # Load language
+                            if 'language' in config:
+                                self.lang_manager.set_language(config['language'])
+                            
+                            # Load theme
+                            if 'theme' in config:
+                                self.current_theme = config['theme']
+                            
+                            # Load current platform
+                            if 'current_platform' in config:
+                                platform = config['current_platform']
+                                if platform in ["YouTube", "TikTok"]:
+                                    self.platform_from_config = platform
+                                    print(f"Loaded platform from config: {platform}")
+                except Exception as e:
+                    print(f"Error parsing config file: {str(e)}")
+                
         except Exception as e:
-            # Write to log file
-            try:
-                log_file = get_resource_path('log.txt')
-                with open(log_file, 'a', encoding='utf-8') as log:
-                    log.write(f"[{datetime.now()}] Error loading configuration: {str(e)}\n")
-            except:
-                pass
             print(f"Error loading configuration: {e}")
 
     def save_config(self, key, value):
@@ -1148,6 +1114,9 @@ class MainWindow(QMainWindow):
                 
             # Switch to Video Info tab if we're not already there
             self.tab_widget.setCurrentIndex(0)
+            
+            # Lưu platform đã chọn vào config
+            self.save_config('current_platform', platform)
 
     def on_platform_filter_changed(self, index):
         """Handle platform filter changes"""

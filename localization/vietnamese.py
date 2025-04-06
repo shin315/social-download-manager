@@ -113,6 +113,7 @@ FORMAT_AUDIO_MP3 = "MP3"
 
 # Status messages
 STATUS_READY = "Sẵn sàng"
+STATUS_READY_TO_DOWNLOAD = "Sẵn sàng tải xuống"
 STATUS_FOLDER_SET = "Đã chọn thư mục lưu: {}"
 STATUS_DOWNLOAD_SUCCESS = "Tải xuống thành công"
 STATUS_DOWNLOAD_SUCCESS_WITH_FILENAME = "Đã tải xuống: {}"
@@ -123,6 +124,7 @@ STATUS_VIDEOS_REFRESHED = "Đã làm mới danh sách video"
 STATUS_REFRESHING = "Đang làm mới danh sách video..."
 STATUS_LANGUAGE_CHANGED = "Đã chuyển ngôn ngữ sang: {}"
 STATUS_DOWNLOADING_SHORT = "Đang tải..."
+STATUS_GETTING_INFO = "Đang lấy thông tin..."
 STATUS_GETTING_INFO_SHORT = "Đang lấy..."
 STATUS_GETTING_INFO_MULTIPLE = "Đang lấy thông tin cho {} video..."
 STATUS_VIDEOS_LOADED = "Đã tải xong thông tin {} video"
@@ -158,6 +160,7 @@ STATUS_SWITCHED_TO_YOUTUBE = "Đã chuyển sang nền tảng YouTube"
 STATUS_SWITCHED_TO_TIKTOK = "Đã chuyển sang nền tảng TikTok"
 STATUS_SHOWING_ALL_PLATFORMS = "Hiển thị video từ tất cả nền tảng"
 STATUS_FILTERED_BY_PLATFORM = "Chỉ hiển thị video từ {}"
+STATUS_NO_PLAYLIST = "Không có playlist"
 
 # Dialogs
 DIALOG_CONFIRM_DELETION = "Xác Nhận Xóa"

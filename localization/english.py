@@ -117,6 +117,7 @@ FORMAT_AUDIO_MP3 = "MP3"
 
 # Status messages
 STATUS_READY = "Ready"
+STATUS_READY_TO_DOWNLOAD = "Ready to download"
 STATUS_FOLDER_SET = "Save folder set to: {}"
 STATUS_DOWNLOAD_SUCCESS = "Successful"
 STATUS_DOWNLOAD_SUCCESS_WITH_FILENAME = "Downloaded: {}"
@@ -127,6 +128,7 @@ STATUS_VIDEOS_REFRESHED = "Videos list refreshed"
 STATUS_REFRESHING = "Refreshing videos list..."
 STATUS_LANGUAGE_CHANGED = "Language changed to: {}"
 STATUS_DOWNLOADING_SHORT = "Downloading..."
+STATUS_GETTING_INFO = "Getting video info..."
 STATUS_GETTING_INFO_SHORT = "Getting info..."
 STATUS_GETTING_INFO_MULTIPLE = "Getting info for {} videos..."
 STATUS_VIDEOS_LOADED = "Loaded info for {} videos"
@@ -162,6 +164,7 @@ STATUS_SWITCHED_TO_YOUTUBE = "Switched to YouTube platform"
 STATUS_SWITCHED_TO_TIKTOK = "Switched to TikTok platform"
 STATUS_SHOWING_ALL_PLATFORMS = "Showing videos from all platforms"
 STATUS_FILTERED_BY_PLATFORM = "Showing {} videos only"
+STATUS_NO_PLAYLIST = "No Playlist"
 
 # Dialogs
 DIALOG_CONFIRM_DELETION = "Confirm Deletion"
