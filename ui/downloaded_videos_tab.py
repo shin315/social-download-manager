@@ -3161,7 +3161,17 @@ class DownloadedVideosTab(QWidget):
             
             # Update UI
             self.update_statistics()
-            self.display_videos()
+            
+            # Reload all videos from database (to ensure we have clean data)
+            self.load_downloaded_videos()
+            
+            # Re-apply the current platform filter
+            if self.current_platform:
+                print(f"DEBUG: Re-applying platform filter after deletion: {self.current_platform}")
+                self.filter_by_platform(self.current_platform)
+            else:
+                # If no platform filter is active, just display all videos
+                self.display_videos()
             
             # Show notification
             if self.parent:
@@ -3170,10 +3180,6 @@ class DownloadedVideosTab(QWidget):
                     print(f"Deleted {deleted_count} videos, {deleted_files_count} video files, and {deleted_thumbnails_count} thumbnails")
                 else:
                     self.parent.status_bar.showMessage(self.tr_("STATUS_VIDEOS_DELETED").format(deleted_count))
-
-        # Display filtered video list again
-        self.load_downloaded_videos()
-        self.display_videos()
         
         # Update button states
         self.update_button_states()
@@ -3624,24 +3630,15 @@ class DownloadedVideosTab(QWidget):
         self.select_toggle_btn.setEnabled(has_videos)
         self.delete_selected_btn.setEnabled(has_videos)
         
+        # Reset any custom styling that might interfere with global stylesheet
+        self.select_toggle_btn.setStyleSheet("")
+        self.delete_selected_btn.setStyleSheet("")
+        
+        # Thêm debug logs chi tiết hơn
         # Thêm debug logs chi tiết hơn
         print(f"DEBUG: update_button_states - has_videos={has_videos}, rowCount={self.downloads_table.rowCount()}")
         print(f"DEBUG: select_toggle_btn enabled: {self.select_toggle_btn.isEnabled()}")
         print(f"DEBUG: delete_selected_btn enabled: {self.delete_selected_btn.isEnabled()}")
-        
-        # Đảm bảo nút được hiển thị đúng trạng thái
-        if has_videos:
-            # Bỏ style disabled
-            self.select_toggle_btn.setStyleSheet("")
-            self.delete_selected_btn.setStyleSheet("")
-        else:
-            # Áp dụng style disabled
-            self.select_toggle_btn.setStyleSheet("QPushButton { color: #999; background-color: #f0f0f0; }")
-            self.delete_selected_btn.setStyleSheet("QPushButton { color: #999; background-color: #f0f0f0; }")
-        
-        # Đảm bảo các nút được cập nhật trực quan
-        self.select_toggle_btn.update()
-        self.delete_selected_btn.update()
         
         # No style applied as it's handled in main_window.py
         print("DEBUG: update_button_states in downloaded_videos_tab - button states updated")
