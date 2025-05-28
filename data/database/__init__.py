@@ -136,6 +136,5 @@ from .monitoring import (
 from .migrations import (
     Migration, MigrationDirection, MigrationStatus,
     MigrationRecord, MigrationError, MigrationValidationError, MigrationExecutionError,
-    MigrationManager,
-    get_migration_manager, initialize_migration_system
+    IMigrationEngine, SQLiteMigrationEngine, create_migration_engine
 ) 
