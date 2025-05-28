@@ -1,0 +1,211 @@
+# Product Requirements Document: Social Download Manager v2.0 Refactoring
+
+## Project Overview
+Social Download Manager v2.0 Refactoring is a comprehensive code restructuring project to prepare the existing TikTok-focused application for multi-platform expansion. The current v1.2.1 MVP works well for TikTok but has architectural limitations that prevent easy addition of new platforms like YouTube, Instagram, Facebook, and Twitter.
+
+## Current State Analysis
+### Existing Codebase Issues
+- **Monolithic Architecture**: Single TikTokDownloader class hardcoded for one platform
+- **Large UI Files**: main_window.py (1100 lines), video_info_tab.py (2434 lines), downloaded_videos_tab.py (3456 lines)
+- **Database Limitations**: No dedicated platform field, metadata stored as JSON blob
+- **Code Organization**: Dead code (temp.py, temp2.py), scattered constants and configs
+- **Tight Coupling**: UI components directly coupled with TikTok-specific logic
+
+### Technical Debt
+- No Factory Pattern implementation (only documented plans)
+- Database schema not optimized for multi-platform data
+- UI components not reusable across platforms
+- Business logic mixed with presentation logic
+
+## Goals and Objectives
+### Primary Goals
+1. **Scalable Architecture**: Implement Factory Pattern for easy platform addition
+2. **Code Organization**: Restructure codebase into logical, maintainable modules
+3. **Database Optimization**: Create new schema supporting multi-platform metadata
+4. **UI Modularity**: Break down large UI files into reusable components
+5. **Backward Compatibility**: Maintain all existing v1.2.1 functionality
+
+### Success Criteria
+- Zero breaking changes to existing TikTok functionality
+- Architecture ready for YouTube, Instagram, Facebook, Twitter integration
+- Codebase reduced from 3 large files to 15+ smaller, focused modules
+- Database migration completed without data loss
+- 50% reduction in code coupling between UI and business logic
+
+## Technical Requirements
+### Architecture Requirements
+1. **Platform Handler System**
+   - Abstract base class for all platform handlers
+   - Factory pattern for automatic platform detection
+   - Isolated platform-specific logic in separate modules
+
+2. **Data Layer Refactoring**
+   - New database schema with dedicated platform field
+   - Migration system for existing data
+   - Typed data models replacing loose dictionaries
+
+3. **UI Component System**
+   - Reusable UI components (video table, platform selector, progress widgets)
+   - Base tab class for consistent tab implementation
+   - Separation of UI logic from business logic
+
+4. **Configuration Management**
+   - Centralized configuration system
+   - Platform-specific settings support
+   - Clean constants management
+
+### Technology Stack
+- **Language**: Python 3.8+
+- **UI Framework**: PyQt6
+- **Database**: SQLite with new schema
+- **Architecture Patterns**: Factory, Repository, MVP
+- **Dependencies**: yt-dlp, requests, existing libraries
+
+## Detailed Feature Requirements
+### Core Infrastructure Module
+- **App Controller**: Central coordinator replacing scattered logic
+- **Config Manager**: Unified configuration handling
+- **Constants**: Centralized application constants
+- **Error Handling**: Improved error management system
+
+### Platform Handler System
+- **Base Platform Handler**: Abstract interface for all platforms
+- **TikTok Handler**: Refactored existing TikTok logic
+- **Platform Factory**: Automatic platform detection and handler creation
+- **YouTube Stub**: Placeholder for future YouTube implementation
+
+### Data Layer
+- **Video Info Model**: Typed data model for video information
+- **Download Models**: Request, result, and progress models
+- **Database Repository**: Clean data access layer
+- **Migration System**: Safe data migration from v1.2.1 schema
+
+### UI Component System
+- **Platform Selector**: Dropdown component for platform switching
+- **Video Table**: Reusable table component for video listings
+- **Progress Widget**: Unified progress display component
+- **Base Tab**: Common functionality for all tabs
+
+### Database Schema
+```sql
+CREATE TABLE downloads_v2 (
+    id INTEGER PRIMARY KEY,
+    url TEXT NOT NULL,
+    title TEXT NOT NULL,
+    platform TEXT NOT NULL,
+    creator TEXT,
+    filepath TEXT NOT NULL,
+    quality TEXT,
+    format TEXT,
+    duration INTEGER,
+    filesize INTEGER,
+    download_date TIMESTAMP,
+    platform_metadata JSON,
+    thumbnail_url TEXT,
+    description TEXT,
+    hashtags TEXT
+);
+```
+
+## Implementation Phases
+### Phase 1: Core Infrastructure (Week 1)
+- Create core/ module with app controller and config manager
+- Implement constants management
+- Set up new project structure
+
+### Phase 2: Platform Architecture (Week 2)
+- Design and implement abstract platform handler
+- Create platform factory system
+- Refactor existing TikTok code to new architecture
+- Create YouTube stub for future implementation
+
+### Phase 3: Data Layer Refactoring (Week 3)
+- Design new database schema
+- Implement data models and repository pattern
+- Create migration system
+- Test data migration with existing user data
+
+### Phase 4: UI Modernization (Week 4)
+- Break down large UI files into components
+- Implement base tab architecture
+- Create reusable UI components
+- Integrate new data layer with UI
+
+### Phase 5: Integration and Testing (Week 5)
+- Integration testing of all components
+- Performance optimization
+- UI/UX testing
+- Documentation updates
+
+## Migration Strategy
+### Data Migration
+- Automatic detection of existing v1.2.1 database
+- Safe migration with backup creation
+- Rollback capability if migration fails
+- Progress reporting during migration
+
+### Code Migration
+- Gradual refactoring maintaining functionality
+- Feature flags for testing new components
+- Comprehensive testing at each step
+
+## Quality Assurance
+### Testing Requirements
+- Unit tests for all new components
+- Integration tests for platform handlers
+- UI component testing
+- Database migration testing
+- Performance regression testing
+
+### Code Quality
+- Type hints for all new code
+- Consistent code formatting
+- Documentation for all public APIs
+- Code review for all changes
+
+## Risks and Mitigation
+### Technical Risks
+- **Database Migration Failure**: Implement rollback and backup systems
+- **Performance Regression**: Benchmark existing performance and monitor
+- **Breaking Changes**: Comprehensive testing and gradual rollout
+
+### Timeline Risks
+- **Complex Refactoring**: Break into smaller, deliverable chunks
+- **Testing Overhead**: Parallel development and testing
+
+## Constraints
+### Technical Constraints
+- Must maintain Python 3.8+ compatibility
+- Cannot break existing TikTok functionality
+- Must work with existing PyQt6 and yt-dlp dependencies
+- Database must remain SQLite for simplicity
+
+### Business Constraints
+- Zero downtime for existing users
+- No data loss during migration
+- Maintain existing UI/UX while improving architecture
+
+## Post-Refactoring Benefits
+### Developer Experience
+- 50% faster feature development for new platforms
+- Cleaner, more testable codebase
+- Better error handling and debugging
+
+### User Experience
+- No impact on existing functionality
+- Faster application startup
+- Better performance for large download histories
+- Preparation for exciting new platform features
+
+### Platform Expansion
+- YouTube integration ready in 2-3 weeks
+- Instagram, Facebook, Twitter follow-up possible
+- Each new platform takes 1 week instead of 1 month
+
+## Acceptance Criteria
+1. All existing TikTok functionality works identically
+2. New architecture allows adding YouTube handler in < 1 week
+3. Database migration completes successfully with data integrity
+4. Code organization passes architecture review
+5. Performance equals or exceeds v1.2.1 benchmarks
+6. Documentation complete for all new components 
