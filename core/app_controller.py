@@ -16,6 +16,13 @@ from .event_system import EventBus, Event, EventType, EventHandler, get_event_bu
 from .config_manager import ConfigManager, AppConfig, get_config_manager
 from .constants import AppConstants, ErrorConstants
 
+# Import service layer
+from .services import (
+    ServiceRegistry, get_service_registry, configure_services,
+    IContentService, IAnalyticsService, IDownloadService,
+    ContentDTO, DownloadRequestDTO, AnalyticsDTO
+)
+
 # Import database manager for core systems integration
 try:
     from data.database import get_connection_manager, initialize_database, shutdown_database
@@ -49,6 +56,7 @@ class ControllerStatus:
     active_operations: Dict[str, Any]
     last_error: Optional[str] = None
     uptime_seconds: float = 0.0
+    services_registered: List[str] = None
 
 
 class IAppController(ABC):
@@ -88,6 +96,22 @@ class IAppController(ABC):
     def handle_error(self, error: Exception, context: str) -> None:
         """Handle errors in a centralized way"""
         pass
+    
+    # Service accessor methods
+    @abstractmethod
+    def get_content_service(self) -> Optional[IContentService]:
+        """Get content service instance"""
+        pass
+    
+    @abstractmethod
+    def get_analytics_service(self) -> Optional[IAnalyticsService]:
+        """Get analytics service instance"""
+        pass
+    
+    @abstractmethod
+    def get_download_service(self) -> Optional[IDownloadService]:
+        """Get download service instance"""
+        pass
 
 
 class AppController(IAppController, EventHandler):
@@ -100,6 +124,7 @@ class AppController(IAppController, EventHandler):
     - Handle inter-component communication via events
     - Provide centralized error handling
     - Manage component registration and dependencies
+    - Provide access to service layer
     """
     
     def __init__(self):
@@ -108,6 +133,7 @@ class AppController(IAppController, EventHandler):
         self._event_bus: Optional[EventBus] = None
         self._config_manager: Optional[ConfigManager] = None
         self._config: Optional[AppConfig] = None
+        self._service_registry: Optional[ServiceRegistry] = None
         self._lock = threading.RLock()
         self._logger = logging.getLogger(__name__)
         self._startup_time: Optional[float] = None
@@ -118,6 +144,8 @@ class AppController(IAppController, EventHandler):
             "config_manager",
             "event_bus", 
             "database",
+            "service_registry",
+            "services",
             "platform_factory",
             "ui_manager"
         ]
@@ -143,6 +171,10 @@ class AppController(IAppController, EventHandler):
                 # Initialize core systems
                 if not self._initialize_core_systems():
                     raise ControllerError("Failed to initialize core systems")
+                
+                # Initialize service layer
+                if not self._initialize_services():
+                    raise ControllerError("Failed to initialize services")
                 
                 # Register with event system
                 self._event_bus.add_handler(self)
@@ -177,14 +209,46 @@ class AppController(IAppController, EventHandler):
             
             # Initialize database
             if DATABASE_AVAILABLE:
-                get_connection_manager()
+                connection_manager = get_connection_manager()
                 initialize_database()
+                self.register_component("database", connection_manager)
             
             self._logger.info("Core systems initialized successfully")
             return True
             
         except Exception as e:
             self._logger.error(f"Failed to initialize core systems: {e}")
+            return False
+    
+    def _initialize_services(self) -> bool:
+        """Initialize service layer and dependency injection"""
+        try:
+            # Get service registry
+            self._service_registry = get_service_registry()
+            self.register_component("service_registry", self._service_registry)
+            
+            # Configure default services
+            configure_services()
+            
+            # Register additional services with database components
+            if DATABASE_AVAILABLE:
+                from .services import get_content_service, get_analytics_service, get_download_service
+                
+                # Initialize services
+                content_service = get_content_service()
+                analytics_service = get_analytics_service()
+                download_service = get_download_service()
+                
+                # Register as components for easy access
+                self.register_component("content_service", content_service)
+                self.register_component("analytics_service", analytics_service)
+                self.register_component("download_service", download_service)
+            
+            self._logger.info("Services initialized successfully")
+            return True
+            
+        except Exception as e:
+            self._logger.error(f"Failed to initialize services: {e}")
             return False
     
     def shutdown(self) -> bool:
@@ -208,6 +272,10 @@ class AppController(IAppController, EventHandler):
                         EventType.APP_SHUTDOWN,
                         {"controller_state": self._state.name}
                     )
+                
+                # Dispose services first
+                if self._service_registry:
+                    self._service_registry.dispose()
                 
                 # Cleanup components in reverse order
                 for component_name in reversed(list(self._components.keys())):
@@ -243,11 +311,19 @@ class AppController(IAppController, EventHandler):
     def get_status(self) -> ControllerStatus:
         """Get current controller status"""
         with self._lock:
+            services_registered = []
+            if self._service_registry:
+                services_registered = [
+                    service_type.__name__ 
+                    for service_type in self._service_registry.get_registered_services()
+                ]
+            
             return ControllerStatus(
                 state=self._state,
                 components_initialized=list(self._components.keys()),
                 active_operations={},  # Will be populated by specific operations
-                uptime_seconds=0.0 if not self._startup_time else threading.get_ident() - self._startup_time
+                uptime_seconds=0.0 if not self._startup_time else threading.get_ident() - self._startup_time,
+                services_registered=services_registered
             )
     
     def register_component(self, name: str, component: Any) -> bool:
@@ -341,19 +417,150 @@ class AppController(IAppController, EventHandler):
         except ValueError:
             return False
     
-    def handle_event(self, event: Event) -> None:
+    # Service accessor methods
+    
+    def get_content_service(self) -> Optional[IContentService]:
+        """Get content service instance"""
+        if self._service_registry:
+            return self._service_registry.try_get_service(IContentService)
+        return self.get_component("content_service")
+    
+    def get_analytics_service(self) -> Optional[IAnalyticsService]:
+        """Get analytics service instance"""
+        if self._service_registry:
+            return self._service_registry.try_get_service(IAnalyticsService)
+        return self.get_component("analytics_service")
+    
+    def get_download_service(self) -> Optional[IDownloadService]:
+        """Get download service instance"""
+        if self._service_registry:
+            return self._service_registry.try_get_service(IDownloadService)
+        return self.get_component("download_service")
+    
+    # High-level business operations using services
+    
+    async def create_content_from_url(self, url: str, platform: Optional[str] = None) -> Optional[ContentDTO]:
         """
-        Handle events from the event system
+        Create content from URL using content service
         
         Args:
-            event: Event to handle
+            url: Content URL
+            platform: Optional platform hint
+            
+        Returns:
+            Created content DTO or None if failed
         """
         try:
-            # Handle controller-specific events
+            content_service = self.get_content_service()
+            if not content_service:
+                self._logger.error("Content service not available")
+                return None
+            
+            # Create content DTO with basic information
+            from data.models import PlatformType
+            platform_type = None
+            if platform:
+                try:
+                    platform_type = PlatformType(platform.lower())
+                except ValueError:
+                    pass
+            
+            content_dto = ContentDTO(
+                url=url,
+                platform=platform_type,
+                status=ContentStatus.PENDING
+            )
+            
+            # Create content via service
+            created_content = await content_service.create_content(content_dto)
+            
+            self._logger.info(f"Content created: {created_content.id} - {created_content.url}")
+            
+            # Publish event
+            if self._event_bus:
+                self._publish_event(
+                    EventType.CONTENT_CREATED,
+                    {"content_id": created_content.id, "url": created_content.url}
+                )
+            
+            return created_content
+            
+        except Exception as e:
+            self._logger.error(f"Failed to create content from URL: {e}")
+            self.handle_error(e, "create_content_from_url")
+            return None
+    
+    async def get_analytics_overview(self) -> Optional[AnalyticsDTO]:
+        """
+        Get analytics overview using analytics service
+        
+        Returns:
+            Analytics DTO or None if failed
+        """
+        try:
+            analytics_service = self.get_analytics_service()
+            if not analytics_service:
+                self._logger.error("Analytics service not available")
+                return None
+            
+            analytics = await analytics_service.get_analytics_overview()
+            return analytics
+            
+        except Exception as e:
+            self._logger.error(f"Failed to get analytics overview: {e}")
+            self.handle_error(e, "get_analytics_overview")
+            return None
+    
+    async def start_download(self, url: str, options: Optional[Dict[str, Any]] = None) -> Optional[ContentDTO]:
+        """
+        Start download using download service
+        
+        Args:
+            url: Content URL to download
+            options: Download options
+            
+        Returns:
+            Content DTO or None if failed
+        """
+        try:
+            download_service = self.get_download_service()
+            if not download_service:
+                self._logger.error("Download service not available")
+                return None
+            
+            # Create download request
+            request = DownloadRequestDTO(
+                url=url,
+                **(options or {})
+            )
+            
+            # Start download
+            content = await download_service.start_download(request)
+            
+            self._logger.info(f"Download started for: {url}")
+            
+            # Publish event
+            if self._event_bus:
+                self._publish_event(
+                    EventType.DOWNLOAD_STARTED,
+                    {"url": url, "content_id": content.id}
+                )
+            
+            return content
+            
+        except Exception as e:
+            self._logger.error(f"Failed to start download: {e}")
+            self.handle_error(e, "start_download")
+            return None
+    
+    def handle_event(self, event: Event) -> None:
+        """Handle events from the event bus"""
+        try:
             if event.event_type == EventType.CONFIG_CHANGED:
                 self._handle_config_changed(event)
             elif event.event_type == EventType.ERROR_OCCURRED:
                 self._handle_error_event(event)
+            # Add more event handlers as needed
             
         except Exception as e:
             self._logger.error(f"Error handling event {event.event_type}: {e}")
@@ -361,38 +568,38 @@ class AppController(IAppController, EventHandler):
     def _handle_config_changed(self, event: Event) -> None:
         """Handle configuration change events"""
         self._logger.info("Configuration changed, reloading...")
-        if self._config_manager:
-            self._config_manager._load_config()
-            self._config = self._config_manager.config
+        # TODO: Implement configuration reload logic
     
     def _handle_error_event(self, event: Event) -> None:
         """Handle error events"""
-        if event.data:
-            context = event.data.get("context", "unknown")
-            self._logger.warning(f"Error event received from {context}")
+        error_data = event.data or {}
+        self._logger.warning(f"Error event received: {error_data}")
     
     def _publish_event(self, event_type: EventType, data: Optional[Dict[str, Any]] = None) -> None:
-        """Publish an event through the event system"""
+        """Publish an event to the event bus"""
         if self._event_bus:
-            event = Event(event_type, "app_controller", data)
+            event = Event(event_type, data)
             self._event_bus.publish(event)
     
-    # Convenience methods for common operations
     def is_ready(self) -> bool:
-        """Check if controller is ready for operations"""
+        """Check if controller is ready"""
         return self._state == ControllerState.READY
     
     def is_running(self) -> bool:
-        """Check if controller is in running state"""
-        return self._state in [ControllerState.READY, ControllerState.RUNNING]
+        """Check if controller is running"""
+        return self._state == ControllerState.RUNNING
     
     def get_config(self) -> Optional[AppConfig]:
-        """Get current application configuration"""
+        """Get application configuration"""
         return self._config
     
     def get_event_bus(self) -> Optional[EventBus]:
-        """Get the event bus instance"""
+        """Get event bus instance"""
         return self._event_bus
+    
+    def get_service_registry(self) -> Optional[ServiceRegistry]:
+        """Get service registry instance"""
+        return self._service_registry
 
 
 # Global controller instance
@@ -402,22 +609,22 @@ _controller_lock = threading.Lock()
 
 def get_app_controller() -> AppController:
     """
-    Get the global App Controller instance (singleton)
+    Get the global app controller instance
     
     Returns:
-        Global AppController instance
+        AppController instance
     """
     global _app_controller
-    
-    with _controller_lock:
-        if _app_controller is None:
-            _app_controller = AppController()
-        return _app_controller
+    if _app_controller is None:
+        with _controller_lock:
+            if _app_controller is None:
+                _app_controller = AppController()
+    return _app_controller
 
 
 def initialize_app_controller() -> bool:
     """
-    Initialize the global App Controller
+    Initialize the global app controller
     
     Returns:
         True if initialization successful
@@ -428,16 +635,14 @@ def initialize_app_controller() -> bool:
 
 def shutdown_app_controller() -> bool:
     """
-    Shutdown the global App Controller
+    Shutdown the global app controller
     
     Returns:
         True if shutdown successful
     """
     global _app_controller
-    
-    with _controller_lock:
-        if _app_controller:
-            result = _app_controller.shutdown()
-            _app_controller = None
-            return result
-        return True 
+    if _app_controller:
+        result = _app_controller.shutdown()
+        _app_controller = None
+        return result
+    return True 
