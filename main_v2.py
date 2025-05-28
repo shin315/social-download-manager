@@ -16,6 +16,10 @@ sys.path.insert(0, str(current_dir))
 # Core imports
 from core.config_manager import get_config_manager, get_config
 from core.event_system import get_event_bus, publish_event, EventType
+from core.constants import (
+    AppConstants, PlatformConstants, UIConstants, DatabaseConstants, ErrorConstants,
+    validate_constants, get_platform_name, is_supported_platform
+)
 from version import get_version_info, get_full_version, is_development_version
 
 # Platform imports (will be implemented in later tasks)
@@ -36,11 +40,18 @@ def setup_application() -> bool:
         True if setup successful, False otherwise
     """
     try:
+        # Validate constants first
+        print("Validating application constants...")
+        if not validate_constants():
+            print("❌ Constants validation failed!")
+            return False
+        print("✅ Constants validation passed")
+        
         # Initialize configuration
         config_manager = get_config_manager()
         config = get_config()
         
-        print(f"Initializing {config.app_name} v{config.version}")
+        print(f"Initializing {AppConstants.APP_NAME} v{AppConstants.APP_VERSION}")
         
         # Initialize event system
         event_bus = get_event_bus()
@@ -50,7 +61,7 @@ def setup_application() -> bool:
             EventType.APP_STARTUP,
             "main",
             {
-                "version": config.version,
+                "version": AppConstants.APP_VERSION,
                 "development": is_development_version(),
                 "config_path": str(config_manager.config_path)
             }
@@ -64,11 +75,22 @@ def setup_application() -> bool:
         print(f"Configuration loaded from: {config_manager.config_path}")
         print(f"Development mode: {is_development_version()}")
         
-        # Print platform status
+        # Print platform status using constants
         print("\nPlatform Status:")
-        for platform_name, platform_config in config.platforms.items():
-            status = "ENABLED" if platform_config.enabled else "DISABLED"
-            print(f"  {platform_name.upper()}: {status}")
+        for platform_id in PlatformConstants.PLATFORM_NAMES.keys():
+            platform_name = get_platform_name(platform_id)
+            is_supported = is_supported_platform(platform_id)
+            status = PlatformConstants.PLATFORM_STATUS.get(platform_id, "unknown")
+            status_emoji = "✅" if status == PlatformConstants.STATUS_STABLE else "⏳" if status == PlatformConstants.STATUS_PLANNED else "❌"
+            print(f"  {status_emoji} {platform_name}: {status.upper()}")
+        
+        # Test constants access
+        print(f"\nConstants Test:")
+        print(f"  App Short Name: {AppConstants.APP_SHORT_NAME}")
+        print(f"  Default Timeout: {AppConstants.DEFAULT_TIMEOUT}s")
+        print(f"  Max Concurrent Downloads: {AppConstants.MAX_CONCURRENT_DOWNLOADS}")
+        print(f"  Supported Languages: {len(UIConstants.AVAILABLE_LANGUAGES)}")
+        print(f"  Download Statuses: {len(DatabaseConstants.DOWNLOAD_STATUSES)}")
         
         return True
         
@@ -108,10 +130,11 @@ def main() -> int:
             print("\nv2.0 Status:")
             print("  ✅ Configuration system")
             print("  ✅ Event system")
+            print("  ✅ Constants management")
             print("  ✅ Project structure")
-            print("  ⏳ Platform abstraction (Task 3)")
-            print("  ⏳ Database layer (Task 4)")
-            print("  ⏳ UI refactoring (Task 5+)")
+            print("  ⏳ Platform abstraction (Task 4)")
+            print("  ⏳ Database layer (Task 5)")
+            print("  ⏳ UI refactoring (Task 6+)")
             
             # For now, offer to run v1.2.1 or continue with v2.0 development
             print("\nOptions:")
@@ -142,7 +165,14 @@ def main() -> int:
                     event_bus = get_event_bus()
                     print(f"  Event system: {event_bus.get_total_subscribers()} subscribers")
                     
-                    print("\n✅ v2.0 foundation ready for Task 3!")
+                    # Test constants system
+                    print(f"\nConstants system test:")
+                    print(f"  Platform constants: {len(PlatformConstants.PLATFORM_NAMES)} platforms")
+                    print(f"  Error codes: {len(ErrorConstants.ERROR_CODES)} defined")
+                    print(f"  UI themes: {UIConstants.AVAILABLE_THEMES}")
+                    print(f"  Quality options: {PlatformConstants.QUALITY_OPTIONS}")
+                    
+                    print("\n✅ v2.0 foundation ready for Task 4!")
                     return 0
                     
                 elif choice == "3":
