@@ -16,6 +16,7 @@ sys.path.insert(0, str(current_dir))
 # Core imports
 from core.config_manager import get_config_manager, get_config
 from core.event_system import get_event_bus, publish_event, EventType
+from core.app_controller import get_app_controller, initialize_app_controller, shutdown_app_controller
 from core.constants import (
     AppConstants, PlatformConstants, UIConstants, DatabaseConstants, ErrorConstants,
     validate_constants, get_platform_name, is_supported_platform
@@ -34,7 +35,7 @@ from version import get_version_info, get_full_version, is_development_version
 
 def setup_application() -> bool:
     """
-    Setup the application environment and configuration
+    Setup the application environment and configuration using App Controller
     
     Returns:
         True if setup successful, False otherwise
@@ -47,25 +48,24 @@ def setup_application() -> bool:
             return False
         print("✅ Constants validation passed")
         
-        # Initialize configuration
-        config_manager = get_config_manager()
-        config = get_config()
+        # Initialize App Controller (this will initialize all core systems)
+        print(f"Initializing {AppConstants.APP_NAME} v{AppConstants.APP_VERSION} with App Controller...")
+        if not initialize_app_controller():
+            print("❌ App Controller initialization failed!")
+            return False
+        print("✅ App Controller initialized successfully")
         
-        print(f"Initializing {AppConstants.APP_NAME} v{AppConstants.APP_VERSION}")
+        # Get controller instance for further operations
+        controller = get_app_controller()
         
-        # Initialize event system
-        event_bus = get_event_bus()
+        # Get components from controller
+        config_manager = controller.get_component("config_manager")
+        event_bus = controller.get_component("event_bus")
+        config = controller.get_config()
         
-        # Publish application startup event
-        publish_event(
-            EventType.APP_STARTUP,
-            "main",
-            {
-                "version": AppConstants.APP_VERSION,
-                "development": is_development_version(),
-                "config_path": str(config_manager.config_path)
-            }
-        )
+        if not config_manager or not event_bus or not config:
+            print("❌ Failed to get core components from controller!")
+            return False
         
         # Validate configuration
         if not config_manager.config_path.exists():
@@ -74,6 +74,7 @@ def setup_application() -> bool:
         
         print(f"Configuration loaded from: {config_manager.config_path}")
         print(f"Development mode: {is_development_version()}")
+        print(f"App Controller status: {controller.get_status().state.name}")
         
         # Print platform status using constants
         print("\nPlatform Status:")
@@ -91,6 +92,13 @@ def setup_application() -> bool:
         print(f"  Max Concurrent Downloads: {AppConstants.MAX_CONCURRENT_DOWNLOADS}")
         print(f"  Supported Languages: {len(UIConstants.AVAILABLE_LANGUAGES)}")
         print(f"  Download Statuses: {len(DatabaseConstants.DOWNLOAD_STATUSES)}")
+        
+        # Test controller status
+        status = controller.get_status()
+        print(f"\nApp Controller Status:")
+        print(f"  State: {status.state.name}")
+        print(f"  Components: {', '.join(status.components_initialized)}")
+        print(f"  Ready: {controller.is_ready()}")
         
         return True
         
@@ -202,13 +210,22 @@ def main() -> int:
             
     except KeyboardInterrupt:
         print("\nShutdown requested by user")
-        publish_event(EventType.APP_SHUTDOWN, "main", {"reason": "user_interrupt"})
         return 0
         
     except Exception as e:
         print(f"Unexpected error: {e}")
-        publish_event(EventType.ERROR_OCCURRED, "main", {"error": str(e)})
+        controller = get_app_controller()
+        if controller:
+            controller.handle_error(e, "main_application")
         return 1
+    
+    finally:
+        # Always cleanup App Controller on exit
+        print("\nShutting down App Controller...")
+        if shutdown_app_controller():
+            print("✅ App Controller shutdown complete")
+        else:
+            print("⚠️ App Controller shutdown had issues")
 
 
 if __name__ == "__main__":

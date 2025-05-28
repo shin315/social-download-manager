@@ -32,6 +32,22 @@ class DatabaseConfig:
     backup_enabled: bool = True
     backup_interval_days: int = 7
     max_backups: int = 5
+    
+    # Connection pool settings
+    max_pool_size: int = 10
+    min_pool_size: int = 2
+    connection_timeout: float = 30.0
+    pool_timeout: float = 5.0
+    
+    # Performance settings
+    enable_wal_mode: bool = True
+    enable_foreign_keys: bool = True
+    page_size: int = 4096
+    cache_size: int = -64000  # 64MB cache (negative means KB)
+    
+    # Maintenance settings
+    auto_vacuum: bool = True
+    vacuum_threshold_mb: int = 100  # Auto vacuum when WAL exceeds this size
 
 
 @dataclass
