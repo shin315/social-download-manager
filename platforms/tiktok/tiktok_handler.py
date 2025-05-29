@@ -9,6 +9,8 @@ import asyncio
 import logging
 import re
 import unicodedata
+import time
+from datetime import datetime, timedelta
 from pathlib import Path
 from typing import Optional, List, Dict, Any, Callable
 from urllib.parse import urlparse
@@ -35,6 +37,290 @@ from platforms.base import (
 )
 
 logger = logging.getLogger(__name__)
+
+
+class TikTokErrorContext:
+    """Enhanced error context for detailed error reporting"""
+    
+    def __init__(
+        self,
+        operation: str,
+        url: Optional[str] = None,
+        error_code: Optional[str] = None,
+        timestamp: Optional[datetime] = None,
+        user_message: Optional[str] = None,
+        technical_details: Optional[Dict[str, Any]] = None,
+        suggested_actions: Optional[List[str]] = None,
+        recovery_options: Optional[List[str]] = None
+    ):
+        self.operation = operation
+        self.url = url
+        self.error_code = error_code
+        self.timestamp = timestamp or datetime.now()
+        self.user_message = user_message
+        self.technical_details = technical_details or {}
+        self.suggested_actions = suggested_actions or []
+        self.recovery_options = recovery_options or []
+    
+    def to_dict(self) -> Dict[str, Any]:
+        """Convert error context to dictionary for logging"""
+        return {
+            'operation': self.operation,
+            'url': self.url,
+            'error_code': self.error_code,
+            'timestamp': self.timestamp.isoformat(),
+            'user_message': self.user_message,
+            'technical_details': self.technical_details,
+            'suggested_actions': self.suggested_actions,
+            'recovery_options': self.recovery_options
+        }
+
+
+class TikTokErrorMonitor:
+    """Error rate monitoring and health tracking"""
+    
+    def __init__(self):
+        self.error_counts: Dict[str, int] = {}
+        self.error_history: List[Dict[str, Any]] = []
+        self.circuit_breaker_state = False
+        self.circuit_breaker_reset_time: Optional[datetime] = None
+        self.health_check_interval = 300  # 5 minutes
+        self.error_threshold_per_hour = 50
+        self.circuit_breaker_duration = 900  # 15 minutes
+    
+    def record_error(self, error_type: str, context: TikTokErrorContext):
+        """Record an error occurrence"""
+        self.error_counts[error_type] = self.error_counts.get(error_type, 0) + 1
+        
+        error_record = {
+            'type': error_type,
+            'timestamp': context.timestamp,
+            'operation': context.operation,
+            'url': context.url,
+            'error_code': context.error_code
+        }
+        self.error_history.append(error_record)
+        
+        # Maintain only last hour of history
+        cutoff_time = datetime.now() - timedelta(hours=1)
+        self.error_history = [
+            record for record in self.error_history 
+            if record['timestamp'] > cutoff_time
+        ]
+        
+        # Check if circuit breaker should be triggered
+        self._check_circuit_breaker()
+    
+    def _check_circuit_breaker(self):
+        """Check if circuit breaker should be triggered"""
+        recent_errors = len(self.error_history)
+        
+        if recent_errors >= self.error_threshold_per_hour and not self.circuit_breaker_state:
+            self.circuit_breaker_state = True
+            self.circuit_breaker_reset_time = datetime.now() + timedelta(seconds=self.circuit_breaker_duration)
+            logger.error(f"Circuit breaker activated due to {recent_errors} errors in the last hour")
+    
+    def is_circuit_open(self) -> bool:
+        """Check if circuit breaker is currently open"""
+        if not self.circuit_breaker_state:
+            return False
+        
+        if self.circuit_breaker_reset_time and datetime.now() > self.circuit_breaker_reset_time:
+            self.circuit_breaker_state = False
+            self.circuit_breaker_reset_time = None
+            logger.info("Circuit breaker reset - service restored")
+            return False
+        
+        return True
+    
+    def get_health_status(self) -> Dict[str, Any]:
+        """Get current health status"""
+        recent_errors = len(self.error_history)
+        error_rate = recent_errors / 60.0  # errors per minute
+        
+        return {
+            'healthy': not self.circuit_breaker_state and error_rate < 1.0,
+            'circuit_breaker_active': self.circuit_breaker_state,
+            'recent_error_count': recent_errors,
+            'error_rate_per_minute': error_rate,
+            'error_counts_by_type': self.error_counts.copy(),
+            'circuit_breaker_reset_time': self.circuit_breaker_reset_time.isoformat() if self.circuit_breaker_reset_time else None
+        }
+
+
+class TikTokErrorRecovery:
+    """Error recovery strategies and graceful degradation"""
+    
+    @staticmethod
+    async def attempt_url_normalization(url: str) -> List[str]:
+        """Generate alternative URL formats for retry"""
+        alternatives = [url]
+        
+        # Try different URL formats
+        if 'vm.tiktok.com' in url or 'vt.tiktok.com' in url:
+            # For short URLs, add different parameters
+            alternatives.extend([
+                f"{url}?is_from_webapp=1",
+                f"{url}?source=h5_m"
+            ])
+        elif 'tiktok.com/@' in url:
+            # For full URLs, try variations
+            if '?' in url:
+                base_url = url.split('?')[0]
+                alternatives.append(base_url)
+            else:
+                alternatives.extend([
+                    f"{url}?is_from_webapp=1",
+                    f"{url}?source=h5_m"
+                ])
+        
+        return alternatives
+    
+    @staticmethod
+    async def attempt_quality_degradation(
+        formats: List[VideoFormat], 
+        failed_quality: QualityLevel
+    ) -> Optional[VideoFormat]:
+        """Try lower quality formats when high quality fails"""
+        quality_order = [
+            QualityLevel.FHD,
+            QualityLevel.HD,
+            QualityLevel.SD,
+            QualityLevel.LD,
+            QualityLevel.MOBILE,
+            QualityLevel.WORST
+        ]
+        
+        try:
+            current_index = quality_order.index(failed_quality)
+            # Try lower qualities
+            for quality in quality_order[current_index + 1:]:
+                matching_formats = [f for f in formats if f.quality == quality]
+                if matching_formats:
+                    return matching_formats[0]
+        except ValueError:
+            pass
+        
+        return None
+    
+    @staticmethod
+    def get_recovery_suggestions(error_type: str, context: TikTokErrorContext) -> List[str]:
+        """Get recovery suggestions based on error type"""
+        suggestions = []
+        
+        if 'connection' in error_type.lower():
+            suggestions.extend([
+                "Check your internet connection",
+                "Try again in a few minutes",
+                "Consider using a VPN if region-blocked"
+            ])
+        elif 'rate' in error_type.lower() or '429' in str(context.error_code):
+            suggestions.extend([
+                "Wait a few minutes before trying again",
+                "Reduce the number of concurrent downloads",
+                "Try downloading during off-peak hours"
+            ])
+        elif 'private' in error_type.lower() or 'forbidden' in error_type.lower():
+            suggestions.extend([
+                "This video is private or restricted",
+                "Check if the video is still available on TikTok",
+                "Try copying the URL again from TikTok"
+            ])
+        elif 'not found' in error_type.lower() or '404' in str(context.error_code):
+            suggestions.extend([
+                "The video may have been deleted",
+                "Check if the URL is correct",
+                "Try searching for the video on TikTok directly"
+            ])
+        else:
+            suggestions.extend([
+                "Try refreshing the page and copying the URL again",
+                "Check if TikTok is accessible in your region",
+                "Report this issue if it persists"
+            ])
+        
+        return suggestions
+
+
+class DownloadProgressTracker:
+    """Enhanced progress tracker for download operations"""
+    
+    def __init__(self, url: str, callback: Optional[Callable[[DownloadProgress], None]] = None):
+        self.url = url
+        self.callback = callback
+        self.last_progress = None
+    
+    def progress_hook(self, d: Dict[str, Any]) -> None:
+        """Enhanced progress hook with detailed information"""
+        try:
+            if d['status'] == 'downloading':
+                # Extract progress information
+                total_bytes = d.get('total_bytes', 0) or d.get('total_bytes_estimate', 0)
+                downloaded_bytes = d.get('downloaded_bytes', 0)
+                
+                # Calculate progress percentage
+                if total_bytes > 0:
+                    progress_percent = (downloaded_bytes / total_bytes) * 100
+                else:
+                    progress_percent = 0
+                
+                # Extract speed and ETA information
+                speed = d.get('speed', 0) or 0
+                eta = d.get('eta', 0) or 0
+                
+                # Create enhanced progress object
+                progress = DownloadProgress(
+                    status=DownloadStatus.DOWNLOADING,
+                    progress_percent=progress_percent,
+                    downloaded_bytes=downloaded_bytes,
+                    total_bytes=total_bytes,
+                    speed_bps=speed,
+                    eta_seconds=eta,
+                    message=f"Downloading... {progress_percent:.1f}%"
+                )
+                
+                # Only notify if progress changed significantly (reduce noise)
+                if self._should_notify_progress(progress):
+                    self.last_progress = progress
+                    if self.callback:
+                        self.callback(progress)
+                
+            elif d['status'] == 'finished':
+                # Download completed
+                progress = DownloadProgress(
+                    status=DownloadStatus.COMPLETED,
+                    progress_percent=100.0,
+                    downloaded_bytes=d.get('total_bytes', 0),
+                    total_bytes=d.get('total_bytes', 0),
+                    speed_bps=0,
+                    message="Download completed"
+                )
+                
+                if self.callback:
+                    self.callback(progress)
+                    
+            elif d['status'] == 'error':
+                # Download error
+                progress = DownloadProgress(
+                    status=DownloadStatus.FAILED,
+                    progress_percent=0.0,
+                    message=f"Download error: {d.get('error', 'Unknown error')}"
+                )
+                
+                if self.callback:
+                    self.callback(progress)
+                    
+        except Exception as e:
+            logger.error(f"Error in progress hook: {e}")
+    
+    def _should_notify_progress(self, progress: DownloadProgress) -> bool:
+        """Determine if we should notify about this progress update"""
+        if not self.last_progress:
+            return True
+        
+        # Notify if progress changed by at least 1% or every 5 seconds
+        percent_change = abs(progress.progress_percent - self.last_progress.progress_percent)
+        return percent_change >= 1.0
 
 
 @PlatformHandler(
@@ -90,6 +376,13 @@ class TikTokHandler(AbstractPlatformHandler):
         self._session_cookies = {}
         self._request_count = 0
         self._last_request_time = 0
+        
+        # Enhanced Error Handling Components
+        self._error_monitor = TikTokErrorMonitor()
+        self._error_recovery = TikTokErrorRecovery()
+        self._enable_error_monitoring = self._config.get('error_monitoring', {}).get('enabled', True)
+        self._enable_circuit_breaker = self._config.get('circuit_breaker', {}).get('enabled', True)
+        self._enable_recovery_suggestions = self._config.get('recovery', {}).get('enabled', True)
         
         # URL patterns for validation
         self._url_patterns = [
@@ -281,17 +574,19 @@ class TikTokHandler(AbstractPlatformHandler):
         output_path: Path,
         quality: Optional[QualityLevel] = None,
         audio_only: bool = False,
+        progress_callback: Optional[Callable[[DownloadProgress], None]] = None,
         **kwargs
     ) -> DownloadResult:
         """
-        Download video from TikTok
+        Download video from TikTok with enhanced features
         
         Args:
             url: TikTok video URL
             output_path: Output file path
             quality: Desired video quality
             audio_only: Whether to download audio only
-            **kwargs: Additional options (format_id, remove_watermark, force_overwrite, etc.)
+            progress_callback: Optional callback for progress updates
+            **kwargs: Additional options
             
         Returns:
             DownloadResult with download information
@@ -313,36 +608,62 @@ class TikTokHandler(AbstractPlatformHandler):
         
         self._downloading_urls.add(url)
         
+        # Enhanced configuration
+        max_retries = kwargs.get('max_retries', 3)
+        allow_resumption = kwargs.get('allow_resumption', True)
+        retry_delay = kwargs.get('initial_retry_delay', 1.0)
+        
+        start_time = asyncio.get_event_loop().time()
+        
         try:
             # Get video info first
             video_info = await self.get_video_info(url)
             
+            # Enhanced format selection
+            selected_format = await self._select_best_format(
+                video_info, quality, audio_only, **kwargs
+            )
+            
             # Extract kwargs options
-            format_id = kwargs.get('format_id')
+            format_id = selected_format.format_id if selected_format else kwargs.get('format_id')
             remove_watermark = kwargs.get('remove_watermark', True)
             output_template = kwargs.get('output_template')
             force_overwrite = kwargs.get('force_overwrite', False)
             
-            # Build yt-dlp options
-            ydl_opts = self._build_download_options(
-                output_path=output_path,
-                format_id=format_id,
-                audio_only=audio_only,
-                remove_watermark=remove_watermark,
-                output_template=output_template,
-                force_overwrite=force_overwrite
-            )
+            # Setup progress tracking
+            progress_tracker = DownloadProgressTracker(url, progress_callback)
             
-            # Add progress hook
-            progress_info = {'url': url, 'total_bytes': 0, 'downloaded_bytes': 0}
-            ydl_opts['progress_hooks'] = [lambda d: self._progress_hook(d, progress_info)]
-            
-            logger.info(f"Starting TikTok video download: {url}")
-            
-            # Download using yt-dlp
-            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+            # Retry logic implementation
+            last_exception = None
+            for attempt in range(max_retries + 1):
                 try:
-                    ydl.download([url])
+                    logger.info(f"Download attempt {attempt + 1}/{max_retries + 1} for: {url}")
+                    
+                    # Apply authentication and session management
+                    await self._update_session_state()
+                    
+                    # Build enhanced yt-dlp options
+                    ydl_opts = await self._build_enhanced_download_options(
+                        output_path=output_path,
+                        format_id=format_id,
+                        audio_only=audio_only,
+                        remove_watermark=remove_watermark,
+                        output_template=output_template,
+                        force_overwrite=force_overwrite,
+                        progress_tracker=progress_tracker,
+                        allow_resumption=allow_resumption,
+                        attempt=attempt
+                    )
+                    
+                    logger.info(f"Starting TikTok video download: {url}")
+                    
+                    # Download using yt-dlp
+                    download_result = await self._execute_download_with_ydlp(
+                        url, ydl_opts, progress_tracker
+                    )
+                    
+                    # Calculate download time
+                    download_time = asyncio.get_event_loop().time() - start_time
                     
                     # Create successful download result
                     result = DownloadResult(
@@ -350,7 +671,8 @@ class TikTokHandler(AbstractPlatformHandler):
                         video_info=video_info,
                         file_path=output_path,
                         file_size=output_path.stat().st_size if output_path.exists() else 0,
-                        format_used=None  # Could be determined from selected format
+                        format_used=selected_format,
+                        download_time=download_time
                     )
                     
                     # Track download
@@ -359,25 +681,52 @@ class TikTokHandler(AbstractPlatformHandler):
                     logger.info(f"Successfully downloaded TikTok video: {output_path}")
                     return result
                     
-                except yt_dlp.utils.DownloadError as e:
-                    error_msg = str(e)
-                    logger.error(f"yt-dlp download error: {error_msg}")
+                except (yt_dlp.utils.DownloadError, PlatformConnectionError) as e:
+                    last_exception = e
+                    error_msg = str(e).lower()
                     
-                    # Create failed download result
-                    result = DownloadResult(
-                        success=False,
-                        video_info=video_info,
-                        error_message=error_msg
-                    )
+                    # Check if this is a retryable error
+                    is_retryable = self._is_retryable_error(error_msg)
                     
-                    self._add_to_downloads(url, False, error_msg)
-                    
-                    raise PlatformError(
-                        f"Download failed: {error_msg}",
-                        platform=self.platform_type,
-                        url=url,
-                        original_error=e
-                    )
+                    if attempt < max_retries and is_retryable:
+                        # Calculate exponential backoff with jitter
+                        delay = retry_delay * (2 ** attempt) + (0.1 * attempt)
+                        logger.warning(f"Download attempt {attempt + 1} failed, retrying in {delay:.1f}s: {error_msg}")
+                        
+                        # Notify progress callback of retry
+                        if progress_callback:
+                            retry_progress = DownloadProgress(
+                                status=DownloadStatus.PENDING,
+                                progress_percent=0.0,
+                                message=f"Retrying in {delay:.1f}s (attempt {attempt + 1}/{max_retries + 1})"
+                            )
+                            progress_callback(retry_progress)
+                        
+                        await asyncio.sleep(delay)
+                        continue
+                    else:
+                        # Not retryable or max retries reached
+                        logger.error(f"Download failed after {attempt + 1} attempts: {error_msg}")
+                        break
+            
+            # If we reach here, all retries failed
+            error_msg = str(last_exception) if last_exception else "Unknown error"
+            
+            # Create failed download result
+            result = DownloadResult(
+                success=False,
+                video_info=video_info,
+                error_message=error_msg
+            )
+            
+            self._add_to_downloads(url, False, error_msg)
+            
+            raise PlatformError(
+                f"Download failed after {max_retries + 1} attempts: {error_msg}",
+                platform=self.platform_type,
+                url=url,
+                original_error=last_exception
+            )
                     
         except PlatformError:
             # Re-raise platform errors as-is
@@ -873,8 +1222,8 @@ class TikTokHandler(AbstractPlatformHandler):
                 if api_key:
                     ydl_opts['http_headers']['Authorization'] = f'Bearer {api_key}'
     
-    def _update_session_state(self) -> None:
-        """Update session state after a request"""
+    async def _update_session_state(self) -> None:
+        """Update session state for downloads (async version)"""
         import time
         self._request_count += 1
         self._last_request_time = time.time()
@@ -883,6 +1232,14 @@ class TikTokHandler(AbstractPlatformHandler):
         if (self._headers_config.get('rotate_user_agent', True) and 
             self._request_count % self._headers_config.get('rotate_interval', 10) == 0):
             self._current_user_agent = self._get_user_agent()
+        
+        # Apply rate limiting if needed
+        rate_limit = self._config.get('rate_limit', {})
+        if rate_limit.get('enabled', True):
+            min_interval = rate_limit.get('min_request_interval', 0.5)
+            elapsed = time.time() - self._last_request_time
+            if elapsed < min_interval:
+                await asyncio.sleep(min_interval - elapsed)
     
     def _validate_authentication(self) -> bool:
         """Validate current authentication state"""
@@ -916,4 +1273,412 @@ class TikTokHandler(AbstractPlatformHandler):
             'last_request_time': self._last_request_time,
             'cookies_count': len(self._session_cookies),
             'proxy_enabled': self._proxy_config.get('enabled', False)
-        } 
+        }
+    
+    # =====================================================
+    # Enhanced Download Helper Methods
+    # =====================================================
+    
+    async def _select_best_format(
+        self,
+        video_info: PlatformVideoInfo,
+        quality: Optional[QualityLevel] = None,
+        audio_only: bool = False,
+        **kwargs
+    ) -> Optional[VideoFormat]:
+        """Select the best format based on quality preferences"""
+        if not video_info.formats:
+            return None
+        
+        available_formats = video_info.formats
+        
+        # Filter for audio-only if requested
+        if audio_only:
+            audio_formats = [f for f in available_formats if f.is_audio_only]
+            if audio_formats:
+                # Return best audio quality
+                return max(audio_formats, key=lambda f: f.abr or 0)
+            return None
+        
+        # Filter video formats
+        video_formats = [f for f in available_formats if not f.is_audio_only]
+        if not video_formats:
+            return None
+        
+        # If specific quality requested, try to match it
+        if quality:
+            quality_matches = [f for f in video_formats if f.quality == quality]
+            if quality_matches:
+                # Among matching quality, prefer no watermark
+                no_watermark = [f for f in quality_matches if not f.has_watermark]
+                if no_watermark:
+                    return max(no_watermark, key=lambda f: f.vbr or 0)
+                return max(quality_matches, key=lambda f: f.vbr or 0)
+        
+        # Default selection: best quality available
+        prefer_no_watermark = kwargs.get('prefer_no_watermark', True)
+        
+        if prefer_no_watermark:
+            no_watermark_formats = [f for f in video_formats if not f.has_watermark]
+            if no_watermark_formats:
+                return max(no_watermark_formats, key=lambda f: (f.quality.height, f.vbr or 0))
+        
+        # Fallback to best quality overall
+        return max(video_formats, key=lambda f: (f.quality.height, f.vbr or 0))
+    
+    async def _build_enhanced_download_options(
+        self,
+        output_path: Path,
+        format_id: Optional[str] = None,
+        audio_only: bool = False,
+        remove_watermark: bool = True,
+        output_template: Optional[str] = None,
+        force_overwrite: bool = False,
+        progress_tracker: 'DownloadProgressTracker' = None,
+        allow_resumption: bool = True,
+        attempt: int = 0
+    ) -> Dict[str, Any]:
+        """Build enhanced yt-dlp download options with retry and resumption support"""
+        
+        options = {
+            'outtmpl': str(output_path) if not output_template else output_template,
+            'quiet': True,
+            'no_warnings': True,
+        }
+        
+        # Format selection
+        if audio_only:
+            options['format'] = 'bestaudio/best'
+            options['postprocessors'] = [{
+                'key': 'FFmpegExtractAudio',
+                'preferredcodec': 'mp3',
+                'preferredquality': '192',
+            }]
+        elif format_id:
+            options['format'] = format_id
+        else:
+            options['format'] = 'best'
+        
+        # Overwrite handling
+        if force_overwrite:
+            options['overwrites'] = True
+        
+        # Resumption support
+        if allow_resumption and output_path.exists():
+            options['continue'] = True
+            options['nooverwrites'] = False
+        
+        # Enhanced progress tracking
+        if progress_tracker:
+            options['progress_hooks'] = [progress_tracker.progress_hook]
+        
+        # Apply authentication and session settings
+        self._apply_authentication(options)
+        
+        # Add retry-specific options
+        if attempt > 0:
+            # Add more conservative settings for retries
+            options['socket_timeout'] = 30
+            options['retries'] = 1  # yt-dlp internal retries
+        
+        return options
+    
+    async def _execute_download_with_ydlp(
+        self,
+        url: str,
+        ydl_opts: Dict[str, Any],
+        progress_tracker: 'DownloadProgressTracker'
+    ) -> bool:
+        """Execute download using yt-dlp with async support"""
+        loop = asyncio.get_event_loop()
+        
+        def _download():
+            with yt_dlp.YoutubeDL(ydl_opts) as ydl:
+                ydl.download([url])
+                return True
+        
+        # Run in thread pool to avoid blocking the event loop
+        return await loop.run_in_executor(None, _download)
+    
+    def _is_retryable_error(self, error_msg: str) -> bool:
+        """Determine if an error is retryable"""
+        retryable_patterns = [
+            'connection',
+            'timeout',
+            'network',
+            'temporary',
+            '429',  # Rate limit
+            '502',  # Bad gateway
+            '503',  # Service unavailable
+            '504',  # Gateway timeout
+            'ssl',
+            'certificate'
+        ]
+        
+        non_retryable_patterns = [
+            'private',
+            'removed',
+            'deleted',
+            'not available',
+            'copyright',
+            '404',  # Not found
+            '403',  # Forbidden
+            '401',  # Unauthorized
+        ]
+        
+        error_lower = error_msg.lower()
+        
+        # Check non-retryable first (more specific)
+        if any(pattern in error_lower for pattern in non_retryable_patterns):
+            return False
+        
+        # Check retryable patterns
+        return any(pattern in error_lower for pattern in retryable_patterns)
+    
+    # =====================================================
+    # Comprehensive Error Handling Methods
+    # =====================================================
+    
+    def _create_error_context(
+        self,
+        operation: str,
+        url: Optional[str] = None,
+        error_code: Optional[str] = None,
+        original_error: Optional[Exception] = None,
+        **kwargs
+    ) -> TikTokErrorContext:
+        """Create detailed error context for enhanced error reporting"""
+        
+        # Extract error details
+        error_msg = str(original_error) if original_error else None
+        technical_details = {
+            'original_error_type': type(original_error).__name__ if original_error else None,
+            'original_error_message': error_msg,
+            'session_info': self.get_session_info(),
+            'timestamp': datetime.now().isoformat(),
+            **kwargs
+        }
+        
+        # Generate user-friendly message
+        user_message = self._generate_user_friendly_message(operation, error_msg, error_code)
+        
+        # Get recovery suggestions
+        suggested_actions = []
+        recovery_options = []
+        
+        if self._enable_recovery_suggestions:
+            error_type = type(original_error).__name__ if original_error else 'Unknown'
+            context = TikTokErrorContext(operation, url, error_code)
+            suggested_actions = self._error_recovery.get_recovery_suggestions(error_type, context)
+            recovery_options = self._get_recovery_options(operation, error_msg)
+        
+        return TikTokErrorContext(
+            operation=operation,
+            url=url,
+            error_code=error_code,
+            user_message=user_message,
+            technical_details=technical_details,
+            suggested_actions=suggested_actions,
+            recovery_options=recovery_options
+        )
+    
+    def _generate_user_friendly_message(
+        self,
+        operation: str,
+        error_msg: Optional[str],
+        error_code: Optional[str]
+    ) -> str:
+        """Generate user-friendly error messages"""
+        
+        if not error_msg:
+            return f"An error occurred during {operation}. Please try again."
+        
+        error_lower = error_msg.lower()
+        
+        # Network and connection errors
+        if any(word in error_lower for word in ['connection', 'network', 'timeout', 'ssl']):
+            return "Connection failed. Please check your internet connection and try again."
+        
+        # Rate limiting
+        if '429' in str(error_code) or 'rate' in error_lower:
+            return "Too many requests. Please wait a few minutes before trying again."
+        
+        # Content not available
+        if any(word in error_lower for word in ['private', 'not available', 'removed', 'deleted']):
+            return "This video is not available. It may be private, deleted, or restricted in your region."
+        
+        # Authentication issues
+        if any(word in error_lower for word in ['forbidden', 'unauthorized', '403', '401']):
+            return "Access denied. This content may require authentication or may be restricted."
+        
+        # Not found
+        if '404' in str(error_code) or 'not found' in error_lower:
+            return "Video not found. Please check the URL and try again."
+        
+        # API changes
+        if any(word in error_lower for word in ['api', 'extractor', 'youtube-dl', 'yt-dlp']):
+            return "TikTok's service may have changed. Please update the application or try again later."
+        
+        # Generic error with operation context
+        operation_msg = {
+            'video_info_extraction': 'extracting video information',
+            'download': 'downloading the video',
+            'authentication': 'authenticating with TikTok',
+            'url_validation': 'validating the URL'
+        }.get(operation, operation)
+        
+        return f"Error {operation_msg}. Please try again or contact support if the issue persists."
+    
+    def _get_recovery_options(self, operation: str, error_msg: Optional[str]) -> List[str]:
+        """Get specific recovery options based on operation and error"""
+        options = []
+        
+        if operation == 'download' and error_msg:
+            error_lower = error_msg.lower()
+            
+            if 'quality' in error_lower or 'format' in error_lower:
+                options.append("Try downloading in lower quality")
+                options.append("Try audio-only download")
+            
+            if 'watermark' in error_lower:
+                options.append("Try downloading with watermark included")
+            
+            if 'connection' in error_lower:
+                options.append("Try using a different network")
+                options.append("Try using a VPN")
+        
+        elif operation == 'video_info_extraction':
+            options.extend([
+                "Try refreshing the TikTok page and copying the URL again",
+                "Try using a different URL format (mobile vs desktop)",
+                "Check if the video is still available on TikTok"
+            ])
+        
+        return options
+    
+    def _handle_error_with_context(
+        self,
+        operation: str,
+        original_error: Exception,
+        url: Optional[str] = None,
+        **kwargs
+    ) -> PlatformError:
+        """Handle errors with comprehensive context and monitoring"""
+        
+        # Create detailed error context
+        error_context = self._create_error_context(
+            operation=operation,
+            url=url,
+            original_error=original_error,
+            **kwargs
+        )
+        
+        # Record error for monitoring
+        if self._enable_error_monitoring:
+            error_type = type(original_error).__name__
+            self._error_monitor.record_error(error_type, error_context)
+            
+            # Log detailed error context
+            logger.error(f"TikTok handler error in {operation}: {error_context.to_dict()}")
+        
+        # Check circuit breaker
+        if self._enable_circuit_breaker and self._error_monitor.is_circuit_open():
+            raise PlatformError(
+                "TikTok service is temporarily unavailable due to repeated errors. Please try again later.",
+                platform=self.platform_type,
+                url=url,
+                original_error=original_error
+            )
+        
+        # Determine appropriate platform exception type
+        error_msg = str(original_error).lower()
+        
+        if any(word in error_msg for word in ['private', 'not available', 'removed', 'deleted', 'forbidden']):
+            exception_class = PlatformContentError
+        elif any(word in error_msg for word in ['connection', 'network', 'timeout', 'ssl']):
+            exception_class = PlatformConnectionError
+        elif '429' in error_msg or 'rate' in error_msg:
+            exception_class = PlatformRateLimitError
+        else:
+            exception_class = PlatformError
+        
+        # Create enhanced exception with context
+        enhanced_error = exception_class(
+            error_context.user_message,
+            platform=self.platform_type,
+            url=url,
+            original_error=original_error
+        )
+        
+        # Add error context as attribute for advanced error handling
+        enhanced_error.error_context = error_context
+        
+        return enhanced_error
+    
+    async def _attempt_error_recovery(
+        self,
+        operation: str,
+        original_error: Exception,
+        url: Optional[str] = None,
+        **recovery_kwargs
+    ) -> Optional[Any]:
+        """Attempt automatic error recovery based on error type and operation"""
+        
+        if not self._enable_recovery_suggestions:
+            return None
+        
+        error_msg = str(original_error).lower()
+        
+        # URL normalization recovery for connection errors
+        if url and 'connection' in error_msg and operation in ['video_info_extraction', 'download']:
+            logger.info(f"Attempting URL normalization recovery for {url}")
+            alternative_urls = await self._error_recovery.attempt_url_normalization(url)
+            
+            for alt_url in alternative_urls[1:]:  # Skip original URL
+                try:
+                    if operation == 'video_info_extraction':
+                        return await self.get_video_info(alt_url)
+                    # Add other recovery operations as needed
+                except Exception as retry_error:
+                    logger.debug(f"Recovery attempt with {alt_url} failed: {retry_error}")
+                    continue
+        
+        # Quality degradation recovery for download errors
+        if (operation == 'download' and 
+            'format' in error_msg and 
+            'video_info' in recovery_kwargs and 
+            'failed_quality' in recovery_kwargs):
+            
+            logger.info("Attempting quality degradation recovery")
+            video_info = recovery_kwargs['video_info']
+            failed_quality = recovery_kwargs['failed_quality']
+            
+            fallback_format = await self._error_recovery.attempt_quality_degradation(
+                video_info.formats, failed_quality
+            )
+            
+            if fallback_format:
+                logger.info(f"Found fallback format: {fallback_format.quality.value}")
+                return fallback_format
+        
+        return None
+    
+    def get_error_health_status(self) -> Dict[str, Any]:
+        """Get current error monitoring and health status"""
+        if not self._enable_error_monitoring:
+            return {'error_monitoring': 'disabled'}
+        
+        health_status = self._error_monitor.get_health_status()
+        health_status.update({
+            'error_monitoring_enabled': self._enable_error_monitoring,
+            'circuit_breaker_enabled': self._enable_circuit_breaker,
+            'recovery_suggestions_enabled': self._enable_recovery_suggestions
+        })
+        
+        return health_status
+    
+    def reset_error_state(self) -> None:
+        """Reset error monitoring state (admin function)"""
+        if self._enable_error_monitoring:
+            self._error_monitor = TikTokErrorMonitor()
+            logger.info("TikTok error monitoring state reset") 
