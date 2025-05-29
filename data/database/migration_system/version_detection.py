@@ -14,8 +14,8 @@ import sqlite3
 import re
 from datetime import datetime, timezone
 
-from .connection import SQLiteConnectionManager
-from .exceptions import DatabaseError, VersionMismatchError
+from data.database.connection import SQLiteConnectionManager
+from data.database.exceptions import DatabaseError, VersionMismatchError
 
 
 class DatabaseVersion(Enum):
