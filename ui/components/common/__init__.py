@@ -24,6 +24,25 @@ from .tab_manager import TabManager, TabRegistration, get_tab_manager, initializ
 # Import new component interfaces
 from .component_interfaces import *
 
+# Import state management system
+from .component_state_manager import (
+    ComponentStateManager, ComponentStateInterface, ComponentStateSnapshot, ComponentStateChange,
+    get_component_state_manager, initialize_component_state_manager
+)
+
+# Import state management mixins  
+from ..mixins.state_management import (
+    StatefulComponentMixin, FilterableStateMixin, SelectableStateMixin
+)
+
+# Import component theming system
+from .component_theming import (
+    ComponentThemeManager, ComponentThemeType, ComponentState, ResponsiveBreakpoint,
+    ComponentColorPalette, ComponentTypography, ComponentSpacing, ComponentAnimations,
+    ComponentTheme, get_component_theme_manager, initialize_component_theming,
+    apply_component_theme
+)
+
 __all__ = [
     # Models
     'TableConfig',

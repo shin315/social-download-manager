@@ -3,6 +3,7 @@ FilterableVideoTable Component
 
 Video table with advanced filtering capabilities.
 Extends VideoTable and implements FilterableTableInterface.
+Now includes comprehensive state management via mixins.
 """
 
 from typing import List, Dict, Any, Optional, Set
@@ -14,9 +15,19 @@ from .video_table import VideoTable
 from ..common.component_interfaces import FilterableTableInterface
 from ..common.models import TableConfig, FilterConfig
 from ..widgets.filter_popup import FilterPopup
+from ..mixins.state_management import FilterableStateMixin, SelectableStateMixin
 
-class FilterableVideoTable(VideoTable, FilterableTableInterface):
-    """Video table with advanced filtering capabilities"""
+class FilterableVideoTable(VideoTable, FilterableTableInterface, 
+                          FilterableStateMixin, SelectableStateMixin):
+    """
+    Video table with advanced filtering capabilities and comprehensive state management
+    
+    Features:
+    - Advanced filtering and search
+    - State persistence and synchronization
+    - Selection state management
+    - Filter state tracking and history
+    """
     
     # Additional signals from FilterableTableInterface
     filter_changed = pyqtSignal(dict)  # Active filters
@@ -30,11 +41,14 @@ class FilterableVideoTable(VideoTable, FilterableTableInterface):
     def __init__(self, config: TableConfig, parent=None, lang_manager=None):
         super().__init__(config, parent, lang_manager)
         
-        # Filter state
+        # Initialize state management first
+        self._initialize_comprehensive_state()
+        
+        # Filter state (now managed by FilterableStateMixin)
         self._active_filters: Dict[int, FilterConfig] = {}
         self._filtered_data: List[Dict[str, Any]] = []
         
-        # Search state
+        # Search state (now managed by FilterableStateMixin)
         self._search_query: str = ""
         self._search_columns: List[int] = []
         
@@ -49,6 +63,42 @@ class FilterableVideoTable(VideoTable, FilterableTableInterface):
         
         # Enable filtering features
         self._setup_filtering()
+        
+        # Connect state management signals
+        self._connect_state_management_signals()
+    
+    def _initialize_comprehensive_state(self):
+        """Initialize comprehensive state management for this component"""
+        try:
+            # Generate unique component ID
+            component_id = f"filterable_table_{id(self)}"
+            
+            # Initialize state management with all mixins
+            self.initialize_state_management(
+                component_id=component_id,
+                component_type="FilterableVideoTable",
+                auto_register=True
+            )
+            
+            # Set initial state
+            self._synchronize_state_with_internal_data()
+            
+        except Exception as e:
+            print(f"Error initializing comprehensive state: {e}")
+    
+    def _connect_state_management_signals(self):
+        """Connect state management signals to internal operations"""
+        # Connect filter state changes
+        self.filter_applied.connect(self._on_filter_applied_for_state)
+        self.filter_cleared.connect(self._on_filter_cleared_for_state)
+        self.search_applied.connect(self._on_search_applied_for_state)
+        
+        # Connect selection changes from parent VideoTable
+        if hasattr(self, 'selection_changed'):
+            self.selection_changed.connect(self._on_selection_changed_for_state)
+        
+        # Connect state restoration signals
+        self.state_restored.connect(self._on_state_restored)
     
     def _setup_filtering(self):
         """Setup filtering capabilities"""
@@ -456,6 +506,310 @@ class FilterableVideoTable(VideoTable, FilterableTableInterface):
             if column < len(self.config.columns):
                 column_config = self.config.columns[column]
                 popup.update_display_name(self.tr_(column_config.key))
+
+    # =========================================================================
+    # Enhanced State Management Integration
+    # =========================================================================
+    
+    def get_component_state(self) -> Dict[str, Any]:
+        """Get complete component state including filter and selection state"""
+        # Get base state from mixins
+        base_state = super().get_component_state()
+        
+        # Add component-specific state
+        component_state = {
+            'original_data_count': len(self._original_data),
+            'filtered_data_count': len(self._filtered_data),
+            'display_data_count': len(self._display_data),
+            'filter_popups_count': len(self._filter_popups),
+            'current_sort': {
+                'column': self._current_sort.column,
+                'order': self._current_sort.order.value
+            }
+        }
+        
+        # Merge all states
+        complete_state = {**base_state, **component_state}
+        return complete_state
+    
+    def set_component_state(self, state: Dict[str, Any]) -> None:
+        """Set component state including restoration of filters and selection"""
+        # Let mixins handle their state first
+        super().set_component_state(state)
+        
+        # Restore component-specific state
+        if 'current_sort' in state:
+            sort_info = state['current_sort']
+            if 'column' in sort_info and 'order' in sort_info:
+                # Restore sorting state
+                from ..common.models import SortOrder
+                order = SortOrder.ASCENDING if sort_info['order'] == 'ascending' else SortOrder.DESCENDING
+                # Don't trigger actual sort, just restore the state
+                self._current_sort.column = sort_info['column']
+                self._current_sort.order = order
+        
+        # Synchronize with internal data structures
+        self._synchronize_internal_data_with_state()
+    
+    def _synchronize_state_with_internal_data(self):
+        """Synchronize state management with internal data structures"""
+        try:
+            # Update filter state
+            filter_state = {
+                'active_filters': self._active_filters,
+                'search_query': self._search_query,
+                'search_columns': self._search_columns,
+                'filter_history': []  # Can be enhanced to track filter history
+            }
+            
+            # Update selection state
+            selected_items = []
+            if hasattr(self, '_last_selected_items'):
+                selected_items = self._last_selected_items
+            
+            selection_state = {
+                'selected_items': selected_items,
+                'selection_mode': 'multi',  # Default for table
+                'last_selected': selected_items[-1] if selected_items else None,
+                'selection_history': []
+            }
+            
+            # Update state via mixins
+            self.update_state({**filter_state, **selection_state}, 'internal_sync')
+            
+        except Exception as e:
+            print(f"Error synchronizing state: {e}")
+    
+    def _synchronize_internal_data_with_state(self):
+        """Synchronize internal data structures with state management"""
+        try:
+            # Restore filters
+            active_filters = self.get_active_filters()
+            if active_filters != self._active_filters:
+                self._active_filters = active_filters
+                self._apply_all_filters()
+            
+            # Restore search
+            search_query = self.get_search_query()
+            if search_query != self._search_query:
+                self._search_query = search_query
+                search_columns = self.get_state_field('search_columns') or []
+                self._search_columns = search_columns
+                if search_query:
+                    self._apply_all_filters()
+            
+            # Restore selection
+            selected_items = self.get_selected_items()
+            if hasattr(self, '_last_selected_items'):
+                if selected_items != self._last_selected_items:
+                    # Restore selection in the table
+                    self._restore_table_selection(selected_items)
+            
+        except Exception as e:
+            print(f"Error synchronizing internal data with state: {e}")
+    
+    def _restore_table_selection(self, selected_items: List[Any]):
+        """Restore table selection from state"""
+        try:
+            # Clear current selection
+            self.clearSelection()
+            
+            # Restore selection
+            for item in selected_items:
+                # Find rows that match the selected items
+                for row in range(self.rowCount()):
+                    row_data = self._item_data_map.get(row)
+                    if row_data and row_data == item:
+                        self.selectRow(row)
+                        break
+            
+            # Update internal tracking
+            self._last_selected_items = selected_items
+            
+        except Exception as e:
+            print(f"Error restoring table selection: {e}")
+    
+    # =========================================================================
+    # State Management Event Handlers
+    # =========================================================================
+    
+    def _on_filter_applied_for_state(self, filter_config: FilterConfig):
+        """Handle filter application for state management"""
+        try:
+            # Update state with new filter
+            current_filters = self.get_active_filters()
+            self.set_active_filters(current_filters)
+            
+            # Create snapshot for undo capability
+            self.create_snapshot({'event': 'filter_applied', 'filter': filter_config.__dict__})
+            
+        except Exception as e:
+            print(f"Error handling filter applied for state: {e}")
+    
+    def _on_filter_cleared_for_state(self, column: int):
+        """Handle filter clearing for state management"""
+        try:
+            # Update state
+            current_filters = self.get_active_filters()
+            self.set_active_filters(current_filters)
+            
+            # Create snapshot
+            self.create_snapshot({'event': 'filter_cleared', 'column': column})
+            
+        except Exception as e:
+            print(f"Error handling filter cleared for state: {e}")
+    
+    def _on_search_applied_for_state(self, query: str, columns: List[int]):
+        """Handle search application for state management"""
+        try:
+            # Update state
+            self.set_search_query(query, columns)
+            
+            # Create snapshot
+            self.create_snapshot({'event': 'search_applied', 'query': query, 'columns': columns})
+            
+        except Exception as e:
+            print(f"Error handling search applied for state: {e}")
+    
+    def _on_selection_changed_for_state(self, newly_selected: List[Any], newly_deselected: List[Any]):
+        """Handle selection changes for state management"""
+        try:
+            # Update selection state
+            current_selection = self.get_selected_items()
+            all_selected = list(set(current_selection + newly_selected))
+            final_selection = [item for item in all_selected if item not in newly_deselected]
+            
+            self.set_selected_items(final_selection)
+            
+            # Create snapshot for large selection changes
+            if len(newly_selected) > 5 or len(newly_deselected) > 5:
+                self.create_snapshot({
+                    'event': 'selection_changed', 
+                    'selected_count': len(final_selection)
+                })
+            
+        except Exception as e:
+            print(f"Error handling selection changed for state: {e}")
+    
+    def _on_state_restored(self, success: bool):
+        """Handle state restoration completion"""
+        if success:
+            try:
+                # Refresh display after state restoration
+                self._synchronize_internal_data_with_state()
+                self._apply_all_filters()
+                
+                # Update UI indicators
+                for column in self._active_filters.keys():
+                    self._update_filter_indicator(column, True)
+                
+                print(f"FilterableVideoTable state restored successfully")
+                
+            except Exception as e:
+                print(f"Error during state restoration: {e}")
+    
+    # =========================================================================
+    # Enhanced State Operations
+    # =========================================================================
+    
+    def save_filter_preset(self, preset_name: str) -> bool:
+        """Save current filter configuration as a preset"""
+        try:
+            preset_data = {
+                'active_filters': self.get_active_filters(),
+                'search_query': self.get_search_query(),
+                'search_columns': self.get_state_field('search_columns'),
+                'preset_name': preset_name
+            }
+            
+            return self.create_snapshot({'event': 'filter_preset_saved', 'preset': preset_data})
+            
+        except Exception as e:
+            print(f"Error saving filter preset: {e}")
+            return False
+    
+    def restore_filter_preset(self, snapshot_index: int) -> bool:
+        """Restore filter configuration from a preset"""
+        try:
+            snapshots = self.get_snapshots()
+            if 0 <= snapshot_index < len(snapshots):
+                snapshot = snapshots[snapshot_index]
+                if 'preset' in snapshot.metadata:
+                    preset_data = snapshot.metadata['preset']
+                    
+                    # Clear current filters
+                    self.clear_all_filters()
+                    
+                    # Restore filters
+                    for column, filter_config in preset_data.get('active_filters', {}).items():
+                        self.apply_filter(int(column), FilterConfig(**filter_config))
+                    
+                    # Restore search
+                    search_query = preset_data.get('search_query', '')
+                    search_columns = preset_data.get('search_columns', [])
+                    if search_query:
+                        self.search(search_query, search_columns)
+                    
+                    return True
+            
+            return False
+            
+        except Exception as e:
+            print(f"Error restoring filter preset: {e}")
+            return False
+    
+    def get_state_summary(self) -> Dict[str, Any]:
+        """Get comprehensive state summary for debugging"""
+        try:
+            return {
+                'component_id': self._component_id,
+                'component_type': self._component_type,
+                'is_dirty': self.is_state_dirty(),
+                'active_filters_count': len(self.get_active_filters()),
+                'search_active': bool(self.get_search_query()),
+                'selected_items_count': len(self.get_selected_items()),
+                'data_counts': {
+                    'original': len(self._original_data),
+                    'filtered': len(self._filtered_data),
+                    'display': len(self._display_data)
+                },
+                'snapshots_count': len(self.get_snapshots()),
+                'history_count': len(self.get_state_history())
+            }
+            
+        except Exception as e:
+            print(f"Error getting state summary: {e}")
+            return {'error': str(e)}
+    
+    # =========================================================================
+    # Cleanup and Lifecycle
+    # =========================================================================
+    
+    def cleanup_component(self):
+        """Enhanced cleanup with state management"""
+        try:
+            # Create final snapshot before cleanup
+            self.create_snapshot({'event': 'component_cleanup'})
+            
+            # Persist state
+            self.persist_state()
+            
+            # Cleanup state management
+            self.cleanup_state_management(persist_state=True)
+            
+            # Original cleanup
+            if hasattr(super(), 'cleanup_component'):
+                super().cleanup_component()
+            
+        except Exception as e:
+            print(f"Error during component cleanup: {e}")
+    
+    def __del__(self):
+        """Destructor with state cleanup"""
+        try:
+            self.cleanup_component()
+        except:
+            pass  # Ignore errors during destruction
 
 
 # =============================================================================
