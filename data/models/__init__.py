@@ -30,4 +30,23 @@ from .repositories import (
     IRepository, IContentRepository, RepositoryError,
     BaseRepository, ContentRepository, QueryBuilder,
     get_content_repository, register_repository
+)
+
+# Extended repository interfaces
+from .repository_interfaces import (
+    IDownloadRepository, IDownloadSessionRepository, IDownloadErrorRepository,
+    IUserRepository, IConfigurationRepository, IAnalyticsRepository
+)
+
+# Download repository implementations
+from .download_repositories import (
+    DownloadRepository, DownloadSessionRepository, DownloadErrorRepository,
+    get_download_repository, get_download_session_repository, 
+    get_download_error_repository, register_download_repositories
+)
+
+# Advanced query capabilities
+from .advanced_queries import (
+    AdvancedQueryBuilder, QueryMethodsMixin, QueryOptimizer,
+    DateRange, SortDirection, AggregateFunction
 ) 
