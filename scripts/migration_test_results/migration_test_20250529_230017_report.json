@@ -1,0 +1,588 @@
+{
+  "test_session_id": "migration_test_20250529_230017",
+  "start_time": "2025-05-29T23:00:17.173552",
+  "end_time": "2025-05-29T23:00:17.515363",
+  "total_duration": 0.341811,
+  "datasets_tested": 13,
+  "tests_passed": 15,
+  "tests_failed": 0,
+  "tests_warning": 2,
+  "overall_status": "warning",
+  "results": [
+    {
+      "dataset_name": "standard_small",
+      "test_phase": "pre_migration_baseline",
+      "status": "success",
+      "execution_time": 0.013451576232910156,
+      "records_processed": 15,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "record_count": 15,
+        "schema_columns": 11,
+        "null_urls": 0
+      },
+      "timestamp": "2025-05-29T23:00:17.187004"
+    },
+    {
+      "dataset_name": "standard_medium",
+      "test_phase": "pre_migration_baseline",
+      "status": "success",
+      "execution_time": 0.005997419357299805,
+      "records_processed": 150,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "record_count": 150,
+        "schema_columns": 11,
+        "null_urls": 0
+      },
+      "timestamp": "2025-05-29T23:00:17.193001"
+    },
+    {
+      "dataset_name": "v1_schema_only",
+      "test_phase": "pre_migration_baseline",
+      "status": "success",
+      "execution_time": 0.005056142807006836,
+      "records_processed": 0,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "record_count": 0,
+        "schema_columns": 11,
+        "null_urls": 0
+      },
+      "timestamp": "2025-05-29T23:00:17.198058"
+    },
+    {
+      "dataset_name": "standard_small",
+      "test_phase": "migration_execution",
+      "status": "success",
+      "execution_time": 0.06083941459655762,
+      "records_processed": 15,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "detected_version": {
+          "version": "DatabaseVersion.V1_2_1",
+          "version_string": "v1.2.1",
+          "schema_valid": false,
+          "tables_found": [
+            "downloads",
+            "sqlite_sequence"
+          ],
+          "migration_records": [],
+          "last_migration": null,
+          "requires_migration": true,
+          "migration_path": "v1.2.1 \u2192 v2.0.0 (requires data migration and schema transformation)",
+          "validation_errors": [
+            "Unexpected table for v1.2.1: sqlite_sequence"
+          ],
+          "detected_at": "2025-05-29 16:00:17.250896+00:00"
+        },
+        "schema_validation": {
+          "is_safe": true,
+          "concerns": [],
+          "plan_steps": 20,
+          "target_version": "v2.0.0"
+        },
+        "pre_migration_integrity": {
+          "success": true,
+          "message": "Database integrity validation passed: 6 checks successful",
+          "report_summary": {
+            "passed_checks": 6,
+            "failed_checks": 0,
+            "warnings": 0
+          }
+        }
+      },
+      "timestamp": "2025-05-29T23:00:17.258897"
+    },
+    {
+      "dataset_name": "standard_medium",
+      "test_phase": "migration_execution",
+      "status": "success",
+      "execution_time": 0.03399991989135742,
+      "records_processed": 150,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "detected_version": {
+          "version": "DatabaseVersion.V1_2_1",
+          "version_string": "v1.2.1",
+          "schema_valid": false,
+          "tables_found": [
+            "downloads",
+            "sqlite_sequence"
+          ],
+          "migration_records": [],
+          "last_migration": null,
+          "requires_migration": true,
+          "migration_path": "v1.2.1 \u2192 v2.0.0 (requires data migration and schema transformation)",
+          "validation_errors": [
+            "Unexpected table for v1.2.1: sqlite_sequence"
+          ],
+          "detected_at": "2025-05-29 16:00:17.287898+00:00"
+        },
+        "schema_validation": {
+          "is_safe": true,
+          "concerns": [],
+          "plan_steps": 20,
+          "target_version": "v2.0.0"
+        },
+        "pre_migration_integrity": {
+          "success": true,
+          "message": "Database integrity validation passed: 6 checks successful",
+          "report_summary": {
+            "passed_checks": 6,
+            "failed_checks": 0,
+            "warnings": 0
+          }
+        }
+      },
+      "timestamp": "2025-05-29T23:00:17.292897"
+    },
+    {
+      "dataset_name": "edge_cases",
+      "test_phase": "migration_execution",
+      "status": "success",
+      "execution_time": 0.03355979919433594,
+      "records_processed": 25,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "detected_version": {
+          "version": "DatabaseVersion.V1_2_1",
+          "version_string": "v1.2.1",
+          "schema_valid": false,
+          "tables_found": [
+            "downloads",
+            "sqlite_sequence"
+          ],
+          "migration_records": [],
+          "last_migration": null,
+          "requires_migration": true,
+          "migration_path": "v1.2.1 \u2192 v2.0.0 (requires data migration and schema transformation)",
+          "validation_errors": [
+            "Unexpected table for v1.2.1: sqlite_sequence"
+          ],
+          "detected_at": "2025-05-29 16:00:17.322460+00:00"
+        },
+        "schema_validation": {
+          "is_safe": true,
+          "concerns": [],
+          "plan_steps": 20,
+          "target_version": "v2.0.0"
+        },
+        "pre_migration_integrity": {
+          "success": true,
+          "message": "Database integrity validation passed: 6 checks successful",
+          "report_summary": {
+            "passed_checks": 6,
+            "failed_checks": 0,
+            "warnings": 0
+          }
+        }
+      },
+      "timestamp": "2025-05-29T23:00:17.326457"
+    },
+    {
+      "dataset_name": "corrupted_data",
+      "test_phase": "migration_execution",
+      "status": "success",
+      "execution_time": 0.029517412185668945,
+      "records_processed": 20,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "detected_version": {
+          "version": "DatabaseVersion.V1_2_1",
+          "version_string": "v1.2.1",
+          "schema_valid": false,
+          "tables_found": [
+            "downloads",
+            "sqlite_sequence"
+          ],
+          "migration_records": [],
+          "last_migration": null,
+          "requires_migration": true,
+          "migration_path": "v1.2.1 \u2192 v2.0.0 (requires data migration and schema transformation)",
+          "validation_errors": [
+            "Unexpected table for v1.2.1: sqlite_sequence"
+          ],
+          "detected_at": "2025-05-29 16:00:17.351974+00:00"
+        },
+        "schema_validation": {
+          "is_safe": true,
+          "concerns": [],
+          "plan_steps": 20,
+          "target_version": "v2.0.0"
+        },
+        "pre_migration_integrity": {
+          "success": true,
+          "message": "Database integrity validation passed: 6 checks successful",
+          "report_summary": {
+            "passed_checks": 6,
+            "failed_checks": 0,
+            "warnings": 0
+          }
+        }
+      },
+      "timestamp": "2025-05-29T23:00:17.355974"
+    },
+    {
+      "dataset_name": "unicode_edge",
+      "test_phase": "migration_execution",
+      "status": "success",
+      "execution_time": 0.031139612197875977,
+      "records_processed": 15,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "detected_version": {
+          "version": "DatabaseVersion.V1_2_1",
+          "version_string": "v1.2.1",
+          "schema_valid": false,
+          "tables_found": [
+            "downloads",
+            "sqlite_sequence"
+          ],
+          "migration_records": [],
+          "last_migration": null,
+          "requires_migration": true,
+          "migration_path": "v1.2.1 \u2192 v2.0.0 (requires data migration and schema transformation)",
+          "validation_errors": [
+            "Unexpected table for v1.2.1: sqlite_sequence"
+          ],
+          "detected_at": "2025-05-29 16:00:17.384114+00:00"
+        },
+        "schema_validation": {
+          "is_safe": true,
+          "concerns": [],
+          "plan_steps": 20,
+          "target_version": "v2.0.0"
+        },
+        "pre_migration_integrity": {
+          "success": true,
+          "message": "Database integrity validation passed: 6 checks successful",
+          "report_summary": {
+            "passed_checks": 6,
+            "failed_checks": 0,
+            "warnings": 0
+          }
+        }
+      },
+      "timestamp": "2025-05-29T23:00:17.387114"
+    },
+    {
+      "dataset_name": "tiktok_focus",
+      "test_phase": "migration_execution",
+      "status": "success",
+      "execution_time": 0.021736860275268555,
+      "records_processed": 50,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "detected_version": {
+          "version": "DatabaseVersion.V1_2_1",
+          "version_string": "v1.2.1",
+          "schema_valid": false,
+          "tables_found": [
+            "downloads",
+            "sqlite_sequence"
+          ],
+          "migration_records": [],
+          "last_migration": null,
+          "requires_migration": true,
+          "migration_path": "v1.2.1 \u2192 v2.0.0 (requires data migration and schema transformation)",
+          "validation_errors": [
+            "Unexpected table for v1.2.1: sqlite_sequence"
+          ],
+          "detected_at": "2025-05-29 16:00:17.404849+00:00"
+        },
+        "schema_validation": {
+          "is_safe": true,
+          "concerns": [],
+          "plan_steps": 20,
+          "target_version": "v2.0.0"
+        },
+        "pre_migration_integrity": {
+          "success": true,
+          "message": "Database integrity validation passed: 6 checks successful",
+          "report_summary": {
+            "passed_checks": 6,
+            "failed_checks": 0,
+            "warnings": 0
+          }
+        }
+      },
+      "timestamp": "2025-05-29T23:00:17.408850"
+    },
+    {
+      "dataset_name": "youtube_focus",
+      "test_phase": "migration_execution",
+      "status": "success",
+      "execution_time": 0.017000675201416016,
+      "records_processed": 40,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "detected_version": {
+          "version": "DatabaseVersion.V1_2_1",
+          "version_string": "v1.2.1",
+          "schema_valid": false,
+          "tables_found": [
+            "downloads",
+            "sqlite_sequence"
+          ],
+          "migration_records": [],
+          "last_migration": null,
+          "requires_migration": true,
+          "migration_path": "v1.2.1 \u2192 v2.0.0 (requires data migration and schema transformation)",
+          "validation_errors": [
+            "Unexpected table for v1.2.1: sqlite_sequence"
+          ],
+          "detected_at": "2025-05-29 16:00:17.423849+00:00"
+        },
+        "schema_validation": {
+          "is_safe": true,
+          "concerns": [],
+          "plan_steps": 20,
+          "target_version": "v2.0.0"
+        },
+        "pre_migration_integrity": {
+          "success": true,
+          "message": "Database integrity validation passed: 6 checks successful",
+          "report_summary": {
+            "passed_checks": 6,
+            "failed_checks": 0,
+            "warnings": 0
+          }
+        }
+      },
+      "timestamp": "2025-05-29T23:00:17.425851"
+    },
+    {
+      "dataset_name": "mixed_platforms",
+      "test_phase": "migration_execution",
+      "status": "success",
+      "execution_time": 0.008856534957885742,
+      "records_processed": 100,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "detected_version": {
+          "version": "DatabaseVersion.V1_2_1",
+          "version_string": "v1.2.1",
+          "schema_valid": false,
+          "tables_found": [
+            "downloads",
+            "sqlite_sequence"
+          ],
+          "migration_records": [],
+          "last_migration": null,
+          "requires_migration": true,
+          "migration_path": "v1.2.1 \u2192 v2.0.0 (requires data migration and schema transformation)",
+          "validation_errors": [
+            "Unexpected table for v1.2.1: sqlite_sequence"
+          ],
+          "detected_at": "2025-05-29 16:00:17.431707+00:00"
+        },
+        "schema_validation": {
+          "is_safe": true,
+          "concerns": [],
+          "plan_steps": 20,
+          "target_version": "v2.0.0"
+        },
+        "pre_migration_integrity": {
+          "success": true,
+          "message": "Database integrity validation passed: 6 checks successful",
+          "report_summary": {
+            "passed_checks": 6,
+            "failed_checks": 0,
+            "warnings": 0
+          }
+        }
+      },
+      "timestamp": "2025-05-29T23:00:17.434708"
+    },
+    {
+      "dataset_name": "standard_large",
+      "test_phase": "migration_execution",
+      "status": "success",
+      "execution_time": 0.005999565124511719,
+      "records_processed": 1200,
+      "errors": [],
+      "warnings": [],
+      "metrics": {
+        "detected_version": {
+          "version": "DatabaseVersion.V1_2_1",
+          "version_string": "v1.2.1",
+          "schema_valid": false,
+          "tables_found": [
+            "downloads",
+            "sqlite_sequence"
+          ],
+          "migration_records": [],
+          "last_migration": null,
+          "requires_migration": true,
+          "migration_path": "v1.2.1 \u2192 v2.0.0 (requires data migration and schema transformation)",
+          "validation_errors": [
+            "Unexpected table for v1.2.1: sqlite_sequence"
+          ],
+          "detected_at": "2025-05-29 16:00:17.438709+00:00"
+        },
+        "schema_validation": {
+          "is_safe": true,
+          "concerns": [],
+          "plan_steps": 20,
+          "target_version": "v2.0.0"
+        },
+        "pre_migration_integrity": {
+          "success": true,
+          "message": "Database integrity validation passed: 6 checks successful",
+          "report_summary": {
+            "passed_checks": 6,
+            "failed_checks": 0,
+            "warnings": 0
+          }
+        }
+      },
+      "timestamp": "2025-05-29T23:00:17.440707"
+    },
+    {
+      "dataset_name": "partial_v2",
+      "test_phase": "post_migration_validation",
+      "status": "success",
+      "execution_time": 0.006006002426147461,
+      "records_processed": 0,
+      "errors": [],
+      "warnings": [
+        "Dataset uses v1.2.1 schema without platform column"
+      ],
+      "metrics": {
+        "post_migration_integrity": {
+          "success": true,
+          "message": "Database integrity validation passed: 6 checks successful",
+          "report_summary": {
+            "passed_checks": 6,
+            "failed_checks": 0,
+            "warnings": 0
+          }
+        },
+        "record_count": 0,
+        "platform_diversity": 1,
+        "has_platform_column": false
+      },
+      "timestamp": "2025-05-29T23:00:17.448218"
+    },
+    {
+      "dataset_name": "standard_large",
+      "test_phase": "post_migration_validation",
+      "status": "success",
+      "execution_time": 0.003999233245849609,
+      "records_processed": 1200,
+      "errors": [],
+      "warnings": [
+        "Dataset uses v1.2.1 schema without platform column"
+      ],
+      "metrics": {
+        "post_migration_integrity": {
+          "success": true,
+          "message": "Database integrity validation passed: 6 checks successful",
+          "report_summary": {
+            "passed_checks": 6,
+            "failed_checks": 0,
+            "warnings": 0
+          }
+        },
+        "record_count": 1200,
+        "platform_diversity": 1,
+        "has_platform_column": false
+      },
+      "timestamp": "2025-05-29T23:00:17.452217"
+    },
+    {
+      "dataset_name": "mixed_platforms",
+      "test_phase": "post_migration_validation",
+      "status": "success",
+      "execution_time": 0.004000186920166016,
+      "records_processed": 100,
+      "errors": [],
+      "warnings": [
+        "Dataset uses v1.2.1 schema without platform column"
+      ],
+      "metrics": {
+        "post_migration_integrity": {
+          "success": true,
+          "message": "Database integrity validation passed: 6 checks successful",
+          "report_summary": {
+            "passed_checks": 6,
+            "failed_checks": 0,
+            "warnings": 0
+          }
+        },
+        "record_count": 100,
+        "platform_diversity": 1,
+        "has_platform_column": false
+      },
+      "timestamp": "2025-05-29T23:00:17.456218"
+    },
+    {
+      "dataset_name": "performance_1000",
+      "test_phase": "performance_benchmark",
+      "status": "warning",
+      "execution_time": 0.011629343032836914,
+      "records_processed": 1000,
+      "errors": [],
+      "warnings": [
+        "Performance test adapted for v1.2.1 schema without platform column"
+      ],
+      "metrics": {
+        "record_count": 1000,
+        "connection_time_ms": 3.06,
+        "simple_query_time_ms": 5.56,
+        "complex_query_time_ms": 0.0,
+        "platform_summary": 1
+      },
+      "timestamp": "2025-05-29T23:00:17.467847"
+    },
+    {
+      "dataset_name": "performance_10000",
+      "test_phase": "performance_benchmark",
+      "status": "warning",
+      "execution_time": 0.04651594161987305,
+      "records_processed": 10000,
+      "errors": [],
+      "warnings": [
+        "Performance test adapted for v1.2.1 schema without platform column"
+      ],
+      "metrics": {
+        "record_count": 10000,
+        "connection_time_ms": 2.0,
+        "simple_query_time_ms": 42.52,
+        "complex_query_time_ms": 1.99,
+        "platform_summary": 1
+      },
+      "timestamp": "2025-05-29T23:00:17.514363"
+    }
+  ],
+  "summary": {
+    "execution_summary": {
+      "total_tests": 17,
+      "datasets_tested": 13,
+      "success_rate": 88.24,
+      "average_execution_time": 0.02
+    },
+    "performance_summary": {
+      "total_records_processed": 14080,
+      "fastest_test": 0.003999233245849609,
+      "slowest_test": 0.06083941459655762
+    },
+    "error_summary": {
+      "total_errors": 0,
+      "total_warnings": 5,
+      "most_common_issues": []
+    }
+  }
+}

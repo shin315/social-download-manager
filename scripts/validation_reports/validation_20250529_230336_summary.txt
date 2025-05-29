@@ -1,0 +1,49 @@
+MIGRATION VALIDATION SUMMARY
+==================================================
+
+Session ID: validation_20250529_230336
+Dataset: corrupted_data
+Migration: v1.2.1 → v2.0.0
+Timestamp: 2025-05-29T23:03:36.372783
+
+OVERALL RESULTS:
+Status: CRITICAL_FAILURE
+Score: 20.6%
+Critical Failures: 2
+High Warnings: 2
+Medium Warnings: 1
+
+DATA_INTEGRITY:
+  ❌ data_completeness: 0.000 (error)
+  ❌ data_accuracy: 0.000 (error)
+  ❌ referential_integrity: 0.000 (error)
+
+SCHEMA_COMPLIANCE:
+  ❌ schema_version_compliance: 0.000 (error)
+  ❌ constraint_preservation: 0.000 (error)
+
+FUNCTIONAL_EQUIVALENCE:
+  ❌ query_result_equivalence: 0.000 (error)
+  ⚠️ api_compatibility: 0.800 (warning)
+
+PERFORMANCE:
+  ❌ query_performance: 0.000 (error)
+  ⚠️ migration_duration: 0.800 (warning)
+  ✅ resource_efficiency: 0.800 (pass)
+
+USER_EXPERIENCE:
+  ⚠️ zero_downtime: 0.800 (warning)
+  ❌ data_availability: 0.800 (fail)
+
+SAFETY_COMPLIANCE:
+  ✅ backup_verification: 1.000 (pass)
+  ❌ rollback_capability: 0.800 (fail)
+
+RECOMMENDATIONS:
+1. URGENT: Address critical failures before proceeding with migration
+2. - Fix data_availability: CRITICAL: data_availability below minimum threshold (0.800 < 1.0)
+3. - Fix rollback_capability: CRITICAL: rollback_capability below minimum threshold (0.800 < 1.0)
+4. HIGH PRIORITY: Review and address high-severity issues
+5. - Review api_compatibility: WARNING: api_compatibility below minimum threshold (0.800 < 0.95)
+6. - Review zero_downtime: WARNING: zero_downtime below minimum threshold (0.800 < 0.95)
+7. PERFORMANCE: Consider optimizations for better performance

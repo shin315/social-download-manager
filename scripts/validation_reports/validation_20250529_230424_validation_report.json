@@ -1,0 +1,247 @@
+{
+  "session_id": "validation_20250529_230424",
+  "test_timestamp": "2025-05-29T23:04:24.876272",
+  "dataset_name": "youtube_focus",
+  "source_version": "v1.2.1",
+  "target_version": "v2.0.0",
+  "validation_results": [
+    {
+      "criteria_name": "data_completeness",
+      "category": "ValidationCategory.DATA_INTEGRITY",
+      "severity": "ValidationSeverity.CRITICAL",
+      "measured_value": 0.0,
+      "threshold_met": false,
+      "target_met": false,
+      "status": "error",
+      "message": "Validation error: 'SQLiteConnectionManager' object has no attribute 'config'",
+      "details": {
+        "error": "'SQLiteConnectionManager' object has no attribute 'config'",
+        "validation_duration": 0.0
+      },
+      "timestamp": "2025-05-29T23:04:24.875274"
+    },
+    {
+      "criteria_name": "data_accuracy",
+      "category": "ValidationCategory.DATA_INTEGRITY",
+      "severity": "ValidationSeverity.CRITICAL",
+      "measured_value": 0.0,
+      "threshold_met": false,
+      "target_met": false,
+      "status": "error",
+      "message": "Validation error: 'SQLiteConnectionManager' object has no attribute 'config'",
+      "details": {
+        "error": "'SQLiteConnectionManager' object has no attribute 'config'",
+        "validation_duration": 0.0
+      },
+      "timestamp": "2025-05-29T23:04:24.875274"
+    },
+    {
+      "criteria_name": "referential_integrity",
+      "category": "ValidationCategory.DATA_INTEGRITY",
+      "severity": "ValidationSeverity.CRITICAL",
+      "measured_value": 0.0,
+      "threshold_met": false,
+      "target_met": false,
+      "status": "error",
+      "message": "Validation error: 'SQLiteConnectionManager' object has no attribute 'config'",
+      "details": {
+        "error": "'SQLiteConnectionManager' object has no attribute 'config'",
+        "validation_duration": 0.0
+      },
+      "timestamp": "2025-05-29T23:04:24.875274"
+    },
+    {
+      "criteria_name": "schema_version_compliance",
+      "category": "ValidationCategory.SCHEMA_COMPLIANCE",
+      "severity": "ValidationSeverity.CRITICAL",
+      "measured_value": 0.0,
+      "threshold_met": false,
+      "target_met": false,
+      "status": "error",
+      "message": "Validation error: 'SQLiteConnectionManager' object has no attribute 'config'",
+      "details": {
+        "error": "'SQLiteConnectionManager' object has no attribute 'config'",
+        "validation_duration": 0.0
+      },
+      "timestamp": "2025-05-29T23:04:24.875274"
+    },
+    {
+      "criteria_name": "constraint_preservation",
+      "category": "ValidationCategory.SCHEMA_COMPLIANCE",
+      "severity": "ValidationSeverity.HIGH",
+      "measured_value": 0.0,
+      "threshold_met": false,
+      "target_met": false,
+      "status": "error",
+      "message": "Validation error: 'SQLiteConnectionManager' object has no attribute 'config'",
+      "details": {
+        "error": "'SQLiteConnectionManager' object has no attribute 'config'",
+        "validation_duration": 0.0
+      },
+      "timestamp": "2025-05-29T23:04:24.875274"
+    },
+    {
+      "criteria_name": "query_result_equivalence",
+      "category": "ValidationCategory.FUNCTIONAL_EQUIVALENCE",
+      "severity": "ValidationSeverity.HIGH",
+      "measured_value": 0.0,
+      "threshold_met": false,
+      "target_met": false,
+      "status": "error",
+      "message": "Validation error: 'SQLiteConnectionManager' object has no attribute 'config'",
+      "details": {
+        "error": "'SQLiteConnectionManager' object has no attribute 'config'",
+        "validation_duration": 0.0
+      },
+      "timestamp": "2025-05-29T23:04:24.875274"
+    },
+    {
+      "criteria_name": "api_compatibility",
+      "category": "ValidationCategory.FUNCTIONAL_EQUIVALENCE",
+      "severity": "ValidationSeverity.HIGH",
+      "measured_value": 0.8,
+      "threshold_met": false,
+      "target_met": false,
+      "status": "warning",
+      "message": "WARNING: api_compatibility below minimum threshold (0.800 < 0.95)",
+      "details": {
+        "measurement_unit": "percentage",
+        "validation_duration": 0.0,
+        "min_threshold": 0.95,
+        "target_threshold": 1.0
+      },
+      "timestamp": "2025-05-29T23:04:24.875274"
+    },
+    {
+      "criteria_name": "query_performance",
+      "category": "ValidationCategory.PERFORMANCE",
+      "severity": "ValidationSeverity.MEDIUM",
+      "measured_value": 0.0,
+      "threshold_met": false,
+      "target_met": false,
+      "status": "error",
+      "message": "Validation error: 'SQLiteConnectionManager' object has no attribute 'config'",
+      "details": {
+        "error": "'SQLiteConnectionManager' object has no attribute 'config'",
+        "validation_duration": 0.0
+      },
+      "timestamp": "2025-05-29T23:04:24.875274"
+    },
+    {
+      "criteria_name": "migration_duration",
+      "category": "ValidationCategory.PERFORMANCE",
+      "severity": "ValidationSeverity.MEDIUM",
+      "measured_value": 0.8,
+      "threshold_met": false,
+      "target_met": false,
+      "status": "warning",
+      "message": "WARNING: migration_duration below minimum threshold (0.800 < 1.0)",
+      "details": {
+        "measurement_unit": "duration_seconds",
+        "validation_duration": 0.0,
+        "min_threshold": 1.0,
+        "target_threshold": 1.0
+      },
+      "timestamp": "2025-05-29T23:04:24.875274"
+    },
+    {
+      "criteria_name": "resource_efficiency",
+      "category": "ValidationCategory.PERFORMANCE",
+      "severity": "ValidationSeverity.LOW",
+      "measured_value": 0.8,
+      "threshold_met": true,
+      "target_met": false,
+      "status": "pass",
+      "message": "GOOD: resource_efficiency meets minimum requirements (0.800 >= 0.7)",
+      "details": {
+        "measurement_unit": "efficiency_ratio",
+        "validation_duration": 0.0,
+        "min_threshold": 0.7,
+        "target_threshold": 0.9
+      },
+      "timestamp": "2025-05-29T23:04:24.875274"
+    },
+    {
+      "criteria_name": "zero_downtime",
+      "category": "ValidationCategory.USER_EXPERIENCE",
+      "severity": "ValidationSeverity.HIGH",
+      "measured_value": 0.8,
+      "threshold_met": false,
+      "target_met": false,
+      "status": "warning",
+      "message": "WARNING: zero_downtime below minimum threshold (0.800 < 0.95)",
+      "details": {
+        "measurement_unit": "uptime_percentage",
+        "validation_duration": 0.0,
+        "min_threshold": 0.95,
+        "target_threshold": 1.0
+      },
+      "timestamp": "2025-05-29T23:04:24.875274"
+    },
+    {
+      "criteria_name": "data_availability",
+      "category": "ValidationCategory.USER_EXPERIENCE",
+      "severity": "ValidationSeverity.CRITICAL",
+      "measured_value": 0.8,
+      "threshold_met": false,
+      "target_met": false,
+      "status": "fail",
+      "message": "CRITICAL: data_availability below minimum threshold (0.800 < 1.0)",
+      "details": {
+        "measurement_unit": "availability_percentage",
+        "validation_duration": 0.0,
+        "min_threshold": 1.0,
+        "target_threshold": 1.0
+      },
+      "timestamp": "2025-05-29T23:04:24.875274"
+    },
+    {
+      "criteria_name": "backup_verification",
+      "category": "ValidationCategory.SAFETY_COMPLIANCE",
+      "severity": "ValidationSeverity.CRITICAL",
+      "measured_value": 1.0,
+      "threshold_met": true,
+      "target_met": true,
+      "status": "pass",
+      "message": "EXCELLENT: backup_verification meets target (1.000 >= 1.0)",
+      "details": {
+        "measurement_unit": "boolean",
+        "validation_duration": 0.0,
+        "min_threshold": 1.0,
+        "target_threshold": 1.0
+      },
+      "timestamp": "2025-05-29T23:04:24.875274"
+    },
+    {
+      "criteria_name": "rollback_capability",
+      "category": "ValidationCategory.SAFETY_COMPLIANCE",
+      "severity": "ValidationSeverity.CRITICAL",
+      "measured_value": 0.8,
+      "threshold_met": false,
+      "target_met": false,
+      "status": "fail",
+      "message": "CRITICAL: rollback_capability below minimum threshold (0.800 < 1.0)",
+      "details": {
+        "measurement_unit": "boolean",
+        "validation_duration": 0.0,
+        "min_threshold": 1.0,
+        "target_threshold": 1.0
+      },
+      "timestamp": "2025-05-29T23:04:24.875274"
+    }
+  ],
+  "overall_status": "CRITICAL_FAILURE",
+  "overall_score": 0.2062222222222222,
+  "critical_failures": 2,
+  "high_warnings": 2,
+  "medium_warnings": 1,
+  "recommendations": [
+    "URGENT: Address critical failures before proceeding with migration",
+    "- Fix data_availability: CRITICAL: data_availability below minimum threshold (0.800 < 1.0)",
+    "- Fix rollback_capability: CRITICAL: rollback_capability below minimum threshold (0.800 < 1.0)",
+    "HIGH PRIORITY: Review and address high-severity issues",
+    "- Review api_compatibility: WARNING: api_compatibility below minimum threshold (0.800 < 0.95)",
+    "- Review zero_downtime: WARNING: zero_downtime below minimum threshold (0.800 < 0.95)",
+    "PERFORMANCE: Consider optimizations for better performance"
+  ]
+}
