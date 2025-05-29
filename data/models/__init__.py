@@ -49,4 +49,30 @@ from .download_repositories import (
 from .advanced_queries import (
     AdvancedQueryBuilder, QueryMethodsMixin, QueryOptimizer,
     DateRange, SortDirection, AggregateFunction
+)
+
+# Transaction-aware repositories
+from .transaction_repository import (
+    TransactionAwareRepositoryMixin, TransactionalRepository,
+    UnitOfWork, transactional, requires_transaction
+)
+
+# Error management system
+from .error_management import (
+    ErrorSeverity, ErrorCategory, RecoveryStrategy,
+    ErrorContext, ErrorInfo, DomainError,
+    RepositoryValidationError, RepositoryDatabaseError, RepositoryConnectionError,
+    RepositoryBusinessLogicError, RepositoryConfigurationError, RepositoryResourceError,
+    IErrorHandler, ErrorManager, get_error_manager,
+    handle_repository_errors, ErrorHandlingContext
+)
+
+# Performance optimization components
+from .performance_optimizations import (
+    ICacheProvider, LRUCache, TTLCache, RepositoryCache,
+    BatchOperationManager, QueryOptimizer, PerformanceMonitor,
+    PerformanceOptimizedRepository, CacheStrategy, PerformanceMetricType,
+    performance_optimized, get_global_cache_provider, 
+    get_global_performance_monitor, get_global_query_optimizer,
+    set_global_cache_provider
 ) 

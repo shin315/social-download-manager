@@ -18,9 +18,15 @@ from .repository_interfaces import (
     IDownloadErrorRepository
 )
 from .advanced_queries import QueryMethodsMixin, DateRange, SortDirection
+from .transaction_repository import TransactionAwareRepositoryMixin
+from .performance_optimizations import (
+    PerformanceOptimizedRepository, performance_optimized, CacheStrategy,
+    get_global_cache_provider, get_global_performance_monitor
+)
 
 
-class DownloadRepository(BaseRepository[DownloadModel], IDownloadRepository, QueryMethodsMixin):
+class DownloadRepository(BaseRepository[DownloadModel], IDownloadRepository, 
+                        QueryMethodsMixin, TransactionAwareRepositoryMixin):
     """
     Download repository implementation
     
@@ -219,7 +225,8 @@ class DownloadRepository(BaseRepository[DownloadModel], IDownloadRepository, Que
             raise RepositoryError(f"Pagination query failed: {e}")
 
 
-class DownloadSessionRepository(BaseRepository[DownloadSession], IDownloadSessionRepository, QueryMethodsMixin):
+class DownloadSessionRepository(BaseRepository[DownloadSession], IDownloadSessionRepository, 
+                               QueryMethodsMixin, TransactionAwareRepositoryMixin):
     """
     Download session repository implementation
     
@@ -386,7 +393,8 @@ class DownloadSessionRepository(BaseRepository[DownloadSession], IDownloadSessio
             raise RepositoryError(f"Get session performance stats failed: {e}")
 
 
-class DownloadErrorRepository(BaseRepository[DownloadError], IDownloadErrorRepository, QueryMethodsMixin):
+class DownloadErrorRepository(BaseRepository[DownloadError], IDownloadErrorRepository, 
+                             QueryMethodsMixin, TransactionAwareRepositoryMixin):
     """
     Download error repository implementation
     

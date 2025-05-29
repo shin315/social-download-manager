@@ -10,8 +10,12 @@ from typing import List, Optional, Dict, Any, Generic, TypeVar, Callable, Union
 from datetime import datetime
 import logging
 
-from .base import BaseEntity, EntityId
+from .base import BaseModel, BaseEntity, EntityId, ValidationError, ModelError
 from .content import ContentModel, ContentType, ContentStatus, PlatformType
+from .error_management import (
+    get_error_manager, ErrorContext, ErrorHandlingContext,
+    handle_repository_errors, RepositoryDatabaseError, RepositoryValidationError
+)
 
 T = TypeVar('T', bound=BaseEntity)
 
@@ -270,93 +274,87 @@ class BaseRepository(IRepository[T]):
         self._model = model_manager
         self._logger = logging.getLogger(self.__class__.__name__)
     
+    @handle_repository_errors("save_entity")
     def save(self, entity: T) -> Optional[T]:
-        """Save entity using model layer"""
-        try:
+        """Save entity using model layer with comprehensive error handling"""
+        with ErrorHandlingContext("save_entity", entity.id, entity.__class__.__name__):
             return self._model.save(entity)
-        except Exception as e:
-            self._logger.error(f"Failed to save entity: {e}")
-            raise RepositoryError(f"Save operation failed: {e}")
     
+    @handle_repository_errors("find_by_id")
     def find_by_id(self, entity_id: EntityId) -> Optional[T]:
-        """Find entity by ID using model layer"""
-        try:
+        """Find entity by ID with error handling"""
+        with ErrorHandlingContext("find_by_id", entity_id):
             return self._model.find_by_id(entity_id)
-        except Exception as e:
-            self._logger.error(f"Failed to find entity by ID {entity_id}: {e}")
-            raise RepositoryError(f"Find by ID operation failed: {e}")
     
+    @handle_repository_errors("find_all")
     def find_all(self, include_deleted: bool = False) -> List[T]:
-        """Find all entities using model layer"""
-        try:
+        """Find all entities with error handling"""
+        with ErrorHandlingContext("find_all"):
             return self._model.find_all(include_deleted)
-        except Exception as e:
-            self._logger.error(f"Failed to find all entities: {e}")
-            raise RepositoryError(f"Find all operation failed: {e}")
     
+    @handle_repository_errors("delete_entity")
     def delete(self, entity_id: EntityId, soft_delete: bool = True) -> bool:
-        """Delete entity using model layer"""
-        try:
+        """Delete entity with error handling"""
+        with ErrorHandlingContext("delete_entity", entity_id):
             return self._model.delete(entity_id, soft_delete)
-        except Exception as e:
-            self._logger.error(f"Failed to delete entity {entity_id}: {e}")
-            raise RepositoryError(f"Delete operation failed: {e}")
     
+    @handle_repository_errors("entity_exists")
     def exists(self, entity_id: EntityId) -> bool:
-        """Check if entity exists using model layer"""
-        try:
+        """Check if entity exists with error handling"""
+        with ErrorHandlingContext("entity_exists", entity_id):
             return self._model.exists(entity_id)
-        except Exception as e:
-            self._logger.error(f"Failed to check existence of entity {entity_id}: {e}")
-            raise RepositoryError(f"Exists check failed: {e}")
     
+    @handle_repository_errors("count_entities")
     def count(self, include_deleted: bool = False) -> int:
-        """Count entities using model layer"""
-        try:
+        """Count entities with error handling"""
+        with ErrorHandlingContext("count_entities"):
             return self._model.count(include_deleted)
-        except Exception as e:
-            self._logger.error(f"Failed to count entities: {e}")
-            raise RepositoryError(f"Count operation failed: {e}")
     
+    @handle_repository_errors("find_by_criteria")
     def find_by_criteria(self, criteria: Dict[str, Any]) -> List[T]:
-        """Find entities by criteria using model layer"""
-        try:
+        """Find entities by criteria with error handling"""
+        with ErrorHandlingContext("find_by_criteria"):
             return self._model.find_by_criteria(criteria)
-        except Exception as e:
-            self._logger.error(f"Failed to find entities by criteria: {e}")
-            raise RepositoryError(f"Find by criteria operation failed: {e}")
     
     def query(self) -> QueryBuilder:
         """Get query builder for complex queries"""
         return QueryBuilder(self._model.get_table_name())
     
+    @handle_repository_errors("execute_query")
     def execute_query(self, query: str, params: List[Any] = None) -> List[T]:
-        """Execute custom query and return entities"""
-        try:
+        """Execute custom query with error handling"""
+        with ErrorHandlingContext("execute_query"):
             if params is None:
                 params = []
             
-            connection = self._model._get_connection()
             try:
-                cursor = connection.cursor()
-                cursor.execute(query, params)
-                rows = cursor.fetchall()
-                cursor.close()
-                
-                # Convert rows to entities
-                entities = []
-                for row in rows:
-                    entity = self._model.get_entity_class().from_row(row)
-                    entities.append(entity)
-                
-                return entities
-                
-            finally:
-                self._model._return_connection(connection)
-                
-        except Exception as e:
-            self._logger.error(f"Failed to execute query: {e}")
-            raise RepositoryError(f"Query execution failed: {e}")
+                connection = self._model._get_connection()
+                try:
+                    cursor = connection.cursor()
+                    cursor.execute(query, params)
+                    rows = cursor.fetchall()
+                    cursor.close()
+                    
+                    # Convert rows to entities
+                    entities = []
+                    for row in rows:
+                        try:
+                            entity = self._model.get_entity_class().from_row(row)
+                            entities.append(entity)
+                        except Exception as e:
+                            self._logger.warning(f"Failed to convert row to entity: {e}")
+                            continue
+                    
+                    return entities
+                    
+                finally:
+                    self._model._return_connection(connection)
+                    
+            except Exception as e:
+                error_manager = get_error_manager()
+                context = ErrorContext("execute_query")
+                error_info = error_manager.handle_error(e, context)
+                raise RepositoryDatabaseError(error_info.message, e, context)
 
 
 class ContentRepository(BaseRepository[ContentModel], IContentRepository):
