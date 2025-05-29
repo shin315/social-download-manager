@@ -64,6 +64,56 @@ from .factory import (
     get_factory_info
 )
 
+from .lifecycle import (
+    LifecycleState,
+    LifecycleEvent,
+    LifecycleContext,
+    ManagedResource,
+    SessionResource,
+    ConnectionResource,
+    ResourceManager,
+    LifecycleManager,
+    ConnectionConfig,
+    ConnectionPool,
+    LifecycleMixin
+)
+
+from .authentication import (
+    AuthenticationError,
+    TokenExpiredError,
+    InvalidCredentialsError,
+    RefreshTokenError,
+    AuthFlowError,
+    CredentialStorage,
+    InMemoryCredentialStorage,
+    FileCredentialStorage,
+    Token,
+    TokenManager,
+    AuthProvider,
+    APIKeyAuthProvider,
+    OAuthProvider,
+    SessionAuthProvider,
+    AuthenticationManager
+)
+
+from .metadata import (
+    MetadataError,
+    MetadataExtractionError,
+    MetadataValidationError,
+    MetadataTransformationError,
+    RawMetadata,
+    MetadataField,
+    MetadataExtractor,
+    TikTokMetadataExtractor,
+    YouTubeMetadataExtractor,
+    DataTransformers,
+    DataValidators,
+    MetadataManager,
+    content_type_enricher,
+    quality_enricher,
+    metadata_manager
+)
+
 __all__ = [
     # Core handler
     'AbstractPlatformHandler',
@@ -121,5 +171,52 @@ __all__ = [
     'get_supported_platforms',
     'get_platform_capabilities',
     'discover_handlers',
-    'get_factory_info'
+    'get_factory_info',
+    
+    # Lifecycle management
+    'LifecycleState',
+    'LifecycleEvent',
+    'LifecycleContext',
+    'ManagedResource',
+    'SessionResource',
+    'ConnectionResource',
+    'ResourceManager',
+    'LifecycleManager',
+    'ConnectionConfig',
+    'ConnectionPool',
+    'LifecycleMixin',
+    
+    # Authentication framework
+    'AuthenticationError',
+    'TokenExpiredError',
+    'InvalidCredentialsError',
+    'RefreshTokenError',
+    'AuthFlowError',
+    'CredentialStorage',
+    'InMemoryCredentialStorage',
+    'FileCredentialStorage',
+    'Token',
+    'TokenManager',
+    'AuthProvider',
+    'APIKeyAuthProvider',
+    'OAuthProvider',
+    'SessionAuthProvider',
+    'AuthenticationManager',
+    
+    # Metadata extraction
+    'MetadataError',
+    'MetadataExtractionError',
+    'MetadataValidationError',
+    'MetadataTransformationError',
+    'RawMetadata',
+    'MetadataField',
+    'MetadataExtractor',
+    'TikTokMetadataExtractor',
+    'YouTubeMetadataExtractor',
+    'DataTransformers',
+    'DataValidators',
+    'MetadataManager',
+    'content_type_enricher',
+    'quality_enricher',
+    'metadata_manager'
 ] 
