@@ -35,6 +35,18 @@ from ..mixins.state_management import (
     StatefulComponentMixin, FilterableStateMixin, SelectableStateMixin
 )
 
+# Import accessibility management system
+from .accessibility import (
+    AccessibilityManager, AccessibilityValidator, AccessibilityRole, AccessibilityState,
+    AccessibilityProperty, AccessibilityInfo, KeyboardShortcut,
+    get_accessibility_manager, initialize_accessibility_system
+)
+
+# Import accessibility mixin
+from ..mixins.accessibility_support import (
+    AccessibilitySupport, apply_accessibility_to_widget, create_accessible_widget
+)
+
 # Import component theming system
 from .component_theming import (
     ComponentThemeManager, ComponentThemeType, ComponentState, ResponsiveBreakpoint,
@@ -42,6 +54,9 @@ from .component_theming import (
     ComponentTheme, get_component_theme_manager, initialize_component_theming,
     apply_component_theme
 )
+
+# Import enhanced theme support
+from ..mixins.enhanced_theme_support import EnhancedThemeSupport, apply_enhanced_theme, create_themed_widget
 
 __all__ = [
     # Models
@@ -149,4 +164,23 @@ __all__ = [
     
     # Interface registry
     'ComponentInterfaceRegistry',
+    
+    # Accessibility system
+    'AccessibilityManager',
+    'AccessibilityValidator', 
+    'AccessibilityRole',
+    'AccessibilityState',
+    'AccessibilityProperty',
+    'AccessibilityInfo',
+    'KeyboardShortcut',
+    'get_accessibility_manager',
+    'initialize_accessibility_system',
+    'AccessibilitySupport',
+    'apply_accessibility_to_widget',
+    'create_accessible_widget',
+    
+    # Enhanced theming
+    'EnhancedThemeSupport',
+    'apply_enhanced_theme', 
+    'create_themed_widget'
 ] 

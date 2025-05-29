@@ -15,6 +15,9 @@ from .state_management import StatefulComponentMixin, FilterableStateMixin, Sele
 # Import enhanced theme support
 from .enhanced_theme_support import EnhancedThemeSupport, apply_enhanced_theme, create_themed_widget
 
+# Import accessibility support
+from .accessibility_support import AccessibilitySupport, apply_accessibility_to_widget, create_accessible_widget
+
 __all__ = [
     'LanguageSupport',
     'ThemeSupport', 
@@ -24,5 +27,8 @@ __all__ = [
     'SelectableStateMixin',
     'EnhancedThemeSupport',
     'apply_enhanced_theme',
-    'create_themed_widget'
+    'create_themed_widget',
+    'AccessibilitySupport',
+    'apply_accessibility_to_widget',
+    'create_accessible_widget'
 ] 
