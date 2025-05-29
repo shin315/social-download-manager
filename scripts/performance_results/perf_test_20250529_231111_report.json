@@ -1,0 +1,591 @@
+{
+  "session_id": "perf_test_20250529_231111",
+  "test_timestamp": "2025-05-29T23:11:20.811611",
+  "total_tests": 25,
+  "performance_metrics": [
+    {
+      "operation_name": "migration_duration_corrupted_data",
+      "start_time": 1748535071.1033823,
+      "end_time": 1748535071.3087697,
+      "duration": 0.20538735389709473,
+      "cpu_usage_before": 11.1,
+      "cpu_usage_after": 1.2,
+      "memory_before_mb": 26.24609375,
+      "memory_after_mb": 26.9921875,
+      "memory_peak_mb": 26.34765625,
+      "disk_read_before": 2004451150848,
+      "disk_write_before": 65540633600,
+      "disk_read_after": 2004452305920,
+      "disk_write_after": 65540637696,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "migration_duration_edge_cases",
+      "start_time": 1748535071.4123347,
+      "end_time": 1748535071.6169846,
+      "duration": 0.2046499252319336,
+      "cpu_usage_before": 11.0,
+      "cpu_usage_after": 11.8,
+      "memory_before_mb": 27.0,
+      "memory_after_mb": 27.00390625,
+      "memory_peak_mb": 27.01953125,
+      "disk_read_before": 2004452334592,
+      "disk_write_before": 65540637696,
+      "disk_read_after": 2004452363264,
+      "disk_write_after": 65540707328,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "migration_duration_empty_db",
+      "start_time": 1748535071.726279,
+      "end_time": 1748535071.9281018,
+      "duration": 0.20182275772094727,
+      "cpu_usage_before": 2.8,
+      "cpu_usage_after": 18.1,
+      "memory_before_mb": 27.00390625,
+      "memory_after_mb": 27.00390625,
+      "memory_peak_mb": 27.0234375,
+      "disk_read_before": 2004452363264,
+      "disk_write_before": 65540707328,
+      "disk_read_after": 2004452367360,
+      "disk_write_after": 65540707328,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "migration_duration_mixed_platforms",
+      "start_time": 1748535072.0351589,
+      "end_time": 1748535072.2363315,
+      "duration": 0.2011725902557373,
+      "cpu_usage_before": 20.5,
+      "cpu_usage_after": 5.7,
+      "memory_before_mb": 27.00390625,
+      "memory_after_mb": 27.00390625,
+      "memory_peak_mb": 27.0234375,
+      "disk_read_before": 2004452997632,
+      "disk_write_before": 65541047296,
+      "disk_read_after": 2004453276160,
+      "disk_write_after": 65541776384,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "migration_duration_partial_v2",
+      "start_time": 1748535072.3433275,
+      "end_time": 1748535072.545092,
+      "duration": 0.20176458358764648,
+      "cpu_usage_before": 9.8,
+      "cpu_usage_after": 2.7,
+      "memory_before_mb": 27.00390625,
+      "memory_after_mb": 27.00390625,
+      "memory_peak_mb": 27.0234375,
+      "disk_read_before": 2004453370368,
+      "disk_write_before": 65542157312,
+      "disk_read_after": 2004453493248,
+      "disk_write_after": 65542669312,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "migration_duration_performance_1000",
+      "start_time": 1748535072.6496768,
+      "end_time": 1748535072.8521223,
+      "duration": 0.20244550704956055,
+      "cpu_usage_before": 7.0,
+      "cpu_usage_after": 10.7,
+      "memory_before_mb": 27.00390625,
+      "memory_after_mb": 27.015625,
+      "memory_peak_mb": 27.0234375,
+      "disk_read_before": 2004453575168,
+      "disk_write_before": 65542980608,
+      "disk_read_after": 2004453829120,
+      "disk_write_after": 65543037952,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "migration_duration_performance_10000",
+      "start_time": 1748535072.9573317,
+      "end_time": 1748535073.1590767,
+      "duration": 0.20174503326416016,
+      "cpu_usage_before": 2.8,
+      "cpu_usage_after": 9.2,
+      "memory_before_mb": 27.015625,
+      "memory_after_mb": 26.7890625,
+      "memory_peak_mb": 27.03515625,
+      "disk_read_before": 2004453829120,
+      "disk_write_before": 65543037952,
+      "disk_read_after": 2004456536576,
+      "disk_write_after": 65543087104,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "migration_duration_standard_large",
+      "start_time": 1748535073.2595477,
+      "end_time": 1748535073.465267,
+      "duration": 0.2057192325592041,
+      "cpu_usage_before": 3.9,
+      "cpu_usage_after": 15.3,
+      "memory_before_mb": 26.7890625,
+      "memory_after_mb": 26.58984375,
+      "memory_peak_mb": 26.80859375,
+      "disk_read_before": 2004456536576,
+      "disk_write_before": 65543087104,
+      "disk_read_after": 2004456839680,
+      "disk_write_after": 65543087104,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "migration_duration_standard_medium",
+      "start_time": 1748535073.5716598,
+      "end_time": 1748535073.773842,
+      "duration": 0.20218229293823242,
+      "cpu_usage_before": 14.9,
+      "cpu_usage_after": 4.3,
+      "memory_before_mb": 26.58984375,
+      "memory_after_mb": 26.9453125,
+      "memory_peak_mb": 26.609375,
+      "disk_read_before": 2004456839680,
+      "disk_write_before": 65543087104,
+      "disk_read_after": 2004456888832,
+      "disk_write_after": 65543087104,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "migration_duration_standard_small",
+      "start_time": 1748535073.8764997,
+      "end_time": 1748535074.0780094,
+      "duration": 0.20150971412658691,
+      "cpu_usage_before": 18.8,
+      "cpu_usage_after": 12.0,
+      "memory_before_mb": 26.94921875,
+      "memory_after_mb": 26.49609375,
+      "memory_peak_mb": 26.96875,
+      "disk_read_before": 2004456888832,
+      "disk_write_before": 65543095296,
+      "disk_read_after": 2004456966656,
+      "disk_write_after": 65543152640,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "migration_duration_tiktok_focus",
+      "start_time": 1748535074.1808257,
+      "end_time": 1748535074.381976,
+      "duration": 0.20115017890930176,
+      "cpu_usage_before": 10.8,
+      "cpu_usage_after": 17.9,
+      "memory_before_mb": 26.49609375,
+      "memory_after_mb": 26.84375,
+      "memory_peak_mb": 26.515625,
+      "disk_read_before": 2004456966656,
+      "disk_write_before": 65543160832,
+      "disk_read_after": 2004456995328,
+      "disk_write_after": 65543160832,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "migration_duration_unicode_edge",
+      "start_time": 1748535074.4916742,
+      "end_time": 1748535074.6932132,
+      "duration": 0.2015390396118164,
+      "cpu_usage_before": 8.1,
+      "cpu_usage_after": 16.4,
+      "memory_before_mb": 26.84375,
+      "memory_after_mb": 26.9609375,
+      "memory_peak_mb": 26.86328125,
+      "disk_read_before": 2004456995328,
+      "disk_write_before": 65543160832,
+      "disk_read_after": 2004457081344,
+      "disk_write_after": 65543173120,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "migration_duration_v1_schema_only",
+      "start_time": 1748535074.8010857,
+      "end_time": 1748535075.0033655,
+      "duration": 0.20227980613708496,
+      "cpu_usage_before": 5.5,
+      "cpu_usage_after": 3.6,
+      "memory_before_mb": 26.9609375,
+      "memory_after_mb": 26.5078125,
+      "memory_peak_mb": 26.98046875,
+      "disk_read_before": 2004457138688,
+      "disk_write_before": 65543296000,
+      "disk_read_after": 2004457359872,
+      "disk_write_after": 65544029184,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "migration_duration_youtube_focus",
+      "start_time": 1748535075.1065562,
+      "end_time": 1748535075.3089714,
+      "duration": 0.20241522789001465,
+      "cpu_usage_before": 8.8,
+      "cpu_usage_after": 9.6,
+      "memory_before_mb": 26.5078125,
+      "memory_after_mb": 26.84375,
+      "memory_peak_mb": 26.52734375,
+      "disk_read_before": 2004457445888,
+      "disk_write_before": 65544406016,
+      "disk_read_after": 2004457562624,
+      "disk_write_after": 65545323520,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "resource_utilization_100_records",
+      "start_time": 1748535075.4446554,
+      "end_time": 1748535075.647145,
+      "duration": 0.20248961448669434,
+      "cpu_usage_before": 6.8,
+      "cpu_usage_after": 9.3,
+      "memory_before_mb": 26.9296875,
+      "memory_after_mb": 27.0390625,
+      "memory_peak_mb": 26.94921875,
+      "disk_read_before": 2004457591296,
+      "disk_write_before": 65545634816,
+      "disk_read_after": 2004457628160,
+      "disk_write_after": 65546245120,
+      "records_processed": 100,
+      "throughput_records_per_sec": 493.8524884522956,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "resource_utilization_500_records",
+      "start_time": 1748535075.7785137,
+      "end_time": 1748535075.9804385,
+      "duration": 0.20192480087280273,
+      "cpu_usage_before": 2.5,
+      "cpu_usage_after": 3.8,
+      "memory_before_mb": 27.04296875,
+      "memory_after_mb": 26.5859375,
+      "memory_peak_mb": 27.0625,
+      "disk_read_before": 2004457628160,
+      "disk_write_before": 65546408960,
+      "disk_read_after": 2004457628160,
+      "disk_write_after": 65546449920,
+      "records_processed": 500,
+      "throughput_records_per_sec": 2476.169335509024,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "resource_utilization_1000_records",
+      "start_time": 1748535076.1141708,
+      "end_time": 1748535076.3164587,
+      "duration": 0.20228791236877441,
+      "cpu_usage_before": 16.4,
+      "cpu_usage_after": 4.3,
+      "memory_before_mb": 26.734375,
+      "memory_after_mb": 26.98046875,
+      "memory_peak_mb": 26.75390625,
+      "disk_read_before": 2004457628160,
+      "disk_write_before": 65546720256,
+      "disk_read_after": 2004458013184,
+      "disk_write_after": 65547092992,
+      "records_processed": 1000,
+      "throughput_records_per_sec": 4943.449108204659,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "resource_utilization_5000_records",
+      "start_time": 1748535076.46159,
+      "end_time": 1748535076.6635349,
+      "duration": 0.20194482803344727,
+      "cpu_usage_before": 5.4,
+      "cpu_usage_after": 13.6,
+      "memory_before_mb": 27.4140625,
+      "memory_after_mb": 27.4609375,
+      "memory_peak_mb": 27.43359375,
+      "disk_read_before": 2004458013184,
+      "disk_write_before": 65547748352,
+      "disk_read_after": 2004458136064,
+      "disk_write_after": 65548456960,
+      "records_processed": 5000,
+      "throughput_records_per_sec": 24759.237702150367,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "memory_efficiency_version_detection",
+      "start_time": 1748535078.8367274,
+      "end_time": 1748535079.0402758,
+      "duration": 0.20354843139648438,
+      "cpu_usage_before": 4.3,
+      "cpu_usage_after": 5.2,
+      "memory_before_mb": 26.9609375,
+      "memory_after_mb": 27.1328125,
+      "memory_peak_mb": 26.98046875,
+      "disk_read_before": 2004459102208,
+      "disk_write_before": 65555129344,
+      "disk_read_after": 2004459102208,
+      "disk_write_after": 65555190784,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "memory_efficiency_schema_analysis",
+      "start_time": 1748535079.142737,
+      "end_time": 1748535079.3445306,
+      "duration": 0.20179367065429688,
+      "cpu_usage_before": 19.4,
+      "cpu_usage_after": 19.8,
+      "memory_before_mb": 27.1328125,
+      "memory_after_mb": 27.1328125,
+      "memory_peak_mb": 27.15234375,
+      "disk_read_before": 2004459102208,
+      "disk_write_before": 65555526656,
+      "disk_read_after": 2004459429888,
+      "disk_write_after": 65556415488,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "memory_efficiency_data_validation",
+      "start_time": 1748535079.451523,
+      "end_time": 1748535079.6535418,
+      "duration": 0.20201873779296875,
+      "cpu_usage_before": 19.0,
+      "cpu_usage_after": 16.7,
+      "memory_before_mb": 27.1328125,
+      "memory_after_mb": 27.13671875,
+      "memory_peak_mb": 27.15234375,
+      "disk_read_before": 2004459429888,
+      "disk_write_before": 65556468736,
+      "disk_read_after": 2004459495424,
+      "disk_write_after": 65557079040,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "True"
+      }
+    },
+    {
+      "operation_name": "concurrent_operations",
+      "start_time": 1748535079.8347042,
+      "end_time": 1748535079.8696988,
+      "duration": 0.03499460220336914,
+      "cpu_usage_before": 0,
+      "cpu_usage_after": 0,
+      "memory_before_mb": 0,
+      "memory_after_mb": 0,
+      "memory_peak_mb": 0,
+      "disk_read_before": 0,
+      "disk_write_before": 0,
+      "disk_read_after": 0,
+      "disk_write_after": 0,
+      "records_processed": 1500,
+      "throughput_records_per_sec": 42863.753423537586,
+      "additional_metrics": {
+        "concurrent_datasets": 3,
+        "results": 3
+      }
+    },
+    {
+      "operation_name": "db_benchmark_select_all",
+      "start_time": 1748535079.8976839,
+      "end_time": 1748535080.1001637,
+      "duration": 0.20247983932495117,
+      "cpu_usage_before": 16.0,
+      "cpu_usage_after": 8.5,
+      "memory_before_mb": 27.12890625,
+      "memory_after_mb": 27.1484375,
+      "memory_peak_mb": 27.1484375,
+      "disk_read_before": 2004459588096,
+      "disk_write_before": 65558447104,
+      "disk_read_after": 2004459588096,
+      "disk_write_after": 65558447104,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "100"
+      }
+    },
+    {
+      "operation_name": "db_benchmark_indexed_queries",
+      "start_time": 1748535080.2024105,
+      "end_time": 1748535080.4046059,
+      "duration": 0.202195405960083,
+      "cpu_usage_before": 31.4,
+      "cpu_usage_after": 14.9,
+      "memory_before_mb": 27.1484375,
+      "memory_after_mb": 27.2578125,
+      "memory_peak_mb": 27.16796875,
+      "disk_read_before": 2004459911680,
+      "disk_write_before": 65558610944,
+      "disk_read_after": 2004460042752,
+      "disk_write_after": 65558733824,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "334"
+      }
+    },
+    {
+      "operation_name": "db_benchmark_aggregation_queries",
+      "start_time": 1748535080.5088987,
+      "end_time": 1748535080.7107568,
+      "duration": 0.2018580436706543,
+      "cpu_usage_before": 25.8,
+      "cpu_usage_after": 7.2,
+      "memory_before_mb": 27.2578125,
+      "memory_after_mb": 27.265625,
+      "memory_peak_mb": 27.27734375,
+      "disk_read_before": 2004460042752,
+      "disk_write_before": 65558733824,
+      "disk_read_after": 2004460042752,
+      "disk_write_after": 65558889472,
+      "records_processed": 0,
+      "throughput_records_per_sec": 0,
+      "additional_metrics": {
+        "result": "2"
+      }
+    }
+  ],
+  "scalability_results": [
+    {
+      "dataset_size": 50,
+      "records_count": 50,
+      "processing_time": 0.11594581604003906,
+      "memory_usage_mb": -0.6015625,
+      "cpu_usage_percent": 9.6,
+      "throughput": 431.2359143924065,
+      "performance_score": 43.123591439240656
+    },
+    {
+      "dataset_size": 100,
+      "records_count": 100,
+      "processing_time": 0.1257631778717041,
+      "memory_usage_mb": -0.27734375,
+      "cpu_usage_percent": 11.25,
+      "throughput": 795.1453016081852,
+      "performance_score": 79.51453016081852
+    },
+    {
+      "dataset_size": 250,
+      "records_count": 250,
+      "processing_time": 0.1139521598815918,
+      "memory_usage_mb": 0.24609375,
+      "cpu_usage_percent": 9.8,
+      "throughput": 2193.9031279422534,
+      "performance_score": 100.0
+    },
+    {
+      "dataset_size": 500,
+      "records_count": 500,
+      "processing_time": 0.11817121505737305,
+      "memory_usage_mb": 0.0625,
+      "cpu_usage_percent": 7.6,
+      "throughput": 4231.148844134726,
+      "performance_score": 100.0
+    },
+    {
+      "dataset_size": 1000,
+      "records_count": 1000,
+      "processing_time": 0.11798834800720215,
+      "memory_usage_mb": 0.0,
+      "cpu_usage_percent": 8.95,
+      "throughput": 8475.413181808079,
+      "performance_score": 100.0
+    },
+    {
+      "dataset_size": 2500,
+      "records_count": 2500,
+      "processing_time": 0.12386584281921387,
+      "memory_usage_mb": 0.13671875,
+      "cpu_usage_percent": 10.299999999999999,
+      "throughput": 20183.126704662474,
+      "performance_score": 100.0
+    },
+    {
+      "dataset_size": 5000,
+      "records_count": 5000,
+      "processing_time": 0.12037920951843262,
+      "memory_usage_mb": -0.56640625,
+      "cpu_usage_percent": 15.4,
+      "throughput": 41535.411471815605,
+      "performance_score": 100.0
+    },
+    {
+      "dataset_size": 10000,
+      "records_count": 10000,
+      "processing_time": 0.13172507286071777,
+      "memory_usage_mb": 0.0546875,
+      "cpu_usage_percent": 8.95,
+      "throughput": 75915.69154471986,
+      "performance_score": 100.0
+    }
+  ],
+  "bottlenecks_identified": [],
+  "optimization_recommendations": [
+    "EXCELLENT: No significant performance issues detected",
+    "MONITORING: Continue monitoring performance as data scales"
+  ],
+  "system_specifications": {
+    "error": "cannot convert dictionary update sequence element #0 to a sequence"
+  },
+  "overall_performance_score": 90.3297652000074
+}
