@@ -56,16 +56,22 @@ class YouTubeHandler(AbstractPlatformHandler):
     NotImplementedError to indicate they need future implementation.
     """
     
-    def __init__(self, auth_info: Optional[Any] = None, config: Optional[Dict[str, Any]] = None):
+    def __init__(
+        self, 
+        platform_type: Optional[PlatformType] = None,
+        auth_info: Optional[Any] = None, 
+        config: Optional[Dict[str, Any]] = None
+    ):
         """
         Initialize YouTube handler
         
         Args:
+            platform_type: Platform type (defaults to YOUTUBE if not provided)
             auth_info: Authentication information (not currently used)
             config: Configuration dictionary
         """
         super().__init__(
-            platform_type=PlatformType.YOUTUBE,
+            platform_type=platform_type or PlatformType.YOUTUBE,
             auth_info=auth_info,
             config=config
         )
@@ -85,29 +91,19 @@ class YouTubeHandler(AbstractPlatformHandler):
             PlatformCapabilities object with stub capabilities
         """
         return PlatformCapabilities(
-            platform_type=PlatformType.YOUTUBE,
+            supports_video=True,
+            supports_audio=True,
+            supports_playlists=False,  # Not implemented in stub
+            supports_live=False,
+            supports_stories=False,
             requires_auth=False,  # Stub implementation doesn't require auth
-            supports_video_download=True,
-            supports_audio_download=True,
-            supports_playlist=False,  # Not implemented in stub
-            supports_metadata_extraction=True,
-            supports_thumbnail_extraction=True,
-            supported_qualities=[
-                QualityLevel.WORST,
-                QualityLevel.MOBILE,
-                QualityLevel.LD,
-                QualityLevel.SD,
-                QualityLevel.HD,
-                QualityLevel.FHD,
-                QualityLevel.BEST
-            ],
-            max_file_size_mb=1000,  # Placeholder limit
-            supported_formats=['mp4', 'webm', 'mp3'],
-            auth_types=[AuthType.NONE],  # No authentication required for stub
-            rate_limits={
-                'requests_per_minute': 60,
-                'downloads_per_hour': 100
-            }
+            supports_watermark_removal=False,
+            supports_quality_selection=True,
+            supports_thumbnails=True,
+            supports_metadata=True,
+            max_concurrent_downloads=3,
+            rate_limit_requests=60,
+            rate_limit_period=60
         )
     
     def is_valid_url(self, url: str) -> bool:
@@ -169,48 +165,53 @@ class YouTubeHandler(AbstractPlatformHandler):
                 url=url
             )
         
+        # Create stub video formats
+        formats = [
+            VideoFormat(
+                format_id="stub_720p",
+                quality=QualityLevel.HD,
+                ext="mp4",
+                height=720,
+                width=1280,
+                fps=30,
+                filesize=50000000,  # 50MB placeholder
+                vcodec="h264",
+                acodec="aac",
+                url=f"https://www.youtube.com/watch?v={video_id}"  # Placeholder
+            ),
+            VideoFormat(
+                format_id="stub_480p",
+                quality=QualityLevel.SD,
+                ext="mp4",
+                height=480,
+                width=854,
+                fps=30,
+                filesize=30000000,  # 30MB placeholder
+                vcodec="h264",
+                acodec="aac",
+                url=f"https://www.youtube.com/watch?v={video_id}"  # Placeholder
+            )
+        ]
+        
         # Return stub video info
         return PlatformVideoInfo(
-            platform=PlatformType.YOUTUBE,
             url=url,
-            video_id=video_id,
+            platform=PlatformType.YOUTUBE,
+            platform_id=video_id,
             title=f"YouTube Video {video_id} (Stub)",
             description="This is a stub implementation. Actual video description would appear here.",
             thumbnail_url=f"https://img.youtube.com/vi/{video_id}/maxresdefault.jpg",
             duration=180,  # 3 minutes placeholder
+            creator="YouTube Creator (Stub)",
+            creator_id="stub_channel_id",
+            content_type=ContentType.VIDEO,
             view_count=1000000,  # Placeholder view count
             like_count=50000,    # Placeholder like count
-            author="YouTube Creator (Stub)",
-            author_id="stub_channel_id",
-            upload_date=datetime.now(),
-            content_type=ContentType.VIDEO,
-            formats=[
-                VideoFormat(
-                    format_id="stub_720p",
-                    ext="mp4",
-                    quality=QualityLevel.HD,
-                    width=1280,
-                    height=720,
-                    fps=30,
-                    filesize=50000000,  # 50MB placeholder
-                    url=f"https://www.youtube.com/watch?v={video_id}",  # Placeholder
-                    codec="h264"
-                ),
-                VideoFormat(
-                    format_id="stub_480p",
-                    ext="mp4", 
-                    quality=QualityLevel.SD,
-                    width=854,
-                    height=480,
-                    fps=30,
-                    filesize=30000000,  # 30MB placeholder
-                    url=f"https://www.youtube.com/watch?v={video_id}",  # Placeholder
-                    codec="h264"
-                )
-            ],
-            metadata={
+            published_at=datetime.now(),
+            formats=formats,
+            hashtags=["youtube", "video", "stub"],
+            extra_data={
                 "category": "Entertainment",
-                "tags": ["youtube", "video", "stub"],
                 "language": "en",
                 "is_live": False,
                 "is_family_safe": True,
@@ -246,33 +247,30 @@ class YouTubeHandler(AbstractPlatformHandler):
         """
         logger.warning(f"YouTube download attempted but not implemented: {url}")
         
+        # Get video info for the result
+        video_info = await self.get_video_info(url)
+        
         # Simulate some progress updates for demonstration
         if progress_callback:
             progress_callback(DownloadProgress(
-                url=url,
                 status=DownloadStatus.FAILED,
                 progress_percent=0.0,
-                downloaded_bytes=0,
                 total_bytes=0,
-                speed_bytes_per_sec=0,
+                speed_bps=0,
                 eta_seconds=0,
-                current_file="N/A - Stub Implementation"
+                message="N/A - Stub Implementation"
             ))
         
         # Return failed result indicating stub implementation
         return DownloadResult(
             success=False,
+            video_info=video_info,
             file_path=None,
             file_size=0,
-            format_id="stub",
-            quality=quality or QualityLevel.SD,
-            duration=0,
+            format_used=None,
+            download_time=0,
             error_message="YouTube download not implemented - this is a stub handler",
-            metadata={
-                "stub_implementation": True,
-                "platform": "youtube",
-                "attempted_url": url
-            }
+            extra_files=[]
         )
     
     def extract_video_id(self, url: str) -> Optional[str]:
