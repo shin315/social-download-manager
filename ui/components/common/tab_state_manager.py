@@ -151,14 +151,16 @@ class FileBasedStatePersistence(TabStatePersistence):
             return []
 
 
-class TabStateManager(QObject, StateManagerInterface):
+class TabStateManager(QObject):
     """
     Advanced tab state management system providing:
     - State persistence and recovery
     - Inter-tab state synchronization
     - State change tracking and transactions
     - Automatic state snapshots
-    - State validation and recovery
+    
+    Note: Implements StateManagerInterface methods but doesn't inherit from it
+    to avoid metaclass conflicts with QObject.
     """
     
     # Signals for state management events

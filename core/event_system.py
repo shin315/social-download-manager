@@ -26,6 +26,11 @@ class EventType(Enum):
     PLATFORM_ERROR = auto()
     PLATFORM_UNAVAILABLE = auto()
     
+    # Data events
+    DATA_UPDATED = auto()
+    DATA_LOADED = auto()
+    DATA_ERROR = auto()
+    
     # UI events
     UI_UPDATE_REQUIRED = auto()
     UI_THEME_CHANGED = auto()

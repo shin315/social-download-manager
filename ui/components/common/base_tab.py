@@ -19,16 +19,16 @@ from .tab_interfaces import (
 )
 from .models import TabConfig, TabState
 from .events import get_event_bus, EventType, ComponentEvent
-from ..mixins import LanguageSupport, ThemeSupport, TooltipSupport
+# Use lazy imports to avoid circular dependency
+# from ..mixins import LanguageSupport, ThemeSupport, TooltipSupport
 from .tab_styling import TabStyleManager, TabStyleHelper, TabStyleVariant, apply_tab_theme
 
 
-class BaseTab(QWidget, TabInterface, LanguageSupport, ThemeSupport, TooltipSupport):
+class BaseTab(QWidget, TabInterface):
     """
     Abstract base class for all tab implementations.
-    
-    Provides standardized lifecycle management, state handling, and integration
-    with the component system established in Task 15.
+    Note: Temporarily removed mixins inheritance to avoid circular dependency.
+    TODO: Refactor to use composition pattern instead of multiple inheritance.
     """
     
     # Tab-specific signals
