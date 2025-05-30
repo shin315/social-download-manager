@@ -13,7 +13,8 @@ from abc import ABC, abstractmethod
 import logging
 from PyQt6.QtCore import QObject, pyqtSignal, QTimer
 
-from data.models.repositories import IRepository, IContentRepository, IDownloadRepository
+from data.models.repositories import IRepository, IContentRepository
+from data.models.repository_interfaces import IDownloadRepository
 from data.models.base import BaseEntity, EntityId
 from ui.components.common.component_state_manager import (
     ComponentStateManager, ComponentStateInterface, ComponentStateSnapshot, ComponentStateChange

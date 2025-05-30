@@ -12,6 +12,8 @@ from enum import Enum, auto
 from typing import Optional, Dict, Any, List, Callable, Type
 from datetime import datetime, timezone
 from dataclasses import dataclass, field
+from contextlib import contextmanager
+import time
 
 from .base import EntityId, ModelError
 
@@ -402,7 +404,6 @@ class ErrorRecoveryManager:
                 
                 if attempt < max_retries:
                     # Wait before retry (exponential backoff)
-                    import time
                     wait_time = 2 ** attempt
                     time.sleep(wait_time)
                     continue
@@ -1079,4 +1080,279 @@ def get_user_friendly_message(category: ErrorCategory, error_type: Optional[str]
         ErrorCategory.UNKNOWN: "An unexpected error occurred. Please try again.",
     }
     
-    return default_messages.get(category, "An error occurred. Please try again.") 
+    return default_messages.get(category, "An error occurred. Please try again.")
+
+
+# =============================================================================
+# ENHANCED LOGGING INTEGRATION
+# =============================================================================
+
+class EnhancedErrorLogger:
+    """Enhanced error logger that integrates with the logging strategy"""
+    
+    def __init__(self, use_enhanced_logging: bool = True):
+        self.use_enhanced_logging = use_enhanced_logging
+        self._logger = None
+        self._setup_logger()
+    
+    def _setup_logger(self):
+        """Setup enhanced logger if available"""
+        if self.use_enhanced_logging:
+            try:
+                from core.logging_strategy import get_enhanced_logger, log_error_with_context
+                self._logger = get_enhanced_logger("ErrorManager")
+                self._log_error_with_context = log_error_with_context
+            except ImportError:
+                # Fallback to standard logging
+                self._logger = logging.getLogger("ErrorManager")
+                self.use_enhanced_logging = False
+        else:
+            self._logger = logging.getLogger("ErrorManager")
+    
+    def log_error(self, error_info: ErrorInfo, context: Optional[Dict[str, Any]] = None):
+        """Log error with enhanced information if available"""
+        if self.use_enhanced_logging and hasattr(self, '_log_error_with_context'):
+            # Use enhanced logging
+            self._log_error_with_context("ErrorManager", error_info, context)
+        else:
+            # Use standard logging
+            self._log_error_standard(error_info, context)
+    
+    def _log_error_standard(self, error_info: ErrorInfo, context: Optional[Dict[str, Any]] = None):
+        """Standard error logging fallback"""
+        log_message = (
+            f"Error {error_info.error_id} [{error_info.error_code}]: {error_info.message} "
+            f"(Category: {error_info.category.value}, Severity: {error_info.severity.value}"
+        )
+        
+        if error_info.component:
+            log_message += f", Component: {error_info.component}"
+        
+        if error_info.error_type:
+            log_message += f", Type: {error_info.error_type}"
+        
+        log_message += ")"
+        
+        # Add context information
+        if context:
+            log_message += f" | Context: {context}"
+        
+        # Log with appropriate level
+        if error_info.severity == ErrorSeverity.CRITICAL:
+            self._logger.critical(log_message, exc_info=error_info.original_exception)
+        elif error_info.severity == ErrorSeverity.HIGH:
+            self._logger.error(log_message, exc_info=error_info.original_exception)
+        elif error_info.severity == ErrorSeverity.MEDIUM:
+            self._logger.warning(log_message)
+        else:
+            self._logger.info(log_message)
+
+
+# Update ErrorManager to use enhanced logging
+def _update_error_manager_logging():
+    """Update ErrorManager to use enhanced logging"""
+    # Replace the _log_error method in ErrorManager
+    original_log_error = ErrorManager._log_error
+    
+    def enhanced_log_error(self, error_info: ErrorInfo) -> None:
+        """Enhanced error logging method"""
+        if not hasattr(self, '_enhanced_logger'):
+            self._enhanced_logger = EnhancedErrorLogger(use_enhanced_logging=True)
+        
+        # Extract context from error_info
+        context = {}
+        if error_info.context:
+            context.update({
+                'operation': error_info.context.operation,
+                'entity_type': error_info.context.entity_type,
+                'entity_id': error_info.context.entity_id,
+                'user_id': error_info.context.user_id,
+                'session_id': error_info.context.session_id,
+                'additional_context': error_info.context.additional_data
+            })
+        
+        if error_info.additional_data:
+            context['additional_data'] = error_info.additional_data
+        
+        # Use enhanced logger
+        self._enhanced_logger.log_error(error_info, context)
+    
+    # Replace the method
+    ErrorManager._log_error = enhanced_log_error
+
+
+# Apply the enhancement
+_update_error_manager_logging()
+
+
+# =============================================================================
+# LOGGING UTILITIES FOR ERROR MANAGEMENT
+# =============================================================================
+
+def setup_error_logging_strategy(environment: str = None):
+    """Setup enhanced logging strategy for error management"""
+    try:
+        from core.logging_strategy import setup_enhanced_logging
+        from core.logging_config import LoggingConfig
+        
+        # Get configuration based on environment
+        config = LoggingConfig.get_config_by_environment(environment)
+        
+        # Setup enhanced logging
+        strategy = setup_enhanced_logging(config)
+        
+        return strategy
+    except ImportError:
+        # Fallback to basic logging setup
+        logging.basicConfig(
+            level=logging.INFO,
+            format='%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+        )
+        return None
+
+
+def log_error_recovery_attempt(error_info: ErrorInfo, recovery_strategy: str, attempt_number: int):
+    """Log error recovery attempt"""
+    try:
+        from core.logging_strategy import get_enhanced_logger
+        logger = get_enhanced_logger("ErrorRecovery")
+        
+        extra = {
+            'error_id': error_info.error_id,
+            'error_category': error_info.category.value,
+            'recovery_strategy': recovery_strategy,
+            'attempt_number': attempt_number,
+            'component': error_info.component,
+            'tags': ['error_recovery', 'retry']
+        }
+        
+        logger.info(f"Attempting error recovery: {recovery_strategy} (attempt {attempt_number})", extra=extra)
+    except ImportError:
+        # Fallback to standard logging
+        logger = logging.getLogger("ErrorRecovery")
+        logger.info(f"Attempting error recovery: {recovery_strategy} (attempt {attempt_number}) for error {error_info.error_id}")
+
+
+def log_error_recovery_success(error_info: ErrorInfo, recovery_strategy: str, attempt_number: int):
+    """Log successful error recovery"""
+    try:
+        from core.logging_strategy import get_enhanced_logger
+        logger = get_enhanced_logger("ErrorRecovery")
+        
+        extra = {
+            'error_id': error_info.error_id,
+            'error_category': error_info.category.value,
+            'recovery_strategy': recovery_strategy,
+            'attempt_number': attempt_number,
+            'component': error_info.component,
+            'tags': ['error_recovery', 'success']
+        }
+        
+        logger.info(f"Error recovery successful: {recovery_strategy} (attempt {attempt_number})", extra=extra)
+    except ImportError:
+        # Fallback to standard logging
+        logger = logging.getLogger("ErrorRecovery")
+        logger.info(f"Error recovery successful: {recovery_strategy} (attempt {attempt_number}) for error {error_info.error_id}")
+
+
+def log_error_recovery_failure(error_info: ErrorInfo, recovery_strategy: str, final_attempt: int):
+    """Log failed error recovery"""
+    try:
+        from core.logging_strategy import get_enhanced_logger
+        logger = get_enhanced_logger("ErrorRecovery")
+        
+        extra = {
+            'error_id': error_info.error_id,
+            'error_category': error_info.category.value,
+            'recovery_strategy': recovery_strategy,
+            'final_attempt': final_attempt,
+            'component': error_info.component,
+            'tags': ['error_recovery', 'failure']
+        }
+        
+        logger.error(f"Error recovery failed: {recovery_strategy} after {final_attempt} attempts", extra=extra)
+    except ImportError:
+        # Fallback to standard logging
+        logger = logging.getLogger("ErrorRecovery")
+        logger.error(f"Error recovery failed: {recovery_strategy} after {final_attempt} attempts for error {error_info.error_id}")
+
+
+def log_error_statistics(statistics: Dict[str, Any]):
+    """Log error statistics"""
+    try:
+        from core.logging_strategy import get_enhanced_logger
+        logger = get_enhanced_logger("ErrorStatistics")
+        
+        extra = {
+            'statistics': statistics,
+            'tags': ['error_statistics', 'monitoring']
+        }
+        
+        logger.info("Error statistics update", extra=extra)
+    except ImportError:
+        # Fallback to standard logging
+        logger = logging.getLogger("ErrorStatistics")
+        logger.info(f"Error statistics: {statistics}")
+
+
+# =============================================================================
+# PERFORMANCE LOGGING INTEGRATION
+# =============================================================================
+
+def log_error_handling_performance(operation: str, execution_time_ms: float, error_category: str = None):
+    """Log error handling performance metrics"""
+    try:
+        from core.logging_strategy import log_performance_metrics
+        
+        metrics = {
+            'execution_time_ms': execution_time_ms,
+            'operation_type': 'error_handling'
+        }
+        
+        if error_category:
+            metrics['error_category'] = error_category
+        
+        log_performance_metrics("ErrorHandling", operation, metrics, "error_management")
+    except ImportError:
+        # Fallback to standard logging
+        logger = logging.getLogger("ErrorHandling")
+        logger.info(f"Error handling performance - {operation}: {execution_time_ms}ms")
+
+
+# =============================================================================
+# CONTEXT MANAGERS FOR ENHANCED LOGGING
+# =============================================================================
+
+@contextmanager
+def error_handling_context(operation: str, component: str = None, user_id: str = None):
+    """Context manager for enhanced error handling with logging"""
+    start_time = time.time()
+    
+    try:
+        from core.logging_strategy import log_operation_start, log_operation_end
+        log_operation_start("ErrorHandling", operation, component, {'user_id': user_id})
+        
+        yield
+        
+        # Log successful completion
+        execution_time = (time.time() - start_time) * 1000
+        log_operation_end("ErrorHandling", operation, component, True, {'execution_time_ms': execution_time})
+        
+    except Exception as e:
+        # Log operation failure
+        execution_time = (time.time() - start_time) * 1000
+        
+        try:
+            from core.logging_strategy import log_operation_end
+            log_operation_end("ErrorHandling", operation, component, False, {
+                'execution_time_ms': execution_time,
+                'error': str(e)
+            })
+        except ImportError:
+            pass
+        
+        raise
+    finally:
+        # Log performance metrics
+        execution_time = (time.time() - start_time) * 1000
+        log_error_handling_performance(operation, execution_time) 

@@ -14,7 +14,8 @@ from abc import ABC, abstractmethod
 import logging
 from PyQt6.QtCore import QObject, pyqtSignal
 
-from data.models.repositories import IRepository, IContentRepository, IDownloadRepository
+from data.models.repositories import IRepository, IContentRepository
+from data.models.repository_interfaces import IDownloadRepository
 from data.models.base import BaseEntity, EntityId
 from core.event_system import EventBus, Event, EventType, EventHandler, get_event_bus, publish_event
 from core.constants import AppConstants

@@ -14,7 +14,8 @@ from datetime import datetime
 import logging
 from PyQt6.QtCore import QObject, pyqtSignal
 
-from data.models.repositories import IRepository, IContentRepository, IDownloadRepository
+from data.models.repositories import IRepository, IContentRepository
+from data.models.repository_interfaces import IDownloadRepository
 from data.models.base import BaseEntity, EntityId
 from core.event_system import EventBus, Event, EventType, get_event_bus
 from ui.components.common.component_state_manager import ComponentStateManager
