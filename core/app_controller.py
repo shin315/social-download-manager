@@ -30,6 +30,16 @@ try:
 except ImportError:
     DATABASE_AVAILABLE = False
 
+# Import enhanced error management
+try:
+    from data.models.error_management import (
+        ErrorManager, ErrorClassifier, ErrorContext, ErrorCategory, 
+        ErrorSeverity, get_user_friendly_message
+    )
+    ERROR_MANAGEMENT_AVAILABLE = True
+except ImportError:
+    ERROR_MANAGEMENT_AVAILABLE = False
+
 
 class ControllerState(Enum):
     """App Controller lifecycle states"""
@@ -93,7 +103,7 @@ class IAppController(ABC):
         pass
     
     @abstractmethod
-    def handle_error(self, error: Exception, context: str) -> None:
+    def handle_error(self, error: Exception, context: str, component: Optional[str] = None) -> None:
         """Handle errors in a centralized way"""
         pass
     
@@ -122,7 +132,7 @@ class AppController(IAppController, EventHandler):
     - Coordinate between UI and business logic layers
     - Manage application lifecycle
     - Handle inter-component communication via events
-    - Provide centralized error handling
+    - Provide centralized error handling with enhanced classification
     - Manage component registration and dependencies
     - Provide access to service layer
     """
@@ -138,6 +148,14 @@ class AppController(IAppController, EventHandler):
         self._logger = logging.getLogger(__name__)
         self._startup_time: Optional[float] = None
         self._error_handlers: List[Callable[[Exception, str], None]] = []
+        
+        # Enhanced error management
+        if ERROR_MANAGEMENT_AVAILABLE:
+            self._error_manager = ErrorManager(use_enhanced_classification=True)
+            self._logger.info("Enhanced error management system initialized")
+        else:
+            self._error_manager = None
+            self._logger.warning("Enhanced error management not available, using basic error handling")
         
         # Component initialization order
         self._init_order = [
@@ -376,18 +394,79 @@ class AppController(IAppController, EventHandler):
         with self._lock:
             return self._components.get(name)
     
-    def handle_error(self, error: Exception, context: str) -> None:
+    def handle_error(self, error: Exception, context: str, component: Optional[str] = None) -> None:
         """
-        Handle errors in a centralized way
+        Enhanced error handling with classification and recovery
         
         Args:
             error: Exception that occurred
             context: Context where error occurred
+            component: Component name where error occurred
         """
+        if self._error_manager and ERROR_MANAGEMENT_AVAILABLE:
+            # Use enhanced error handling
+            error_context = ErrorContext(
+                operation=context,
+                additional_data={'component': component} if component else {}
+            )
+            
+            try:
+                error_info = self._error_manager.handle_error(error, error_context)
+                
+                # Create enhanced error data for event
+                error_data = {
+                    "error_id": error_info.error_id,
+                    "error_code": error_info.error_code,
+                    "error_type": type(error).__name__,
+                    "error_message": str(error),
+                    "user_message": error_info.user_message,
+                    "category": error_info.category.value,
+                    "severity": error_info.severity.value,
+                    "recovery_strategy": error_info.recovery_strategy.value,
+                    "is_retryable": error_info.is_retryable,
+                    "context": context,
+                    "component": component,
+                    "controller_state": self._state.name,
+                    "timestamp": error_info.timestamp.isoformat()
+                }
+                
+                # Log with enhanced details
+                self._logger.error(
+                    f"Enhanced Error [{error_info.error_code}]: {error_info.message} "
+                    f"(Category: {error_info.category.value}, Severity: {error_info.severity.value})"
+                )
+                
+                # Publish enhanced error event
+                if self._event_bus:
+                    self._publish_event(EventType.ERROR_OCCURRED, error_data)
+                
+                # Call registered error handlers with enhanced info
+                for handler in self._error_handlers:
+                    try:
+                        handler(error, context)
+                    except Exception as handler_error:
+                        self._logger.error(f"Error in error handler: {handler_error}")
+                
+                # Handle recovery if strategy suggests it
+                if error_info.recovery_strategy.value == 'ignore':
+                    self._logger.info(f"Ignoring error as per recovery strategy: {error_info.message}")
+                    return
+                
+            except Exception as e:
+                self._logger.error(f"Error in enhanced error handling: {e}")
+                # Fall back to basic error handling
+                self._handle_error_basic(error, context, component)
+        else:
+            # Use basic error handling
+            self._handle_error_basic(error, context, component)
+    
+    def _handle_error_basic(self, error: Exception, context: str, component: Optional[str] = None) -> None:
+        """Basic error handling fallback"""
         error_data = {
             "error_type": type(error).__name__,
             "error_message": str(error),
             "context": context,
+            "component": component,
             "controller_state": self._state.name
         }
         
@@ -601,6 +680,49 @@ class AppController(IAppController, EventHandler):
     def get_service_registry(self) -> Optional[ServiceRegistry]:
         """Get service registry instance"""
         return self._service_registry
+
+    def get_error_statistics(self) -> Optional[Dict[str, int]]:
+        """Get error statistics from the error manager"""
+        if self._error_manager:
+            return self._error_manager.get_error_statistics()
+        return None
+    
+    def get_error_statistics_by_category(self) -> Optional[Dict[str, int]]:
+        """Get error statistics grouped by category"""
+        if self._error_manager:
+            return self._error_manager.get_error_statistics_by_category()
+        return None
+    
+    def get_error_statistics_by_component(self) -> Optional[Dict[str, int]]:
+        """Get error statistics grouped by component"""
+        if self._error_manager:
+            return self._error_manager.get_error_statistics_by_component()
+        return None
+    
+    def clear_error_statistics(self) -> None:
+        """Clear error statistics"""
+        if self._error_manager:
+            self._error_manager.clear_statistics()
+    
+    def execute_with_error_recovery(self, operation: Callable, context: str, component: Optional[str] = None) -> Any:
+        """Execute operation with automatic error handling and recovery"""
+        if self._error_manager and ERROR_MANAGEMENT_AVAILABLE:
+            error_context = ErrorContext(
+                operation=context,
+                additional_data={'component': component} if component else {}
+            )
+            try:
+                return self._error_manager.execute_with_recovery(operation, error_context)
+            except Exception as e:
+                self.handle_error(e, context, component)
+                raise
+        else:
+            # Basic execution without recovery
+            try:
+                return operation()
+            except Exception as e:
+                self.handle_error(e, context, component)
+                raise
 
 
 # Global controller instance

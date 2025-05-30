@@ -203,69 +203,143 @@ class DatabaseConstants:
 
 
 class ErrorConstants:
-    """Error codes and messages"""
+    """Enhanced error constants for comprehensive error handling"""
+    
+    # Error message templates
+    MESSAGES = {
+        'GENERIC_ERROR': "An unexpected error occurred. Please try again.",
+        'VALIDATION_ERROR': "Invalid input provided. Please check your input and try again.",
+        'NETWORK_ERROR': "Network error occurred. Please check your connection and try again.",
+        'DATABASE_ERROR': "Database error occurred. Please try again later.",
+        'PERMISSION_ERROR': "Permission denied. Please check your access rights.",
+        'FILE_ERROR': "File operation failed. Please check file permissions and disk space.",
+        'AUTHENTICATION_ERROR': "Authentication failed. Please check your credentials.",
+        'CONFIGURATION_ERROR': "Configuration error. Please check application settings.",
+        
+        # UI specific errors
+        'UI_COMPONENT_ERROR': "Component error occurred. Please restart the application.",
+        'UI_RENDERING_ERROR': "Display issue occurred. Please refresh the interface.",
+        'UI_INPUT_ERROR': "Invalid input provided. Please check your input and try again.",
+        
+        # Platform specific errors
+        'PLATFORM_API_ERROR': "Platform service error. Please try again later.",
+        'PLATFORM_RATE_LIMIT': "Rate limit exceeded. Please wait before trying again.",
+        'PLATFORM_NOT_FOUND': "Content not found or may have been removed.",
+        'PLATFORM_PRIVATE': "Content is private and cannot be accessed.",
+        
+        # Download specific errors
+        'DOWNLOAD_FAILED': "Download failed. Please try again.",
+        'DOWNLOAD_SPACE_ERROR': "Not enough disk space. Please free up space and try again.",
+        'DOWNLOAD_PERMISSION_ERROR': "Download permission denied. Please check file permissions.",
+        'DOWNLOAD_NETWORK_ERROR': "Download timed out. Please check your internet connection.",
+        'DOWNLOAD_CORRUPTED': "Downloaded file is corrupted. Please try downloading again.",
+        
+        # Repository specific errors
+        'REPOSITORY_CONNECTION_ERROR': "Database connection failed. Please try again later.",
+        'REPOSITORY_TRANSACTION_ERROR': "Data operation failed. Please try again.",
+        'REPOSITORY_CORRUPTION_ERROR': "Data integrity issue detected. Please contact support.",
+    }
+    
+    # Error codes
+    CODES = {
+        # Generic codes
+        'UNKNOWN': 'ERR_UNKNOWN',
+        'VALIDATION': 'ERR_VALIDATION',
+        'NETWORK': 'ERR_NETWORK',
+        'DATABASE': 'ERR_DATABASE',
+        'PERMISSION': 'ERR_PERMISSION',
+        'FILE_SYSTEM': 'ERR_FILE_SYSTEM',
+        'AUTHENTICATION': 'ERR_AUTH',
+        'CONFIGURATION': 'ERR_CONFIG',
+        
+        # UI codes
+        'UI_COMPONENT': 'ERR_UI_COMPONENT',
+        'UI_RENDERING': 'ERR_UI_RENDER',
+        'UI_INPUT': 'ERR_UI_INPUT',
+        'UI_STATE': 'ERR_UI_STATE',
+        'UI_EVENT': 'ERR_UI_EVENT',
+        
+        # Platform codes
+        'PLATFORM_API': 'ERR_PLT_API',
+        'PLATFORM_RATE_LIMIT': 'ERR_PLT_RATE_LIMIT',
+        'PLATFORM_NOT_FOUND': 'ERR_PLT_NOT_FOUND',
+        'PLATFORM_PRIVATE': 'ERR_PLT_PRIVATE',
+        'PLATFORM_AUTH': 'ERR_PLT_AUTH',
+        
+        # Download codes
+        'DOWNLOAD_FAILED': 'ERR_DWN_FAILED',
+        'DOWNLOAD_SPACE': 'ERR_DWN_SPACE',
+        'DOWNLOAD_PERMISSION': 'ERR_DWN_PERMISSION',
+        'DOWNLOAD_NETWORK': 'ERR_DWN_NETWORK',
+        'DOWNLOAD_CORRUPTED': 'ERR_DWN_CORRUPTED',
+        
+        # Repository codes
+        'REPOSITORY_CONNECTION': 'ERR_REP_CONNECTION',
+        'REPOSITORY_TRANSACTION': 'ERR_REP_TRANSACTION',
+        'REPOSITORY_CORRUPTION': 'ERR_REP_CORRUPTION',
+        'REPOSITORY_DEADLOCK': 'ERR_REP_DEADLOCK',
+        
+        # Service codes
+        'SERVICE_UNAVAILABLE': 'ERR_SVC_UNAVAILABLE',
+        'SERVICE_TIMEOUT': 'ERR_SVC_TIMEOUT',
+        'SERVICE_INVALID_OP': 'ERR_SVC_INVALID_OP',
+    }
+    
+    # Severity levels mapping
+    SEVERITY_LEVELS = {
+        'LOW': 1,
+        'MEDIUM': 2,
+        'HIGH': 3,
+        'CRITICAL': 4
+    }
+    
+    # Recovery strategies
+    RECOVERY_STRATEGIES = {
+        'RETRY': 'retry',
+        'FALLBACK': 'fallback',
+        'FAIL_FAST': 'fail_fast',
+        'IGNORE': 'ignore',
+        'MANUAL': 'manual_intervention'
+    }
     
     # Error categories
-    ERROR_NETWORK: Final[str] = "NETWORK_ERROR"
-    ERROR_PLATFORM: Final[str] = "PLATFORM_ERROR"
-    ERROR_DATABASE: Final[str] = "DATABASE_ERROR"
-    ERROR_FILE: Final[str] = "FILE_ERROR"
-    ERROR_CONFIG: Final[str] = "CONFIG_ERROR"
-    ERROR_UI: Final[str] = "UI_ERROR"
-    ERROR_UNKNOWN: Final[str] = "UNKNOWN_ERROR"
-    
-    # Specific error codes
-    ERROR_CODES: Final[Dict[str, int]] = {
-        # Network errors (1000-1999)
-        "NETWORK_TIMEOUT": 1001,
-        "NETWORK_CONNECTION_FAILED": 1002,
-        "NETWORK_INVALID_URL": 1003,
-        "NETWORK_FORBIDDEN": 1004,
-        "NETWORK_NOT_FOUND": 1005,
-        
-        # Platform errors (2000-2999)
-        "PLATFORM_UNSUPPORTED": 2001,
-        "PLATFORM_DETECTION_FAILED": 2002,
-        "PLATFORM_API_ERROR": 2003,
-        "PLATFORM_CONTENT_UNAVAILABLE": 2004,
-        "PLATFORM_RATE_LIMITED": 2005,
-        
-        # Database errors (3000-3999)
-        "DATABASE_CONNECTION_FAILED": 3001,
-        "DATABASE_QUERY_FAILED": 3002,
-        "DATABASE_MIGRATION_FAILED": 3003,
-        "DATABASE_CORRUPTION": 3004,
-        "DATABASE_PERMISSION_DENIED": 3005,
-        
-        # File errors (4000-4999)
-        "FILE_NOT_FOUND": 4001,
-        "FILE_PERMISSION_DENIED": 4002,
-        "FILE_DISK_FULL": 4003,
-        "FILE_INVALID_PATH": 4004,
-        "FILE_ALREADY_EXISTS": 4005,
-        
-        # Configuration errors (5000-5999)
-        "CONFIG_INVALID_FORMAT": 5001,
-        "CONFIG_MISSING_REQUIRED": 5002,
-        "CONFIG_SAVE_FAILED": 5003,
-        "CONFIG_LOAD_FAILED": 5004,
-        
-        # UI errors (6000-6999)
-        "UI_COMPONENT_FAILED": 6001,
-        "UI_THEME_LOAD_FAILED": 6002,
-        "UI_TRANSLATION_MISSING": 6003,
+    CATEGORIES = {
+        'UI': 'ui',
+        'PLATFORM': 'platform',
+        'DOWNLOAD': 'download',
+        'REPOSITORY': 'repository',
+        'SERVICE': 'service',
+        'DATABASE': 'database',
+        'NETWORK': 'network',
+        'VALIDATION': 'validation',
+        'AUTHENTICATION': 'authentication',
+        'PERMISSION': 'permission',
+        'FILE_SYSTEM': 'file_system',
+        'CONFIGURATION': 'configuration',
+        'UNKNOWN': 'unknown',
+        'FATAL': 'fatal'
     }
     
-    # Default error messages
-    DEFAULT_MESSAGES: Final[Dict[str, str]] = {
-        ERROR_NETWORK: "Network connection error occurred",
-        ERROR_PLATFORM: "Platform-specific error occurred", 
-        ERROR_DATABASE: "Database operation failed",
-        ERROR_FILE: "File operation failed",
-        ERROR_CONFIG: "Configuration error occurred",
-        ERROR_UI: "User interface error occurred",
-        ERROR_UNKNOWN: "An unknown error occurred"
-    }
+    @classmethod
+    def get_message(cls, error_type: str) -> str:
+        """Get error message by type"""
+        return cls.MESSAGES.get(error_type, cls.MESSAGES['GENERIC_ERROR'])
+    
+    @classmethod
+    def get_code(cls, error_type: str) -> str:
+        """Get error code by type"""
+        return cls.CODES.get(error_type, cls.CODES['UNKNOWN'])
+    
+    @classmethod
+    def get_severity_level(cls, severity: str) -> int:
+        """Get numeric severity level"""
+        return cls.SEVERITY_LEVELS.get(severity.upper(), 2)
+    
+    @classmethod
+    def is_retryable(cls, error_category: str) -> bool:
+        """Check if error category is typically retryable"""
+        retryable_categories = ['NETWORK', 'PLATFORM', 'DATABASE', 'DOWNLOAD']
+        return error_category.upper() in retryable_categories
 
 
 class LogConstants:

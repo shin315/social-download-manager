@@ -25,7 +25,8 @@ class ErrorSeverity(Enum):
 
 
 class ErrorCategory(Enum):
-    """Error categories for classification"""
+    """Enhanced error categories for comprehensive application error classification"""
+    # Core system errors
     VALIDATION = "validation"
     DATABASE = "database"
     NETWORK = "network"
@@ -34,7 +35,22 @@ class ErrorCategory(Enum):
     SECURITY = "security"
     RESOURCE = "resource"
     EXTERNAL_SERVICE = "external_service"
+    
+    # Application-specific categories
+    UI = "ui"                           # User interface and component errors
+    PLATFORM = "platform"              # TikTok, YouTube API errors
+    DOWNLOAD = "download"               # File download and management errors
+    REPOSITORY = "repository"           # Data layer and repository errors
+    SERVICE = "service"                 # Business service layer errors
+    AUTHENTICATION = "authentication"   # Auth and session errors
+    PERMISSION = "permission"           # Access control errors
+    FILE_SYSTEM = "file_system"        # File I/O operations
+    PARSING = "parsing"                 # Data parsing and format errors
+    INTEGRATION = "integration"        # Inter-component communication errors
+    
+    # Special categories
     UNKNOWN = "unknown"
+    FATAL = "fatal"                     # Unrecoverable system errors
 
 
 class RecoveryStrategy(Enum):
@@ -60,7 +76,7 @@ class ErrorContext:
 
 @dataclass
 class ErrorInfo:
-    """Comprehensive error information"""
+    """Comprehensive error information with enhanced categorization"""
     error_id: str
     error_code: str
     message: str
@@ -74,6 +90,12 @@ class ErrorInfo:
     is_retryable: bool = False
     retry_count: int = 0
     max_retries: int = 3
+    
+    # Enhanced categorization fields
+    error_type: Optional[str] = None  # Specific error type from the type enums
+    component: Optional[str] = None   # Component where error occurred
+    user_message: Optional[str] = None  # User-friendly error message
+    technical_details: Optional[Dict[str, Any]] = field(default_factory=dict)
 
 
 class DomainError(ModelError):
@@ -396,26 +418,91 @@ class ErrorRecoveryManager:
         )
 
 
-class ErrorManager:
-    """Central error management system for repositories"""
+class EnhancedErrorHandler(IErrorHandler):
+    """Enhanced error handler using the new classification system"""
     
-    def __init__(self):
+    def can_handle(self, error: Exception, context: ErrorContext) -> bool:
+        return True  # Can handle any error using classification
+    
+    def handle_error(self, error: Exception, context: ErrorContext) -> ErrorInfo:
+        """Handle error using enhanced classification system"""
+        # Classify the error automatically
+        category = ErrorClassifier.classify_error(error, context)
+        error_type = ErrorClassifier.get_specific_error_type(error, category)
+        severity = ErrorClassifier.determine_severity(error, category)
+        recovery_strategy = ErrorClassifier.determine_recovery_strategy(error, category)
+        
+        # Generate error code
+        error_code = ErrorCodeGenerator.generate_code(category, error_type)
+        
+        # Generate error ID
+        error_id = f"{category.value.upper()}_{datetime.now().timestamp()}"
+        
+        # Get user-friendly message
+        user_message = get_user_friendly_message(category, error_type)
+        
+        # Determine if retryable
+        is_retryable = recovery_strategy in [RecoveryStrategy.RETRY, RecoveryStrategy.FALLBACK]
+        max_retries = 3 if is_retryable else 0
+        
+        # Extract component from context if available
+        component = context.additional_data.get('component', None)
+        
+        return ErrorInfo(
+            error_id=error_id,
+            error_code=error_code,
+            message=str(error),
+            category=category,
+            severity=severity,
+            context=context,
+            original_exception=error,
+            stack_trace=traceback.format_exc(),
+            recovery_strategy=recovery_strategy,
+            is_retryable=is_retryable,
+            max_retries=max_retries,
+            error_type=error_type,
+            component=component,
+            user_message=user_message,
+            technical_details={
+                'error_class': type(error).__name__,
+                'error_module': getattr(type(error), '__module__', 'unknown'),
+                'classification_reason': f"Classified as {category.value} based on context and error content"
+            }
+        )
+
+
+class ErrorManager:
+    """Enhanced central error management system"""
+    
+    def __init__(self, use_enhanced_classification: bool = True):
         self._logger = logging.getLogger("ErrorManager")
         self._handlers: List[IErrorHandler] = []
         self._recovery_manager = ErrorRecoveryManager()
         self._error_statistics: Dict[str, int] = {}
+        self._use_enhanced = use_enhanced_classification
         
-        # Register default handlers
+        # Register handlers
         self._register_default_handlers()
     
     def _register_default_handlers(self) -> None:
         """Register default error handlers"""
-        self._handlers = [
-            ValidationErrorHandler(),
-            DatabaseErrorHandler(),
-            NetworkErrorHandler(),
-            GenericErrorHandler()  # Must be last (fallback)
-        ]
+        if self._use_enhanced:
+            # Use enhanced handler first
+            self._handlers = [
+                EnhancedErrorHandler(),
+                ValidationErrorHandler(),
+                DatabaseErrorHandler(),
+                NetworkErrorHandler(),
+                GenericErrorHandler()  # Fallback
+            ]
+        else:
+            # Use legacy handlers
+            self._handlers = [
+                ValidationErrorHandler(),
+                DatabaseErrorHandler(),
+                NetworkErrorHandler(),
+                GenericErrorHandler()  # Must be last (fallback)
+            ]
     
     def add_handler(self, handler: IErrorHandler) -> None:
         """Add a custom error handler"""
@@ -448,10 +535,31 @@ class ErrorManager:
     def _log_error(self, error_info: ErrorInfo) -> None:
         """Log error with appropriate level based on severity"""
         log_message = (
-            f"Error {error_info.error_id}: {error_info.message} "
-            f"(Category: {error_info.category.value}, Severity: {error_info.severity.value})"
+            f"Error {error_info.error_id} [{error_info.error_code}]: {error_info.message} "
+            f"(Category: {error_info.category.value}, Severity: {error_info.severity.value}"
         )
         
+        if error_info.component:
+            log_message += f", Component: {error_info.component}"
+        
+        if error_info.error_type:
+            log_message += f", Type: {error_info.error_type}"
+        
+        log_message += ")"
+        
+        # Add context information
+        context_info = []
+        if error_info.context.operation:
+            context_info.append(f"Operation: {error_info.context.operation}")
+        if error_info.context.entity_type:
+            context_info.append(f"Entity: {error_info.context.entity_type}")
+        if error_info.context.user_id:
+            context_info.append(f"User: {error_info.context.user_id}")
+        
+        if context_info:
+            log_message += f" | Context: {', '.join(context_info)}"
+        
+        # Log with appropriate level
         if error_info.severity == ErrorSeverity.CRITICAL:
             self._logger.critical(log_message, exc_info=error_info.original_exception)
         elif error_info.severity == ErrorSeverity.HIGH:
@@ -462,18 +570,44 @@ class ErrorManager:
             self._logger.info(log_message)
     
     def _update_statistics(self, error_info: ErrorInfo) -> None:
-        """Update error statistics"""
+        """Update enhanced error statistics"""
+        # Category statistics
         category_key = f"category_{error_info.category.value}"
-        severity_key = f"severity_{error_info.severity.value}"
-        code_key = f"code_{error_info.error_code}"
-        
         self._error_statistics[category_key] = self._error_statistics.get(category_key, 0) + 1
+        
+        # Severity statistics
+        severity_key = f"severity_{error_info.severity.value}"
         self._error_statistics[severity_key] = self._error_statistics.get(severity_key, 0) + 1
+        
+        # Error code statistics
+        code_key = f"code_{error_info.error_code}"
         self._error_statistics[code_key] = self._error_statistics.get(code_key, 0) + 1
+        
+        # Component statistics
+        if error_info.component:
+            component_key = f"component_{error_info.component}"
+            self._error_statistics[component_key] = self._error_statistics.get(component_key, 0) + 1
+        
+        # Error type statistics
+        if error_info.error_type:
+            type_key = f"type_{error_info.error_type}"
+            self._error_statistics[type_key] = self._error_statistics.get(type_key, 0) + 1
+        
+        # Recovery strategy statistics
+        strategy_key = f"recovery_{error_info.recovery_strategy.value}"
+        self._error_statistics[strategy_key] = self._error_statistics.get(strategy_key, 0) + 1
     
     def get_error_statistics(self) -> Dict[str, int]:
-        """Get error statistics"""
+        """Get comprehensive error statistics"""
         return self._error_statistics.copy()
+    
+    def get_error_statistics_by_category(self) -> Dict[str, int]:
+        """Get error statistics grouped by category"""
+        return {k: v for k, v in self._error_statistics.items() if k.startswith('category_')}
+    
+    def get_error_statistics_by_component(self) -> Dict[str, int]:
+        """Get error statistics grouped by component"""
+        return {k: v for k, v in self._error_statistics.items() if k.startswith('component_')}
     
     def clear_statistics(self) -> None:
         """Clear error statistics"""
@@ -483,10 +617,23 @@ class ErrorManager:
         """Check if operation should be retried"""
         return self._recovery_manager.should_retry(error_info)
     
-    def execute_with_retry(self, operation: Callable, context: ErrorContext, 
-                          max_retries: int = 3) -> Any:
-        """Execute operation with automatic retry"""
-        return self._recovery_manager.execute_with_retry(operation, context, max_retries)
+    def execute_with_recovery(self, operation: Callable, context: ErrorContext) -> Any:
+        """Execute operation with automatic error handling and recovery"""
+        try:
+            return operation()
+        except Exception as e:
+            error_info = self.handle_error(e, context)
+            
+            if error_info.recovery_strategy == RecoveryStrategy.RETRY and error_info.is_retryable:
+                return self._recovery_manager.execute_with_retry(operation, context, error_info.max_retries)
+            elif error_info.recovery_strategy == RecoveryStrategy.FAIL_FAST:
+                raise e
+            elif error_info.recovery_strategy == RecoveryStrategy.IGNORE:
+                self._logger.info(f"Ignoring error as per recovery strategy: {error_info.message}")
+                return None
+            else:
+                # Manual intervention or fallback required
+                raise e
 
 
 # Global error manager instance
@@ -577,3 +724,359 @@ class ErrorHandlingContext:
                 raise RepositoryDatabaseError(error_info.message, exc_val, self.context) from exc_val
         
         return False  # Don't suppress domain errors 
+
+
+class UIErrorType(Enum):
+    """Specific UI error types"""
+    COMPONENT_INITIALIZATION = "component_initialization"
+    EVENT_HANDLING = "event_handling"
+    DATA_BINDING = "data_binding"
+    USER_INPUT = "user_input"
+    RENDERING = "rendering"
+    STATE_MANAGEMENT = "state_management"
+    NAVIGATION = "navigation"
+
+
+class PlatformErrorType(Enum):
+    """Platform-specific error types"""
+    API_RATE_LIMIT = "api_rate_limit"
+    API_AUTHENTICATION = "api_authentication"
+    API_UNAVAILABLE = "api_unavailable"
+    CONTENT_NOT_FOUND = "content_not_found"
+    CONTENT_PRIVATE = "content_private"
+    CONTENT_DELETED = "content_deleted"
+    UNSUPPORTED_FORMAT = "unsupported_format"
+    EXTRACTION_FAILED = "extraction_failed"
+
+
+class DownloadErrorType(Enum):
+    """Download-specific error types"""
+    INSUFFICIENT_SPACE = "insufficient_space"
+    PERMISSION_DENIED = "permission_denied"
+    NETWORK_TIMEOUT = "network_timeout"
+    CORRUPTED_FILE = "corrupted_file"
+    INVALID_URL = "invalid_url"
+    DOWNLOAD_INTERRUPTED = "download_interrupted"
+    QUEUE_FULL = "queue_full"
+    DUPLICATE_DOWNLOAD = "duplicate_download"
+
+
+class RepositoryErrorType(Enum):
+    """Repository layer error types"""
+    CONNECTION_FAILED = "connection_failed"
+    TRANSACTION_FAILED = "transaction_failed"
+    CONSTRAINT_VIOLATION = "constraint_violation"
+    DATA_CORRUPTION = "data_corruption"
+    MIGRATION_FAILED = "migration_failed"
+    QUERY_TIMEOUT = "query_timeout"
+    DEADLOCK = "deadlock"
+
+
+class ServiceErrorType(Enum):
+    """Service layer error types"""
+    INVALID_OPERATION = "invalid_operation"
+    DEPENDENCY_UNAVAILABLE = "dependency_unavailable"
+    OPERATION_TIMEOUT = "operation_timeout"
+    BUSINESS_RULE_VIOLATION = "business_rule_violation"
+    CONCURRENT_MODIFICATION = "concurrent_modification"
+
+
+class ErrorClassifier:
+    """Utility class for automatically classifying errors"""
+    
+    @staticmethod
+    def classify_error(error: Exception, context: ErrorContext) -> ErrorCategory:
+        """
+        Automatically classify an error based on its type and context
+        
+        Args:
+            error: The exception that occurred
+            context: Context where the error occurred
+            
+        Returns:
+            Appropriate ErrorCategory
+        """
+        error_str = str(error).lower()
+        error_type = type(error).__name__.lower()
+        operation = context.operation.lower()
+        
+        # UI errors
+        if any(keyword in operation for keyword in ['ui', 'component', 'widget', 'render']):
+            return ErrorCategory.UI
+        
+        # Platform errors
+        if any(keyword in operation for keyword in ['platform', 'tiktok', 'youtube', 'api']):
+            return ErrorCategory.PLATFORM
+        
+        # Repository errors - Check before download since repository operations can contain "save"
+        if any(keyword in operation for keyword in ['repository', 'repo', 'data']):
+            return ErrorCategory.REPOSITORY
+        
+        # Download errors  
+        if any(keyword in operation for keyword in ['download', 'file', 'save']):
+            return ErrorCategory.DOWNLOAD
+        
+        # Database errors
+        if any(keyword in error_str for keyword in ['database', 'sql', 'connection', 'transaction']):
+            return ErrorCategory.DATABASE
+        
+        # Network errors
+        if any(keyword in error_str for keyword in ['network', 'timeout', 'connection', 'http']):
+            return ErrorCategory.NETWORK
+        
+        # Validation errors
+        if any(keyword in error_type for keyword in ['value', 'type', 'assertion']):
+            return ErrorCategory.VALIDATION
+        
+        # File system errors
+        if any(keyword in error_str for keyword in ['permission', 'file not found', 'disk']):
+            return ErrorCategory.FILE_SYSTEM
+        
+        # Authentication errors
+        if any(keyword in error_str for keyword in ['auth', 'login', 'token', 'unauthorized']):
+            return ErrorCategory.AUTHENTICATION
+        
+        # Configuration errors
+        if any(keyword in operation for keyword in ['config', 'setting', 'init']):
+            return ErrorCategory.CONFIGURATION
+        
+        return ErrorCategory.UNKNOWN
+    
+    @staticmethod
+    def get_specific_error_type(error: Exception, category: ErrorCategory) -> Optional[str]:
+        """
+        Get specific error type based on category
+        
+        Args:
+            error: The exception that occurred
+            category: The error category
+            
+        Returns:
+            Specific error type string or None
+        """
+        error_str = str(error).lower()
+        
+        if category == ErrorCategory.UI:
+            if 'component' in error_str:
+                return UIErrorType.COMPONENT_INITIALIZATION.value
+            elif 'event' in error_str:
+                return UIErrorType.EVENT_HANDLING.value
+            elif 'render' in error_str:
+                return UIErrorType.RENDERING.value
+            elif 'state' in error_str:
+                return UIErrorType.STATE_MANAGEMENT.value
+                
+        elif category == ErrorCategory.PLATFORM:
+            if 'rate limit' in error_str:
+                return PlatformErrorType.API_RATE_LIMIT.value
+            elif 'not found' in error_str:
+                return PlatformErrorType.CONTENT_NOT_FOUND.value
+            elif 'private' in error_str:
+                return PlatformErrorType.CONTENT_PRIVATE.value
+            elif 'auth' in error_str:
+                return PlatformErrorType.API_AUTHENTICATION.value
+                
+        elif category == ErrorCategory.DOWNLOAD:
+            if 'space' in error_str:
+                return DownloadErrorType.INSUFFICIENT_SPACE.value
+            elif 'permission' in error_str:
+                return DownloadErrorType.PERMISSION_DENIED.value
+            elif 'timeout' in error_str:
+                return DownloadErrorType.NETWORK_TIMEOUT.value
+            elif 'corrupt' in error_str:
+                return DownloadErrorType.CORRUPTED_FILE.value
+                
+        elif category == ErrorCategory.REPOSITORY:
+            if 'connection' in error_str:
+                return RepositoryErrorType.CONNECTION_FAILED.value
+            elif 'deadlock' in error_str:
+                return RepositoryErrorType.DEADLOCK.value
+            elif 'constraint' in error_str:
+                return RepositoryErrorType.CONSTRAINT_VIOLATION.value
+                
+        return None
+    
+    @staticmethod
+    def determine_severity(error: Exception, category: ErrorCategory) -> ErrorSeverity:
+        """
+        Determine error severity based on error type and category
+        
+        Args:
+            error: The exception that occurred
+            category: The error category
+            
+        Returns:
+            Appropriate ErrorSeverity
+        """
+        error_str = str(error).lower()
+        error_type = type(error).__name__.lower()
+        
+        # Critical errors that require immediate attention
+        if category == ErrorCategory.FATAL:
+            return ErrorSeverity.CRITICAL
+        if any(keyword in error_str for keyword in ['corrupt', 'disk full', 'deadlock']):
+            return ErrorSeverity.CRITICAL
+        
+        # High severity errors
+        if category in [ErrorCategory.DATABASE, ErrorCategory.SECURITY, ErrorCategory.AUTHENTICATION]:
+            return ErrorSeverity.HIGH
+        if any(keyword in error_str for keyword in ['permission denied', 'unauthorized']):
+            return ErrorSeverity.HIGH
+        
+        # Medium severity errors
+        if category in [ErrorCategory.NETWORK, ErrorCategory.PLATFORM, ErrorCategory.DOWNLOAD]:
+            return ErrorSeverity.MEDIUM
+        if 'timeout' in error_str:
+            return ErrorSeverity.MEDIUM
+        
+        # Low severity errors
+        if category in [ErrorCategory.UI, ErrorCategory.VALIDATION]:
+            return ErrorSeverity.LOW
+        
+        # Default to medium for unknown categories
+        return ErrorSeverity.MEDIUM
+    
+    @staticmethod
+    def determine_recovery_strategy(error: Exception, category: ErrorCategory) -> RecoveryStrategy:
+        """
+        Determine recovery strategy based on error type and category
+        
+        Args:
+            error: The exception that occurred
+            category: The error category
+            
+        Returns:
+            Appropriate RecoveryStrategy
+        """
+        error_str = str(error).lower()
+        
+        # Retryable errors
+        if any(keyword in error_str for keyword in ['timeout', 'connection', 'rate limit']):
+            return RecoveryStrategy.RETRY
+        if category in [ErrorCategory.NETWORK, ErrorCategory.PLATFORM]:
+            return RecoveryStrategy.RETRY
+        
+        # Fallback strategies
+        if category in [ErrorCategory.DOWNLOAD, ErrorCategory.EXTERNAL_SERVICE]:
+            return RecoveryStrategy.FALLBACK
+        
+        # Manual intervention required
+        if any(keyword in error_str for keyword in ['corrupt', 'permission', 'disk full']):
+            return RecoveryStrategy.MANUAL_INTERVENTION
+        if category in [ErrorCategory.SECURITY, ErrorCategory.AUTHENTICATION]:
+            return RecoveryStrategy.MANUAL_INTERVENTION
+        
+        # Ignore minor UI errors
+        if category == ErrorCategory.UI and 'warning' in error_str:
+            return RecoveryStrategy.IGNORE
+        
+        # Default to fail fast
+        return RecoveryStrategy.FAIL_FAST
+
+
+class ErrorCodeGenerator:
+    """Utility for generating standardized error codes"""
+    
+    _category_prefixes = {
+        ErrorCategory.UI: "UI",
+        ErrorCategory.PLATFORM: "PLT",
+        ErrorCategory.DOWNLOAD: "DWN", 
+        ErrorCategory.REPOSITORY: "REP",
+        ErrorCategory.SERVICE: "SVC",
+        ErrorCategory.DATABASE: "DB",
+        ErrorCategory.NETWORK: "NET",
+        ErrorCategory.VALIDATION: "VAL",
+        ErrorCategory.AUTHENTICATION: "AUTH",
+        ErrorCategory.PERMISSION: "PERM",
+        ErrorCategory.FILE_SYSTEM: "FS",
+        ErrorCategory.CONFIGURATION: "CFG",
+        ErrorCategory.UNKNOWN: "UNK",
+        ErrorCategory.FATAL: "FATAL"
+    }
+    
+    @classmethod
+    def generate_code(cls, category: ErrorCategory, error_type: Optional[str] = None) -> str:
+        """
+        Generate a standardized error code
+        
+        Args:
+            category: Error category
+            error_type: Specific error type
+            
+        Returns:
+            Standardized error code
+        """
+        prefix = cls._category_prefixes.get(category, "UNK")
+        timestamp = int(datetime.now().timestamp() * 1000) % 10000  # Last 4 digits
+        
+        if error_type:
+            # Convert error type to short code
+            type_code = error_type.upper().replace("_", "")[:4]
+            return f"{prefix}_{type_code}_{timestamp}"
+        
+        return f"{prefix}_{timestamp}"
+
+
+# Error message templates for user-friendly messages
+ERROR_MESSAGES = {
+    ErrorCategory.UI: {
+        UIErrorType.COMPONENT_INITIALIZATION: "A component failed to start properly. Please restart the application.",
+        UIErrorType.USER_INPUT: "Invalid input provided. Please check your input and try again.",
+        UIErrorType.RENDERING: "Display issue occurred. Please refresh the interface.",
+        UIErrorType.STATE_MANAGEMENT: "Interface state error. Please restart the application.",
+    },
+    ErrorCategory.PLATFORM: {
+        PlatformErrorType.API_RATE_LIMIT: "Rate limit exceeded. Please wait before trying again.",
+        PlatformErrorType.CONTENT_NOT_FOUND: "Content not found or may have been removed.",
+        PlatformErrorType.CONTENT_PRIVATE: "Content is private and cannot be accessed.",
+        PlatformErrorType.API_AUTHENTICATION: "Authentication failed. Please check your credentials.",
+    },
+    ErrorCategory.DOWNLOAD: {
+        DownloadErrorType.INSUFFICIENT_SPACE: "Not enough disk space. Please free up space and try again.",
+        DownloadErrorType.PERMISSION_DENIED: "Permission denied. Please check file permissions.",
+        DownloadErrorType.NETWORK_TIMEOUT: "Download timed out. Please check your internet connection.",
+        DownloadErrorType.CORRUPTED_FILE: "Downloaded file is corrupted. Please try downloading again.",
+    },
+    ErrorCategory.REPOSITORY: {
+        RepositoryErrorType.CONNECTION_FAILED: "Database connection failed. Please try again later.",
+        RepositoryErrorType.TRANSACTION_FAILED: "Data operation failed. Please try again.",
+        RepositoryErrorType.DATA_CORRUPTION: "Data integrity issue detected. Please contact support.",
+    }
+}
+
+
+def get_user_friendly_message(category: ErrorCategory, error_type: Optional[str] = None) -> str:
+    """
+    Get user-friendly error message
+    
+    Args:
+        category: Error category
+        error_type: Specific error type
+        
+    Returns:
+        User-friendly error message
+    """
+    if category in ERROR_MESSAGES and error_type:
+        # Convert string back to enum if needed
+        for type_enum in [UIErrorType, PlatformErrorType, DownloadErrorType, RepositoryErrorType]:
+            try:
+                error_enum = type_enum(error_type)
+                return ERROR_MESSAGES[category].get(error_enum, "An unexpected error occurred.")
+            except ValueError:
+                continue
+    
+    # Default messages by category
+    default_messages = {
+        ErrorCategory.UI: "A user interface error occurred. Please try again.",
+        ErrorCategory.PLATFORM: "Platform service error. Please try again later.",
+        ErrorCategory.DOWNLOAD: "Download error occurred. Please check your connection and try again.",
+        ErrorCategory.REPOSITORY: "Data operation failed. Please try again.",
+        ErrorCategory.SERVICE: "Service error occurred. Please try again later.",
+        ErrorCategory.NETWORK: "Network error. Please check your internet connection.",
+        ErrorCategory.VALIDATION: "Invalid input provided. Please check and try again.",
+        ErrorCategory.AUTHENTICATION: "Authentication failed. Please check your credentials.",
+        ErrorCategory.DATABASE: "Database error occurred. Please try again later.",
+        ErrorCategory.UNKNOWN: "An unexpected error occurred. Please try again.",
+    }
+    
+    return default_messages.get(category, "An error occurred. Please try again.") 
