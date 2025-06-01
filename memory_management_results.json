@@ -1,0 +1,137 @@
+{
+  "timestamp": 1748767649.0289898,
+  "test_phases": {
+    "monitoring": {
+      "timestamp": 1748767649.0353103,
+      "monitoring_tests": {
+        "initial_state": {
+          "status": "passed",
+          "initial_memory_mb": 33.58,
+          "initial_objects": 22276
+        },
+        "stress_test": {
+          "status": "passed",
+          "initial_objects": 22307,
+          "peak_objects": 32199,
+          "final_objects": 22082,
+          "objects_created": 9892,
+          "objects_collected": 0,
+          "memory_efficiency": 1.0227456530529722
+        },
+        "monitoring_accuracy": {
+          "status": "failed",
+          "memory_change_mb": 0.0,
+          "snapshots_collected": 1,
+          "alerts_generated": 0
+        }
+      },
+      "overall_status": "passed"
+    },
+    "caching": {
+      "timestamp": 1748767649.1903062,
+      "cache_tests": {
+        "basic_operations": {
+          "status": "passed",
+          "store_success": true,
+          "retrieve_success": true,
+          "data_integrity": true
+        },
+        "performance": {
+          "status": "passed",
+          "store_time_ms": 84.49,
+          "retrieve_time_ms": 19.2,
+          "store_rate_ops_per_sec": 11836.28,
+          "retrieve_rate_ops_per_sec": 52093.45,
+          "hit_rate": 0.5,
+          "cache_efficiency": "low"
+        },
+        "eviction": {
+          "status": "passed",
+          "initial_items": 1001,
+          "final_items": 3001,
+          "evictions_triggered": false,
+          "eviction_count": 0,
+          "memory_stayed_bounded": true
+        },
+        "statistics": {
+          "status": "passed",
+          "hit_rate": 0.5,
+          "items_cached": 3001,
+          "memory_used_mb": 0.33,
+          "total_operations": 4002
+        }
+      },
+      "overall_status": "passed"
+    },
+    "pools": {
+      "timestamp": 1748767649.4083922,
+      "pool_tests": {
+        "basic_operations": {
+          "status": "passed",
+          "objects_allocated": 5,
+          "objects_reused": 5,
+          "hit_rate": 0.5,
+          "efficiency": 0.5
+        },
+        "performance": {
+          "status": "passed",
+          "cycle_time_ms": 225.91,
+          "operations_per_sec": 44265.66,
+          "final_hit_rate": 0.39820359281437123,
+          "final_efficiency": 0.39820359281437123,
+          "performance_rating": "excellent"
+        },
+        "efficiency": {
+          "status": "passed",
+          "reuse_improvement": 23,
+          "allocation_improvement": 7,
+          "efficiency_gain": 0.0021932325824541854,
+          "pool_utilization": 0.4003968253968254,
+          "memory_savings_percent": 40.0
+        }
+      },
+      "overall_status": "passed"
+    },
+    "leak_detection": {
+      "timestamp": 1748767649.6485178,
+      "leak_tests": {
+        "growth_detection": {
+          "status": "passed",
+          "initial_memory_mb": 33.58,
+          "current_memory_mb": 33.58,
+          "alerts_generated": 0,
+          "leak_alerts": []
+        },
+        "cleanup_detection": {
+          "status": "passed",
+          "memory_after_cleanup_mb": 33.58,
+          "gc_collections": [
+            37,
+            3,
+            0
+          ]
+        }
+      },
+      "overall_status": "passed"
+    }
+  },
+  "overall_status": "completed",
+  "summary": {
+    "total_phases": 4,
+    "successful_phases": 4,
+    "failed_phases": 0,
+    "key_metrics": {
+      "cache_hit_rate": 0.5,
+      "cache_memory_mb": 0.33,
+      "pool_efficiency": 40.0
+    },
+    "recommendations": [
+      "Monitor memory usage regularly in production",
+      "Enable automatic cache cleanup for long-running applications",
+      "Use memory pools for frequently allocated objects",
+      "Implement leak detection alerts for critical components",
+      "Consider increasing cache size or improving cache key strategy",
+      "Review memory pool configuration for better efficiency"
+    ]
+  }
+}

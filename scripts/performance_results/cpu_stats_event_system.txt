@@ -1,0 +1,50 @@
+         10 function calls in 0.000 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.print}
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:141(__exit__)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.next}
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:162(profile_context)
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\core\event_system.py:228(get_event_bus)
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\core\event_system.py:77(__init__)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\threading.py:124(RLock)
+        1    0.000    0.000    0.000    0.000 {built-in method time.time}
+
+
+   Ordered by: cumulative time
+
+Function                                                                                                                 was called by...
+                                                                                                                             ncalls  tottime  cumtime
+{built-in method builtins.print}                                                                                         <- 
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:141(__exit__)                                   <- 
+{built-in method builtins.next}                                                                                          <-       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:141(__exit__)
+I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:162(profile_context)  <-       1    0.000    0.000  {built-in method builtins.next}
+I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)      <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:162(profile_context)
+{method 'disable' of '_lsprof.Profiler' objects}                                                                         <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)
+I:\dev-work-space\project\app\test-version\social-download-manager\core\event_system.py:228(get_event_bus)               <- 
+I:\dev-work-space\project\app\test-version\social-download-manager\core\event_system.py:77(__init__)                     <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\event_system.py:228(get_event_bus)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\threading.py:124(RLock)                                       <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\event_system.py:77(__init__)
+{built-in method time.time}                                                                                              <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)
+
+
+   Ordered by: cumulative time
+
+Function                                                                                                                 called...
+                                                                                                                             ncalls  tottime  cumtime
+{built-in method builtins.print}                                                                                         -> 
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:141(__exit__)                                   ->       1    0.000    0.000  {built-in method builtins.next}
+{built-in method builtins.next}                                                                                          ->       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:162(profile_context)
+I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:162(profile_context)  ->       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)
+I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)      ->       1    0.000    0.000  {built-in method time.time}
+                                                                                                                                  1    0.000    0.000  {method 'disable' of '_lsprof.Profiler' objects}
+{method 'disable' of '_lsprof.Profiler' objects}                                                                         -> 
+I:\dev-work-space\project\app\test-version\social-download-manager\core\event_system.py:228(get_event_bus)               ->       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\event_system.py:77(__init__)
+I:\dev-work-space\project\app\test-version\social-download-manager\core\event_system.py:77(__init__)                     ->       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\threading.py:124(RLock)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\threading.py:124(RLock)                                       -> 
+{built-in method time.time}                                                                                              -> 
+
+

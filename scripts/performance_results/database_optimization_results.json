@@ -1,0 +1,100 @@
+{
+  "start_time": "2025-06-01T15:28:13.042572",
+  "optimization_steps": {
+    "database_settings": {
+      "journal_mode": {
+        "applied": "WAL",
+        "current": "wal",
+        "success": true
+      },
+      "synchronous": {
+        "applied": "NORMAL",
+        "current": 1,
+        "success": true
+      },
+      "cache_size": {
+        "applied": "-64000",
+        "current": -64000,
+        "success": true
+      },
+      "temp_store": {
+        "applied": "MEMORY",
+        "current": 2,
+        "success": true
+      },
+      "mmap_size": {
+        "applied": "268435456",
+        "current": 268435456,
+        "success": true
+      },
+      "page_size": {
+        "applied": "4096",
+        "current": 4096,
+        "success": true
+      },
+      "foreign_keys": {
+        "applied": "ON",
+        "current": 1,
+        "success": true
+      },
+      "optimize": {
+        "success": true
+      }
+    },
+    "query_analysis": {
+      "total_queries_analyzed": 8,
+      "average_complexity": 8.5,
+      "queries_with_missing_indexes": 0
+    },
+    "index_creation": {
+      "total_recommendations": 0,
+      "created_indexes": [],
+      "failed_indexes": [],
+      "skipped_indexes": []
+    },
+    "query_caching": {
+      "caching_enabled": true,
+      "max_cache_size": 1000,
+      "current_cache_size": 0
+    }
+  },
+  "performance_improvements": {
+    "query_performance": {
+      "content_by_platform": {
+        "error": "no such column: platform_id"
+      },
+      "content_search": {
+        "error": "no such column: is_deleted"
+      },
+      "content_with_metadata": {
+        "error": "no such table: content_metadata"
+      },
+      "active_downloads": {
+        "execution_time_ms": 0.5600452423095703,
+        "total_time_ms": 0.5600452423095703,
+        "result_count": 3,
+        "cached": false,
+        "cache_improvement_percent": -3.8314176245210727
+      },
+      "download_history": {
+        "error": "float division by zero"
+      },
+      "download_errors": {
+        "error": "no such column: is_resolved"
+      },
+      "platform_stats": {
+        "error": "no such table: platforms"
+      },
+      "metadata_aggregation": {
+        "error": "no such table: content_metadata"
+      }
+    },
+    "overall_improvement_percent": -3.8314176245210727
+  },
+  "recommendations": [
+    "Low cache utilization - consider increasing cache size or TTL",
+    "Few indexes detected - consider creating indexes for common queries"
+  ],
+  "end_time": "2025-06-01T15:28:13.052097",
+  "total_duration_seconds": 0.009525
+}

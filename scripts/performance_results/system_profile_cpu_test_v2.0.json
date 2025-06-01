@@ -1,0 +1,72 @@
+{
+  "session_id": "cpu_test_v2.0",
+  "start_time": 1748771581.2241268,
+  "end_time": 1748771583.2250576,
+  "duration": 2.0009307861328125,
+  "snapshots": [
+    {
+      "timestamp": 1748771579.0993226,
+      "cpu_percent": 8.6,
+      "memory_percent": 76.2,
+      "memory_used_mb": 24835.671875,
+      "memory_available_mb": 7763.45703125,
+      "disk_io_read_mb": 1401257.6728515625,
+      "disk_io_write_mb": 133326.13623046875,
+      "network_sent_mb": 24137.63634777069,
+      "network_recv_mb": 72602.37051486969,
+      "thread_count": 2,
+      "process_count": 339
+    },
+    {
+      "timestamp": 1748771580.2169626,
+      "cpu_percent": 23.2,
+      "memory_percent": 76.3,
+      "memory_used_mb": 24880.09765625,
+      "memory_available_mb": 7719.03125,
+      "disk_io_read_mb": 1401258.1103515625,
+      "disk_io_write_mb": 133332.42919921875,
+      "network_sent_mb": 24138.346749305725,
+      "network_recv_mb": 72607.17354488373,
+      "thread_count": 2,
+      "process_count": 338
+    },
+    {
+      "timestamp": 1748771581.334941,
+      "cpu_percent": 23.3,
+      "memory_percent": 76.2,
+      "memory_used_mb": 24856.30859375,
+      "memory_available_mb": 7742.8203125,
+      "disk_io_read_mb": 1401258.9267578125,
+      "disk_io_write_mb": 133339.35498046875,
+      "network_sent_mb": 24139.26836681366,
+      "network_recv_mb": 72611.90716743469,
+      "thread_count": 2,
+      "process_count": 338
+    },
+    {
+      "timestamp": 1748771582.4502866,
+      "cpu_percent": 29.1,
+      "memory_percent": 76.2,
+      "memory_used_mb": 24841.078125,
+      "memory_available_mb": 7758.05078125,
+      "disk_io_read_mb": 1401260.0751953125,
+      "disk_io_write_mb": 133348.79248046875,
+      "network_sent_mb": 24140.229652404785,
+      "network_recv_mb": 72616.95233726501,
+      "thread_count": 2,
+      "process_count": 338
+    }
+  ],
+  "summary": {
+    "cpu_avg": 21.05,
+    "cpu_max": 29.1,
+    "cpu_min": 8.6,
+    "memory_avg": 76.225,
+    "memory_max": 76.3,
+    "memory_min": 76.2,
+    "memory_used_avg_mb": 24853.2890625,
+    "memory_used_max_mb": 24880.09765625,
+    "memory_used_min_mb": 24835.671875,
+    "total_snapshots": 4
+  }
+}

@@ -1,0 +1,127 @@
+         76 function calls in 0.000 seconds
+
+   Ordered by: cumulative time
+   List reduced from 55 to 50 due to restriction <50>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        2    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:222(get_config_manager)
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:102(__init__)
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:117(_load_config)
+        1    0.000    0.000    0.000    0.000 {built-in method _io.open}
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py:274(load)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.print}
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:852(exists)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:835(stat)
+        1    0.000    0.000    0.000    0.000 {built-in method nt.stat}
+        1    0.000    0.000    0.000    0.000 {method 'read' of '_io.TextIOWrapper' objects}
+        2    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:447(__fspath__)
+        2    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:437(__str__)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:141(__exit__)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.next}
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:162(profile_context)
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:551(drive)
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:131(_dict_to_config)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:407(_load_parts)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py:299(loads)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:387(_parse_path)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py:332(decode)
+        1    0.000    0.000    0.000    0.000 {method '__exit__' of '_io._IOBase' objects}
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1157(__init__)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:358(__init__)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:429(_format_parsed_parts)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1164(__new__)
+        1    0.000    0.000    0.000    0.000 <frozen codecs>:319(decode)
+        2    0.000    0.000    0.000    0.000 <frozen ntpath>:179(splitroot)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\json\decoder.py:343(raw_decode)
+        2    0.000    0.000    0.000    0.000 {method 'match' of 're.Pattern' objects}
+        1    0.000    0.000    0.000    0.000 <frozen codecs>:309(__init__)
+        1    0.000    0.000    0.000    0.000 <frozen ntpath>:156(splitdrive)
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:230(get_config)
+        5    0.000    0.000    0.000    0.000 {method 'get' of 'dict' objects}
+        2    0.000    0.000    0.000    0.000 {method 'startswith' of 'str' objects}
+        3    0.000    0.000    0.000    0.000 {method 'replace' of 'str' objects}
+        5    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
+        1    0.000    0.000    0.000    0.000 {built-in method _codecs.utf_8_decode}
+        1    0.000    0.000    0.000    0.000 <frozen codecs>:260(__init__)
+        1    0.000    0.000    0.000    0.000 <string>:2(__init__)
+        1    0.000    0.000    0.000    0.000 {built-in method sys.intern}
+        1    0.000    0.000    0.000    0.000 {built-in method __new__ of type object at 0x00007FFB9CED88B0}
+        3    0.000    0.000    0.000    0.000 {built-in method nt.fspath}
+        3    0.000    0.000    0.000    0.000 {built-in method builtins.len}
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:83(__post_init__)
+        2    0.000    0.000    0.000    0.000 {method 'end' of 're.Match' objects}
+        1    0.000    0.000    0.000    0.000 {method 'split' of 'str' objects}
+        1    0.000    0.000    0.000    0.000 {built-in method time.time}
+
+
+   Ordered by: cumulative time
+   List reduced from 55 to 20 due to restriction <20>
+
+Function                                                                                                                 was called by...
+                                                                                                                             ncalls  tottime  cumtime
+I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:222(get_config_manager)        <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:230(get_config)
+I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:102(__init__)                  <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:222(get_config_manager)
+I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:117(_load_config)              <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:102(__init__)
+{built-in method _io.open}                                                                                               <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:117(_load_config)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py:274(load)                                    <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:117(_load_config)
+{built-in method builtins.print}                                                                                         <- 
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:852(exists)                                        <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:117(_load_config)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:835(stat)                                          <-       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:852(exists)
+{built-in method nt.stat}                                                                                                <-       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:835(stat)
+{method 'read' of '_io.TextIOWrapper' objects}                                                                           <-       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py:274(load)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:447(__fspath__)                                    <-       1    0.000    0.000  {built-in method _io.open}
+                                                                                                                                  1    0.000    0.000  {built-in method nt.stat}
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:437(__str__)                                       <-       2    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:447(__fspath__)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:141(__exit__)                                   <- 
+{built-in method builtins.next}                                                                                          <-       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:141(__exit__)
+I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:162(profile_context)  <-       1    0.000    0.000  {built-in method builtins.next}
+I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)      <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:162(profile_context)
+{method 'disable' of '_lsprof.Profiler' objects}                                                                         <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:551(drive)                                         <-       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:437(__str__)
+I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:131(_dict_to_config)           <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:117(_load_config)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:407(_load_parts)                                   <-       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:551(drive)
+
+
+   Ordered by: cumulative time
+   List reduced from 55 to 20 due to restriction <20>
+
+Function                                                                                                                 called...
+                                                                                                                             ncalls  tottime  cumtime
+I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:222(get_config_manager)        ->       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:102(__init__)
+I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:102(__init__)                  ->       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1157(__init__)
+                                                                                                                                  1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1164(__new__)
+                                                                                                                                  1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:117(_load_config)
+I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:117(_load_config)              ->       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py:274(load)
+                                                                                                                                  1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:852(exists)
+                                                                                                                                  1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:131(_dict_to_config)
+                                                                                                                                  1    0.000    0.000  {built-in method _io.open}
+                                                                                                                                  1    0.000    0.000  {method '__exit__' of '_io._IOBase' objects}
+{built-in method _io.open}                                                                                               ->       1    0.000    0.000  <frozen codecs>:309(__init__)
+                                                                                                                                  1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:447(__fspath__)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py:274(load)                                    ->       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\json\__init__.py:299(loads)
+                                                                                                                                  1    0.000    0.000  {method 'read' of '_io.TextIOWrapper' objects}
+{built-in method builtins.print}                                                                                         -> 
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:852(exists)                                        ->       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:835(stat)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:835(stat)                                          ->       1    0.000    0.000  {built-in method nt.stat}
+{built-in method nt.stat}                                                                                                ->       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:447(__fspath__)
+{method 'read' of '_io.TextIOWrapper' objects}                                                                           ->       1    0.000    0.000  <frozen codecs>:319(decode)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:447(__fspath__)                                    ->       2    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:437(__str__)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:437(__str__)                                       ->       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:429(_format_parsed_parts)
+                                                                                                                                  1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:551(drive)
+                                                                                                                                  1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:560(root)
+                                                                                                                                  1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:569(_tail)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:141(__exit__)                                   ->       1    0.000    0.000  {built-in method builtins.next}
+{built-in method builtins.next}                                                                                          ->       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:162(profile_context)
+I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:162(profile_context)  ->       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)
+I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)      ->       1    0.000    0.000  {built-in method time.time}
+                                                                                                                                  1    0.000    0.000  {method 'disable' of '_lsprof.Profiler' objects}
+{method 'disable' of '_lsprof.Profiler' objects}                                                                         -> 
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:551(drive)                                         ->       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:407(_load_parts)
+I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:131(_dict_to_config)           ->       1    0.000    0.000  <string>:2(__init__)
+                                                                                                                                  5    0.000    0.000  {method 'get' of 'dict' objects}
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:407(_load_parts)                                   ->       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:387(_parse_path)
+                                                                                                                                  2    0.000    0.000  {built-in method builtins.len}
+
+

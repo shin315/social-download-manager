@@ -1,0 +1,36 @@
+{
+  "timing": {
+    "startup_time": 2.5,
+    "shutdown_time": 0.0,
+    "ui_load_time": 1.5,
+    "database_init_time": 0.8
+  },
+  "resources": {
+    "peak_memory_mb": 26895.70703125,
+    "avg_memory_mb": 26893.09765625,
+    "peak_cpu_percent": 42.7,
+    "avg_cpu_percent": 30.175
+  },
+  "operations": {
+    "video_download_time": 12.0,
+    "metadata_extraction_time": 1.2000000000000002,
+    "database_query_time": 0.025,
+    "ui_response_time": 0.15
+  },
+  "throughput": {
+    "downloads_per_minute": 5.0,
+    "concurrent_download_capacity": 3,
+    "ui_interactions_per_second": 6.666666666666667
+  },
+  "quality": {
+    "error_rate_percent": 0.0,
+    "success_rate_percent": 100.0
+  },
+  "metadata": {
+    "version": "v1.2.1",
+    "python_version": "3.12.1",
+    "platform": "win32",
+    "timestamp": "2025-06-01T15:13:48.348044",
+    "test_duration": 4.464648723602295
+  }
+}

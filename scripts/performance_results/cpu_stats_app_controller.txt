@@ -1,0 +1,121 @@
+         72 function calls in 0.000 seconds
+
+   Ordered by: cumulative time
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:733(get_app_controller)
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:140(__init__)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.print}
+        3    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:2156(getLogger)
+        3    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1377(getLogger)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:141(__exit__)
+        1    0.000    0.000    0.000    0.000 {built-in method builtins.next}
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:162(profile_context)
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:478(__init__)
+        1    0.000    0.000    0.000    0.000 {method 'disable' of '_lsprof.Profiler' objects}
+        3    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1428(_fixupParents)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1529(info)
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:330(get_status)
+        3    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1497(__init__)
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:364(__init__)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1790(isEnabledFor)
+        4    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:234(_acquireLock)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\threading.py:124(RLock)
+        4    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:243(_releaseLock)
+        1    0.000    0.000    0.000    0.000 I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:488(_register_default_handlers)
+        4    0.000    0.000    0.000    0.000 {method 'rfind' of 'str' objects}
+        3    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:208(_checkLevel)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\enum.py:197(__get__)
+        4    0.000    0.000    0.000    0.000 {method 'acquire' of '_thread.RLock' objects}
+        9    0.000    0.000    0.000    0.000 {built-in method builtins.isinstance}
+        4    0.000    0.000    0.000    0.000 {method 'release' of '_thread.RLock' objects}
+        3    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:811(__init__)
+        1    0.000    0.000    0.000    0.000 <string>:2(__init__)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1317(__init__)
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1776(getEffectiveLevel)
+        1    0.000    0.000    0.000    0.000 {method '__exit__' of '_thread.lock' objects}
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\enum.py:1274(name)
+        1    0.000    0.000    0.000    0.000 {built-in method time.time}
+        1    0.000    0.000    0.000    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1369(disable)
+        1    0.000    0.000    0.000    0.000 {method 'keys' of 'dict' objects}
+        1    0.000    0.000    0.000    0.000 {method '__exit__' of '_thread.RLock' objects}
+
+
+   Ordered by: cumulative time
+   List reduced from 37 to 20 due to restriction <20>
+
+Function                                                                                                                 was called by...
+                                                                                                                             ncalls  tottime  cumtime
+I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:733(get_app_controller)        <- 
+I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:140(__init__)                  <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:733(get_app_controller)
+{built-in method builtins.print}                                                                                         <- 
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:2156(getLogger)                           <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:140(__init__)
+                                                                                                                                  1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:364(__init__)
+                                                                                                                                  1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:478(__init__)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1377(getLogger)                           <-       3    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:2156(getLogger)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:141(__exit__)                                   <- 
+{built-in method builtins.next}                                                                                          <-       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:141(__exit__)
+I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:162(profile_context)  <-       1    0.000    0.000  {built-in method builtins.next}
+I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)      <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:162(profile_context)
+I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:478(__init__)         <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:140(__init__)
+{method 'disable' of '_lsprof.Profiler' objects}                                                                         <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1428(_fixupParents)                       <-       3    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1377(getLogger)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1529(info)                                <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:140(__init__)
+I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:330(get_status)                <- 
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1497(__init__)                            <-       3    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1377(getLogger)
+I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:364(__init__)         <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:478(__init__)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1790(isEnabledFor)                        <-       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1529(info)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:234(_acquireLock)                         <-       3    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1377(getLogger)
+                                                                                                                                  1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1790(isEnabledFor)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\threading.py:124(RLock)                                       <-       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:140(__init__)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:243(_releaseLock)                         <-       3    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1377(getLogger)
+                                                                                                                                  1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1790(isEnabledFor)
+
+
+   Ordered by: cumulative time
+   List reduced from 37 to 20 due to restriction <20>
+
+Function                                                                                                                 called...
+                                                                                                                             ncalls  tottime  cumtime
+I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:733(get_app_controller)        ->       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:140(__init__)
+                                                                                                                                  1    0.000    0.000  {method '__exit__' of '_thread.lock' objects}
+I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:140(__init__)                  ->       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1529(info)
+                                                                                                                                  1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:2156(getLogger)
+                                                                                                                                  1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\threading.py:124(RLock)
+                                                                                                                                  1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:478(__init__)
+{built-in method builtins.print}                                                                                         -> 
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:2156(getLogger)                           ->       3    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1377(getLogger)
+                                                                                                                                  3    0.000    0.000  {built-in method builtins.isinstance}
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1377(getLogger)                           ->       3    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:234(_acquireLock)
+                                                                                                                                  3    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:243(_releaseLock)
+                                                                                                                                  3    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1428(_fixupParents)
+                                                                                                                                  3    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1497(__init__)
+                                                                                                                                  3    0.000    0.000  {built-in method builtins.isinstance}
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\contextlib.py:141(__exit__)                                   ->       1    0.000    0.000  {built-in method builtins.next}
+{built-in method builtins.next}                                                                                          ->       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:162(profile_context)
+I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:162(profile_context)  ->       1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)
+I:\dev-work-space\project\app\test-version\social-download-manager\scripts\performance\profiler.py:133(end_session)      ->       1    0.000    0.000  {built-in method time.time}
+                                                                                                                                  1    0.000    0.000  {method 'disable' of '_lsprof.Profiler' objects}
+I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:478(__init__)         ->       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:2156(getLogger)
+                                                                                                                                  1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:364(__init__)
+                                                                                                                                  1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:488(_register_default_handlers)
+{method 'disable' of '_lsprof.Profiler' objects}                                                                         -> 
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1428(_fixupParents)                       ->       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1317(__init__)
+                                                                                                                                  4    0.000    0.000  {method 'rfind' of 'str' objects}
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1529(info)                                ->       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1790(isEnabledFor)
+I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:330(get_status)                ->       1    0.000    0.000  <string>:2(__init__)
+                                                                                                                                  1    0.000    0.000  {method '__exit__' of '_thread.RLock' objects}
+                                                                                                                                  1    0.000    0.000  {method 'keys' of 'dict' objects}
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1497(__init__)                            ->       3    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:208(_checkLevel)
+                                                                                                                                  3    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:811(__init__)
+I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:364(__init__)         ->       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:2156(getLogger)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1790(isEnabledFor)                        ->       1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:234(_acquireLock)
+                                                                                                                                  1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:243(_releaseLock)
+                                                                                                                                  1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1369(disable)
+                                                                                                                                  1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1776(getEffectiveLevel)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:234(_acquireLock)                         ->       4    0.000    0.000  {method 'acquire' of '_thread.RLock' objects}
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\threading.py:124(RLock)                                       -> 
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:243(_releaseLock)                         ->       4    0.000    0.000  {method 'release' of '_thread.RLock' objects}
+
+

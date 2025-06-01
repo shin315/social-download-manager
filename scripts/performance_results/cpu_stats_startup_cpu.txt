@@ -1,0 +1,287 @@
+         63276 function calls (62060 primitive calls) in 0.099 seconds
+
+   Ordered by: cumulative time
+   List reduced from 739 to 50 due to restriction <50>
+
+   ncalls  tottime  percall  cumtime  percall filename:lineno(function)
+     53/1    0.001    0.000    0.100    0.100 <frozen importlib._bootstrap>:1349(_find_and_load)
+     53/1    0.000    0.000    0.100    0.100 <frozen importlib._bootstrap>:1304(_find_and_load_unlocked)
+     51/1    0.000    0.000    0.099    0.099 <frozen importlib._bootstrap>:911(_load_unlocked)
+     43/1    0.000    0.000    0.099    0.099 <frozen importlib._bootstrap_external>:988(exec_module)
+    110/3    0.000    0.000    0.098    0.033 <frozen importlib._bootstrap>:480(_call_with_frames_removed)
+    190/1    0.021    0.000    0.097    0.097 {built-in method builtins.exec}
+        1    0.000    0.000    0.097    0.097 I:\dev-work-space\project\app\test-version\social-download-manager\main_v2.py:1(<module>)
+      3/1    0.000    0.000    0.096    0.096 {built-in method builtins.__import__}
+        1    0.000    0.000    0.096    0.096 I:\dev-work-space\project\app\test-version\social-download-manager\core\__init__.py:1(<module>)
+        1    0.000    0.000    0.095    0.095 I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:1(<module>)
+        1    0.000    0.000    0.076    0.076 I:\dev-work-space\project\app\test-version\social-download-manager\core\services\__init__.py:1(<module>)
+        1    0.000    0.000    0.072    0.072 I:\dev-work-space\project\app\test-version\social-download-manager\core\services\content_service.py:1(<module>)
+        1    0.000    0.000    0.063    0.063 I:\dev-work-space\project\app\test-version\social-download-manager\data\models\__init__.py:1(<module>)
+        1    0.000    0.000    0.033    0.033 I:\dev-work-space\project\app\test-version\social-download-manager\data\models\download_repositories.py:1(<module>)
+       43    0.000    0.000    0.033    0.001 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:1255(wrap)
+       43    0.002    0.000    0.033    0.001 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:921(_process_class)
+        1    0.000    0.000    0.028    0.028 I:\dev-work-space\project\app\test-version\social-download-manager\data\models\transaction_repository.py:1(<module>)
+        1    0.000    0.000    0.027    0.027 I:\dev-work-space\project\app\test-version\social-download-manager\data\database\__init__.py:1(<module>)
+      147    0.001    0.000    0.024    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:449(_create_fn)
+       43    0.000    0.000    0.023    0.001 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:1238(dataclass)
+       43    0.001    0.000    0.022    0.001 <frozen importlib._bootstrap_external>:1061(get_code)
+      263    0.003    0.000    0.021    0.000 {built-in method builtins.__build_class__}
+       44    0.000    0.000    0.013    0.000 <frozen importlib._bootstrap_external>:1182(get_data)
+       43    0.001    0.000    0.013    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:568(_init_fn)
+       44    0.011    0.000    0.011    0.000 {built-in method _io.open_code}
+       51    0.000    0.000    0.008    0.000 <frozen importlib._bootstrap>:1240(_find_spec)
+        1    0.000    0.000    0.008    0.008 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1(<module>)
+        1    0.000    0.000    0.008    0.008 I:\dev-work-space\project\app\test-version\social-download-manager\data\models\content.py:1(<module>)
+        1    0.000    0.000    0.008    0.008 I:\dev-work-space\project\app\test-version\social-download-manager\core\services\dtos.py:1(<module>)
+       47    0.000    0.000    0.007    0.000 <frozen importlib._bootstrap_external>:1516(find_spec)
+       47    0.000    0.000    0.007    0.000 <frozen importlib._bootstrap_external>:1487(_get_spec)
+       95    0.001    0.000    0.007    0.000 <frozen importlib._bootstrap_external>:1589(find_spec)
+        1    0.000    0.000    0.006    0.006 I:\dev-work-space\project\app\test-version\social-download-manager\data\models\repositories.py:1(<module>)
+        1    0.000    0.000    0.005    0.005 I:\dev-work-space\project\app\test-version\social-download-manager\data\models\base.py:1(<module>)
+       43    0.000    0.000    0.005    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:661(_cmp_fn)
+       42    0.001    0.000    0.005    0.000 <frozen importlib._bootstrap_external>:750(_compile_bytecode)
+       43    0.000    0.000    0.005    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:627(_repr_fn)
+       33    0.001    0.000    0.005    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\enum.py:515(__new__)
+  900/843    0.001    0.000    0.005    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\typing.py:378(inner)
+        1    0.000    0.000    0.005    0.005 I:\dev-work-space\project\app\test-version\social-download-manager\data\database\migrations.py:1(<module>)
+       42    0.005    0.000    0.005    0.000 {built-in method marshal.loads}
+        1    0.000    0.000    0.005    0.005 I:\dev-work-space\project\app\test-version\social-download-manager\data\models\downloads.py:1(<module>)
+        9    0.000    0.000    0.005    0.001 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\re\__init__.py:226(compile)
+        9    0.000    0.000    0.005    0.001 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\re\__init__.py:280(_compile)
+        9    0.000    0.000    0.004    0.000 C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\re\_compiler.py:740(compile)
+        1    0.000    0.000    0.004    0.004 I:\dev-work-space\project\app\test-version\social-download-manager\data\database\connection.py:1(<module>)
+        1    0.000    0.000    0.004    0.004 I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:1(<module>)
+  391/141    0.001    0.000    0.004    0.000 {built-in method __new__ of type object at 0x00007FFB9CED88B0}
+       51    0.000    0.000    0.004    0.000 <frozen importlib._bootstrap>:806(module_from_spec)
+        1    0.000    0.000    0.004    0.004 I:\dev-work-space\project\app\test-version\social-download-manager\data\database\transactions.py:1(<module>)
+
+
+   Ordered by: cumulative time
+   List reduced from 739 to 20 due to restriction <20>
+
+Function                                                                                                              was called by...
+                                                                                                                          ncalls  tottime  cumtime
+<frozen importlib._bootstrap>:1349(_find_and_load)                                                                    <-       1    0.000    0.002  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\hashlib.py:1(<module>)
+                                                                                                                               1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\hashlib.py:82(__get_builtin_constructor)
+                                                                                                                               1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\heapq.py:1(<module>)
+                                                                                                                               3    0.000    0.006  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1(<module>)
+                                                                                                                               2    0.000    0.002  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\queue.py:1(<module>)
+                                                                                                                               1    0.000    0.004  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\sqlite3\__init__.py:1(<module>)
+                                                                                                                               1    0.000    0.002  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\sqlite3\dbapi2.py:1(<module>)
+                                                                                                                               1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\string.py:1(<module>)
+                                                                                                                               1    0.000    0.003  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\traceback.py:1(<module>)
+                                                                                                                               1    0.000    0.001  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\uuid.py:1(<module>)
+                                                                                                                               1    0.000    0.096  I:\dev-work-space\project\app\test-version\social-download-manager\core\__init__.py:1(<module>)
+                                                                                                                               5    0.000    0.093  I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:1(<module>)
+                                                                                                                               4    0.000    0.076  I:\dev-work-space\project\app\test-version\social-download-manager\core\services\__init__.py:1(<module>)
+                                                                                                                               2    0.000    0.072  I:\dev-work-space\project\app\test-version\social-download-manager\core\services\content_service.py:1(<module>)
+                                                                                                                               7    0.000    0.027  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\__init__.py:1(<module>)
+                                                                                                                               1    0.000    0.003  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\connection.py:1(<module>)
+                                                                                                                               1    0.000    0.003  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\migrations.py:1(<module>)
+                                                                                                                               1    0.000    0.002  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\transactions.py:1(<module>)
+                                                                                                                               6    0.000    0.063  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\__init__.py:1(<module>)
+                                                                                                                               1    0.000    0.004  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\base.py:1(<module>)
+                                                                                                                               3    0.000    0.033  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\download_repositories.py:1(<module>)
+                                                                                                                               1    0.000    0.005  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\repositories.py:1(<module>)
+                                                                                                                               1    0.000    0.028  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\transaction_repository.py:1(<module>)
+                                                                                                                               2    0.000    0.097  I:\dev-work-space\project\app\test-version\social-download-manager\main_v2.py:1(<module>)
+                                                                                                                             3/1    0.000    0.096  {built-in method builtins.__import__}
+<frozen importlib._bootstrap>:1304(_find_and_load_unlocked)                                                           <-    53/1    0.000    0.100  <frozen importlib._bootstrap>:1349(_find_and_load)
+<frozen importlib._bootstrap>:911(_load_unlocked)                                                                     <-    51/1    0.000    0.099  <frozen importlib._bootstrap>:1304(_find_and_load_unlocked)
+<frozen importlib._bootstrap_external>:988(exec_module)                                                               <-    43/1    0.000    0.099  <frozen importlib._bootstrap>:911(_load_unlocked)
+<frozen importlib._bootstrap>:480(_call_with_frames_removed)                                                          <-       4    0.000    0.000  <frozen importlib._bootstrap>:989(create_module)
+                                                                                                                               4    0.000    0.000  <frozen importlib._bootstrap>:997(exec_module)
+                                                                                                                              47    0.000    0.000  <frozen importlib._bootstrap>:1128(find_spec)
+                                                                                                                             3/1    0.000    0.096  <frozen importlib._bootstrap>:1304(_find_and_load_unlocked)
+                                                                                                                            43/1    0.000    0.097  <frozen importlib._bootstrap_external>:988(exec_module)
+                                                                                                                               1    0.000    0.001  <frozen importlib._bootstrap_external>:1053(source_to_code)
+                                                                                                                               4    0.000    0.002  <frozen importlib._bootstrap_external>:1286(create_module)
+                                                                                                                               4    0.000    0.001  <frozen importlib._bootstrap_external>:1294(exec_module)
+{built-in method builtins.exec}                                                                                       <-    43/1    0.000    0.097  <frozen importlib._bootstrap>:480(_call_with_frames_removed)
+                                                                                                                             147    0.021    0.022  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:449(_create_fn)
+I:\dev-work-space\project\app\test-version\social-download-manager\main_v2.py:1(<module>)                             <-       1    0.000    0.097  {built-in method builtins.exec}
+{built-in method builtins.__import__}                                                                                 <-     3/1    0.000    0.096  <frozen importlib._bootstrap>:480(_call_with_frames_removed)
+I:\dev-work-space\project\app\test-version\social-download-manager\core\__init__.py:1(<module>)                       <-       1    0.000    0.096  {built-in method builtins.exec}
+I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:1(<module>)                 <-       1    0.000    0.095  {built-in method builtins.exec}
+I:\dev-work-space\project\app\test-version\social-download-manager\core\services\__init__.py:1(<module>)              <-       1    0.000    0.076  {built-in method builtins.exec}
+I:\dev-work-space\project\app\test-version\social-download-manager\core\services\content_service.py:1(<module>)       <-       1    0.000    0.072  {built-in method builtins.exec}
+I:\dev-work-space\project\app\test-version\social-download-manager\data\models\__init__.py:1(<module>)                <-       1    0.000    0.063  {built-in method builtins.exec}
+I:\dev-work-space\project\app\test-version\social-download-manager\data\models\download_repositories.py:1(<module>)   <-       1    0.000    0.033  {built-in method builtins.exec}
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:1255(wrap)                                  <-      34    0.000    0.023  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:1238(dataclass)
+                                                                                                                               6    0.000    0.007  I:\dev-work-space\project\app\test-version\social-download-manager\core\services\dtos.py:1(<module>)
+                                                                                                                               3    0.000    0.004  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\downloads.py:1(<module>)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:921(_process_class)                         <-      43    0.002    0.033  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:1255(wrap)
+I:\dev-work-space\project\app\test-version\social-download-manager\data\models\transaction_repository.py:1(<module>)  <-       1    0.000    0.028  {built-in method builtins.exec}
+I:\dev-work-space\project\app\test-version\social-download-manager\data\database\__init__.py:1(<module>)              <-       1    0.000    0.027  {built-in method builtins.exec}
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:449(_create_fn)                             <-      43    0.001    0.011  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:568(_init_fn)
+                                                                                                                              43    0.000    0.004  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:627(_repr_fn)
+                                                                                                                              12    0.000    0.002  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:638(_frozen_get_del_attr)
+                                                                                                                              43    0.000    0.005  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:661(_cmp_fn)
+                                                                                                                               6    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:675(_hash_fn)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:1238(dataclass)                             <-       1    0.000    0.001  I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:1(<module>)
+                                                                                                                               5    0.000    0.003  I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:1(<module>)
+                                                                                                                               1    0.000    0.001  I:\dev-work-space\project\app\test-version\social-download-manager\core\event_system.py:1(<module>)
+                                                                                                                               6    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\services\dtos.py:1(<module>)
+                                                                                                                               2    0.000    0.001  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\connection.py:1(<module>)
+                                                                                                                               1    0.000    0.001  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\exceptions.py:1(<module>)
+                                                                                                                               2    0.000    0.001  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\logging.py:1(<module>)
+                                                                                                                               2    0.000    0.001  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\migrations.py:1(<module>)
+                                                                                                                               2    0.000    0.001  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\monitoring.py:1(<module>)
+                                                                                                                               4    0.000    0.002  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\retry.py:1(<module>)
+                                                                                                                               2    0.000    0.001  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\transactions.py:1(<module>)
+                                                                                                                               1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\base.py:1(<module>)
+                                                                                                                               6    0.000    0.007  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\content.py:1(<module>)
+                                                                                                                               4    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\downloads.py:1(<module>)
+                                                                                                                               2    0.000    0.002  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:1(<module>)
+                                                                                                                               2    0.000    0.001  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\performance_optimizations.py:1(<module>)
+
+
+   Ordered by: cumulative time
+   List reduced from 739 to 20 due to restriction <20>
+
+Function                                                                                                              called...
+                                                                                                                          ncalls  tottime  cumtime
+<frozen importlib._bootstrap>:1349(_find_and_load)                                                                    ->      53    0.000    0.000  <frozen importlib._bootstrap>:412(__init__)
+                                                                                                                              53    0.001    0.002  <frozen importlib._bootstrap>:416(__enter__)
+                                                                                                                              53    0.000    0.000  <frozen importlib._bootstrap>:420(__exit__)
+                                                                                                                              51    0.000    0.000  <frozen importlib._bootstrap>:445(cb)
+                                                                                                                            53/1    0.000    0.100  <frozen importlib._bootstrap>:1304(_find_and_load_unlocked)
+                                                                                                                             106    0.000    0.000  {method 'get' of 'dict' objects}
+<frozen importlib._bootstrap>:1304(_find_and_load_unlocked)                                                           ->     3/1    0.000    0.096  <frozen importlib._bootstrap>:480(_call_with_frames_removed)
+                                                                                                                            51/1    0.000    0.099  <frozen importlib._bootstrap>:911(_load_unlocked)
+                                                                                                                              51    0.000    0.008  <frozen importlib._bootstrap>:1240(_find_spec)
+                                                                                                                              30    0.000    0.000  {built-in method builtins.setattr}
+                                                                                                                              30    0.000    0.000  {method 'append' of 'list' objects}
+                                                                                                                              30    0.000    0.000  {method 'pop' of 'list' objects}
+                                                                                                                              83    0.000    0.000  {method 'rpartition' of 'str' objects}
+<frozen importlib._bootstrap>:911(_load_unlocked)                                                                     ->      51    0.000    0.000  <frozen importlib._bootstrap>:491(_verbose_message)
+                                                                                                                              51    0.000    0.004  <frozen importlib._bootstrap>:806(module_from_spec)
+                                                                                                                               4    0.000    0.000  <frozen importlib._bootstrap>:997(exec_module)
+                                                                                                                            43/1    0.000    0.099  <frozen importlib._bootstrap_external>:988(exec_module)
+                                                                                                                               4    0.000    0.001  <frozen importlib._bootstrap_external>:1294(exec_module)
+                                                                                                                              51    0.000    0.000  {built-in method builtins.hasattr}
+                                                                                                                              51    0.000    0.000  {method 'pop' of 'dict' objects}
+<frozen importlib._bootstrap_external>:988(exec_module)                                                               ->    43/1    0.000    0.097  <frozen importlib._bootstrap>:480(_call_with_frames_removed)
+                                                                                                                              43    0.001    0.022  <frozen importlib._bootstrap_external>:1061(get_code)
+<frozen importlib._bootstrap>:480(_call_with_frames_removed)                                                          ->       4    0.000    0.000  {built-in method _imp.create_builtin}
+                                                                                                                               4    0.002    0.002  {built-in method _imp.create_dynamic}
+                                                                                                                               4    0.000    0.000  {built-in method _imp.exec_builtin}
+                                                                                                                               4    0.001    0.001  {built-in method _imp.exec_dynamic}
+                                                                                                                              47    0.000    0.000  {built-in method _imp.find_frozen}
+                                                                                                                             3/1    0.000    0.096  {built-in method builtins.__import__}
+                                                                                                                               1    0.001    0.001  {built-in method builtins.compile}
+                                                                                                                            43/1    0.000    0.097  {built-in method builtins.exec}
+{built-in method builtins.exec}                                                                                       ->       1    0.000    0.002  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\hashlib.py:1(<module>)
+                                                                                                                               1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\heapq.py:1(<module>)
+                                                                                                                               1    0.000    0.008  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\logging\__init__.py:1(<module>)
+                                                                                                                               1    0.000    0.002  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\queue.py:1(<module>)
+                                                                                                                               1    0.000    0.004  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\sqlite3\__init__.py:1(<module>)
+                                                                                                                               1    0.000    0.002  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\sqlite3\dbapi2.py:1(<module>)
+                                                                                                                               1    0.000    0.001  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\string.py:1(<module>)
+                                                                                                                               1    0.000    0.002  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\textwrap.py:1(<module>)
+                                                                                                                               1    0.000    0.003  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\traceback.py:1(<module>)
+                                                                                                                               1    0.000    0.001  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\uuid.py:1(<module>)
+                                                                                                                               1    0.000    0.096  I:\dev-work-space\project\app\test-version\social-download-manager\core\__init__.py:1(<module>)
+                                                                                                                               1    0.000    0.095  I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:1(<module>)
+                                                                                                                               1    0.000    0.003  I:\dev-work-space\project\app\test-version\social-download-manager\core\config_manager.py:1(<module>)
+                                                                                                                               1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\constants.py:1(<module>)
+                                                                                                                               1    0.000    0.002  I:\dev-work-space\project\app\test-version\social-download-manager\core\event_system.py:1(<module>)
+                                                                                                                               1    0.000    0.076  I:\dev-work-space\project\app\test-version\social-download-manager\core\services\__init__.py:1(<module>)
+                                                                                                                               1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\services\analytics_service.py:1(<module>)
+                                                                                                                               1    0.000    0.072  I:\dev-work-space\project\app\test-version\social-download-manager\core\services\content_service.py:1(<module>)
+                                                                                                                               1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\core\services\download_service.py:1(<module>)
+                                                                                                                               1    0.000    0.008  I:\dev-work-space\project\app\test-version\social-download-manager\core\services\dtos.py:1(<module>)
+                                                                                                                               1    0.000    0.001  I:\dev-work-space\project\app\test-version\social-download-manager\core\services\service_registry.py:1(<module>)
+                                                                                                                               1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\data\__init__.py:1(<module>)
+                                                                                                                               1    0.000    0.027  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\__init__.py:1(<module>)
+                                                                                                                               1    0.000    0.004  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\connection.py:1(<module>)
+                                                                                                                               1    0.000    0.002  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\exceptions.py:1(<module>)
+                                                                                                                               1    0.000    0.002  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\logging.py:1(<module>)
+                                                                                                                               1    0.000    0.005  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\migrations.py:1(<module>)
+                                                                                                                               1    0.000    0.002  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\monitoring.py:1(<module>)
+                                                                                                                               1    0.000    0.003  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\retry.py:1(<module>)
+                                                                                                                               1    0.000    0.004  I:\dev-work-space\project\app\test-version\social-download-manager\data\database\transactions.py:1(<module>)
+                                                                                                                               1    0.000    0.063  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\__init__.py:1(<module>)
+                                                                                                                               1    0.000    0.001  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\advanced_queries.py:1(<module>)
+                                                                                                                               1    0.000    0.005  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\base.py:1(<module>)
+                                                                                                                               1    0.000    0.008  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\content.py:1(<module>)
+                                                                                                                               1    0.000    0.033  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\download_repositories.py:1(<module>)
+                                                                                                                               1    0.000    0.005  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\downloads.py:1(<module>)
+                                                                                                                               1    0.000    0.004  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\error_management.py:1(<module>)
+                                                                                                                               1    0.000    0.002  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\performance_optimizations.py:1(<module>)
+                                                                                                                               1    0.000    0.006  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\repositories.py:1(<module>)
+                                                                                                                               1    0.000    0.001  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\repository_interfaces.py:1(<module>)
+                                                                                                                               1    0.000    0.028  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\transaction_repository.py:1(<module>)
+                                                                                                                               1    0.000    0.097  I:\dev-work-space\project\app\test-version\social-download-manager\main_v2.py:1(<module>)
+                                                                                                                               1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\version.py:1(<module>)
+I:\dev-work-space\project\app\test-version\social-download-manager\main_v2.py:1(<module>)                             ->       2    0.000    0.097  <frozen importlib._bootstrap>:1349(_find_and_load)
+                                                                                                                               1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:437(__str__)
+                                                                                                                               1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:731(parent)
+                                                                                                                               1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1157(__init__)
+                                                                                                                               1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\pathlib.py:1164(__new__)
+                                                                                                                               1    0.000    0.000  {method 'insert' of 'list' objects}
+{built-in method builtins.__import__}                                                                                 ->     3/1    0.000    0.096  <frozen importlib._bootstrap>:1349(_find_and_load)
+I:\dev-work-space\project\app\test-version\social-download-manager\core\__init__.py:1(<module>)                       ->       4    0.000    0.000  <frozen importlib._bootstrap>:645(parent)
+                                                                                                                               1    0.000    0.096  <frozen importlib._bootstrap>:1349(_find_and_load)
+I:\dev-work-space\project\app\test-version\social-download-manager\core\app_controller.py:1(<module>)                 ->       4    0.000    0.000  <frozen importlib._bootstrap>:645(parent)
+                                                                                                                               5    0.000    0.093  <frozen importlib._bootstrap>:1349(_find_and_load)
+                                                                                                                               2    0.000    0.000  <frozen importlib._bootstrap>:1390(_handle_fromlist)
+                                                                                                                               1    0.000    0.001  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:1238(dataclass)
+                                                                                                                               1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\typing.py:378(inner)
+                                                                                                                               1    0.000    0.000  {built-in method _thread.allocate_lock}
+                                                                                                                               5    0.000    0.001  {built-in method builtins.__build_class__}
+I:\dev-work-space\project\app\test-version\social-download-manager\core\services\__init__.py:1(<module>)              ->       5    0.000    0.000  <frozen importlib._bootstrap>:645(parent)
+                                                                                                                               4    0.000    0.076  <frozen importlib._bootstrap>:1349(_find_and_load)
+I:\dev-work-space\project\app\test-version\social-download-manager\core\services\content_service.py:1(<module>)       ->       1    0.000    0.000  <frozen importlib._bootstrap>:645(parent)
+                                                                                                                               2    0.000    0.072  <frozen importlib._bootstrap>:1349(_find_and_load)
+                                                                                                                               1    0.000    0.000  <frozen importlib._bootstrap>:1390(_handle_fromlist)
+                                                                                                                               2    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\typing.py:378(inner)
+                                                                                                                               2    0.000    0.000  {built-in method builtins.__build_class__}
+I:\dev-work-space\project\app\test-version\social-download-manager\data\models\__init__.py:1(<module>)                ->      10    0.000    0.000  <frozen importlib._bootstrap>:645(parent)
+                                                                                                                               6    0.000    0.063  <frozen importlib._bootstrap>:1349(_find_and_load)
+I:\dev-work-space\project\app\test-version\social-download-manager\data\models\download_repositories.py:1(<module>)   ->       7    0.000    0.000  <frozen importlib._bootstrap>:645(parent)
+                                                                                                                               3    0.000    0.033  <frozen importlib._bootstrap>:1349(_find_and_load)
+                                                                                                                               3    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\typing.py:378(inner)
+                                                                                                                               1    0.000    0.000  I:\dev-work-space\project\app\test-version\social-download-manager\data\models\repositories.py:517(__init__)
+                                                                                                                               3    0.000    0.000  {built-in method builtins.__build_class__}
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:1255(wrap)                                  ->      43    0.002    0.033  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:921(_process_class)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:921(_process_class)                         ->      43    0.000    0.000  <frozen abc>:146(update_abstractmethods)
+                                                                                                                              43    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:372(__init__)
+                                                                                                                              43    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:428(_fields_in_init_order)
+                                                                                                                              86    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:437(_tuple_str)
+                                                                                                                              43    0.001    0.013  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:568(_init_fn)
+                                                                                                                              43    0.000    0.005  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:627(_repr_fn)
+                                                                                                                               6    0.000    0.002  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:638(_frozen_get_del_attr)
+                                                                                                                              43    0.000    0.005  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:661(_cmp_fn)
+                                                                                                                             397    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:697(_is_kw_only)
+                                                                                                                             397    0.001    0.002  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:760(_get_field)
+                                                                                                                             184    0.000    0.001  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:864(_set_new_attribute)
+                                                                                                                              37    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:879(_hash_set_none)
+                                                                                                                               6    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:882(_hash_add)
+                                                                                                                             549    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:1142(<genexpr>)
+                                                                                                                              43    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\inspect.py:175(get_annotations)
+                                                                                                                              31    0.000    0.000  {built-in method builtins.delattr}
+                                                                                                                             507    0.000    0.000  {built-in method builtins.getattr}
+                                                                                                                              43    0.000    0.000  {built-in method builtins.hasattr}
+                                                                                                                            1399    0.000    0.000  {built-in method builtins.isinstance}
+                                                                                                                              86    0.000    0.000  {built-in method builtins.setattr}
+                                                                                                                             397    0.000    0.000  {method 'append' of 'list' objects}
+                                                                                                                              43    0.000    0.000  {method 'get' of 'mappingproxy' objects}
+                                                                                                                              43    0.000    0.000  {method 'items' of 'dict' objects}
+                                                                                                                              43    0.000    0.000  {method 'items' of 'mappingproxy' objects}
+                                                                                                                              98    0.000    0.000  {method 'values' of 'dict' objects}
+I:\dev-work-space\project\app\test-version\social-download-manager\data\models\transaction_repository.py:1(<module>)  ->       3    0.000    0.000  <frozen importlib._bootstrap>:645(parent)
+                                                                                                                               1    0.000    0.028  <frozen importlib._bootstrap>:1349(_find_and_load)
+                                                                                                                               1    0.000    0.000  <frozen importlib._bootstrap>:1390(_handle_fromlist)
+                                                                                                                               1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\typing.py:175(_type_check)
+                                                                                                                               1    0.000    0.000  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\typing.py:378(inner)
+                                                                                                                               3    0.000    0.000  {built-in method builtins.__build_class__}
+I:\dev-work-space\project\app\test-version\social-download-manager\data\database\__init__.py:1(<module>)              ->       7    0.000    0.000  <frozen importlib._bootstrap>:645(parent)
+                                                                                                                               7    0.000    0.027  <frozen importlib._bootstrap>:1349(_find_and_load)
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:449(_create_fn)                             ->       1    0.000    0.000  <string>:1(__create_fn__)
+                                                                                                                             147    0.021    0.022  {built-in method builtins.exec}
+                                                                                                                             441    0.000    0.001  {method 'join' of 'str' objects}
+                                                                                                                             147    0.000    0.000  {method 'keys' of 'dict' objects}
+C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:1238(dataclass)                             ->      34    0.000    0.023  C:\Users\Admin\AppData\Local\Programs\Python\Python312\Lib\dataclasses.py:1255(wrap)
+
+
