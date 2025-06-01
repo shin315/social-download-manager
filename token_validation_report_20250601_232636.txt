@@ -1,0 +1,43 @@
+============================================================
+DESIGN TOKEN SYSTEM VALIDATION REPORT
+============================================================
+
+Overall Score: 29.7/100
+Total Tokens: 175
+Valid Tokens: 52
+Invalid Tokens: 0
+Warnings: 123
+
+CATEGORY BREAKDOWN:
+----------------------------------------
+⚠️ COLOR: 70.3% (52/74)
+❌ SPACING: 0.0% (0/31)
+❌ TYPOGRAPHY: 0.0% (0/31)
+❌ SIZING: 0.0% (0/39)
+❌ ANIMATION: 0.0% (0/0)
+❌ BORDER: 0.0% (0/0)
+❌ SHADOW: 0.0% (0/0)
+❌ Z-INDEX: 0.0% (0/0)
+
+NAMING VIOLATIONS:
+------------------------------
+• color-border-focus (color): Token name 'color-border-focus' doesn't match expected pattern for color tokens
+• color-button-primary-background-hover (color): Token name 'color-button-primary-background-hover' doesn't match expected pattern for color tokens
+• color-background-primary (color): Token name 'color-background-primary' doesn't match expected pattern for color tokens
+• color-text-secondary (color): Token name 'color-text-secondary' doesn't match expected pattern for color tokens
+• color-button-primary-background (color): Token name 'color-button-primary-background' doesn't match expected pattern for color tokens
+• color-background-inverse (color): Token name 'color-background-inverse' doesn't match expected pattern for color tokens
+• color-border-default (color): Token name 'color-border-default' doesn't match expected pattern for color tokens
+• color-button-secondary-text (color): Token name 'color-button-secondary-text' doesn't match expected pattern for color tokens
+• color-background-secondary (color): Token name 'color-background-secondary' doesn't match expected pattern for color tokens
+• color-text-inverse (color): Token name 'color-text-inverse' doesn't match expected pattern for color tokens
+
+RECOMMENDATIONS:
+------------------------------
+1. Token system quality needs improvement
+2. High number of naming violations (109) - review naming conventions
+3. Token reference issues found (57) - check for broken references
+4. Multiple theme token issues (88) - review theme overrides
+5. Category 'spacing' has low quality score (0.0%)
+6. Category 'typography' has low quality score (0.0%)
+7. Category 'sizing' has low quality score (0.0%)

@@ -19,6 +19,9 @@ from localization import get_language_manager
 from utils.update_checker import UpdateChecker
 from utils.downloader import TikTokDownloader
 
+# Import new design system
+from ui.design_system.styles import MainWindowStyler
+
 def get_resource_path(relative_path):
     """Get absolute path to resource, works for dev and for PyInstaller"""
     try:
@@ -44,7 +47,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.output_folder = ""
-        self.current_theme = "dark"  # Store current theme
+        self.current_theme = "light"  # Default to light theme for new design system
         
         # Initialize language manager
         self.lang_manager = get_language_manager()
@@ -52,13 +55,19 @@ class MainWindow(QMainWindow):
         # Store platform actions to update icons based on theme
         self.platform_actions = {}
         
+        # Initialize design system styler
+        self.styler = None  # Will be initialized after UI setup
+        
         self.setup_font()
         self.init_ui()
+        
+        # Initialize modern styling system after UI is set up
+        self.styler = MainWindowStyler.create_for_main_window(self)
         
         # Load output folder, language and theme from config if available
         self.load_config()
         
-        # Áp dụng rõ ràng theme hiện tại sau khi đã load từ config
+        # Apply theme using the new design system
         self.set_theme(self.current_theme)
         
         # Update UI based on current language
@@ -133,8 +142,8 @@ class MainWindow(QMainWindow):
         # Platform Menu (YouTube, Instagram, Facebook)
         platform_menu = menu_bar.addMenu(self.tr_("MENU_PLATFORM"))
         
-        # Choose icon suffix based on current theme
-        icon_suffix = "-outlined" if self.current_theme == "dark" else "-bw"
+        # Choose icon suffix based on current theme (will be updated by styler)
+        icon_suffix = "-bw"  # Default for light theme
         
         # Action: TikTok (Current)
         tiktok_icon = QIcon(get_resource_path(f"assets/platforms/tiktok{icon_suffix}.png"))
@@ -171,32 +180,49 @@ class MainWindow(QMainWindow):
             "facebook": facebook_action
         }
         
-        # Theme Menu (Dark/Light)
+        # Theme Menu (Dark/Light/High Contrast/Blue)
         theme_menu = menu_bar.addMenu(self.tr_("MENU_APPEARANCE"))
         
-        # Create action group to select one of the themes
+        # Light mode action
         light_mode_action = QAction(self.tr_("MENU_LIGHT_MODE"), self)
         light_mode_action.setCheckable(True)
         light_mode_action.triggered.connect(lambda: self.set_theme("light"))
         theme_menu.addAction(light_mode_action)
         
+        # Dark mode action
         dark_mode_action = QAction(self.tr_("MENU_DARK_MODE"), self)
         dark_mode_action.setCheckable(True)
         dark_mode_action.triggered.connect(lambda: self.set_theme("dark"))
         theme_menu.addAction(dark_mode_action)
         
-        # Đặt checked cho theme hiện tại dựa trên self.current_theme
+        # High contrast mode action (NEW!)
+        high_contrast_action = QAction("High Contrast", self)
+        high_contrast_action.setCheckable(True)
+        high_contrast_action.triggered.connect(lambda: self.set_theme("high_contrast"))
+        theme_menu.addAction(high_contrast_action)
+        
+        # Blue theme action (NEW!)
+        blue_theme_action = QAction("Blue Theme", self)
+        blue_theme_action.setCheckable(True)
+        blue_theme_action.triggered.connect(lambda: self.set_theme("blue"))
+        theme_menu.addAction(blue_theme_action)
+        
+        # Set checked for current theme
         if self.current_theme == "light":
             light_mode_action.setChecked(True)
-            dark_mode_action.setChecked(False)
-        else:  # dark theme
+        elif self.current_theme == "dark":
             dark_mode_action.setChecked(True)
-            light_mode_action.setChecked(False)
+        elif self.current_theme == "high_contrast":
+            high_contrast_action.setChecked(True)
+        elif self.current_theme == "blue":
+            blue_theme_action.setChecked(True)
         
         # Create action group to select only one theme
         theme_group = QActionGroup(self)
         theme_group.addAction(light_mode_action)
         theme_group.addAction(dark_mode_action)
+        theme_group.addAction(high_contrast_action)
+        theme_group.addAction(blue_theme_action)
         theme_group.setExclusive(True)
         
         # Language Menu
@@ -394,71 +420,31 @@ class MainWindow(QMainWindow):
             )
         
     def set_theme(self, theme):
-        """Set application theme (dark/light)"""
+        """Set application theme using the modern design system"""
         self.current_theme = theme
         
-        # Apply theme to all components
+        # Use the new design system if available
+        if self.styler:
+            success = self.styler.set_theme(theme)
+            if success:
+                # Log theme change
+                try:
+                    log_file = get_resource_path('log.txt')
+                    with open(log_file, 'a', encoding='utf-8') as log:
+                        log.write(f"[{datetime.now()}] Theme changed to: {theme} (Design System)\n")
+                except:
+                    pass
+            return
+        
+        # Fallback to basic theming if design system not initialized yet
+        # (This should only happen during initialization)
         if theme == "dark":
+            # Minimal dark theme styling for initialization
             self.setStyleSheet("""
                 QMainWindow, QWidget {
                     background-color: #2d2d2d;
                     color: #ffffff;
                     font-family: 'Inter';
-                }
-                QTabWidget::pane {
-                    border: 1px solid #444444;
-                    background-color: #2d2d2d;
-                }
-                QTabBar::tab {
-                    background-color: #3d3d3d;
-                    color: #ffffff;
-                    padding: 8px 15px;
-                    border: 1px solid #444444;
-                }
-                QTabBar::tab:selected {
-                    background-color: #0078d7;
-                    font-weight: normal;
-                }
-                QTabBar::tab:hover:!selected {
-                    background-color: #505050;
-                }
-                QTableWidget {
-                    background-color: #2d2d2d;
-                    color: #ffffff;
-                    gridline-color: #444444;
-                    border: 1px solid #444444;
-                }
-                QTableWidget::item {
-                    border-bottom: 1px solid #444444;
-                    color: #ffffff;
-                }
-                QTableWidget::item:selected {
-                    background-color: #0078d7;
-                }
-                QTableWidget::item:hover {
-                    background-color: #3a3a3a;
-                }
-                QHeaderView::section {
-                    background-color: #3d3d3d;
-                    color: #ffffff;
-                    padding: 5px;
-                    border: 1px solid #444444;
-                }
-                QHeaderView::section:hover {
-                    background-color: #505050;
-                }
-                QLineEdit, QComboBox {
-                    background-color: #3d3d3d;
-                    color: #ffffff;
-                    border: 1px solid #555555;
-                    padding: 5px;
-                }
-                QComboBox:hover {
-                    background-color: #505050;
-                    border: 1px solid #666666;
-                }
-                QComboBox::drop-down:hover {
-                    background-color: #505050;
                 }
                 QPushButton {
                     background-color: #0078d7;
@@ -467,201 +453,17 @@ class MainWindow(QMainWindow):
                     padding: 8px 15px;
                     border-radius: 4px;
                 }
-                QPushButton:hover {
-                    background-color: #0086f0;
-                }
-                QPushButton:pressed {
-                    background-color: #0067b8;
-                }
-                QPushButton:disabled {
-                    background-color: #444444 !important;
-                    color: #777777 !important;
-                    border: none !important;
-                }
-                QCheckBox {
-                    color: #ffffff;
-                }
-                QCheckBox::indicator {
-                    width: 13px;
-                    height: 13px;
-                    background-color: #3d3d3d;
-                    border: 1px solid #555555;
-                    border-radius: 2px;
-                }
-                QCheckBox::indicator:checked {
-                    background-color: #0078d7;
-                    border: 1px solid #0078d7;
-                    border-radius: 2px;
-                }
-                QTableWidget QCheckBox::indicator {
-                    width: 13px;
-                    height: 13px;
-                    background-color: #3d3d3d;
-                    border: 1px solid #555555;
-                    border-radius: 2px;
-                }
-                QTableWidget QCheckBox::indicator:checked {
-                    background-color: #0078d7;
-                    border: 1px solid #0078d7;
-                    border-radius: 2px;
-                }
-                QMenuBar {
-                    background-color: #2d2d2d;
-                    color: #ffffff;
-                }
-                QMenuBar::item:selected {
-                    background-color: #3d3d3d;
-                }
-                QMenuBar::item:hover {
-                    background-color: #3d3d3d;
-                }
-                QMenu {
-                    background-color: #2d2d2d;
-                    color: #ffffff;
-                    border: 1px solid #444444;
-                }
-                QMenu::item:selected {
-                    background-color: #0078d7;
-                }
-                QMenu::item:hover:!selected {
-                    background-color: #3d3d3d;
-                }
-                QStatusBar {
-                    background-color: #2d2d2d;
-                    color: #ffffff;
-                }
-                QDialog {
-                    background-color: #2d2d2d;
-                    color: #ffffff;
-                    border-radius: 8px;
-                }
-                /* Synchronize colors for icons in context menu */
-                QMenu::icon {
-                    color: #cccccc;
-                }
-                /* Colors for all actions in context menu */
-                QMenu QAction {
-                    color: #ffffff;
-                }
-                /* Colors for all icons in right-click */
-                QMenu::indicator:non-exclusive:checked {
-                    image: url(:/qt-project.org/styles/commonstyle/images/checkbox-checked.png);
-                    color: #cccccc;
-                }
-                /* Set common color for all icons in context menu */
-                QMenu QIcon {
-                    color: #cccccc;
-                }
-                /* Color for cut, copy, paste icons and other icons in context menu */
-                QLineEdit::contextmenu-item QMenu::icon,
-                QLineEdit::contextmenu-item QAction::icon,
-                QTextEdit::contextmenu-item QMenu::icon,
-                QTextEdit::contextmenu-item QAction::icon,
-                QPlainTextEdit::contextmenu-item QMenu::icon,
-                QPlainTextEdit::contextmenu-item QAction::icon {
-                    color: #cccccc;
-                }
-                /* Title bar */
-                QDockWidget::title {
-                    background-color: #2d2d2d;
-                    color: #ffffff;
-                }
-                QMainWindow::title {
-                    background-color: #2d2d2d;
-                    color: #ffffff;
-                }
-                QWidget#titleBar {
-                    background-color: #2d2d2d;
-                    color: #ffffff;
-                }
-                QToolTip {
-                    background-color: #3d3d3d;
-                    color: #ffffff;
-                    border: 1px solid #555555;
-                    padding: 5px;
-                    border-radius: 3px;
-                }
             """)
-            self.status_bar.showMessage(self.tr_("STATUS_DARK_MODE_ENABLED"))
-            
-            # Force tooltips to update immediately by hiding any visible tooltip
-            QToolTip.hideText()
-            # Set application-wide tooltip style
-            QApplication.instance().setStyleSheet("""
-                QToolTip {
-                    background-color: #3d3d3d;
-                    color: #ffffff;
-                    border: 1px solid #555555;
-                    padding: 5px;
-                    border-radius: 3px;
-                }
-            """)
-            
-            # Update icons to white outline version for better visibility
+            if hasattr(self, 'status_bar'):
+                self.status_bar.showMessage(self.tr_("STATUS_DARK_MODE_ENABLED"))
             self.update_platform_icons("-outlined")
         else:
-            # Apply Light mode stylesheet with better contrast colors
+            # Minimal light theme styling for initialization  
             self.setStyleSheet("""
                 QMainWindow, QWidget {
                     background-color: #f0f0f0;
                     color: #333333;
                     font-family: 'Inter';
-                }
-                QTabWidget::pane {
-                    background-color: #f0f0f0;
-                }
-                QTabBar::tab {
-                    background-color: #e0e0e0;
-                    color: #333333;
-                    padding: 8px 15px;
-                    border: 1px solid #cccccc;
-                }
-                QTabBar::tab:selected {
-                    background-color: #0078d7;
-                    color: #ffffff;
-                    font-weight: normal;
-                }
-                QTabBar::tab:hover:!selected {
-                    background-color: #d0d0d0;
-                }
-                QTableWidget {
-                    background-color: #ffffff;
-                    color: #333333;
-                    gridline-color: #dddddd;
-                    border: 1px solid #cccccc;
-                }
-                QTableWidget::item {
-                    border-bottom: 1px solid #eeeeee;
-                    color: #333333;
-                }
-                QTableWidget::item:selected {
-                    background-color: #0078d7;
-                    color: #ffffff;
-                }
-                QTableWidget::item:hover {
-                    background-color: #e8e8e8;
-                }
-                QHeaderView::section {
-                    background-color: #e0e0e0;
-                    color: #333333;
-                    padding: 5px;
-                    border: 1px solid #cccccc;
-                }
-                QHeaderView::section:hover {
-                    background-color: #d0d0d0;
-                }
-                QLineEdit, QComboBox {
-                    background-color: #ffffff;
-                    color: #333333;
-                    border: 1px solid #cccccc;
-                    padding: 5px;
-                }
-                QComboBox:hover {
-                    background-color: #f5f5f5;
-                    border: 1px solid #bbbbbb;
-                }
-                QComboBox::drop-down:hover {
-                    background-color: #e5e5e5;
                 }
                 QPushButton {
                     background-color: #0078d7;
@@ -670,161 +472,13 @@ class MainWindow(QMainWindow):
                     padding: 8px 15px;
                     border-radius: 4px;
                 }
-                QPushButton:hover {
-                    background-color: #0086f0;
-                }
-                QPushButton:pressed {
-                    background-color: #0067b8;
-                }
-                QPushButton:disabled {
-                    background-color: #e5e5e5 !important;
-                    color: #a0a0a0 !important;
-                    border: 1px solid #d0d0d0 !important;
-                }
-                QCheckBox {
-                    color: #333333;
-                }
-                QCheckBox::indicator {
-                    width: 13px;
-                    height: 13px;
-                    background-color: #e0e0e0;
-                    border: 1px solid #aaaaaa;
-                    border-radius: 2px;
-                }
-                QCheckBox::indicator:checked {
-                    background-color: #0078d7;
-                    border: 1px solid #0078d7;
-                    border-radius: 2px;
-                }
-                QTableWidget QCheckBox::indicator {
-                    width: 13px;
-                    height: 13px;
-                    background-color: #e0e0e0;
-                    border: 1px solid #aaaaaa;
-                    border-radius: 2px;
-                }
-                QTableWidget QCheckBox::indicator:checked {
-                    background-color: #0078d7;
-                    border: 1px solid #0078d7;
-                    border-radius: 2px;
-                }
-                QMenuBar {
-                    background-color: #e0e0e0;
-                    color: #333333;
-                    border-bottom: 1px solid #cccccc;
-                }
-                QMenuBar::item:selected {
-                    background-color: #d0d0d0;
-                }
-                QMenuBar::item:hover {
-                    background-color: #d0d0d0;
-                }
-                QMenu {
-                    background-color: #f5f5f5;
-                    color: #333333;
-                    border: 1px solid #cccccc;
-                }
-                QMenu::item:selected {
-                    background-color: #0078d7;
-                    color: #ffffff;
-                }
-                QMenu::item:hover:!selected {
-                    background-color: #e0e0e0;
-                }
-                QStatusBar {
-                    background-color: #e0e0e0;
-                    color: #333333;
-                    border-top: 1px solid #cccccc;
-                }
-                QDialog {
-                    background-color: #f5f5f5;
-                    color: #333333;
-                    border-radius: 8px;
-                }
-                /* Synchronize colors for icons in context menu */
-                QMenu::icon {
-                    color: #555555;
-                }
-                /* Colors for all actions in context menu */
-                QMenu QAction {
-                    color: #333333;
-                }
-                /* Colors for all icons in right-click */
-                QMenu::indicator:non-exclusive:checked {
-                    image: url(:/qt-project.org/styles/commonstyle/images/checkbox-checked.png);
-                    color: #555555;
-                }
-                /* Set common color for all icons in context menu */
-                QMenu QIcon {
-                    color: #555555;
-                }
-                /* Title bar */
-                QDockWidget::title {
-                    background-color: #e0e0e0;
-                    color: #333333;
-                }
-                QMainWindow::title {
-                    background-color: #e0e0e0;
-                    color: #333333;
-                }
-                QWidget#titleBar {
-                    background-color: #e0e0e0;
-                    color: #333333;
-                }
-                QToolTip {
-                    background-color: #f5f5f5;
-                    color: #333333;
-                    border: 1px solid #cccccc;
-                    padding: 5px;
-                    border-radius: 3px;
-                }
             """)
-            self.status_bar.showMessage(self.tr_("STATUS_LIGHT_MODE_ENABLED"))
-            
-            # Force tooltips to update immediately by hiding any visible tooltip
-            QToolTip.hideText()
-            # Set application-wide tooltip style
-            QApplication.instance().setStyleSheet("""
-                QToolTip {
-                    background-color: #f5f5f5;
-                    color: #333333;
-                    border: 1px solid #cccccc;
-                    padding: 5px;
-                    border-radius: 3px;
-                }
-            """)
-            
-            # Update icons to black version
+            if hasattr(self, 'status_bar'):
+                self.status_bar.showMessage(self.tr_("STATUS_LIGHT_MODE_ENABLED"))
             self.update_platform_icons("-bw")
-            
-        # Update colors for child tabs
-        if hasattr(self, 'downloaded_videos_tab') and hasattr(self.downloaded_videos_tab, 'apply_theme_colors'):
-            self.downloaded_videos_tab.apply_theme_colors(theme)
-            
-        if hasattr(self, 'video_info_tab') and hasattr(self.video_info_tab, 'apply_theme_colors'):
-            self.video_info_tab.apply_theme_colors(theme)
-            
-        # Update theme for donate dialog if already created
-        if hasattr(self, 'donate_dialog') and self.donate_dialog:
-            # Update dialog style
-            if theme == "dark":
-                self.donate_dialog.setStyleSheet("background-color: #2d2d2d; color: #ffffff;")
-            else:
-                self.donate_dialog.setStyleSheet("background-color: #f5f5f5; color: #333333;")
-            
-            # Update donate_tab if exists
-            if hasattr(self, 'donate_tab'):
-                self.donate_tab.apply_theme_colors(self.current_theme)
-
+        
         # Save theme setting to config
         self.save_config('theme', theme)
-        # Log theme change
-        try:
-            log_file = get_resource_path('log.txt')
-            with open(log_file, 'a', encoding='utf-8') as log:
-                log.write(f"[{datetime.now()}] Theme changed to: {theme}\n")
-        except:
-            pass
 
     def update_platform_icons(self, suffix):
         """Update icons for platform menus based on theme"""

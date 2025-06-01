@@ -1,16 +1,27 @@
 """
 Theme System
 
-Theme management and predefined themes for the design system.
+Theme management system for the Social Download Manager design system.
+Provides theme definitions, management, and preset themes.
 """
 
-from .base import ThemeDefinition, ThemeManager
-from .presets import LIGHT_THEME, DARK_THEME, HIGH_CONTRAST_THEME
+from .base import (
+    ThemeDefinition,
+    ThemeManager,
+    ThemeMetadata,
+    ThemeType
+)
+
+from .presets import (
+    ThemePresets,
+    initialize_preset_themes
+)
 
 __all__ = [
     "ThemeDefinition",
-    "ThemeManager", 
-    "LIGHT_THEME",
-    "DARK_THEME",
-    "HIGH_CONTRAST_THEME"
+    "ThemeManager",
+    "ThemeMetadata",
+    "ThemeType",
+    "ThemePresets",
+    "initialize_preset_themes"
 ] 

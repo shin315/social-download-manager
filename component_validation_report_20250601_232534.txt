@@ -1,0 +1,55 @@
+============================================================
+DESIGN SYSTEM COMPONENT VALIDATION REPORT
+============================================================
+
+Overall Score: 50.5/100
+Components Passed: 0/10
+Components Failed: 0/10
+Components with Warnings: 10/10
+
+COMPONENT DETAILS:
+----------------------------------------
+⚠️ BUTTON: 30.0/100
+    - Hardcoded color found: #3B82F6
+    - Hardcoded color found: #FFFFFF
+    - Hardcoded color found: #2563EB
+⚠️ INPUT: 50.0/100
+    - Hardcoded color found: #FFFFFF
+    - Hardcoded color found: #0F172A
+    - Hardcoded color found: #E2E8F0
+⚠️ TABLE: 20.0/100
+    - Hardcoded color found: #FFFFFF
+    - Hardcoded color found: #0F172A
+    - Hardcoded color found: #E2E8F0
+⚠️ TAB: 45.0/100
+    - Hardcoded color found: #E2E8F0
+    - Hardcoded color found: #FFFFFF
+    - Hardcoded color found: #F8FAFC
+⚠️ CHECKBOX: 40.0/100
+    - Hardcoded color found: #0F172A
+    - Hardcoded color found: #F8FAFC
+    - Hardcoded color found: #E2E8F0
+⚠️ MENU: 35.0/100
+    - Hardcoded color found: #F8FAFC
+    - Hardcoded color found: #0F172A
+    - Hardcoded color found: #E2E8F0
+⚠️ STATUSBAR: 70.0/100
+    - Hardcoded color found: #F8FAFC
+    - Hardcoded color found: #0F172A
+    - Hardcoded color found: #E2E8F0
+⚠️ DIALOG: 70.0/100
+    - Hardcoded color found: #FFFFFF
+    - Hardcoded color found: #0F172A
+    - Hardcoded color found: #E2E8F0
+⚠️ TOOLTIP: 70.0/100
+    - Hardcoded color found: #0F172A
+    - Hardcoded color found: #FFFFFF
+    - Hardcoded color found: #E2E8F0
+⚠️ MAIN_WINDOW: 75.0/100
+    - Hardcoded color found: #FFFFFF
+    - Hardcoded color found: #0F172A
+
+RECOMMENDATIONS:
+----------------------------------------
+1. Overall component quality needs improvement
+2. Multiple hardcoded colors found - prioritize token migration

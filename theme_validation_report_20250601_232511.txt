@@ -1,0 +1,32 @@
+============================================================
+THEME SYSTEM VALIDATION REPORT
+============================================================
+
+Consistency Score: 0.0/100
+Themes Tested: 4
+Themes Passed: 0
+Themes Failed: 0
+Themes with Warnings: 4
+
+THEME DETAILS:
+----------------------------------------
+⚠️ LIGHT: 0.0/100
+    - Dark background color '#3B82F6' in light theme
+    - Dark background color '#2563EB' in light theme
+    - Dark background color '#3B82F6' in light theme
+⚠️ DARK: 0.0/100
+    - Light background color '#60A5FA' in dark theme
+    - Dark text color '#3B82F6' in dark theme
+    - Dark text color '#3B82F6' in dark theme
+⚠️ HIGH_CONTRAST: 0.0/100
+    - Dark background color '#000000 !important' in light theme
+    - Light text color '#FFFFFF' in light theme
+    - Light text color '#FFFF00' in light theme
+⚠️ BLUE: 0.0/100
+    - Dark background color '#0284C7' in light theme
+    - Dark background color '#0369A1' in light theme
+    - Dark background color '#0284C7' in light theme
+
+RECOMMENDATIONS:
+------------------------------
+1. Theme consistency needs improvement across components

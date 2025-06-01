@@ -1,0 +1,29 @@
+================================================================================
+DESIGN SYSTEM COMPREHENSIVE VALIDATION REPORT
+Generated: 2025-06-01 23:26:37
+================================================================================
+
+SUMMARY:
+----------------------------------------
+🔧 Component Validation: 50.5/100
+   Components Passed: 0/10
+   Components Failed: 0/10
+
+🎨 Token Validation: 29.7/100
+   Total Tokens: 175
+   Valid Tokens: 52
+   Invalid Tokens: 0
+
+🎭 Theme Validation: 0.0/100
+   Themes Passed: 0/4
+   Themes Failed: 0/4
+
+📸 Visual Regression: Baseline Directory Available
+   Total Baselines: 3
+   Components Covered: 1
+
+OVERALL ASSESSMENT:
+------------------------------
+Combined Score: 26.7/100
+
+Status: 🔴 Poor - Significant improvements required

@@ -18,22 +18,22 @@ from .tokens import (
     TypographyToken,
     SizingToken,
     TokenManager,
-    TokenCategory
+    TokenCategory,
+    initialize_design_system
 )
 
 from .themes import (
     ThemeDefinition,
     ThemeManager,
-    LIGHT_THEME,
-    DARK_THEME,
-    HIGH_CONTRAST_THEME
+    ThemeType,
+    ThemePresets,
+    initialize_preset_themes
 )
 
-from .utils import (
-    TokenResolver,
-    ThemeValidator,
-    CSSGenerator,
-    TokenExporter
+from .styles import (
+    StyleManager,
+    ComponentStyler,
+    ThemeStyler
 )
 
 __version__ = "1.0.0"
@@ -46,19 +46,19 @@ __all__ = [
     "SizingToken",
     "TokenManager",
     "TokenCategory",
+    "initialize_design_system",
     
     # Theme System
     "ThemeDefinition",
     "ThemeManager",
-    "LIGHT_THEME",
-    "DARK_THEME", 
-    "HIGH_CONTRAST_THEME",
+    "ThemeType",
+    "ThemePresets",
+    "initialize_preset_themes",
     
-    # Utilities
-    "TokenResolver",
-    "ThemeValidator",
-    "CSSGenerator",
-    "TokenExporter"
+    # Style System
+    "StyleManager",
+    "ComponentStyler",
+    "ThemeStyler"
 ]
 
 # Default token manager instance
