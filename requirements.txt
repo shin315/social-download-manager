@@ -1,4 +1,11 @@
 PyQt6==6.6.1
 yt-dlp==2025.3.31
 packaging>=23.2
-requests>=2.31.0 
+requests>=2.31.0
+
+# Testing dependencies for integration testing
+pytest>=7.4.0
+pytest-asyncio>=0.21.0
+pytest-cov>=4.1.0
+pytest-mock>=3.11.0
+pytest-timeout>=2.1.0 

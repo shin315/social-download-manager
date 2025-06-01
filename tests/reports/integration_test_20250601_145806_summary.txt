@@ -1,0 +1,31 @@
+Integration Test Execution Report
+==================================================
+Execution ID: integration_test_20250601_145806
+Configuration: quick
+Start Time: 2025-06-01 14:58:06.811805
+Duration: 1.50 seconds
+
+Overall Results:
+  Total Tests: 2
+  Passed: 0
+  Failed: 0
+  Skipped: 2
+  Errors: 0
+  Success Rate: 0.0%
+  Average Coverage: 0.0%
+
+Test Suites:
+  Component Interactions:
+    Tests: 1 | Passed: 0 | Failed: 0
+    Success Rate: 0.0% | Coverage: 0.0%
+    Duration: 0.82s
+
+  End-to-End Scenarios:
+    Tests: 1 | Passed: 0 | Failed: 0
+    Success Rate: 0.0% | Coverage: 0.0%
+    Duration: 0.69s
+
+Recommendations:
+  - Test coverage is 0.0%. Consider adding more tests to reach 80%+ coverage.
+  - 2 tests were skipped. Consider implementing missing components to enable more tests.
+  - All tests passed successfully! Consider adding more edge case tests and increasing coverage.
