@@ -34,6 +34,13 @@ class ComponentStyler:
             }}
         """
     
+    def get_card_styles(self, **overrides) -> str:
+        """Generate modern card-based layout styles"""
+        from .card_styles import CardStyler
+        
+        card_styler = CardStyler(self.style_manager)
+        return card_styler.get_complete_card_stylesheet(interactive=True)
+    
     def get_button_styles(self, **overrides) -> str:
         """Generate button styles using design tokens"""
         return f"""
@@ -267,7 +274,7 @@ class ComponentStyler:
         """
         if components is None:
             components = [
-                'main_window', 'button', 'input', 'table', 'tab', 
+                'main_window', 'card', 'button', 'input', 'table', 'tab', 
                 'checkbox', 'menu', 'statusbar', 'dialog', 'tooltip'
             ]
         

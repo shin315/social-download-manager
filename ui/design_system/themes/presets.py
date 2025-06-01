@@ -2,7 +2,7 @@
 Theme Presets
 
 Predefined theme configurations for the Social Download Manager.
-Includes Light, Dark, and High Contrast themes using semantic tokens.
+Includes Light and Dark themes using semantic tokens.
 """
 
 from typing import Dict, Any
@@ -123,123 +123,12 @@ class ThemePresets:
         
         return ThemeDefinition("dark", dark_overrides, metadata)
     
-    @staticmethod
-    def create_high_contrast_theme() -> ThemeDefinition:
-        """
-        Create the high contrast theme
-        
-        Provides maximum contrast for accessibility and users with
-        visual impairments or in bright lighting conditions.
-        """
-        high_contrast_overrides = {
-            # Background colors - pure black/white for maximum contrast
-            'color-background-primary': '#000000',      # pure black
-            'color-background-secondary': '#111111',    # very dark gray
-            'color-background-tertiary': '#222222',     # dark gray
-            'color-background-inverse': '#FFFFFF',      # pure white
-            
-            # Text colors - pure white/black for maximum contrast
-            'color-text-primary': '#FFFFFF',       # pure white
-            'color-text-secondary': '#FFFFFF',     # pure white (no secondary in high contrast)
-            'color-text-tertiary': '#CCCCCC',      # light gray (minimal difference)
-            'color-text-inverse': '#000000',       # pure black
-            'color-text-link': '#00FFFF',          # bright cyan (high visibility)
-            'color-text-link-hover': '#FFFF00',    # bright yellow (high visibility)
-            
-            # Border colors - high contrast borders
-            'color-border-default': '#FFFFFF',     # white borders on dark
-            'color-border-strong': '#FFFFFF',      # white borders
-            'color-border-focus': '#FFFF00',       # bright yellow focus
-            
-            # Button colors - high contrast buttons
-            'color-button-primary-background': '#FFFFFF',    # white background
-            'color-button-primary-background-hover': '#FFFF00',  # yellow on hover
-            'color-button-primary-text': '#000000',          # black text
-            'color-button-secondary-background': '#000000',  # black background
-            'color-button-secondary-text': '#FFFFFF',        # white text
-            
-            # Status colors - high contrast status colors
-            'color-status-success': '#00FF00',     # bright green
-            'color-status-warning': '#FFFF00',     # bright yellow
-            'color-status-error': '#FF0000',       # bright red
-            'color-status-info': '#00FFFF',        # bright cyan
-        }
-        
-        metadata = ThemeMetadata(
-            name="high_contrast",
-            display_name="High Contrast Theme",
-            description="Maximum contrast theme for accessibility and bright environments",
-            theme_type=ThemeType.HIGH_CONTRAST,
-            author="Social Download Manager",
-            version="1.0.0",
-            created_at=datetime.now(),
-            tags={'accessibility', 'high-contrast', 'a11y', 'bright', 'visibility'}
-        )
-        
-        return ThemeDefinition("high_contrast", high_contrast_overrides, metadata)
-    
-    @staticmethod
-    def create_blue_theme() -> ThemeDefinition:
-        """
-        Create a custom blue-focused theme
-        
-        Emphasizes blue tones throughout the interface while maintaining usability.
-        """
-        blue_overrides = {
-            # Background colors - blue-tinted backgrounds
-            'color-background-primary': '#F0F9FF',      # blue-50
-            'color-background-secondary': '#E0F2FE',    # sky-100
-            'color-background-tertiary': '#BAE6FD',     # sky-200
-            'color-background-inverse': '#0C4A6E',      # sky-900
-            
-            # Text colors - blue-tinted text
-            'color-text-primary': '#0C4A6E',       # sky-900
-            'color-text-secondary': '#075985',     # sky-800
-            'color-text-tertiary': '#0369A1',      # sky-700
-            'color-text-inverse': '#F0F9FF',       # blue-50
-            'color-text-link': '#0284C7',          # sky-600
-            'color-text-link-hover': '#0369A1',    # sky-700
-            
-            # Border colors - blue borders
-            'color-border-default': '#7DD3FC',     # sky-300
-            'color-border-strong': '#38BDF8',      # sky-400
-            'color-border-focus': '#0284C7',       # sky-600
-            
-            # Button colors - blue button scheme
-            'color-button-primary-background': '#0284C7',         # sky-600
-            'color-button-primary-background-hover': '#0369A1',   # sky-700
-            'color-button-primary-text': '#F0F9FF',              # blue-50
-            'color-button-secondary-background': '#BAE6FD',       # sky-200
-            'color-button-secondary-text': '#0C4A6E',             # sky-900
-            
-            # Status colors - maintain standard semantic colors
-            'color-status-success': '#10B981',     # emerald-500
-            'color-status-warning': '#F59E0B',     # amber-500
-            'color-status-error': '#EF4444',       # red-500
-            'color-status-info': '#06B6D4',        # cyan-500
-        }
-        
-        metadata = ThemeMetadata(
-            name="blue",
-            display_name="Blue Theme",
-            description="Blue-focused theme with calming blue tones throughout",
-            theme_type=ThemeType.CUSTOM,
-            author="Social Download Manager",
-            version="1.0.0",
-            created_at=datetime.now(),
-            tags={'blue', 'calming', 'custom', 'tinted', 'cool'}
-        )
-        
-        return ThemeDefinition("blue", blue_overrides, metadata)
-    
     @classmethod
     def create_all_presets(cls) -> Dict[str, ThemeDefinition]:
-        """Create all preset themes"""
+        """Create all preset themes (light and dark only)"""
         return {
             'light': cls.create_light_theme(),
-            'dark': cls.create_dark_theme(),
-            'high_contrast': cls.create_high_contrast_theme(),
-            'blue': cls.create_blue_theme()
+            'dark': cls.create_dark_theme()
         }
     
     @classmethod
@@ -250,7 +139,7 @@ class ThemePresets:
     @classmethod
     def get_preset_names(cls) -> list[str]:
         """Get list of all preset theme names"""
-        return ['light', 'dark', 'high_contrast', 'blue']
+        return ['light', 'dark']
     
     @classmethod
     def is_preset_theme(cls, theme_name: str) -> bool:
@@ -260,7 +149,7 @@ class ThemePresets:
 
 def initialize_preset_themes(theme_manager) -> Dict[str, bool]:
     """
-    Initialize all preset themes in a ThemeManager
+    Initialize preset themes in a ThemeManager
     
     Args:
         theme_manager: ThemeManager instance to register presets in

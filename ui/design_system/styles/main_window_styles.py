@@ -198,7 +198,7 @@ class MainWindowStyler(QObject):
             'icon_suffix': self.theme_styler.get_icon_suffix_for_theme(),
             'tab_integration': {
                 'integrator_available': self.tab_integrator is not None,
-                'themes_supported': 4
+                'themes_supported': 2  # Light and Dark themes only
             }
         }
     
