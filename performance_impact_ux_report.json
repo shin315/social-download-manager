@@ -1,0 +1,87 @@
+{
+  "test_summary": {
+    "overall_performance_score": 96.25,
+    "rating": "EXCELLENT",
+    "execution_time": "1.61s",
+    "total_metrics": 3,
+    "timestamp": "2025-06-01T18:32:36.435652"
+  },
+  "category_results": {
+    "ui_responsiveness": {
+      "button_response": {
+        "time_ms": 0,
+        "target_ms": 100,
+        "status": "PASS"
+      },
+      "tab_switch": {
+        "time_ms": 0,
+        "target_ms": 50,
+        "status": "PASS"
+      },
+      "input_response": {
+        "time_ms": 0,
+        "target_ms": 50,
+        "status": "PASS"
+      }
+    },
+    "memory_efficiency": {
+      "initial_memory_mb": 45.0078125,
+      "peak_memory_mb": 45.34375,
+      "memory_increase_mb": 0.3359375,
+      "final_memory_mb": 45.3515625,
+      "memory_leak_mb": 0.34375,
+      "status": "PASS"
+    },
+    "cpu_utilization": {
+      "baseline_cpu_percent": 0.0,
+      "ui_creation": {
+        "peak_cpu_percent": 0.0,
+        "cpu_increase_percent": 0.0,
+        "status": "PASS"
+      },
+      "table_population": {
+        "peak_cpu_percent": 0.0,
+        "cpu_increase_percent": 0.0,
+        "status": "PASS"
+      },
+      "rapid_updates": {
+        "peak_cpu_percent": 0.0,
+        "cpu_increase_percent": 0.0,
+        "status": "PASS"
+      },
+      "average_cpu_increase": 0.0,
+      "overall_status": "PASS"
+    },
+    "loading_performance": {
+      "main_window_load_time": {
+        "time_ms": 117,
+        "target_ms": 1000,
+        "status": "PASS"
+      },
+      "dialog_window_load_time": {
+        "time_ms": 18,
+        "target_ms": 500,
+        "status": "PASS"
+      },
+      "complex_table_load_time": {
+        "time_ms": 26,
+        "target_ms": 500,
+        "status": "PASS"
+      },
+      "overall_status": "FAIL"
+    },
+    "animation_smoothness": {
+      "progress_animation": {
+        "avg_frame_time_ms": 0.08462727286810563,
+        "max_frame_time_ms": 0.3102000009675976,
+        "target_frame_time_ms": 16.67,
+        "status": "PASS"
+      },
+      "overall_status": "PASS"
+    }
+  },
+  "recommendations": [
+    "Implement lazy loading for complex UI components",
+    "Excellent performance across all metrics - maintain current optimization standards"
+  ]
+}

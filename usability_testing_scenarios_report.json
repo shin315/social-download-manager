@@ -1,0 +1,144 @@
+{
+  "test_summary": {
+    "overall_usability_score": 93.85714285714286,
+    "rating": "EXCELLENT",
+    "total_scenarios": 7,
+    "successful_scenarios": 7,
+    "execution_time": "1.51s",
+    "timestamp": "2025-06-01T18:32:33.218177"
+  },
+  "user_type_analysis": {
+    "novice": {
+      "total_scenarios": 3,
+      "success_rate": 1.0,
+      "avg_satisfaction": 7.666666666666667,
+      "avg_completion_time": 0.18650380770365396,
+      "total_errors": 1
+    },
+    "power_user": {
+      "total_scenarios": 2,
+      "success_rate": 1.0,
+      "avg_satisfaction": 8.5,
+      "avg_completion_time": 0.05525994300842285,
+      "total_errors": 0
+    },
+    "mobile_user": {
+      "total_scenarios": 1,
+      "success_rate": 1.0,
+      "avg_satisfaction": 8.0,
+      "avg_completion_time": 0.023474931716918945,
+      "total_errors": 0
+    },
+    "accessibility_user": {
+      "total_scenarios": 1,
+      "success_rate": 1.0,
+      "avg_satisfaction": 9.0,
+      "avg_completion_time": 0.03905034065246582,
+      "total_errors": 0
+    }
+  },
+  "pain_points_analysis": {
+    "frequency": {
+      "Settings menu not immediately obvious": 1,
+      "Would like more automation options": 1,
+      "Some buttons could be larger for touch": 1
+    },
+    "most_common": [
+      [
+        "Settings menu not immediately obvious",
+        1
+      ],
+      [
+        "Would like more automation options",
+        1
+      ],
+      [
+        "Some buttons could be larger for touch",
+        1
+      ]
+    ]
+  },
+  "detailed_results": [
+    {
+      "scenario_id": "N1",
+      "user_type": "novice",
+      "result": "success",
+      "completion_time": 0.49948883056640625,
+      "errors": 0,
+      "satisfaction": 8,
+      "pain_points": [],
+      "notes": "User successfully completed first download with minimal guidance"
+    },
+    {
+      "scenario_id": "N2",
+      "user_type": "novice",
+      "result": "success",
+      "completion_time": 0.024394512176513672,
+      "errors": 1,
+      "satisfaction": 7,
+      "pain_points": [
+        "Settings menu not immediately obvious"
+      ],
+      "notes": "User found settings after some exploration"
+    },
+    {
+      "scenario_id": "P1",
+      "user_type": "power_user",
+      "result": "success",
+      "completion_time": 0.07593822479248047,
+      "errors": 0,
+      "satisfaction": 9,
+      "pain_points": [],
+      "notes": "Efficiently managed multiple downloads"
+    },
+    {
+      "scenario_id": "P2",
+      "user_type": "power_user",
+      "result": "success",
+      "completion_time": 0.034581661224365234,
+      "errors": 0,
+      "satisfaction": 8,
+      "pain_points": [
+        "Would like more automation options"
+      ],
+      "notes": "Successfully used advanced features"
+    },
+    {
+      "scenario_id": "M1",
+      "user_type": "mobile_user",
+      "result": "success",
+      "completion_time": 0.023474931716918945,
+      "errors": 0,
+      "satisfaction": 8,
+      "pain_points": [
+        "Some buttons could be larger for touch"
+      ],
+      "notes": "Touch interface generally responsive"
+    },
+    {
+      "scenario_id": "A1",
+      "user_type": "accessibility_user",
+      "result": "success",
+      "completion_time": 0.03905034065246582,
+      "errors": 0,
+      "satisfaction": 9,
+      "pain_points": [],
+      "notes": "Excellent keyboard navigation and screen reader support"
+    },
+    {
+      "scenario_id": "E1",
+      "user_type": "novice",
+      "result": "success",
+      "completion_time": 0.03562808036804199,
+      "errors": 0,
+      "satisfaction": 8,
+      "pain_points": [],
+      "notes": "Novice user simulation"
+    }
+  ],
+  "recommendations": [
+    "Excellent usability - maintain current standards and consider advanced user experience enhancements",
+    "Enhance satisfaction for novice users - current average is 7.7/10",
+    "Address most common pain point: 'Settings menu not immediately obvious' (reported 1 times)"
+  ]
+}
