@@ -2,9 +2,9 @@
   "test_summary": {
     "overall_performance_score": 96.25,
     "rating": "EXCELLENT",
-    "execution_time": "1.61s",
+    "execution_time": "1.56s",
     "total_metrics": 3,
-    "timestamp": "2025-06-01T18:32:36.435652"
+    "timestamp": "2025-06-01T18:46:07.260910"
   },
   "category_results": {
     "ui_responsiveness": {
@@ -25,11 +25,11 @@
       }
     },
     "memory_efficiency": {
-      "initial_memory_mb": 45.0078125,
-      "peak_memory_mb": 45.34375,
-      "memory_increase_mb": 0.3359375,
-      "final_memory_mb": 45.3515625,
-      "memory_leak_mb": 0.34375,
+      "initial_memory_mb": 45.22265625,
+      "peak_memory_mb": 45.5390625,
+      "memory_increase_mb": 0.31640625,
+      "final_memory_mb": 45.546875,
+      "memory_leak_mb": 0.32421875,
       "status": "PASS"
     },
     "cpu_utilization": {
@@ -54,17 +54,17 @@
     },
     "loading_performance": {
       "main_window_load_time": {
-        "time_ms": 117,
+        "time_ms": 114,
         "target_ms": 1000,
         "status": "PASS"
       },
       "dialog_window_load_time": {
-        "time_ms": 18,
+        "time_ms": 10,
         "target_ms": 500,
         "status": "PASS"
       },
       "complex_table_load_time": {
-        "time_ms": 26,
+        "time_ms": 18,
         "target_ms": 500,
         "status": "PASS"
       },
@@ -72,8 +72,8 @@
     },
     "animation_smoothness": {
       "progress_animation": {
-        "avg_frame_time_ms": 0.08462727286810563,
-        "max_frame_time_ms": 0.3102000009675976,
+        "avg_frame_time_ms": 0.07358181855207394,
+        "max_frame_time_ms": 0.3995000006398186,
         "target_frame_time_ms": 16.67,
         "status": "PASS"
       },
