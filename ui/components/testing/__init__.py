@@ -35,6 +35,21 @@ from .performance_tester import (
     MemoryProfiler, RenderingProfiler
 )
 
+# UI Components Testing Framework
+# Task 22.2 - UI Responsiveness Testing Infrastructure
+
+"""
+UI Testing Framework for Social Download Manager v2.0
+
+This package provides comprehensive testing infrastructure for UI components,
+including responsiveness testing, performance monitoring, and accessibility validation.
+"""
+
+from .ui_test_base import UITestBase
+from .performance_monitor import UIPerformanceMonitor
+from .accessibility_checker import AccessibilityChecker
+from .responsiveness_tester import ResponsivenessTester
+
 __all__ = [
     # Core testing framework
     'ComponentTester',
@@ -78,5 +93,13 @@ __all__ = [
     'PerformanceMetrics',
     'BenchmarkTest',
     'MemoryProfiler',
-    'RenderingProfiler'
-] 
+    'RenderingProfiler',
+
+    'UITestBase',
+    'UIPerformanceMonitor', 
+    'AccessibilityChecker',
+    'ResponsivenessTester'
+]
+
+__version__ = '2.0.0'
+__task__ = '22.2 - UI Responsiveness Testing' 

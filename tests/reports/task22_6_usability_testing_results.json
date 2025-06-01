@@ -1,0 +1,500 @@
+{
+  "task": "22.6 - Usability Testing with Different User Scenarios",
+  "timestamp": "2025-06-01 17:51:41",
+  "execution_time": 0.0,
+  "metrics": {
+    "task_completion_rate": 65.0,
+    "user_satisfaction": 3.8503107823674503,
+    "tests_passed": 1,
+    "total_tests": 3,
+    "overall_score": 33.33333333333333,
+    "status": "NEEDS IMPROVEMENT"
+  },
+  "detailed_report": {
+    "test_session_id": "usability_test_1748775101",
+    "timestamp": "2025-06-01 17:51:41",
+    "total_users": 5,
+    "total_tasks": 8,
+    "total_test_cases": 40,
+    "overall_completion_rate": 65.0,
+    "overall_satisfaction": 3.8503107823674503,
+    "successful_tasks": 26,
+    "task_metrics": {
+      "task_001": {
+        "title": "First Video Download",
+        "completion_rate": 100.0,
+        "avg_time": 52.116906739559205,
+        "avg_satisfaction": 4.4535389336900435,
+        "avg_errors": 0.4
+      },
+      "task_002": {
+        "title": "Batch Download Multiple Videos",
+        "completion_rate": 80.0,
+        "avg_time": 120.15689632246429,
+        "avg_satisfaction": 4.226106453294736,
+        "avg_errors": 1.2
+      },
+      "task_003": {
+        "title": "Quality/Format Selection",
+        "completion_rate": 100.0,
+        "avg_time": 33.153813027951244,
+        "avg_satisfaction": 4.569851163249753,
+        "avg_errors": 0.0
+      },
+      "task_004": {
+        "title": "Download Management",
+        "completion_rate": 60.0,
+        "avg_time": 64.52361185774211,
+        "avg_satisfaction": 3.909938522863875,
+        "avg_errors": 1.0
+      },
+      "task_005": {
+        "title": "Settings Customization",
+        "completion_rate": 40.0,
+        "avg_time": 97.61188412710318,
+        "avg_satisfaction": 3.562817321387034,
+        "avg_errors": 1.4
+      },
+      "task_006": {
+        "title": "Error Recovery",
+        "completion_rate": 40.0,
+        "avg_time": 41.94719501514938,
+        "avg_satisfaction": 3.197983541462205,
+        "avg_errors": 1.8
+      },
+      "task_007": {
+        "title": "Advanced Features Discovery",
+        "completion_rate": 60.0,
+        "avg_time": 135.44210929950478,
+        "avg_satisfaction": 3.6356909443950443,
+        "avg_errors": 2.2
+      },
+      "task_008": {
+        "title": "Workflow Efficiency",
+        "completion_rate": 40.0,
+        "avg_time": 27.374164905705744,
+        "avg_satisfaction": 3.2465593785969147,
+        "avg_errors": 1.8
+      }
+    },
+    "user_summary": {
+      "user_001": {
+        "name": "Tech Expert (18-25)",
+        "completion_rate": 75.0,
+        "avg_satisfaction": 4.087520138328575,
+        "successful_tasks": 6,
+        "total_tasks": 8
+      },
+      "user_002": {
+        "name": "Intermediate User (26-35)",
+        "completion_rate": 62.5,
+        "avg_satisfaction": 3.943290320699779,
+        "successful_tasks": 5,
+        "total_tasks": 8
+      },
+      "user_003": {
+        "name": "Beginner User (36-50)",
+        "completion_rate": 50.0,
+        "avg_satisfaction": 3.2346283882429634,
+        "successful_tasks": 4,
+        "total_tasks": 8
+      },
+      "user_004": {
+        "name": "Senior User (51-65)",
+        "completion_rate": 62.5,
+        "avg_satisfaction": 3.8302642872207575,
+        "successful_tasks": 5,
+        "total_tasks": 8
+      },
+      "user_005": {
+        "name": "Content Creator (18-25)",
+        "completion_rate": 75.0,
+        "avg_satisfaction": 4.155850777345179,
+        "successful_tasks": 6,
+        "total_tasks": 8
+      }
+    },
+    "pain_points": [
+      "Low completion rate for Download Management (60.0%)",
+      "Low completion rate for Settings Customization (40.0%)",
+      "Low completion rate for Error Recovery (40.0%)",
+      "Low satisfaction for Error Recovery (3.2/5)",
+      "Low completion rate for Advanced Features Discovery (60.0%)",
+      "High error rate for Advanced Features Discovery (2.2 errors)",
+      "Low completion rate for Workflow Efficiency (40.0%)",
+      "Low satisfaction for Workflow Efficiency (3.2/5)"
+    ],
+    "recommendations": [
+      "Improve UI clarity and guidance for Download Management",
+      "Improve UI clarity and guidance for Settings Customization",
+      "Improve UI clarity and guidance for Error Recovery",
+      "Enhance user experience for Error Recovery",
+      "Improve UI clarity and guidance for Advanced Features Discovery",
+      "Reduce error scenarios in Advanced Features Discovery",
+      "Improve UI clarity and guidance for Workflow Efficiency",
+      "Enhance user experience for Workflow Efficiency"
+    ],
+    "detailed_results": [
+      {
+        "completion_status": "success",
+        "completion_time": 28.0411175317623,
+        "satisfaction": 4.128450232918216,
+        "error_count": 1,
+        "user_id": "user_001",
+        "task_id": "task_001",
+        "task_title": "First Video Download"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 67.68063111809685,
+        "satisfaction": 4.9364880323355695,
+        "error_count": 0,
+        "user_id": "user_001",
+        "task_id": "task_002",
+        "task_title": "Batch Download Multiple Videos"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 20.984496994349435,
+        "satisfaction": 4.67579368656697,
+        "error_count": 0,
+        "user_id": "user_001",
+        "task_id": "task_003",
+        "task_title": "Quality/Format Selection"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 30.41112297590643,
+        "satisfaction": 4.707758501078424,
+        "error_count": 0,
+        "user_id": "user_001",
+        "task_id": "task_004",
+        "task_title": "Download Management"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 40.51387887954195,
+        "satisfaction": 4.373528878593673,
+        "error_count": 0,
+        "user_id": "user_001",
+        "task_id": "task_005",
+        "task_title": "Settings Customization"
+      },
+      {
+        "completion_status": "partial",
+        "completion_time": 23.183308610189517,
+        "satisfaction": 2.6776109833357,
+        "error_count": 2,
+        "user_id": "user_001",
+        "task_id": "task_006",
+        "task_title": "Error Recovery"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 85.44865560038049,
+        "satisfaction": 4.636716251261206,
+        "error_count": 1,
+        "user_id": "user_001",
+        "task_id": "task_007",
+        "task_title": "Advanced Features Discovery"
+      },
+      {
+        "completion_status": "partial",
+        "completion_time": 15.689283970031996,
+        "satisfaction": 2.5638145405388397,
+        "error_count": 2,
+        "user_id": "user_001",
+        "task_id": "task_008",
+        "task_title": "Workflow Efficiency"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 44.87278420486503,
+        "satisfaction": 4.134008119517299,
+        "error_count": 0,
+        "user_id": "user_002",
+        "task_id": "task_001",
+        "task_title": "First Video Download"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 119.04208619014977,
+        "satisfaction": 4.603205449839786,
+        "error_count": 1,
+        "user_id": "user_002",
+        "task_id": "task_002",
+        "task_title": "Batch Download Multiple Videos"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 35.054595826278664,
+        "satisfaction": 4.877554838951672,
+        "error_count": 0,
+        "user_id": "user_002",
+        "task_id": "task_003",
+        "task_title": "Quality/Format Selection"
+      },
+      {
+        "completion_status": "partial",
+        "completion_time": 74.2359106296858,
+        "satisfaction": 3.219159192380897,
+        "error_count": 1,
+        "user_id": "user_002",
+        "task_id": "task_004",
+        "task_title": "Download Management"
+      },
+      {
+        "completion_status": "partial",
+        "completion_time": 81.12627892840082,
+        "satisfaction": 3.372741616369845,
+        "error_count": 2,
+        "user_id": "user_002",
+        "task_id": "task_005",
+        "task_title": "Settings Customization"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 37.75421349799588,
+        "satisfaction": 4.3853314768383775,
+        "error_count": 1,
+        "user_id": "user_002",
+        "task_id": "task_006",
+        "task_title": "Error Recovery"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 139.77513923302197,
+        "satisfaction": 4.2931131070643564,
+        "error_count": 1,
+        "user_id": "user_002",
+        "task_id": "task_007",
+        "task_title": "Advanced Features Discovery"
+      },
+      {
+        "completion_status": "partial",
+        "completion_time": 24.145656973936088,
+        "satisfaction": 2.661208764635999,
+        "error_count": 2,
+        "user_id": "user_002",
+        "task_id": "task_008",
+        "task_title": "Workflow Efficiency"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 106.0772541846287,
+        "satisfaction": 4.303730149665906,
+        "error_count": 1,
+        "user_id": "user_003",
+        "task_id": "task_001",
+        "task_title": "First Video Download"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 190.00262778179817,
+        "satisfaction": 4.755516160266303,
+        "error_count": 1,
+        "user_id": "user_003",
+        "task_id": "task_002",
+        "task_title": "Batch Download Multiple Videos"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 58.81201288044331,
+        "satisfaction": 4.005446329236498,
+        "error_count": 0,
+        "user_id": "user_003",
+        "task_id": "task_003",
+        "task_title": "Quality/Format Selection"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 117.48556197640016,
+        "satisfaction": 4.20539994216392,
+        "error_count": 1,
+        "user_id": "user_003",
+        "task_id": "task_004",
+        "task_title": "Download Management"
+      },
+      {
+        "completion_status": "partial",
+        "completion_time": 226.74715240726536,
+        "satisfaction": 3.2532801740227613,
+        "error_count": 2,
+        "user_id": "user_003",
+        "task_id": "task_005",
+        "task_title": "Settings Customization"
+      },
+      {
+        "completion_status": "failure",
+        "completion_time": 87.78764150981466,
+        "satisfaction": 1.5845619477040507,
+        "error_count": 4,
+        "user_id": "user_003",
+        "task_id": "task_006",
+        "task_title": "Error Recovery"
+      },
+      {
+        "completion_status": "failure",
+        "completion_time": 234.84592276160816,
+        "satisfaction": 2.1853614956461946,
+        "error_count": 4,
+        "user_id": "user_003",
+        "task_id": "task_007",
+        "task_title": "Advanced Features Discovery"
+      },
+      {
+        "completion_status": "failure",
+        "completion_time": 57.19330107972515,
+        "satisfaction": 1.5837309072380716,
+        "error_count": 5,
+        "user_id": "user_003",
+        "task_id": "task_008",
+        "task_title": "Workflow Efficiency"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 54.348472118472934,
+        "satisfaction": 4.711431818902716,
+        "error_count": 0,
+        "user_id": "user_004",
+        "task_id": "task_001",
+        "task_title": "First Video Download"
+      },
+      {
+        "completion_status": "failure",
+        "completion_time": 152.89908794254723,
+        "satisfaction": 1.919748516297875,
+        "error_count": 3,
+        "user_id": "user_004",
+        "task_id": "task_002",
+        "task_title": "Batch Download Multiple Videos"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 33.67800779119051,
+        "satisfaction": 4.841344203632378,
+        "error_count": 0,
+        "user_id": "user_004",
+        "task_id": "task_003",
+        "task_title": "Quality/Format Selection"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 73.8394038857636,
+        "satisfaction": 4.260517490621659,
+        "error_count": 0,
+        "user_id": "user_004",
+        "task_id": "task_004",
+        "task_title": "Download Management"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 81.04052703923257,
+        "satisfaction": 4.999950093941655,
+        "error_count": 0,
+        "user_id": "user_004",
+        "task_id": "task_005",
+        "task_title": "Settings Customization"
+      },
+      {
+        "completion_status": "partial",
+        "completion_time": 33.3694572288416,
+        "satisfaction": 2.7036776644139935,
+        "error_count": 1,
+        "user_id": "user_004",
+        "task_id": "task_006",
+        "task_title": "Error Recovery"
+      },
+      {
+        "completion_status": "failure",
+        "completion_time": 128.1239089075123,
+        "satisfaction": 2.3271205884410184,
+        "error_count": 5,
+        "user_id": "user_004",
+        "task_id": "task_007",
+        "task_title": "Advanced Features Discovery"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 27.623467739894565,
+        "satisfaction": 4.878323921514768,
+        "error_count": 0,
+        "user_id": "user_004",
+        "task_id": "task_008",
+        "task_title": "Workflow Efficiency"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 27.24490565806704,
+        "satisfaction": 4.990074347446081,
+        "error_count": 0,
+        "user_id": "user_005",
+        "task_id": "task_001",
+        "task_title": "First Video Download"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 71.16004857972945,
+        "satisfaction": 4.915574107734147,
+        "error_count": 1,
+        "user_id": "user_005",
+        "task_id": "task_002",
+        "task_title": "Batch Download Multiple Videos"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 17.23995164749432,
+        "satisfaction": 4.449116757861249,
+        "error_count": 0,
+        "user_id": "user_005",
+        "task_id": "task_003",
+        "task_title": "Quality/Format Selection"
+      },
+      {
+        "completion_status": "partial",
+        "completion_time": 26.64605982095454,
+        "satisfaction": 3.156857488074475,
+        "error_count": 3,
+        "user_id": "user_005",
+        "task_id": "task_004",
+        "task_title": "Download Management"
+      },
+      {
+        "completion_status": "failure",
+        "completion_time": 58.6315833810752,
+        "satisfaction": 1.814585844007236,
+        "error_count": 3,
+        "user_id": "user_005",
+        "task_id": "task_005",
+        "task_title": "Settings Customization"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 27.641354228905268,
+        "satisfaction": 4.638735635018905,
+        "error_count": 1,
+        "user_id": "user_005",
+        "task_id": "task_006",
+        "task_title": "Error Recovery"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 89.01691999500099,
+        "satisfaction": 4.7361432795624445,
+        "error_count": 0,
+        "user_id": "user_005",
+        "task_id": "task_007",
+        "task_title": "Advanced Features Discovery"
+      },
+      {
+        "completion_status": "success",
+        "completion_time": 12.219114764940908,
+        "satisfaction": 4.545718759056896,
+        "error_count": 0,
+        "user_id": "user_005",
+        "task_id": "task_008",
+        "task_title": "Workflow Efficiency"
+      }
+    ]
+  }
+}
