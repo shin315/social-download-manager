@@ -62,11 +62,15 @@ validation_*.log
 migration_*.log
 
 # ===== TEST DATA & REPORTS =====
-# Test databases and datasets (but keep small example datasets)
-test_datasets/
-test-*.db
-mock_data/
-fixtures/
+# Test artifacts and results (but keep test files)
+tests/test_datasets/
+tests/test_accessibility_standalone/
+tests/*.log
+tests/*.txt
+tests/*.db
+scripts_dev/**/results/
+scripts_dev/**/*_results.json
+scripts_dev/**/*_report.*
 
 # Performance and analysis reports
 *_results.json
@@ -283,11 +287,17 @@ version.json
 !*template*
 !*sample*
 
-# Keep important test files (but exclude test data and results)
-!test_*.py
+# Keep organized test structure (but exclude data/results)
 !tests/
-!**/test_*.py
-!**/tests/
+!tests/**/*.py
+!tests/**/README.md
+!tests/**/__init__.py
+
+# Keep organized scripts structure (but exclude results)
+!scripts_dev/
+!scripts_dev/**/*.py
+!scripts_dev/**/README.md
+!scripts_dev/**/__init__.py
 
 # Keep taskmaster templates and documentation
 !.taskmaster/templates/

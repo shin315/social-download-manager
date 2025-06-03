@@ -1,4 +1,0 @@
-Starting migration test
-Importing VersionManager...
-SUCCESS: VersionManager imported
-Test complete
