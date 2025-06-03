@@ -255,6 +255,9 @@ junit.xml
 dmypy.json
 
 # ===== PROJECT SPECIFIC =====
+# Internal development documentation
+documentary/
+
 # Project metadata
 .specstory/
 memory-bank/
