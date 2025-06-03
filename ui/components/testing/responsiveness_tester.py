@@ -517,11 +517,15 @@ class ResponsivenessTester(UITestBase, ResponsivenessTestMixin):
 def run_responsiveness_tests():
     """Main function to run responsiveness tests"""
     
-    # Import widget classes to test
+    # Example usage and testing
+    print("📱 UI Responsiveness Testing Example")
+    print("=" * 50)
+    
     try:
-        from ui.main_window import MainWindow
-        from ui.video_info_tab import VideoInfoTab
-        from ui.downloaded_videos_tab import DownloadedVideosTab
+        # Import components using v2.0 architecture
+        from ...main_window import MainWindow
+        from ..tabs.video_info_tab import VideoInfoTab
+        from ..tabs.downloaded_videos_tab import DownloadedVideosTab
         
         widget_classes = [MainWindow, VideoInfoTab, DownloadedVideosTab]
         

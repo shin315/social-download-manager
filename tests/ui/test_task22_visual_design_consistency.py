@@ -22,12 +22,13 @@ from PyQt6.QtGui import QFont, QColor, QPalette, QPixmap, QIcon
 sys.path.insert(0, os.path.dirname(os.path.abspath(__file__)))
 
 try:
+    # Try importing optional UI components
     from ui.components.common.modular_ui import ModularUIComponent
     from ui.components.dialogs.settings_dialog import SettingsDialog
     from ui.components.tabs.download_management_tab import DownloadManagementTab
     from ui.components.tabs.download_tab import DownloadTab
     from ui.components.tables.download_history_table import DownloadHistoryTable
-    from ui.main_window import MainWindow
+    from ui.main_window import MainWindow  # MainWindow stays in ui.main_window
 except ImportError as e:
     print(f"Warning: Could not import all UI components: {e}")
     print("Testing will proceed with available components...")

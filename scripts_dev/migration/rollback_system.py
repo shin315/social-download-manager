@@ -672,10 +672,9 @@ class MigrationRollbackSystem:
         """Validate that imports work after rollback"""
         
         try:
-            # Try importing key modules
-            import ui.video_info_tab
-            import ui.downloaded_videos_tab
+            # Try importing key modules using v2.0 architecture
             import ui.main_window
+            from ui.components.tabs import VideoInfoTab, DownloadedVideosTab
             return True
         except ImportError:
             return False

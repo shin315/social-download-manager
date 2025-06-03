@@ -4,8 +4,7 @@ Component Testing Framework
 Comprehensive testing utilities for UI components including:
 - Unit testing for component logic
 - Widget testing for UI interactions  
-- Integration testing for component interactions
-- Performance testing and benchmarking
+- Component testing and benchmarking
 - Mock utilities and test data generation
 - Automated test discovery and execution
 """
@@ -18,22 +17,23 @@ from .widget_tester import (
     WidgetTester, WidgetTestCase, InteractionTest,
     RenderingTest, ValidationTest
 )
-from .integration_tester import (
-    IntegrationTester, IntegrationTestCase, ComponentInteractionTest,
-    StateConsistencyTest, EventFlowTest
-)
+# NOTE: Integration tester, test runner, and performance tester modules are not yet implemented
+# from .integration_tester import (
+#     IntegrationTester, IntegrationTestCase, ComponentInteractionTest,
+#     StateConsistencyTest, EventFlowTest
+# )
 from .mock_utilities import (
     MockComponent, MockDataGenerator, TestDataFactory,
     MockEventBus, MockThemeManager
 )
-from .test_runner import (
-    ComponentTestRunner, TestReport, TestConfiguration,
-    execute_test_suite, discover_tests, generate_test_report
-)
-from .performance_tester import (
-    PerformanceTester, PerformanceMetrics, BenchmarkTest,
-    MemoryProfiler, RenderingProfiler
-)
+# from .test_runner import (
+#     ComponentTestRunner, TestReport, TestConfiguration,
+#     execute_test_suite, discover_tests, generate_test_report
+# )
+# from .performance_tester import (
+#     PerformanceTester, PerformanceMetrics, BenchmarkTest,
+#     MemoryProfiler, RenderingProfiler
+# )
 
 # UI Components Testing Framework
 # Task 22.2 - UI Responsiveness Testing Infrastructure
@@ -46,7 +46,7 @@ including responsiveness testing, performance monitoring, and accessibility vali
 """
 
 from .ui_test_base import UITestBase
-from .performance_monitor import UIPerformanceMonitor
+# from .performance_monitor import UIPerformanceMonitor  # Not yet implemented
 from .accessibility_checker import AccessibilityChecker
 from .responsiveness_tester import ResponsivenessTester
 
@@ -66,13 +66,6 @@ __all__ = [
     'RenderingTest', 
     'ValidationTest',
     
-    # Integration testing
-    'IntegrationTester',
-    'IntegrationTestCase',
-    'ComponentInteractionTest',
-    'StateConsistencyTest',
-    'EventFlowTest',
-    
     # Mock utilities
     'MockComponent',
     'MockDataGenerator',
@@ -80,23 +73,32 @@ __all__ = [
     'MockEventBus',
     'MockThemeManager',
     
-    # Test execution
-    'ComponentTestRunner',
-    'TestReport',
-    'TestConfiguration',
-    'execute_test_suite',
-    'discover_tests',
-    'generate_test_report',
+    # TODO: Add when implemented
+    # # Integration testing
+    # 'IntegrationTester',
+    # 'IntegrationTestCase',
+    # 'ComponentInteractionTest',
+    # 'StateConsistencyTest',
+    # 'EventFlowTest',
     
-    # Performance testing
-    'PerformanceTester',
-    'PerformanceMetrics',
-    'BenchmarkTest',
-    'MemoryProfiler',
-    'RenderingProfiler',
-
+    # # Test execution
+    # 'ComponentTestRunner',
+    # 'TestReport',
+    # 'TestConfiguration',
+    # 'execute_test_suite',
+    # 'discover_tests',
+    # 'generate_test_report',
+    
+    # # Performance testing
+    # 'PerformanceTester',
+    # 'PerformanceMetrics',
+    # 'BenchmarkTest',
+    # 'MemoryProfiler',
+    # 'RenderingProfiler',
+    
+    # UI testing framework
     'UITestBase',
-    'UIPerformanceMonitor', 
+    # 'UIPerformanceMonitor',  # Not yet implemented
     'AccessibilityChecker',
     'ResponsivenessTester'
 ]
