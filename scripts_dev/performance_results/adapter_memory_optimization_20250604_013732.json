@@ -1,0 +1,559 @@
+{
+  "test_duration": 13.968646,
+  "initial_memory_mb": 29.5234375,
+  "final_memory_mb": 286.73828125,
+  "net_memory_change_mb": 257.21484375,
+  "peak_memory_usage_mb": 582.00390625,
+  "stress_test_results": {
+    "stress_cycles": [
+      {
+        "cycle": 1,
+        "memory_before_stress_mb": 30.26171875,
+        "memory_after_stress_mb": 577.02734375,
+        "memory_after_optimization_mb": 578.21484375,
+        "stress_memory_increase_mb": 546.765625,
+        "optimization_memory_saved_mb": -1.1875,
+        "workload_result": {
+          "total_processed": 0,
+          "workload_time": 0.06765866279602051,
+          "processing_rate": 0.0,
+          "adapter_stats": [
+            {
+              "adapter_id": "adapter_0",
+              "processed_count": 0,
+              "video_cache_size": 0,
+              "metadata_cache_size": 0,
+              "history_size": 0,
+              "event_listeners": 0
+            },
+            {
+              "adapter_id": "adapter_1",
+              "processed_count": 0,
+              "video_cache_size": 0,
+              "metadata_cache_size": 0,
+              "history_size": 0,
+              "event_listeners": 0
+            },
+            {
+              "adapter_id": "adapter_2",
+              "processed_count": 0,
+              "video_cache_size": 0,
+              "metadata_cache_size": 0,
+              "history_size": 0,
+              "event_listeners": 0
+            }
+          ]
+        },
+        "optimization_result": {
+          "timestamp": "2025-06-04 01:37:20.586917",
+          "optimization_time": 0.0880277156829834,
+          "optimizations_performed": [
+            "garbage_collection",
+            "weak_reference_cleanup"
+          ],
+          "memory_before_mb": 577.87109375,
+          "memory_after_mb": 578.21484375,
+          "memory_saved_mb": -0.34375,
+          "memory_saved_percent": -0.059485584885253656,
+          "gc_result": {
+            "timestamp": "2025-06-04 01:37:20.563390",
+            "objects_collected": [
+              0,
+              0,
+              0
+            ],
+            "total_collected": 0,
+            "before_stats": {
+              "counts": [
+                353,
+                1,
+                4
+              ],
+              "stats": [
+                {
+                  "collections": 45,
+                  "collected": 285,
+                  "uncollectable": 0
+                },
+                {
+                  "collections": 4,
+                  "collected": 0,
+                  "uncollectable": 0
+                },
+                {
+                  "collections": 0,
+                  "collected": 0,
+                  "uncollectable": 0
+                }
+              ],
+              "threshold": [
+                500,
+                8,
+                8
+              ],
+              "objects": 23067
+            },
+            "after_stats": {
+              "counts": [
+                0,
+                0,
+                0
+              ],
+              "stats": [
+                {
+                  "collections": 46,
+                  "collected": 285,
+                  "uncollectable": 0
+                },
+                {
+                  "collections": 5,
+                  "collected": 0,
+                  "uncollectable": 0
+                },
+                {
+                  "collections": 1,
+                  "collected": 0,
+                  "uncollectable": 0
+                }
+              ],
+              "threshold": [
+                500,
+                8,
+                8
+              ],
+              "objects": 22925
+            }
+          },
+          "memory_leaks_detected": 0,
+          "memory_leaks": [],
+          "cache_stats": {
+            "total_items": 150,
+            "estimated_size_mb": 0.0263214111328125,
+            "max_size_mb": 75.0,
+            "utilization_percent": 0.03509521484375,
+            "average_access_count": 1.0
+          },
+          "object_stats": {
+            "total_tracked_objects": 0,
+            "objects_by_category": {},
+            "objects_with_callbacks": 0
+          }
+        }
+      },
+      {
+        "cycle": 2,
+        "memory_before_stress_mb": 275.6953125,
+        "memory_after_stress_mb": 581.3125,
+        "memory_after_optimization_mb": 582.00390625,
+        "stress_memory_increase_mb": 305.6171875,
+        "optimization_memory_saved_mb": -0.69140625,
+        "workload_result": {
+          "total_processed": 0,
+          "workload_time": 0.06785035133361816,
+          "processing_rate": 0.0,
+          "adapter_stats": [
+            {
+              "adapter_id": "adapter_0",
+              "processed_count": 0,
+              "video_cache_size": 0,
+              "metadata_cache_size": 0,
+              "history_size": 0,
+              "event_listeners": 0
+            },
+            {
+              "adapter_id": "adapter_1",
+              "processed_count": 0,
+              "video_cache_size": 0,
+              "metadata_cache_size": 0,
+              "history_size": 0,
+              "event_listeners": 0
+            },
+            {
+              "adapter_id": "adapter_2",
+              "processed_count": 0,
+              "video_cache_size": 0,
+              "metadata_cache_size": 0,
+              "history_size": 0,
+              "event_listeners": 0
+            }
+          ]
+        },
+        "optimization_result": {
+          "timestamp": "2025-06-04 01:37:25.026987",
+          "optimization_time": 0.08570384979248047,
+          "optimizations_performed": [
+            "garbage_collection",
+            "weak_reference_cleanup"
+          ],
+          "memory_before_mb": 582.00390625,
+          "memory_after_mb": 582.00390625,
+          "memory_saved_mb": 0.0,
+          "memory_saved_percent": 0.0,
+          "gc_result": {
+            "timestamp": "2025-06-04 01:37:25.004030",
+            "objects_collected": [
+              0,
+              0,
+              0
+            ],
+            "total_collected": 0,
+            "before_stats": {
+              "counts": [
+                21,
+                1,
+                0
+              ],
+              "stats": [
+                {
+                  "collections": 47,
+                  "collected": 285,
+                  "uncollectable": 0
+                },
+                {
+                  "collections": 5,
+                  "collected": 0,
+                  "uncollectable": 0
+                },
+                {
+                  "collections": 1,
+                  "collected": 0,
+                  "uncollectable": 0
+                }
+              ],
+              "threshold": [
+                500,
+                8,
+                8
+              ],
+              "objects": 22964
+            },
+            "after_stats": {
+              "counts": [
+                0,
+                0,
+                0
+              ],
+              "stats": [
+                {
+                  "collections": 48,
+                  "collected": 285,
+                  "uncollectable": 0
+                },
+                {
+                  "collections": 6,
+                  "collected": 0,
+                  "uncollectable": 0
+                },
+                {
+                  "collections": 2,
+                  "collected": 0,
+                  "uncollectable": 0
+                }
+              ],
+              "threshold": [
+                500,
+                8,
+                8
+              ],
+              "objects": 22959
+            }
+          },
+          "memory_leaks_detected": 0,
+          "memory_leaks": [],
+          "cache_stats": {
+            "total_items": 150,
+            "estimated_size_mb": 0.0263214111328125,
+            "max_size_mb": 75.0,
+            "utilization_percent": 0.03509521484375,
+            "average_access_count": 2.0
+          },
+          "object_stats": {
+            "total_tracked_objects": 0,
+            "objects_by_category": {},
+            "objects_with_callbacks": 0
+          }
+        }
+      }
+    ],
+    "total_stress_memory_mb": 852.3828125,
+    "total_optimization_saved_mb": -1.87890625,
+    "average_optimization_effectiveness": -0.0022170953565660637
+  },
+  "comprehensive_report": {
+    "timestamp": "2025-06-04 01:37:32.330119",
+    "current_memory_usage": {
+      "rss_mb": 286.73828125,
+      "percent": 0.8795887831071023,
+      "tracemalloc_current_mb": 58.804710388183594,
+      "tracemalloc_peak_mb": 162.04068756103516
+    },
+    "memory_trend": {
+      "duration_minutes": 60,
+      "snapshots_count": 21,
+      "memory_change_mb": 257.1875,
+      "memory_change_percent": 0.7889397926540647,
+      "peak_memory_mb": 582.00390625,
+      "average_memory_mb": 374.9105282738095,
+      "gc_collections": 5095
+    },
+    "optimization_cycles_run": 2,
+    "total_memory_saved_mb": -0.34375,
+    "average_optimization_time": 0.08686578273773193,
+    "gc_recommendations": [],
+    "cache_performance": {
+      "total_items": 150,
+      "estimated_size_mb": 0.0263214111328125,
+      "max_size_mb": 75.0,
+      "utilization_percent": 0.03509521484375,
+      "average_access_count": 2.0
+    },
+    "object_lifecycle_stats": {
+      "total_tracked_objects": 0,
+      "objects_by_category": {},
+      "objects_with_callbacks": 0
+    },
+    "memory_alerts": [],
+    "recent_optimizations": [
+      {
+        "timestamp": "2025-06-04 01:37:20.586917",
+        "optimization_time": 0.0880277156829834,
+        "optimizations_performed": [
+          "garbage_collection",
+          "weak_reference_cleanup"
+        ],
+        "memory_before_mb": 577.87109375,
+        "memory_after_mb": 578.21484375,
+        "memory_saved_mb": -0.34375,
+        "memory_saved_percent": -0.059485584885253656,
+        "gc_result": {
+          "timestamp": "2025-06-04 01:37:20.563390",
+          "objects_collected": [
+            0,
+            0,
+            0
+          ],
+          "total_collected": 0,
+          "before_stats": {
+            "counts": [
+              353,
+              1,
+              4
+            ],
+            "stats": [
+              {
+                "collections": 45,
+                "collected": 285,
+                "uncollectable": 0
+              },
+              {
+                "collections": 4,
+                "collected": 0,
+                "uncollectable": 0
+              },
+              {
+                "collections": 0,
+                "collected": 0,
+                "uncollectable": 0
+              }
+            ],
+            "threshold": [
+              500,
+              8,
+              8
+            ],
+            "objects": 23067
+          },
+          "after_stats": {
+            "counts": [
+              0,
+              0,
+              0
+            ],
+            "stats": [
+              {
+                "collections": 46,
+                "collected": 285,
+                "uncollectable": 0
+              },
+              {
+                "collections": 5,
+                "collected": 0,
+                "uncollectable": 0
+              },
+              {
+                "collections": 1,
+                "collected": 0,
+                "uncollectable": 0
+              }
+            ],
+            "threshold": [
+              500,
+              8,
+              8
+            ],
+            "objects": 22925
+          }
+        },
+        "memory_leaks_detected": 0,
+        "memory_leaks": [],
+        "cache_stats": {
+          "total_items": 150,
+          "estimated_size_mb": 0.0263214111328125,
+          "max_size_mb": 75.0,
+          "utilization_percent": 0.03509521484375,
+          "average_access_count": 1.0
+        },
+        "object_stats": {
+          "total_tracked_objects": 0,
+          "objects_by_category": {},
+          "objects_with_callbacks": 0
+        }
+      },
+      {
+        "timestamp": "2025-06-04 01:37:25.026987",
+        "optimization_time": 0.08570384979248047,
+        "optimizations_performed": [
+          "garbage_collection",
+          "weak_reference_cleanup"
+        ],
+        "memory_before_mb": 582.00390625,
+        "memory_after_mb": 582.00390625,
+        "memory_saved_mb": 0.0,
+        "memory_saved_percent": 0.0,
+        "gc_result": {
+          "timestamp": "2025-06-04 01:37:25.004030",
+          "objects_collected": [
+            0,
+            0,
+            0
+          ],
+          "total_collected": 0,
+          "before_stats": {
+            "counts": [
+              21,
+              1,
+              0
+            ],
+            "stats": [
+              {
+                "collections": 47,
+                "collected": 285,
+                "uncollectable": 0
+              },
+              {
+                "collections": 5,
+                "collected": 0,
+                "uncollectable": 0
+              },
+              {
+                "collections": 1,
+                "collected": 0,
+                "uncollectable": 0
+              }
+            ],
+            "threshold": [
+              500,
+              8,
+              8
+            ],
+            "objects": 22964
+          },
+          "after_stats": {
+            "counts": [
+              0,
+              0,
+              0
+            ],
+            "stats": [
+              {
+                "collections": 48,
+                "collected": 285,
+                "uncollectable": 0
+              },
+              {
+                "collections": 6,
+                "collected": 0,
+                "uncollectable": 0
+              },
+              {
+                "collections": 2,
+                "collected": 0,
+                "uncollectable": 0
+              }
+            ],
+            "threshold": [
+              500,
+              8,
+              8
+            ],
+            "objects": 22959
+          }
+        },
+        "memory_leaks_detected": 0,
+        "memory_leaks": [],
+        "cache_stats": {
+          "total_items": 150,
+          "estimated_size_mb": 0.0263214111328125,
+          "max_size_mb": 75.0,
+          "utilization_percent": 0.03509521484375,
+          "average_access_count": 2.0
+        },
+        "object_stats": {
+          "total_tracked_objects": 0,
+          "objects_by_category": {},
+          "objects_with_callbacks": 0
+        }
+      }
+    ]
+  },
+  "adapter_final_stats": [
+    {
+      "adapter_id": "adapter_0",
+      "processed_count": 0,
+      "video_cache_size": 0,
+      "metadata_cache_size": 0,
+      "history_size": 0,
+      "event_listeners": 0
+    },
+    {
+      "adapter_id": "adapter_1",
+      "processed_count": 0,
+      "video_cache_size": 0,
+      "metadata_cache_size": 0,
+      "history_size": 0,
+      "event_listeners": 0
+    },
+    {
+      "adapter_id": "adapter_2",
+      "processed_count": 0,
+      "video_cache_size": 0,
+      "metadata_cache_size": 0,
+      "history_size": 0,
+      "event_listeners": 0
+    }
+  ],
+  "analysis": {
+    "memory_efficiency": {
+      "net_memory_change_mb": 257.21484375,
+      "peak_memory_usage_mb": 582.00390625,
+      "optimization_effectiveness": -0.0022170953565660637,
+      "total_memory_saved_mb": -1.87890625
+    },
+    "performance_metrics": {
+      "test_duration": 13.968646,
+      "optimization_cycles": 2,
+      "average_optimization_time": 0.08686578273773193,
+      "cache_utilization": 0.03509521484375
+    },
+    "adapter_performance": {
+      "total_adapters": 3,
+      "total_processed_items": 0,
+      "average_cache_size": 0.0
+    },
+    "optimization_insights": [
+      "Net memory increase of 257.2MB - investigate memory leaks",
+      "Poor optimization effectiveness (<50%)"
+    ],
+    "recommendations": []
+  }
+}

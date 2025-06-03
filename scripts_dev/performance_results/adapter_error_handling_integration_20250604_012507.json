@@ -1,0 +1,68 @@
+{
+  "total_operations": 90,
+  "success_rate": 1.0,
+  "degradation_rate": 0.0,
+  "error_rate": 0.0,
+  "effective_recovery_rate": 1.0,
+  "health_score": 100.0,
+  "ops_per_second": 14976.685578258282,
+  "test_duration": 0.006009340286254883,
+  "component_results": {
+    "main_window_adapter": {
+      "success": 30,
+      "error": 0,
+      "degraded": 0
+    },
+    "video_info_adapter": {
+      "success": 30,
+      "error": 0,
+      "degraded": 0
+    },
+    "downloads_adapter": {
+      "success": 30,
+      "error": 0,
+      "degraded": 0
+    }
+  },
+  "health_report": {
+    "timestamp": "2025-06-04T01:25:07.966125",
+    "circuit_breakers": {
+      "main_window_adapter": {
+        "name": "main_window_adapter",
+        "state": "closed",
+        "failure_count": 0,
+        "success_count": 0,
+        "recent_failures": 0,
+        "avg_call_time": 0,
+        "last_failure_time": null
+      },
+      "video_info_adapter": {
+        "name": "video_info_adapter",
+        "state": "closed",
+        "failure_count": 0,
+        "success_count": 0,
+        "recent_failures": 0,
+        "avg_call_time": 0,
+        "last_failure_time": null
+      },
+      "downloads_adapter": {
+        "name": "downloads_adapter",
+        "state": "closed",
+        "failure_count": 0,
+        "success_count": 0,
+        "recent_failures": 0,
+        "avg_call_time": 0,
+        "last_failure_time": null
+      }
+    },
+    "degradation_status": {
+      "active_degradations": {},
+      "total_strategies": 3,
+      "recent_activations": 0
+    },
+    "active_errors": 0,
+    "total_errors": 9,
+    "health_score": 100.0,
+    "recommendations": []
+  }
+}
