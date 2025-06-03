@@ -1,8 +1,101 @@
-# Python byte-compiled / optimized / DLL files
+# ================================
+# Social Download Manager v2.0
+# Comprehensive .gitignore
+# ================================
+
+# ===== SENSITIVE & SECURITY FILES =====
+# Environment variables & secrets
+.env
+.env.*
+!.env.example
+!.env.template
+
+# Configuration files with sensitive data
+config.json
+!config.template.json
+!config.example.json
+
+# API keys and credentials
+*.key
+*.pem
+secrets.txt
+credentials.json
+
+# ===== DATABASE FILES =====
+# All database files
+*.db
+*.sqlite
+*.sqlite3
+data/downloads.db*
+test*.db
+*test*.db
+*.db-journal
+*.db-wal
+*.db-shm
+
+# Database backups and dumps
+*.sql
+*.dump
+database_backup/
+db_backup/
+
+# ===== LOG FILES =====
+# All log files
+*.log
+logs/
+*.log.*
+app_debug.log
+api_errors.log
+app_startup.log
+error_log.txt
+crash*.txt
+debug*.log
+performance.log
+
+# Log patterns from tests and development
+test_*.log
+*test*.log
+perf_test_*.log
+rollback_*.log
+integration_test_*.log
+validation_*.log
+migration_*.log
+
+# ===== TEST DATA & REPORTS =====
+# Test databases and datasets
+test_datasets/
+test-*.db
+mock_data/
+fixtures/
+
+# Performance and analysis reports
+*_results.json
+*_report.json
+*_report.md
+*_report.txt
+performance_report_*.md
+safety_scan_results.json
+security_scan_results.json
+*optimization_results.json
+*compliance_report.*
+*usability_testing_results.*
+*design_consistency_report.*
+
+# Test output and temporary files
+test_output.log
+test.txt
+temp_*.py
+*_temp.*
+*_backup.*
+
+# ===== DEVELOPMENT & BUILD FILES =====
+# Python bytecode
 __pycache__/
 *.py[cod]
 *$py.class
 *.so
+
+# Distribution / packaging
 .Python
 build/
 develop-eggs/
@@ -19,51 +112,23 @@ wheels/
 *.egg-info/
 .installed.cfg
 *.egg
+MANIFEST
+
+# PyInstaller
+*.manifest
+*.spec
 
 # Virtual environments
 .venv/
 venv/
 ENV/
 env/
+.env/
+env.bak/
+venv.bak/
 
-# Config files with personal paths
-config.json
-
-# IDE specific files
-.vscode/
-.idea/
-*.swp
-*.swo
-
-# OS specific files
-.DS_Store
-Thumbs.db
-
-# Log files
-*.log
-error_report*.txt
-crash*.txt
-
-# Backup files
-*.bak
-*~
-*.tmp
-*.temp
-
-# Build distribution / packaging
-dist/
-build/
-*.egg-info/
-*.egg
-
-# Zip archives
-*.zip
-
-# Database files
-*.db
-*.sqlite3
-
-# Project specific
+# ===== MEDIA & CONTENT FILES =====
+# Downloaded content (these shouldn't be in repo anyway)
 *.mp4
 *.mp3
 *.wav
@@ -74,260 +139,165 @@ build/
 *.m4a
 *.mov
 *.wmv
-*.db
-*.sqlite3
-*.log
-temp/
+*.m4v
+*.3gp
+*.gif
+*.jpg
+*.jpeg
+*.png
+*.bmp
+*.tiff
+*.ico
+
+# Download directories
 downloads/
+temp_downloads/
 thumbnails/
+videos/
+audio/
+media/
 
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
+# ===== BACKUP & TEMPORARY FILES =====
+# Backup files
+*.bak
+*~
+*.tmp
+*.temp
+*.swp
+*.swo
+backup/
+backups/
+*_backup/
+emergency_*/
 
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
+# Temporary directories
+temp/
+tmp/
+.tmp/
+cache/
+.cache/
 
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-.pytest_cache/
-
-# Translations
-*.mo
-*.pot
-
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# pyenv
-.python-version
-
-# celery beat schedule file
-celerybeat-schedule
-
-# SageMath parsed files
-*.sage.py
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-
-# IDE
-.idea/
-.vscode/
-.cursor/
-.specstory/
-
-# SQLite database
-*.db
-
-# Test và backup files
-test_*.py
-*_backup.py
-*_fixed.py
-error_log.txt
-temp_backup/ 
-
-#Tóm tắt :
-Sumerize.txt
-
-# Byte-compiled / optimized / DLL files
-__pycache__/
-*.py[cod]
-*$py.class
-
-# C extensions
-*.so
-
-# Distribution / packaging
-.Python
-build/
-develop-eggs/
-dist/
-downloads/
-eggs/
-.eggs/
-lib/
-lib64/
-parts/
-sdist/
-var/
-wheels/
-*.egg-info/
-.installed.cfg
-*.egg
-MANIFEST
-
-# PyInstaller
-#  Usually these files are written by a python script from a template
-#  before PyInstaller builds the exe, so as to inject date/other infos into it.
-*.manifest
-*.spec
-
-# Installer logs
-pip-log.txt
-pip-delete-this-directory.txt
-
-# Unit test / coverage reports
-htmlcov/
-.tox/
-.coverage
-.coverage.*
-.cache
-nosetests.xml
-coverage.xml
-*.cover
-.hypothesis/
-.pytest_cache/
-
-# Translations
-*.mo
-*.pot
-
-# Django stuff:
-*.log
-local_settings.py
-db.sqlite3
-
-# Flask stuff:
-instance/
-.webassets-cache
-
-# Scrapy stuff:
-.scrapy
-
-# Sphinx documentation
-docs/_build/
-
-# PyBuilder
-target/
-
-# Jupyter Notebook
-.ipynb_checkpoints
-
-# pyenv
-.python-version
-
-# celery beat schedule file
-celerybeat-schedule
-
-# SageMath parsed files
-*.sage.py
-
-# Environments
-.env
-.venv
-env/
-venv/
-ENV/
-env.bak/
-venv.bak/
-
-# Spyder project settings
-.spyderproject
-.spyproject
-
-# Rope project settings
-.ropeproject
-
-# mkdocs documentation
-/site
-
-# mypy
-.mypy_cache/
-
+# ===== IDE & EDITOR FILES =====
 # VS Code
 .vscode/
+.history/
 
-# PyCharm
+# PyCharm / IntelliJ
 .idea/
+*.iml
+*.ipr
+*.iws
 
-# Custom ignores
-/config.json
-/thumbnails/
-/videos/
-old_sumerize.txt
-tatus
-temp_script.py
+# Cursor AI
+.cursor/
 .cursorrules
+
+# Other editors
+*.sublime-project
+*.sublime-workspace
+.spyderproject
+.spyproject
+.ropeproject
+
+# ===== OS SPECIFIC FILES =====
+# macOS
+.DS_Store
+.AppleDouble
+.LSOverride
+Icon?
+
+# Windows
+Thumbs.db
+ehthumbs.db
+Desktop.ini
+$RECYCLE.BIN/
+
+# Linux
+*~
+.directory
+.Trash-*
+
+# ===== TESTING & COVERAGE =====
+# Testing
+.pytest_cache/
+.tox/
+.coverage
+.coverage.*
+htmlcov/
+nosetests.xml
+coverage.xml
+*.cover
+.hypothesis/
+.cache
+junit.xml
+
+# MyPy
+.mypy_cache/
+.dmypy.json
+dmypy.json
+
+# ===== PROJECT SPECIFIC =====
+# Task Master files (if using)
+.taskmaster/
+tasks.json
+tasks/
+
+# Documentation builds
+docs/_build/
+site/
+
+# Scripts output
+scripts/performance_results/
+scripts/edge_case_results/
+scripts/migration_test_results/
+scripts/rollback_results/
+scripts/validation_reports/
+
+# Project metadata
+.specstory/
 memory-bank/
 
-# Added by Claude Task Master
-# Logs
-logs
-npm-debug.log*
-yarn-debug.log*
-yarn-error.log*
-dev-debug.log
-# Dependency directories
-node_modules/
-# Environment variables
-# Editor directories and files
-.idea
-.vscode
-*.suo
-*.ntvs*
-*.njsproj
-*.sln
-*.sw?
-# OS specific
-# Task files
-tasks.json
-tasks/ 
+# Version files
+version.txt
+version.json
+
+# ===== ARCHIVES & COMPRESSED FILES =====
+*.zip
+*.tar.gz
+*.tar.bz2
+*.rar
+*.7z
+
+# ===== IGNORE EXCEPTIONS =====
+# Keep these important files
+!requirements.txt
+!requirements-dev.txt
+!pyproject.toml
+!setup.py
+!README.md
+!LICENSE
+!CHANGELOG.md
+!.gitignore
+!.github/
+
+# Keep example configurations
+!*example*
+!*template*
+!*sample*
+
+# ===== CUSTOM PATTERNS =====
+# Custom ignore patterns specific to SDM
+old_*
+legacy_*
+_old/
+_legacy/
+deprecated/
+
+# Performance test artifacts
+performance_baselines/
+benchmark_*.json
+
+# User-specific files
+user_data/
+personal_*/
+my_*/ 

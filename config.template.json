@@ -1,59 +1,38 @@
 {
     "app_name": "Social Download Manager",
-    "version": "2.0.0",
-    "architecture": {
-        "mode": "v2_with_adapters",
-        "initialization": {
-            "timeout_ms": 5000,
-            "retry_attempts": 3,
-            "phases": ["constants", "core", "data", "service", "bridge", "adapters", "ui", "verification"]
-        },
-        "fallback": {
-            "enabled": true,
-            "modes": ["FULL_V2", "DEGRADED_V2", "FALLBACK_V1"],
-            "auto_degradation": true
-        }
-    },
-    "adapters": {
-        "enabled": true,
-        "health_check_interval_ms": 30000,
-        "performance_thresholds": {
-            "response_time_ms": 100,
-            "memory_limit_mb": 100
-        }
-    },
-    "error_handling": {
-        "dialog_enabled": true,
-        "auto_close_timeout_s": 15,
-        "suppression_duration_min": 5,
-        "max_same_errors": 10
-    },
-    "logging": {
-        "level": "INFO",
-        "handlers": ["console", "file", "error", "performance"],
-        "rotation": {
-            "max_size_mb": 10,
-            "backup_count": 5
-        }
-    },
-    "shutdown": {
-        "timeout_s": 30,
-        "force_after_timeout": true,
-        "create_backup": true
-    },
-    "download_path": "./downloads",
+    "version": "2.0.0-dev",
+    "development_mode": true,
+    "download_dir": "./downloads",
     "max_concurrent_downloads": 3,
-    "supported_platforms": ["youtube", "tiktok"],
-    "ui": {
-        "theme": "default",
-        "language": "en",
-        "show_notifications": true
-    },
+    "default_quality": "best",
+    "supported_platforms": [
+        "TikTok",
+        "YouTube"
+    ],
     "database": {
-        "path": "./data/app.db",
+        "file": "data/downloads.db",
         "backup_enabled": true,
         "backup_interval_hours": 24
     },
-    "last_output_folder": "",
-    "language": "english"
+    "ui": {
+        "theme": "system",
+        "auto_check_updates": true,
+        "minimize_to_tray": false
+    },
+    "network": {
+        "timeout": 30,
+        "retry_attempts": 3,
+        "user_agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36"
+    },
+    "logging": {
+        "level": "INFO",
+        "file": "logs/app.log",
+        "max_size_mb": 10,
+        "backup_count": 5
+    },
+    "features": {
+        "auto_subtitle_download": false,
+        "thumbnail_download": true,
+        "metadata_extraction": true
+    }
 } 
