@@ -41,8 +41,6 @@ try:
         MainWindowAdapter, VideoInfoTabAdapter, DownloadedVideosTabAdapter,
         EventBridgeCoordinator, get_global_coordinator
     )
-    from ui.adapters.data_mappers import get_video_mapper, get_download_mapper, get_config_mapper
-    from ui.adapters.interfaces import AdapterState
 except ImportError as e:
     print(f"Warning: Could not import adapter components: {e}")
     print("Some functionality may be limited")

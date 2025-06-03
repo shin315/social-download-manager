@@ -1,0 +1,19 @@
+{
+  "timestamp": "2025-06-04T02:01:59.099190",
+  "files_analyzed": 3,
+  "total_lines_of_code": 72,
+  "total_functions": 7,
+  "total_classes": 3,
+  "performance_bottlenecks_detected": 0,
+  "code_duplications_detected": 0,
+  "refactoring_opportunities_detected": 5,
+  "analysis_details": {
+    "cyclomatic_complexity": 27,
+    "cognitive_complexity": 20,
+    "average_maintainability": 61.74727971905984
+  },
+  "optimization_effectiveness": {
+    "issues_identified": 5,
+    "optimization_potential": "Low"
+  }
+}

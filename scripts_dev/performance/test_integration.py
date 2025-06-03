@@ -14,7 +14,6 @@ from pathlib import Path
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 try:
-    from ui.adapters.optimized_event_integration import (
         OptimizedEventCoordinator,
         OptimizationLevel,
         get_optimized_coordinator,

@@ -42,7 +42,6 @@ import logging
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 try:
-    from ui.adapters.interfaces import AdapterState
     ADAPTER_INTERFACES_AVAILABLE = True
 except ImportError as e:
     print(f"Warning: Adapter interfaces not available: {e}")

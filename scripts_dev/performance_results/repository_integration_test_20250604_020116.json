@@ -1,0 +1,186 @@
+{
+  "test_metadata": {
+    "test_id": "1781c742-90ce-4442-b12e-efdc8d0948f8",
+    "started_at": "2025-06-04T02:01:16.581742",
+    "completed_at": "2025-06-04T02:01:16.672800",
+    "total_duration": 0.091058,
+    "status": "completed"
+  },
+  "overall_metrics": {
+    "overall_success_rate": 0.8,
+    "repository_operations_count": 1300,
+    "transaction_log_entries": 731,
+    "performance_threshold_met": true,
+    "error_handling_effective": true
+  },
+  "detailed_results": {
+    "data_consistency": {
+      "test_duration": 0.00299835205078125,
+      "videos_tested": 100,
+      "consistency_issues": 100,
+      "consistency_rate": 0.0,
+      "issues_details": [
+        {
+          "video_id": "65a712e7-59ab-44ec-9732-86439acf4de4",
+          "adapter_data": {
+            "url": "https://example.com/video_0",
+            "title": "Test Video 0",
+            "description": "Test description for video 0",
+            "duration": 180,
+            "file_size": 1048576
+          },
+          "repo_data": {
+            "id": "65a712e7-59ab-44ec-9732-86439acf4de4",
+            "url": "https://example.com/video_0",
+            "title": "Test Video 0",
+            "description": "Test description for video 0",
+            "duration": 180,
+            "file_size": 1048576,
+            "download_status": "pending",
+            "created_at": "2025-06-03 19:01:16",
+            "updated_at": "2025-06-03 19:01:16"
+          }
+        },
+        {
+          "video_id": "b25a898d-9343-4242-ba8d-9c10ef95644a",
+          "adapter_data": {
+            "url": "https://example.com/video_1",
+            "title": "Test Video 1",
+            "description": "Test description for video 1",
+            "duration": 181,
+            "file_size": 2097152
+          },
+          "repo_data": {
+            "id": "b25a898d-9343-4242-ba8d-9c10ef95644a",
+            "url": "https://example.com/video_1",
+            "title": "Test Video 1",
+            "description": "Test description for video 1",
+            "duration": 181,
+            "file_size": 2097152,
+            "download_status": "pending",
+            "created_at": "2025-06-03 19:01:16",
+            "updated_at": "2025-06-03 19:01:16"
+          }
+        },
+        {
+          "video_id": "5fe8fbef-93c6-48a0-8df1-359659c81be4",
+          "adapter_data": {
+            "url": "https://example.com/video_2",
+            "title": "Test Video 2",
+            "description": "Test description for video 2",
+            "duration": 182,
+            "file_size": 3145728
+          },
+          "repo_data": {
+            "id": "5fe8fbef-93c6-48a0-8df1-359659c81be4",
+            "url": "https://example.com/video_2",
+            "title": "Test Video 2",
+            "description": "Test description for video 2",
+            "duration": 182,
+            "file_size": 3145728,
+            "download_status": "pending",
+            "created_at": "2025-06-03 19:01:16",
+            "updated_at": "2025-06-03 19:01:16"
+          }
+        },
+        {
+          "video_id": "2770fb21-a9ed-4591-8187-e5ef7c55d147",
+          "adapter_data": {
+            "url": "https://example.com/video_3",
+            "title": "Test Video 3",
+            "description": "Test description for video 3",
+            "duration": 183,
+            "file_size": 4194304
+          },
+          "repo_data": {
+            "id": "2770fb21-a9ed-4591-8187-e5ef7c55d147",
+            "url": "https://example.com/video_3",
+            "title": "Test Video 3",
+            "description": "Test description for video 3",
+            "duration": 183,
+            "file_size": 4194304,
+            "download_status": "pending",
+            "created_at": "2025-06-03 19:01:16",
+            "updated_at": "2025-06-03 19:01:16"
+          }
+        },
+        {
+          "video_id": "068cd9d1-be33-4b4c-aabe-88bc9909a656",
+          "adapter_data": {
+            "url": "https://example.com/video_4",
+            "title": "Test Video 4",
+            "description": "Test description for video 4",
+            "duration": 184,
+            "file_size": 5242880
+          },
+          "repo_data": {
+            "id": "068cd9d1-be33-4b4c-aabe-88bc9909a656",
+            "url": "https://example.com/video_4",
+            "title": "Test Video 4",
+            "description": "Test description for video 4",
+            "duration": 184,
+            "file_size": 5242880,
+            "download_status": "pending",
+            "created_at": "2025-06-03 19:01:16",
+            "updated_at": "2025-06-03 19:01:16"
+          }
+        }
+      ]
+    },
+    "crud_operations": {
+      "test_duration": 0.0010006427764892578,
+      "operations_tested": 105,
+      "successful_operations": 105,
+      "success_rate": 1.0,
+      "create_success": 50,
+      "read_success": 25,
+      "update_success": 20,
+      "delete_success": 10
+    },
+    "transaction_integrity": {
+      "test_duration": 0.0009996891021728516,
+      "transactions_tested": 10,
+      "successful_transactions": 10,
+      "integrity_rate": 1.0,
+      "total_operations_logged": 230
+    },
+    "performance_under_load": {
+      "test_duration": 0.07698774337768555,
+      "total_operations": 496,
+      "total_errors": 0,
+      "operations_per_second": 6442.583952184819,
+      "error_rate": 0.0,
+      "avg_operation_time_ms": 1.2013993916972991,
+      "meets_performance_threshold": true,
+      "concurrent_workers": 8
+    },
+    "error_handling": {
+      "test_duration": 0.0020012855529785156,
+      "error_scenarios_tested": 5,
+      "scenarios_recovered": 5,
+      "recovery_rate": 1.0,
+      "error_handling_effective": true
+    },
+    "resource_cleanup": {
+      "test_duration": 0.0019981861114501953,
+      "records_created": 100,
+      "records_deleted": 100,
+      "records_remaining": 0,
+      "cleanup_rate": 1.0,
+      "cleanup_effective": true
+    },
+    "concurrent_access": {
+      "test_duration": 0.004074573516845703,
+      "total_operations": 50,
+      "successful_reads": 50,
+      "successful_updates": 0,
+      "total_errors": 0,
+      "success_rate": 1.0,
+      "concurrent_workers": 5,
+      "data_consistency_maintained": true
+    }
+  },
+  "recommendations": [
+    "Investigate data consistency issues between adapter and repository"
+  ]
+}

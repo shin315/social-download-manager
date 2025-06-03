@@ -168,7 +168,6 @@ def test_adapter_manager_initialization():
     """Test Adapter Manager initialization"""
     print("\n=== Testing Adapter Manager Initialization ===")
     
-    from ui.adapters.adapter_manager import AdapterManager, FallbackConfig
     
     # Create mock app controller
     app_controller = MockAppController()
@@ -198,8 +197,6 @@ def test_adapter_registration_and_health():
     """Test adapter registration and health monitoring"""
     print("\n=== Testing Adapter Registration and Health Monitoring ===")
     
-    from ui.adapters.adapter_manager import AdapterManager, FallbackConfig
-    from ui.adapters.interfaces import AdapterPriority, AdapterConfig
     
     app_controller = MockAppController()
     adapter_manager = AdapterManager(app_controller, FallbackConfig())
@@ -253,7 +250,6 @@ def test_fallback_mechanisms():
     """Test fallback mechanisms and error handling"""
     print("\n=== Testing Fallback Mechanisms ===")
     
-    from ui.adapters.adapter_manager import AdapterManager, FallbackConfig, FallbackStrategy
     
     app_controller = MockAppController()
     
@@ -306,8 +302,6 @@ def test_migration_coordinator():
     """Test Migration Coordinator functionality"""
     print("\n=== Testing Migration Coordinator ===")
     
-    from ui.adapters.adapter_manager import AdapterManager, FallbackConfig
-    from ui.adapters.migration_coordinator import (
         MigrationCoordinator, MigrationStrategy, MigrationStage
     )
     
@@ -382,7 +376,6 @@ def test_execute_with_fallback():
     """Test execute_with_fallback functionality"""
     print("\n=== Testing Execute with Fallback ===")
     
-    from ui.adapters.adapter_manager import AdapterManager, FallbackConfig
     
     app_controller = MockAppController()
     adapter_manager = AdapterManager(app_controller, FallbackConfig())
@@ -433,7 +426,6 @@ def test_configuration_and_feature_flags():
     """Test configuration and feature flag management"""
     print("\n=== Testing Configuration and Feature Flags ===")
     
-    from ui.adapters.adapter_manager import AdapterManager, FallbackConfig
     
     app_controller = MockAppController()
     adapter_manager = AdapterManager(app_controller, FallbackConfig())
@@ -468,8 +460,6 @@ def test_lifecycle_management():
     """Test complete lifecycle management"""
     print("\n=== Testing Lifecycle Management ===")
     
-    from ui.adapters.adapter_manager import AdapterManager, FallbackConfig
-    from ui.adapters.migration_coordinator import MigrationCoordinator
     
     app_controller = MockAppController()
     adapter_manager = AdapterManager(app_controller, FallbackConfig())

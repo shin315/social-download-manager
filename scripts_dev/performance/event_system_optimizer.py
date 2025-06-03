@@ -38,8 +38,6 @@ sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 try:
     from core.event_system import EventBus, EventType, Event
-    from ui.adapters.event_proxy import EventBridgeCoordinator
-    from ui.adapters.interfaces import AdapterState
 except ImportError as e:
     print(f"Warning: Could not import adapter components: {e}")
 

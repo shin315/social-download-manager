@@ -21,9 +21,6 @@ try:
     from PyQt6.QtGui import QAction
     
     # Import adapter components
-    from ui.adapters.main_window_adapter import MainWindowAdapter, MainWindowAdapterError
-    from ui.adapters.interfaces import AdapterState, AdapterConfig, AdapterMetrics
-    from ui.adapters.event_proxy import EventBridgeCoordinator, EventTranslator
     from core.event_system import EventBus, EventType, Event
     from core.app_controller import AppController
     

@@ -16,7 +16,6 @@ from PyQt6.QtCore import QObject, pyqtSignal
 sys.path.insert(0, '.')
 
 # Import specific classes we need
-from ui.adapters.cross_component_coordinator import (
     CrossComponentCoordinator,
     EventSequence,
     EventSequenceStep,

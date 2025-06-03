@@ -395,7 +395,6 @@ class StatePersistenceVerifier:
         
         try:
             # Try to import and use feature flag manager
-            from ui.adapters.feature_flag_manager import get_flag_manager
             
             flag_manager = get_flag_manager()
             if flag_manager:

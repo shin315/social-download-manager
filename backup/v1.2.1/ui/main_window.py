@@ -11,8 +11,6 @@ import json
 import sys
 from datetime import datetime
 
-from ui.video_info_tab import VideoInfoTab
-from ui.downloaded_videos_tab import DownloadedVideosTab
 from ui.donate_tab import DonateTab
 from ui.update_dialog import UpdateDialog, UpdateCheckerThread
 from localization import get_language_manager

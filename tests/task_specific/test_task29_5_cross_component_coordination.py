@@ -18,7 +18,6 @@ from PyQt6.QtWidgets import QApplication, QWidget
 from PyQt6.QtCore import QObject, pyqtSignal, QTimer
 
 # Import the modules we're testing
-from ui.adapters.cross_component_coordinator import (
     CrossComponentCoordinator,
     EventSequence,
     EventSequenceStep,
@@ -28,7 +27,6 @@ from ui.adapters.cross_component_coordinator import (
     get_cross_component_coordinator,
     initialize_cross_component_coordination
 )
-from ui.adapters.event_proxy import EventBridgeCoordinator, get_global_coordinator
 from core.event_system import get_event_bus, EventType, publish_event
 from ui.components.common.events import get_event_bus as get_component_bus
 

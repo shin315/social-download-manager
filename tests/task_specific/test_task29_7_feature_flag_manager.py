@@ -25,7 +25,6 @@ from PyQt6.QtCore import QTimer
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..'))
 
 try:
-    from ui.adapters.feature_flag_manager import (
         FeatureFlagManager, FeatureFlag, FlagType, FlagScope, 
         FlagEnvironment, FlagStatus, FlagValidationRule, FlagDependency,
         get_flag_manager, initialize_flag_manager, get_flag, 

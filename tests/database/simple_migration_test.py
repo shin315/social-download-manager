@@ -14,9 +14,6 @@ try:
     print("✅ ALL ADAPTERS imported successfully!")
     
     # Test adapter creation
-    from ui.adapters.main_window_adapter import create_main_window_adapter
-    from ui.adapters.video_info_tab_adapter import create_video_info_tab_adapter  
-    from ui.adapters.downloaded_videos_tab_adapter import create_downloaded_videos_tab_adapter
     
     main_adapter = create_main_window_adapter()
     video_adapter = create_video_info_tab_adapter()

@@ -188,6 +188,9 @@ backups/
 *_backup/
 emergency_*/
 
+# Legacy UI migration archive (Task 35 - keep for reference but exclude from version control)
+backup/v2_migration/
+
 # Temporary directories
 temp/
 tmp/

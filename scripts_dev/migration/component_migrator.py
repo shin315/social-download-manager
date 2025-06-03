@@ -68,7 +68,6 @@ class ComponentMigrator:
                 v2_path='ui/components/tabs/video_info_tab.py',
                 adapter_path='ui/adapters/video_info_tab_adapter.py',
                 import_mappings={
-                    'from ui.video_info_tab import VideoInfoTab': 'from ui.adapters.video_info_tab_adapter import VideoInfoTabAdapter',
                     'ui.video_info_tab.VideoInfoTab': 'ui.adapters.video_info_tab_adapter.VideoInfoTabAdapter',
                     'VideoInfoTab': 'VideoInfoTabAdapter'
                 },
@@ -81,7 +80,6 @@ class ComponentMigrator:
                 v2_path='ui/components/tabs/downloaded_videos_tab.py',
                 adapter_path='ui/adapters/downloaded_videos_tab_adapter.py',
                 import_mappings={
-                    'from ui.downloaded_videos_tab import DownloadedVideosTab': 'from ui.adapters.downloaded_videos_tab_adapter import DownloadedVideosTabAdapter',
                     'ui.downloaded_videos_tab.DownloadedVideosTab': 'ui.adapters.downloaded_videos_tab_adapter.DownloadedVideosTabAdapter',
                     'DownloadedVideosTab': 'DownloadedVideosTabAdapter'
                 },
@@ -94,8 +92,6 @@ class ComponentMigrator:
                 v2_path='ui/main_window.py',  # Main window stays in place but gets updated
                 adapter_path='',  # No adapter for main window
                 import_mappings={
-                    'from ui.video_info_tab import VideoInfoTab': 'from ui.adapters.video_info_tab_adapter import VideoInfoTabAdapter',
-                    'from ui.downloaded_videos_tab import DownloadedVideosTab': 'from ui.adapters.downloaded_videos_tab_adapter import DownloadedVideosTabAdapter'
                 },
                 class_mappings={
                     'VideoInfoTab': 'VideoInfoTabAdapter',

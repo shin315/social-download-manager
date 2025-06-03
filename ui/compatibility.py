@@ -286,11 +286,9 @@ MIGRATION_GUIDES = {
 🚀 QUICK START MIGRATION GUIDE
 
 1. Update Import Statements:
-   OLD: from ui.video_info_tab import VideoInfoTab
    NEW: from ui.components.tabs import VideoInfoTab
 
 2. Update Module Imports:
-   OLD: import ui.video_info_tab
    NEW: from ui.components.tabs import VideoInfoTab
 
 3. Update Legacy Functions:
@@ -303,7 +301,6 @@ MIGRATION_GUIDES = {
     
     'common_patterns': {
         'tab_imports': {
-            'old': ['from ui.video_info_tab import VideoInfoTab', 'import ui.video_info_tab'],
             'new': 'from ui.components.tabs import VideoInfoTab',
             'category': 'tabs'
         },

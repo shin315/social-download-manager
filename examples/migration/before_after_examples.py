@@ -23,8 +23,6 @@ print("-" * 50)
 print("❌ BEFORE (Legacy v1.x):")
 print("""
 # Old legacy imports that no longer work
-from ui.video_info_tab import VideoInfoTab
-from ui.downloaded_videos_tab import DownloadedVideosTab
 
 # Usage
 video_tab = VideoInfoTab()
@@ -211,8 +209,6 @@ print("-" * 50)
 print("❌ BEFORE (Legacy v1.x):")
 print("""
 # Old module-level access
-import ui.video_info_tab
-import ui.downloaded_videos_tab
 
 # Usage
 tab_class = ui.video_info_tab.VideoInfoTab
@@ -243,8 +239,6 @@ print("-" * 50)
 print("❌ BEFORE (Legacy v1.x):")
 print("""
 # Multiple legacy imports
-from ui.video_info_tab import VideoInfoTab
-from ui.downloaded_videos_tab import DownloadedVideosTab  
 from ui.video_table import VideoTable
 from ui.action_buttons import ActionButtonGroup
 from ui.main_window import MainWindow
@@ -364,7 +358,6 @@ print("""
 ✅ MIGRATION PATTERNS:
 
 1. Tab Components:
-   FROM: from ui.video_info_tab import VideoInfoTab
    TO:   from ui.components.tabs import VideoInfoTab
 
 2. Table Components:

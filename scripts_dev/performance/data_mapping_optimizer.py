@@ -37,7 +37,6 @@ import copy
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
 try:
-    from ui.adapters.data_mappers import VideoDataMapper, DownloadDataMapper
     from data.models.downloads import DownloadStatus
     from data.models.video_info import LegacyVideoInfo, LegacyDownloadInfo
     MAPPERS_AVAILABLE = True

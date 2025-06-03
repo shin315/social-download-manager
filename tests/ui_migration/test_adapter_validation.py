@@ -24,9 +24,6 @@ import weakref
 sys.path.insert(0, os.path.abspath(os.path.join(os.path.dirname(__file__), '../..')))
 
 # Import adapter components
-from ui.adapters.video_info_tab_adapter import VideoInfoTabAdapter, VideoInfoTabAdapterError
-from ui.adapters.downloaded_videos_tab_adapter import DownloadedVideosTabAdapter, DownloadedVideosTabAdapterError
-from ui.adapters.interfaces import (
     IVideoInfoTabAdapter, IDownloadedVideosTabAdapter, IUIComponentAdapter,
     AdapterState, AdapterConfig, AdapterMetrics, AdapterPriority
 )
