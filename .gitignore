@@ -62,7 +62,7 @@ validation_*.log
 migration_*.log
 
 # ===== TEST DATA & REPORTS =====
-# Test databases and datasets
+# Test databases and datasets (but keep small example datasets)
 test_datasets/
 test-*.db
 mock_data/
@@ -87,6 +87,20 @@ test.txt
 temp_*.py
 *_temp.*
 *_backup.*
+
+# ===== TASKMASTER FILES =====
+# Taskmaster instance data (local/personal)
+.taskmaster/tasks/
+.taskmaster/reports/
+.taskmaster/config.json
+*.json.bak
+tasks.json.bak
+refactor_tasks.json
+
+# But keep taskmaster templates and docs
+!.taskmaster/templates/
+!.taskmaster/docs/
+!.taskmaster/README.md
 
 # ===== DEVELOPMENT & BUILD FILES =====
 # Python bytecode
@@ -237,27 +251,11 @@ junit.xml
 dmypy.json
 
 # ===== PROJECT SPECIFIC =====
-# Task Master files (if using)
-.taskmaster/
-tasks.json
-tasks/
-
-# Documentation builds
-docs/_build/
-site/
-
-# Scripts output
-scripts/performance_results/
-scripts/edge_case_results/
-scripts/migration_test_results/
-scripts/rollback_results/
-scripts/validation_reports/
-
 # Project metadata
 .specstory/
 memory-bank/
 
-# Version files
+# Version files (auto-generated)
 version.txt
 version.json
 
@@ -284,6 +282,16 @@ version.json
 !*example*
 !*template*
 !*sample*
+
+# Keep important test files (but exclude test data and results)
+!test_*.py
+!tests/
+!**/test_*.py
+!**/tests/
+
+# Keep taskmaster templates and documentation
+!.taskmaster/templates/
+!.taskmaster/docs/
 
 # ===== CUSTOM PATTERNS =====
 # Custom ignore patterns specific to SDM
