@@ -1,0 +1,195 @@
+{
+  "metadata": {
+    "report_type": "adapter_framework_baseline",
+    "generated_at": "2025-06-04T01:08:59.090411",
+    "test_duration_seconds": 0.612096,
+    "environment": {
+      "python_version": "3.12.1 (tags/v3.12.1:2305ca5, Dec  7 2023, 22:03:25) [MSC v.1937 64 bit (AMD64)]",
+      "platform": "win32",
+      "cpu_count": 12,
+      "memory_total": 34182664192,
+      "disk_space": 395136987136,
+      "hostname": "Unknown",
+      "timestamp": "2025-06-04T01:08:58.409872",
+      "process_id": 32912,
+      "process_name": "python.exe",
+      "process_threads": 4,
+      "process_memory": 71663616
+    }
+  },
+  "performance_summary": {
+    "initialization_time_ms": 0.7591999965370633,
+    "event_processing_time_ms": 0.0,
+    "data_mapping_time_ms": 17.055500000424217,
+    "memory_usage_mb": {
+      "start": 20599.29296875,
+      "peak": 20601.50390625,
+      "end": 20600.22265625,
+      "allocated": 0.9296875
+    },
+    "cpu_usage_percent": {
+      "average": 40.2,
+      "peak": 40.2
+    },
+    "success_rate_percent": 90.9090909090909,
+    "reliability_score": 90.0
+  },
+  "adapter_benchmarks": {
+    "main_window": {
+      "adapter_name": "MainWindowAdapter",
+      "adapter_type": "main_window",
+      "startup_time": 0.24470000062137842,
+      "method_call_times": {},
+      "memory_footprint": 0,
+      "event_throughput": 0.0,
+      "data_processing_rate": 0.0,
+      "cpu_usage": 0.0,
+      "memory_allocations": 0,
+      "gc_collections": 0,
+      "errors_encountered": 0,
+      "recovery_attempts": 0,
+      "stability_score": 100.0
+    },
+    "video_info_tab": {
+      "adapter_name": "VideoInfoTabAdapter",
+      "adapter_type": "video_info_tab",
+      "startup_time": 0.2575000034994446,
+      "method_call_times": {},
+      "memory_footprint": 0,
+      "event_throughput": 0.0,
+      "data_processing_rate": 0.0,
+      "cpu_usage": 0.0,
+      "memory_allocations": 0,
+      "gc_collections": 0,
+      "errors_encountered": 0,
+      "recovery_attempts": 0,
+      "stability_score": 100.0
+    },
+    "downloaded_videos_tab": {
+      "adapter_name": "DownloadedVideosTabAdapter",
+      "adapter_type": "downloaded_videos_tab",
+      "startup_time": 0.2086000022245571,
+      "method_call_times": {},
+      "memory_footprint": 0,
+      "event_throughput": 0.0,
+      "data_processing_rate": 0.0,
+      "cpu_usage": 0.0,
+      "memory_allocations": 0,
+      "gc_collections": 0,
+      "errors_encountered": 0,
+      "recovery_attempts": 0,
+      "stability_score": 100.0
+    }
+  },
+  "event_system_metrics": {
+    "events_processed": 0,
+    "processing_time_ms": 0.0,
+    "cache_hits": 0,
+    "cache_misses": 0,
+    "errors": 0,
+    "throughput_events_per_second": 0
+  },
+  "data_mapping_metrics": {
+    "mappings_performed": 8,
+    "processing_time_ms": 17.055500000424217,
+    "cache_hits": 0,
+    "cache_misses": 0,
+    "throughput_mappings_per_second": 469.0569024538136
+  },
+  "profiling_data": {
+    "adapter_initialization": {
+      "execution_time": 8.68320000154199,
+      "memory_delta": 16384,
+      "profile_output": "         366 function calls in 0.002 seconds\n\n   Ordered by: cumulative time\n   List reduced from 89 to 20 due to restriction <20>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        2    0.000    0.000    0.001    0.001 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1660(_log)\n        1    0.000    0.000    0.001    0.001 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1529(info)\n        2    0.000    0.000    0.001    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1686(handle)\n        2    0.000    0.000    0.001    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1746(callHandlers)\n        3    0.000    0.000    0.001    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1011(handle)\n        3    0.000    0.000    0.001    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1148(emit)\n        4    0.000    0.000    0.001    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1517(debug)\n        2    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1645(makeRecord)\n        2    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1266(emit)\n        2    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:298(__init__)\n        3    0.000    0.000    0.000    0.000 {method 'write' of '_io.TextIOWrapper' objects}\n        3    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1137(flush)\n        1    0.000    0.000    0.000    0.000 I:\\dev-work-space\\project\\app\\test-version\\social-download-manager\\ui\\adapters\\video_info_tab_adapter.py:61(__init__)\n        1    0.000    0.000    0.000    0.000 I:\\dev-work-space\\project\\app\\test-version\\social-download-manager\\ui\\adapters\\main_window_adapter.py:57(__init__)\n        3    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:988(format)\n        3    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:690(format)\n        1    0.000    0.000    0.000    0.000 I:\\dev-work-space\\project\\app\\test-version\\social-download-manager\\ui\\adapters\\downloaded_videos_tab_adapter.py:62(__init__)\n        3    0.000    0.000    0.000    0.000 {method 'flush' of '_io.TextIOWrapper' objects}\n        1    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\contextlib.py:141(__exit__)\n        6    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:2156(getLogger)\n\n\n",
+      "timestamp": "2025-06-04T01:08:58.450502"
+    },
+    "event_system_performance": {
+      "execution_time": 6.591600002138875,
+      "memory_delta": 24576,
+      "profile_output": "         249 function calls in 0.001 seconds\n\n   Ordered by: cumulative time\n   List reduced from 81 to 20 due to restriction <20>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        2    0.000    0.000    0.001    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1660(_log)\n        2    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1686(handle)\n        2    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1746(callHandlers)\n        1    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1517(debug)\n        3    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1011(handle)\n        1    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1558(error)\n        3    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1148(emit)\n        2    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1645(makeRecord)\n        2    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:298(__init__)\n        1    0.000    0.000    0.000    0.000 I:\\dev-work-space\\project\\app\\test-version\\social-download-manager\\ui\\adapters\\event_proxy.py:703(get_global_coordinator)\n        2    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1266(emit)\n        1    0.000    0.000    0.000    0.000 I:\\dev-work-space\\project\\app\\test-version\\social-download-manager\\ui\\adapters\\event_proxy.py:75(__init__)\n        3    0.000    0.000    0.000    0.000 {method 'write' of '_io.TextIOWrapper' objects}\n        3    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:988(format)\n        3    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:690(format)\n        2    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1611(findCaller)\n        6    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:200(_is_internal_frame)\n        3    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1137(flush)\n        3    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:622(formatTime)\n        6    0.000    0.000    0.000    0.000 <frozen ntpath>:51(normcase)\n\n\n",
+      "timestamp": "2025-06-04T01:08:58.465009"
+    },
+    "data_mapping_performance": {
+      "execution_time": 22.674599997117184,
+      "memory_delta": 1216512,
+      "profile_output": "         4842 function calls (4671 primitive calls) in 0.018 seconds\n\n   Ordered by: cumulative time\n   List reduced from 319 to 20 due to restriction <20>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        1    0.000    0.000    0.016    0.016 I:\\dev-work-space\\project\\app\\test-version\\social-download-manager\\ui\\adapters\\data_mappers.py:316(map_to_v2)\n        1    0.000    0.000    0.016    0.016 I:\\dev-work-space\\project\\app\\test-version\\social-download-manager\\ui\\adapters\\data_mappers.py:516(_parse_date)\n        2    0.000    0.000    0.016    0.008 {built-in method strptime}\n       12    0.000    0.000    0.011    0.001 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\__init__.py:226(compile)\n       12    0.000    0.000    0.011    0.001 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\__init__.py:280(_compile)\n        3    0.000    0.000    0.011    0.004 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\_compiler.py:740(compile)\n        2    0.000    0.000    0.010    0.005 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\_strptime.py:552(_strptime_datetime)\n        2    0.000    0.000    0.010    0.005 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\_strptime.py:293(_strptime)\n        2    0.000    0.000    0.010    0.005 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\_strptime.py:261(compile)\n        3    0.000    0.000    0.006    0.002 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\_parser.py:969(parse)\n     13/3    0.000    0.000    0.006    0.002 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\_parser.py:452(_parse_sub)\n     30/3    0.003    0.000    0.006    0.002 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\_parser.py:512(_parse)\n        1    0.000    0.000    0.005    0.005 <frozen importlib._bootstrap>:1349(_find_and_load)\n        1    0.000    0.000    0.005    0.005 <frozen importlib._bootstrap>:1304(_find_and_load_unlocked)\n        3    0.000    0.000    0.005    0.002 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\_compiler.py:573(_code)\n     38/3    0.002    0.000    0.005    0.002 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\re\\_compiler.py:37(_compile)\n        1    0.000    0.000    0.004    0.004 <frozen importlib._bootstrap>:911(_load_unlocked)\n        1    0.000    0.000    0.004    0.004 <frozen importlib._bootstrap_external>:988(exec_module)\n        2    0.000    0.000    0.003    0.002 <frozen importlib._bootstrap>:480(_call_with_frames_removed)\n        1    0.000    0.000    0.003    0.003 {built-in method builtins.exec}\n\n\n",
+      "timestamp": "2025-06-04T01:08:58.501939"
+    },
+    "memory_analysis": {
+      "top_memory_consumers": [
+        {
+          "file": "    lines = fp.readlines()",
+          "size_mb": 0.2751283645629883,
+          "count": 3099
+        },
+        {
+          "file": "  File \"<frozen importlib._bootstrap_external>\", line 752",
+          "size_mb": 0.03728771209716797,
+          "count": 310
+        },
+        {
+          "file": "    callers[func] = nc, cc, tt, ct",
+          "size_mb": 0.0350189208984375,
+          "count": 510
+        },
+        {
+          "file": "    stats_list.append((cc, nc, tt, ct) + func +",
+          "size_mb": 0.0340576171875,
+          "count": 319
+        },
+        {
+          "file": "    return (code.co_filename, code.co_firstlineno, code.co_name)",
+          "size_mb": 0.0252685546875,
+          "count": 414
+        },
+        {
+          "file": "    self.stats[func] = cc, nc, tt, ct, callers",
+          "size_mb": 0.0234222412109375,
+          "count": 307
+        },
+        {
+          "file": "    \"profile_output\": profiler_output.getvalue(),",
+          "size_mb": 0.008273124694824219,
+          "count": 3
+        },
+        {
+          "file": "    return ('~', 0, code)    # built-in functions ('~' sorts at the end)",
+          "size_mb": 0.00616455078125,
+          "count": 101
+        },
+        {
+          "file": "    entries = self.getstats()",
+          "size_mb": 0.00426483154296875,
+          "count": 92
+        },
+        {
+          "file": "    callers = {}",
+          "size_mb": 0.00390625,
+          "count": 64
+        }
+      ],
+      "total_memory_traced": 564563,
+      "memory_blocks": 582
+    }
+  },
+  "optimization_recommendations": [
+    {
+      "category": "data_mapping",
+      "priority": "medium",
+      "issue": "Slow data mapping performance",
+      "current_value": "469.1 mappings/second",
+      "target_value": "> 1000 mappings/second",
+      "recommendation": "Implement mapping result caching and optimize serialization",
+      "impact": "40-60% improvement in data processing speed"
+    },
+    {
+      "category": "reliability",
+      "priority": "critical",
+      "issue": "Errors detected during baseline testing",
+      "current_value": "1.0 errors",
+      "target_value": "0 errors",
+      "recommendation": "Investigate and fix error sources, implement better error handling",
+      "impact": "Improved stability and reliability"
+    }
+  ]
+}

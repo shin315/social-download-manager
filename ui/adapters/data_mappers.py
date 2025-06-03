@@ -200,6 +200,42 @@ class VideoDataMapper(IDataMapperAdapter):
         """Get supported data types"""
         return self._supported_types.copy()
     
+    def serialize_video_data(self, video_data: Dict[str, Any]) -> str:
+        """
+        Serialize video data to string format for performance testing.
+        
+        Args:
+            video_data: Video data dictionary
+            
+        Returns:
+            Serialized string representation
+        """
+        try:
+            import json
+            # Convert to LegacyVideoInfo first to ensure proper structure
+            legacy_video = LegacyVideoInfo(**video_data)
+            return json.dumps(asdict(legacy_video), default=str)
+        except Exception as e:
+            self.logger.error(f"Failed to serialize video data: {e}")
+            return "{}"
+    
+    def deserialize_video_data(self, serialized_data: str) -> Dict[str, Any]:
+        """
+        Deserialize video data from string format for performance testing.
+        
+        Args:
+            serialized_data: Serialized string data
+            
+        Returns:
+            Deserialized video data dictionary
+        """
+        try:
+            import json
+            return json.loads(serialized_data)
+        except Exception as e:
+            self.logger.error(f"Failed to deserialize video data: {e}")
+            return {}
+    
     def _map_platform_type(self, platform_str: str) -> PlatformType:
         """Map platform string to PlatformType enum"""
         platform_mapping = {
@@ -400,29 +436,72 @@ class DownloadDataMapper(IDataMapperAdapter):
         """Get supported data types"""
         return self._supported_types.copy()
     
+    def serialize_download_data(self, download_data: Dict[str, Any]) -> str:
+        """
+        Serialize download data to string format for performance testing.
+        
+        Args:
+            download_data: Download data dictionary
+            
+        Returns:
+            Serialized string representation
+        """
+        try:
+            import json
+            # Convert to LegacyDownloadInfo first to ensure proper structure
+            legacy_download = LegacyDownloadInfo(**download_data)
+            return json.dumps(asdict(legacy_download), default=str)
+        except Exception as e:
+            self.logger.error(f"Failed to serialize download data: {e}")
+            return "{}"
+    
+    def deserialize_download_data(self, serialized_data: str) -> Dict[str, Any]:
+        """
+        Deserialize download data from string format for performance testing.
+        
+        Args:
+            serialized_data: Serialized string data
+            
+        Returns:
+            Deserialized download data dictionary
+        """
+        try:
+            import json
+            return json.loads(serialized_data)
+        except Exception as e:
+            self.logger.error(f"Failed to deserialize download data: {e}")
+            return {}
+    
     def _map_download_status(self, status_str: str) -> DownloadStatus:
         """Map status string to DownloadStatus enum"""
         status_mapping = {
+            "queued": DownloadStatus.QUEUED,
+            "starting": DownloadStatus.STARTING,
+            "downloading": DownloadStatus.DOWNLOADING,
+            "in_progress": DownloadStatus.DOWNLOADING,  # Alias for downloading
+            "processing": DownloadStatus.PROCESSING,
             "completed": DownloadStatus.COMPLETED,
-            "downloading": DownloadStatus.IN_PROGRESS,
-            "pending": DownloadStatus.PENDING,
             "failed": DownloadStatus.FAILED,
             "cancelled": DownloadStatus.CANCELLED,
-            "paused": DownloadStatus.PAUSED
+            "paused": DownloadStatus.PAUSED,
+            "retrying": DownloadStatus.RETRYING
         }
-        return status_mapping.get(status_str.lower(), DownloadStatus.PENDING)
+        return status_mapping.get(status_str.lower(), DownloadStatus.QUEUED)
     
     def _format_download_status(self, status: DownloadStatus) -> str:
         """Format DownloadStatus enum to string"""
         status_mapping = {
+            DownloadStatus.QUEUED: "queued",
+            DownloadStatus.STARTING: "starting", 
+            DownloadStatus.DOWNLOADING: "downloading",
+            DownloadStatus.PROCESSING: "processing",
             DownloadStatus.COMPLETED: "completed",
-            DownloadStatus.IN_PROGRESS: "downloading",
-            DownloadStatus.PENDING: "pending",
             DownloadStatus.FAILED: "failed",
             DownloadStatus.CANCELLED: "cancelled",
-            DownloadStatus.PAUSED: "paused"
+            DownloadStatus.PAUSED: "paused",
+            DownloadStatus.RETRYING: "retrying"
         }
-        return status_mapping.get(status, "pending")
+        return status_mapping.get(status, "queued")
     
     def _map_platform_type(self, platform_str: str) -> PlatformType:
         """Map platform string to PlatformType enum"""

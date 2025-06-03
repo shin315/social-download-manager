@@ -1,0 +1,186 @@
+{
+  "metadata": {
+    "report_type": "adapter_framework_baseline",
+    "generated_at": "2025-06-04T01:02:03.983905",
+    "test_duration_seconds": 0.613094,
+    "environment": {
+      "python_version": "3.12.1 (tags/v3.12.1:2305ca5, Dec  7 2023, 22:03:25) [MSC v.1937 64 bit (AMD64)]",
+      "platform": "win32",
+      "cpu_count": 12,
+      "memory_total": 34182664192,
+      "disk_space": 395136987136,
+      "hostname": "Unknown",
+      "timestamp": "2025-06-04T01:02:03.312231",
+      "process_id": 26740,
+      "process_name": "python.exe",
+      "process_threads": 4,
+      "process_memory": 71319552
+    }
+  },
+  "performance_summary": {
+    "initialization_time_ms": 1.0185000064666383,
+    "event_processing_time_ms": 0.0,
+    "data_mapping_time_ms": 0.0,
+    "memory_usage_mb": {
+      "start": 21264.87109375,
+      "peak": 21276.87109375,
+      "end": 21236.08203125,
+      "allocated": 0.0
+    },
+    "cpu_usage_percent": {
+      "average": 30.6,
+      "peak": 30.6
+    },
+    "success_rate_percent": 33.33333333333333,
+    "reliability_score": 80.0
+  },
+  "adapter_benchmarks": {
+    "main_window": {
+      "adapter_name": "MainWindowAdapter",
+      "adapter_type": "main_window",
+      "startup_time": 0.44549999438459054,
+      "method_call_times": {},
+      "memory_footprint": 0,
+      "event_throughput": 0.0,
+      "data_processing_rate": 0.0,
+      "cpu_usage": 0.0,
+      "memory_allocations": 0,
+      "gc_collections": 0,
+      "errors_encountered": 0,
+      "recovery_attempts": 0,
+      "stability_score": 100.0
+    },
+    "video_info_tab": {
+      "adapter_name": "VideoInfoTabAdapter",
+      "adapter_type": "video_info_tab",
+      "startup_time": 0.3186000030837022,
+      "method_call_times": {},
+      "memory_footprint": 0,
+      "event_throughput": 0.0,
+      "data_processing_rate": 0.0,
+      "cpu_usage": 0.0,
+      "memory_allocations": 0,
+      "gc_collections": 0,
+      "errors_encountered": 0,
+      "recovery_attempts": 0,
+      "stability_score": 100.0
+    },
+    "downloaded_videos_tab": {
+      "adapter_name": "DownloadedVideosTabAdapter",
+      "adapter_type": "downloaded_videos_tab",
+      "startup_time": 0.2066999950329773,
+      "method_call_times": {},
+      "memory_footprint": 0,
+      "event_throughput": 0.0,
+      "data_processing_rate": 0.0,
+      "cpu_usage": 0.0,
+      "memory_allocations": 0,
+      "gc_collections": 0,
+      "errors_encountered": 0,
+      "recovery_attempts": 0,
+      "stability_score": 100.0
+    }
+  },
+  "event_system_metrics": {
+    "events_processed": 0,
+    "processing_time_ms": 0.0,
+    "cache_hits": 0,
+    "cache_misses": 0,
+    "errors": 0,
+    "throughput_events_per_second": 0
+  },
+  "data_mapping_metrics": {
+    "mappings_performed": 0,
+    "processing_time_ms": 0.0,
+    "cache_hits": 0,
+    "cache_misses": 0,
+    "throughput_mappings_per_second": 0
+  },
+  "profiling_data": {
+    "adapter_initialization": {
+      "execution_time": 10.582900002191309,
+      "memory_delta": 20480,
+      "profile_output": "         774 function calls in 0.005 seconds\n\n   Ordered by: cumulative time\n   List reduced from 155 to 20 due to restriction <20>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        2    0.000    0.000    0.004    0.002 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1660(_log)\n        2    0.000    0.000    0.004    0.002 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1686(handle)\n        2    0.000    0.000    0.004    0.002 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1746(callHandlers)\n        3    0.000    0.000    0.004    0.001 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1011(handle)\n        3    0.000    0.000    0.004    0.001 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1148(emit)\n        1    0.000    0.000    0.004    0.004 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1529(info)\n        2    0.000    0.000    0.004    0.002 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1266(emit)\n        1    0.000    0.000    0.003    0.003 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1066(handleError)\n        1    0.000    0.000    0.002    0.002 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:111(print_exception)\n        1    0.000    0.000    0.002    0.002 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:1041(print)\n        5    0.000    0.000    0.001    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:940(format)\n        2    0.000    0.000    0.001    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:525(format)\n        5    0.000    0.000    0.001    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:460(format_frame_summary)\n        7    0.001    0.000    0.001    0.000 {built-in method builtins.print}\n        1    0.000    0.000    0.001    0.001 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:202(print_stack)\n        4    0.000    0.000    0.001    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1517(debug)\n        2    0.000    0.000    0.001    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:399(_extract_from_extended_frame_gen)\n        1    0.000    0.000    0.001    0.001 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:718(__init__)\n        1    0.000    0.000    0.000    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:21(print_list)\n        1    0.000    0.000    0.000    0.000 I:\\dev-work-space\\project\\app\\test-version\\social-download-manager\\ui\\adapters\\main_window_adapter.py:57(__init__)\n\n\n",
+      "timestamp": "2025-06-04T01:02:03.355001"
+    },
+    "event_system_performance": {
+      "execution_time": 47.193499995046295,
+      "memory_delta": 12603392,
+      "profile_output": "         12138 function calls (12137 primitive calls) in 0.043 seconds\n\n   Ordered by: cumulative time\n   List reduced from 172 to 20 due to restriction <20>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        2    0.000    0.000    0.043    0.021 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1660(_log)\n        2    0.000    0.000    0.042    0.021 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1686(handle)\n        2    0.000    0.000    0.042    0.021 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1746(callHandlers)\n        3    0.000    0.000    0.042    0.014 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1011(handle)\n        1    0.000    0.000    0.042    0.042 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1558(error)\n        3    0.000    0.000    0.042    0.014 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1148(emit)\n        2    0.000    0.000    0.042    0.021 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1266(emit)\n        1    0.000    0.000    0.042    0.042 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1066(handleError)\n        1    0.000    0.000    0.041    0.041 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:111(print_exception)\n      2/1    0.000    0.000    0.039    0.039 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:718(__init__)\n        1    0.000    0.000    0.037    0.037 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:1063(_compute_suggestion_error)\n       34    0.012    0.000    0.036    0.001 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:1125(_levenshtein_distance)\n     4370    0.015    0.000    0.015    0.000 {built-in method builtins.min}\n     2168    0.003    0.000    0.008    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:1055(_substitution_cost)\n     4088    0.005    0.000    0.005    0.000 {method 'lower' of 'str' objects}\n        1    0.000    0.000    0.002    0.002 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:1041(print)\n        3    0.000    0.000    0.002    0.001 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:399(_extract_from_extended_frame_gen)\n       12    0.000    0.000    0.002    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:940(format)\n        3    0.000    0.000    0.001    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:525(format)\n        9    0.000    0.000    0.001    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:460(format_frame_summary)\n\n\n",
+      "timestamp": "2025-06-04T01:02:03.416148"
+    },
+    "data_mapping_performance": {
+      "execution_time": 39.06039999856148,
+      "memory_delta": -4096,
+      "profile_output": "         9633 function calls (9632 primitive calls) in 0.035 seconds\n\n   Ordered by: cumulative time\n   List reduced from 156 to 20 due to restriction <20>\n\n   ncalls  tottime  percall  cumtime  percall filename:lineno(function)\n        2    0.000    0.000    0.035    0.017 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1660(_log)\n        2    0.000    0.000    0.034    0.017 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1686(handle)\n        2    0.000    0.000    0.034    0.017 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1746(callHandlers)\n        3    0.000    0.000    0.034    0.011 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1011(handle)\n        3    0.000    0.000    0.034    0.011 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1148(emit)\n        2    0.000    0.000    0.034    0.017 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1266(emit)\n        1    0.000    0.000    0.030    0.030 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1558(error)\n        1    0.000    0.000    0.030    0.030 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1066(handleError)\n        1    0.000    0.000    0.029    0.029 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:111(print_exception)\n      2/1    0.000    0.000    0.027    0.027 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:718(__init__)\n        1    0.000    0.000    0.027    0.027 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:1063(_compute_suggestion_error)\n       43    0.009    0.000    0.026    0.001 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:1125(_levenshtein_distance)\n     3439    0.011    0.000    0.011    0.000 {built-in method builtins.min}\n     1698    0.002    0.000    0.006    0.000 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\traceback.py:1055(_substitution_cost)\n        1    0.000    0.000    0.004    0.004 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1517(debug)\n        2    0.000    0.000    0.004    0.002 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\logging\\__init__.py:1137(flush)\n        1    0.000    0.000    0.004    0.004 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\psutil\\__init__.py:1976(virtual_memory)\n        1    0.000    0.000    0.004    0.004 C:\\Users\\Admin\\AppData\\Local\\Programs\\Python\\Python312\\Lib\\site-packages\\psutil\\_pswindows.py:237(virtual_memory)\n        1    0.004    0.004    0.004    0.004 {built-in method psutil_windows.virtual_mem}\n     3192    0.003    0.000    0.003    0.000 {method 'lower' of 'str' objects}\n\n\n",
+      "timestamp": "2025-06-04T01:02:03.468340"
+    },
+    "memory_analysis": {
+      "top_memory_consumers": [
+        {
+          "file": "    lines = fp.readlines()",
+          "size_mb": 0.11897850036621094,
+          "count": 1356
+        },
+        {
+          "file": "    stats_list.append((cc, nc, tt, ct) + func +",
+          "size_mb": 0.0183563232421875,
+          "count": 172
+        },
+        {
+          "file": "    callers[func] = nc, cc, tt, ct",
+          "size_mb": 0.01613616943359375,
+          "count": 235
+        },
+        {
+          "file": "    self.stats[func] = cc, nc, tt, ct, callers",
+          "size_mb": 0.0128173828125,
+          "count": 168
+        },
+        {
+          "file": "    return (code.co_filename, code.co_firstlineno, code.co_name)",
+          "size_mb": 0.0120849609375,
+          "count": 198
+        },
+        {
+          "file": "    \"profile_output\": profiler_output.getvalue(),",
+          "size_mb": 0.008421897888183594,
+          "count": 3
+        },
+        {
+          "file": "    entries = self.getstats()",
+          "size_mb": 0.00572967529296875,
+          "count": 152
+        },
+        {
+          "file": "    return ('~', 0, code)    # built-in functions ('~' sorts at the end)",
+          "size_mb": 0.00390625,
+          "count": 64
+        },
+        {
+          "file": "    profiler.enable()",
+          "size_mb": 0.0037355422973632812,
+          "count": 66
+        },
+        {
+          "file": "    callers = {}",
+          "size_mb": 0.00335693359375,
+          "count": 55
+        }
+      ],
+      "total_memory_traced": 261846,
+      "memory_blocks": 336
+    }
+  },
+  "optimization_recommendations": [
+    {
+      "category": "reliability",
+      "priority": "critical",
+      "issue": "Errors detected during baseline testing",
+      "current_value": "2.0 errors",
+      "target_value": "0 errors",
+      "recommendation": "Investigate and fix error sources, implement better error handling",
+      "impact": "Improved stability and reliability"
+    }
+  ]
+}

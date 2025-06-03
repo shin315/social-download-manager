@@ -35,6 +35,8 @@ class EventType(Enum):
     UI_UPDATE_REQUIRED = auto()
     UI_THEME_CHANGED = auto()
     UI_LANGUAGE_CHANGED = auto()
+    CONTENT_URL_ENTERED = auto()
+    CONTENT_METADATA_UPDATED = auto()
     
     # Database events
     DB_CONNECTED = auto()
