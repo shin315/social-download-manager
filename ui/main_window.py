@@ -11,8 +11,10 @@ import json
 import sys
 from datetime import datetime
 
-from ui.video_info_tab import VideoInfoTab
-from ui.downloaded_videos_tab import DownloadedVideosTab
+# Updated imports to use v2.0 component architecture
+from ui.components.tabs.video_info_tab import VideoInfoTab
+from ui.components.tabs.downloaded_videos_tab import DownloadedVideosTab
+# Keep legacy imports for components not yet migrated
 from ui.donate_tab import DonateTab
 from ui.update_dialog import UpdateDialog, UpdateCheckerThread
 from localization import get_language_manager

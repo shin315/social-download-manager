@@ -11,10 +11,11 @@ from PyQt6.QtCore import pyqtSignal
 
 from ..common.models import ButtonConfig, ButtonType
 from ..common.interfaces import ComponentInterface
+from ..common import QWidgetABCMeta
 from ..mixins.language_support import LanguageSupport
 from ..mixins.theme_support import ThemeSupport
 
-class ActionButtonGroup(QWidget, ComponentInterface, LanguageSupport, ThemeSupport):
+class ActionButtonGroup(QWidget, ComponentInterface, LanguageSupport, ThemeSupport, metaclass=QWidgetABCMeta):
     """Reusable button group for common actions"""
     
     # Signals for button actions

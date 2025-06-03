@@ -13,14 +13,14 @@ from PyQt6.QtWidgets import (
 from PyQt6.QtCore import Qt, pyqtSignal, QModelIndex
 from PyQt6.QtGui import QFont, QPixmap, QIcon
 
-from ..common.interfaces import ComponentInterface
-from ..common.component_interfaces import TableInterface
+from ..common.interfaces import TableInterface
+from ..common import QWidgetABCMeta
 from ..common.models import TableConfig, ColumnConfig, SortConfig, SortOrder
 from ..mixins.language_support import LanguageSupport
 from ..mixins.theme_support import ThemeSupport
 
-class VideoTable(QTableWidget, ComponentInterface, TableInterface, 
-                LanguageSupport, ThemeSupport):
+class VideoTable(QTableWidget, TableInterface,
+                LanguageSupport, ThemeSupport, metaclass=QWidgetABCMeta):
     """Base video table with common functionality"""
     
     # Signals from TableInterface
@@ -33,9 +33,8 @@ class VideoTable(QTableWidget, ComponentInterface, TableInterface,
     double_clicked = pyqtSignal(object)  # Item data
     
     def __init__(self, config: TableConfig, parent=None, lang_manager=None):
-        # Initialize parent classes
-        QTableWidget.__init__(self, parent)
-        ComponentInterface.__init__(self)
+        # Initialize parent classes in the correct order
+        super().__init__(parent)  # This calls QTableWidget.__init__
         LanguageSupport.__init__(self, "VideoTable", lang_manager)
         ThemeSupport.__init__(self, "VideoTable")
         

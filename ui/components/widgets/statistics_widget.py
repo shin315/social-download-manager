@@ -11,11 +11,12 @@ from PyQt6.QtCore import pyqtSignal
 
 from ..common.models import StatisticsData
 from ..common.interfaces import ComponentInterface, StatisticsInterface
+from ..common import QWidgetABCMeta
 from ..mixins.language_support import LanguageSupport
 from ..mixins.theme_support import ThemeSupport
 
-class StatisticsWidget(QWidget, ComponentInterface, StatisticsInterface, 
-                      LanguageSupport, ThemeSupport):
+class StatisticsWidget(QWidget, ComponentInterface, StatisticsInterface,
+                      LanguageSupport, ThemeSupport, metaclass=QWidgetABCMeta):
     """Widget for displaying video statistics"""
     
     statistics_updated = pyqtSignal(StatisticsData)

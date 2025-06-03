@@ -11,11 +11,12 @@ from PyQt6.QtCore import pyqtSignal, QTimer
 from PyQt6.QtCore import Qt
 
 from ..common.interfaces import ComponentInterface, ProgressInterface
+from ..common import QWidgetABCMeta
 from ..mixins.language_support import LanguageSupport
 from ..mixins.theme_support import ThemeSupport
 
 class ProgressTracker(QWidget, ComponentInterface, ProgressInterface, 
-                     LanguageSupport, ThemeSupport):
+                     LanguageSupport, ThemeSupport, metaclass=QWidgetABCMeta):
     """Widget for tracking download progress"""
     
     progress_updated = pyqtSignal(int, str)  # progress, speed

@@ -19,11 +19,12 @@ from ..common.component_interfaces import (
     PlatformSelectorInterface, PlatformType, PlatformInfo, 
     PlatformCapability, PlatformSelectorConfig
 )
+from ..common import QWidgetABCMeta
 from ..mixins.language_support import LanguageSupport
 from ..mixins.theme_support import ThemeSupport
 
 class PlatformSelector(QWidget, ComponentInterface, PlatformSelectorInterface,
-                      LanguageSupport, ThemeSupport):
+                      LanguageSupport, ThemeSupport, metaclass=QWidgetABCMeta):
     """Widget for selecting download platforms"""
     
     # Signals from PlatformSelectorInterface

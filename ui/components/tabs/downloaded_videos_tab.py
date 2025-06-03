@@ -38,8 +38,8 @@ from ..common import (
     tab_lifecycle_handler, auto_save_on_change, validate_before_action,
     create_standard_tab_config, setup_tab_logging, connect_tab_to_state_manager
 )
-from ...widgets.video_table import VideoTable
-from ...widgets.video_details import VideoDetailsWidget
+from ..tables.video_table import VideoTable
+# from ..widgets.video_details import VideoDetailsWidget  # TODO: Create this widget
 from utils.db_manager import DatabaseManager
 
 

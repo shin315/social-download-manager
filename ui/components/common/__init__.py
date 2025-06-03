@@ -4,6 +4,17 @@ Common Components and Interfaces
 Shared interfaces, models, and utilities used across all component types.
 """
 
+from abc import ABC
+from PyQt6.QtWidgets import QWidget
+
+# Universal metaclass to resolve conflict between QWidget and ABC metaclasses
+class QWidgetABCMeta(type(QWidget), type(ABC)):
+    """
+    Universal metaclass that combines QWidget's metaclass with ABC's metaclass.
+    Use this for any component that needs to inherit from both QWidget and ABC-based interfaces.
+    """
+    pass
+
 from .models import *
 from .interfaces import *
 from .events import *
@@ -182,5 +193,8 @@ __all__ = [
     # Enhanced theming
     'EnhancedThemeSupport',
     'apply_enhanced_theme', 
-    'create_themed_widget'
+    'create_themed_widget',
+    
+    # Universal metaclass
+    'QWidgetABCMeta'
 ] 

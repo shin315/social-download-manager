@@ -7,11 +7,13 @@ Extracted from thumbnail handling logic in downloaded_videos_tab.py and video_in
 
 from typing import Optional, Dict
 from PyQt6.QtWidgets import QLabel, QWidget, QVBoxLayout, QHBoxLayout
-from PyQt6.QtCore import pyqtSignal, QThread, QObject, QNetworkAccessManager, QNetworkRequest, QNetworkReply
+from PyQt6.QtCore import pyqtSignal, QThread, QObject
+from PyQt6.QtNetwork import QNetworkAccessManager, QNetworkRequest, QNetworkReply
 from PyQt6.QtGui import QPixmap, QMovie, QCursor
 from PyQt6.QtCore import Qt
 
 from ..common.interfaces import ComponentInterface, ThumbnailInterface
+from ..common import QWidgetABCMeta
 from ..mixins.language_support import LanguageSupport
 from ..mixins.theme_support import ThemeSupport
 
@@ -66,7 +68,7 @@ class ThumbnailLoader(QObject):
         self._active_requests.clear()
 
 class ThumbnailWidget(QLabel, ComponentInterface, ThumbnailInterface, 
-                     LanguageSupport, ThemeSupport):
+                     LanguageSupport, ThemeSupport, metaclass=QWidgetABCMeta):
     """Widget for displaying video thumbnails with loading states"""
     
     thumbnail_clicked = pyqtSignal(str)  # URL or path

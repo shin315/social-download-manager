@@ -7,10 +7,12 @@ and provides standardized lifecycle management, state handling, and theme suppor
 """
 
 from abc import ABC, abstractmethod
-from typing import Optional, Dict, Any, List
+from typing import Dict, Any, List, Optional
 from dataclasses import asdict
 from PyQt6.QtWidgets import QWidget, QTableWidget, QProgressBar, QComboBox
 from PyQt6.QtCore import pyqtSignal, QObject, QEvent
+import json
+import os
 
 from .tab_interfaces import (
     TabInterface, TabLifecycleInterface, TabNavigationInterface,
@@ -22,9 +24,10 @@ from .events import get_event_bus, EventType, ComponentEvent
 # Use lazy imports to avoid circular dependency
 # from ..mixins import LanguageSupport, ThemeSupport, TooltipSupport
 from .tab_styling import TabStyleManager, TabStyleHelper, TabStyleVariant, apply_tab_theme
+from . import QWidgetABCMeta
 
 
-class BaseTab(QWidget, TabInterface):
+class BaseTab(QWidget, TabInterface, metaclass=QWidgetABCMeta):
     """
     Abstract base class for all tab implementations.
     Note: Temporarily removed mixins inheritance to avoid circular dependency.
