@@ -1,0 +1,1 @@
+# Integration test fixtures for v2.0 architecture testing 

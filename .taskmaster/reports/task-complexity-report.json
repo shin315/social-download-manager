@@ -1,0 +1,35 @@
+{
+  "meta": {
+    "generatedAt": "2025-06-02T17:51:40.560Z",
+    "tasksAnalyzed": 3,
+    "thresholdScore": 5,
+    "projectName": "Taskmaster",
+    "usedResearch": true
+  },
+  "complexityAnalysis": [
+    {
+      "taskId": 29,
+      "taskTitle": "Task #29: Create UI v1.2.1 to v2.0 Architecture Bridge",
+      "complexityScore": 10,
+      "recommendedSubtasks": 8,
+      "expansionPrompt": "Break down the architecture bridge task into subtasks for each adapter (MainWindow, VideoInfoTab, DownloadedVideosTab), event proxy system, data mappers, lifecycle management, error handling/logging, feature flag system, documentation, and coordination with related tasks.",
+      "reasoning": "This task involves bridging two major architectural versions, requiring adapter patterns, event translation, data mapping, error handling, performance optimization, and coordination with other teams. The need for backward compatibility, comprehensive testing, and future removal planning adds to the complexity. The scope spans multiple components and cross-cutting concerns, making it a highly complex integration and refactoring effort[3][4][5]."
+    },
+    {
+      "taskId": 30,
+      "taskTitle": "Task #30: Create main.py v2.0 Entry Point Migration",
+      "complexityScore": 7,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Expand this migration into subtasks for initializing v2.0 components, integrating adapters, sequencing initialization, error handling/logging, graceful shutdown, configuration/documentation updates, backup/rollback mechanisms, and telemetry integration.",
+      "reasoning": "While this task is critical, its complexity is moderate compared to the architecture bridge. It requires careful sequencing, integration of new and legacy systems, robust error handling, and rollback support. However, the scope is more contained, focusing on the entry point and startup/shutdown logic, with dependencies on already-developed adapters[3][4][5]."
+    },
+    {
+      "taskId": 31,
+      "taskTitle": "Task #31: Conduct Comprehensive UI v1.2.1 + Architecture v2.0 Integration Testing",
+      "complexityScore": 8,
+      "recommendedSubtasks": 7,
+      "expansionPrompt": "Decompose the integration testing task into subtasks for test plan creation, baseline metric establishment, automated test execution, manual workflow validation, performance/load testing, regression/acceptance testing, cross-browser/device testing, issue documentation, and final reporting.",
+      "reasoning": "This task requires a systematic, multi-phase approach covering all workflows, performance, regression, and acceptance criteria. It involves both automated and manual testing, metric analysis, and coordination with development teams to validate the integration. The breadth and depth of required validation, along with the need for comprehensive reporting, make it a complex QA effort[3][4][5]."
+    }
+  ]
+}
