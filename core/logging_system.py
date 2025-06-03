@@ -367,7 +367,7 @@ class LoggingSystem:
         performance_handler.setLevel(LogLevel.PERFORMANCE.value)
         performance_handler.addFilter(CategoryFilter([LogCategory.PERFORMANCE]))
         performance_handler.setFormatter(logging.Formatter(
-            '%(asctime)s - %(component)s - %(operation)s - %(duration_ms).2fms - %(message)s'
+            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
         ))
         
         logging.getLogger().addHandler(performance_handler)

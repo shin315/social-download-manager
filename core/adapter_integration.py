@@ -140,12 +140,15 @@ class IAdapterIntegrationFramework(ABC):
         pass
 
 
-class AdapterIntegrationFramework(QObject, IAdapterIntegrationFramework, EventHandler):
+class AdapterIntegrationFramework(QObject):
     """
     Main adapter integration framework implementation
     
     Manages the integration between Task 29 UI adapters and v2.0 architecture,
     providing lifecycle management, fallback mechanisms, and performance monitoring.
+    
+    Implements IAdapterIntegrationFramework and EventHandler interfaces manually 
+    to avoid metaclass conflicts.
     """
     
     # Signals for framework events

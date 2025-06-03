@@ -17,14 +17,16 @@ from PyQt6.QtGui import QPixmap
 # Import v2.0 architecture components
 from core.app_controller import AppController
 from core.event_system import EventBus, EventType, Event
-from data.repositories.base_repository import IRepository
-from data.models.video_content import VideoContent
-from platforms.base.platform_handler import PlatformHandler
+# data.repositories doesn't exist - using core components directly
+
+# Import v2.0 data models
+from data.models.content import VideoContent
+from data.models.downloads import DownloadModel
 
 # Import adapter interfaces and components
 from .interfaces import (
     IVideoInfoTabAdapter, AdapterState, AdapterConfig, AdapterMetrics,
-    AdapterPriority
+    AdapterPriority, IRepository
 )
 from .event_proxy import (
     EventBridgeCoordinator, EventTranslator, LegacyEventHandler,
@@ -38,13 +40,14 @@ class VideoInfoTabAdapterError(Exception):
     pass
 
 
-class VideoInfoTabAdapter(QObject, IVideoInfoTabAdapter):
+class VideoInfoTabAdapter(QObject):
     """
     Adapter that bridges the legacy VideoInfoTab with v2.0 architecture systems.
     
-    This adapter maintains the existing VideoInfoTab UI and behavior while
-    connecting it to the Repository Layer, Event System, and Platform Handlers
-    for improved video processing and data management.
+    This adapter handles video URL input, information retrieval, and download
+    initiation while integrating with the v2.0 App Controller and Event System.
+    
+    Implements IVideoInfoTabAdapter interface manually to avoid metaclass conflicts.
     """
     
     # Signals for adapter events

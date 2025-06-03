@@ -14,7 +14,7 @@ from PyQt6.QtCore import QObject
 
 # Import v2.0 architecture components
 from core.app_controller import AppController
-from core.event_system import EventBus, EventType
+from core.event_system import EventBus, EventType, Event
 
 # Optional import for repository interfaces - handle gracefully if not available
 try:

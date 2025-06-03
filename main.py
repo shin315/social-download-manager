@@ -189,60 +189,66 @@ def main():
             adapter_framework = None
             
             try:
-                # Create orchestrator with development mode
-                startup_mode = StartupMode.FULL_V2_DEV if "--dev" in sys.argv else StartupMode.FULL_V2_PRODUCTION
-                orchestrator = MainEntryOrchestrator(startup_mode=startup_mode)
+                # Create orchestrator configuration
+                config = create_default_startup_config()
+                if "--dev" in sys.argv:
+                    config.feature_flags["enable_debug_logging"] = True
+                    
+                orchestrator = MainEntryOrchestrator(config=config)
                 
-                logger.info(f"Orchestrator created with mode: {startup_mode.name}")
+                logger.info(f"Orchestrator created successfully")
                 
                 # Setup shutdown handlers early
                 shutdown_mgr.add_handler(FileSystemShutdownHandler())
                 logger.debug("FileSystem shutdown handler registered")
                 
-                # Initialize v2.0 system using orchestrator context manager
-                with orchestrator as (app, window, adapter_integration):
-                    logger.info("Orchestrator context manager entered - v2.0 initialization complete")
+                # Initialize v2.0 system using orchestrator  
+                success, qapplication, main_window = orchestrator.run_startup_sequence()
+                
+                if not success:
+                    logger.error("Orchestrator startup sequence failed")
+                    return run_legacy_fallback()
+                
+                logger.info("Orchestrator startup sequence completed successfully")
+                
+                # Store references for shutdown handlers
+                adapter_framework = orchestrator._integration_framework
+                
+                # Register additional shutdown handlers now that we have references
+                if adapter_framework:
+                    shutdown_mgr.add_handler(AdapterShutdownHandler(adapter_framework))
+                    logger.debug("Adapter shutdown handler registered")
+                
+                if main_window and qapplication:
+                    shutdown_mgr.add_handler(UIShutdownHandler(main_window, qapplication))
+                    logger.debug("UI shutdown handler registered")
+                
+                # Get startup metrics
+                metrics = orchestrator.get_startup_metrics()
+                startup_duration = getattr(metrics, 'total_duration', 0)
+                startup_mode_final = orchestrator.get_startup_mode()
+                
+                logger.info(f"✅ v2.0 startup completed successfully!")
+                logger.info(f"   Mode: {startup_mode_final.name}")
+                logger.info(f"   Duration: {startup_duration}")
+                logger.info(f"   Components initialized: {metrics.components_initialized}")
+                
+                # Run Qt application event loop
+                if qapplication and main_window:
+                    logger.info("Starting Qt event loop")
                     
-                    # Store references for shutdown handlers
-                    qapplication = app
-                    main_window = window
-                    adapter_framework = adapter_integration
+                    # Show main window
+                    main_window.show()
                     
-                    # Register additional shutdown handlers now that we have references
-                    if adapter_framework:
-                        shutdown_mgr.add_handler(AdapterShutdownHandler(adapter_framework))
-                        logger.debug("Adapter shutdown handler registered")
+                    # Execute application
+                    exit_code = qapplication.exec()
                     
-                    if main_window and qapplication:
-                        shutdown_mgr.add_handler(UIShutdownHandler(main_window, qapplication))
-                        logger.debug("UI shutdown handler registered")
+                    logger.info(f"Qt event loop finished with exit code: {exit_code}")
+                    return exit_code
+                else:
+                    logger.error("No QApplication or MainWindow available")
+                    return 1
                     
-                    # Get startup metrics
-                    metrics = orchestrator.get_metrics()
-                    startup_duration = metrics.get('total_startup_time_ms', 0)
-                    startup_mode_final = metrics.get('final_mode', 'unknown')
-                    
-                    logger.info(f"✅ v2.0 startup completed successfully!")
-                    logger.info(f"   Mode: {startup_mode_final}")
-                    logger.info(f"   Duration: {startup_duration:.2f}ms")
-                    logger.info(f"   Components initialized: {metrics.get('components_initialized', 0)}")
-                    
-                    # Run Qt application event loop
-                    if qapplication and main_window:
-                        logger.info("Starting Qt event loop")
-                        
-                        # Show main window
-                        main_window.show()
-                        
-                        # Execute application
-                        exit_code = qapplication.exec()
-                        
-                        logger.info(f"Qt event loop finished with exit code: {exit_code}")
-                        return exit_code
-                    else:
-                        logger.error("No QApplication or MainWindow available")
-                        return 1
-                        
             except KeyboardInterrupt:
                 logger.info("User interrupted application (Ctrl+C)")
                 shutdown_mgr.request_shutdown(ShutdownReason.SYSTEM_SIGNAL)
@@ -295,8 +301,8 @@ def main():
                 logger.info(f"Shutdown summary: {successful_shutdowns}/{total_shutdowns} components shut down successfully")
                 
                 if orchestrator:
-                    final_metrics = orchestrator.get_metrics()
-                    logger.info(f"Final metrics: {final_metrics}")
+                    # Skip metrics logging since get_metrics() doesn't exist yet
+                    logger.info("Orchestrator shutdown completed")
         
         # Normal exit
         logger.info(f"{AppConstants.APP_NAME} v{AppConstants.APP_VERSION} shutdown complete")

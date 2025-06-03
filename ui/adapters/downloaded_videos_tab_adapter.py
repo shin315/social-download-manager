@@ -17,14 +17,16 @@ from PyQt6.QtGui import QPixmap
 # Import v2.0 architecture components
 from core.app_controller import AppController
 from core.event_system import EventBus, EventType, Event
-from data.repositories.base_repository import IRepository
-from data.models.video_content import VideoContent
-from data.models.download_record import DownloadRecord
+# data.repositories doesn't exist - using core components directly
+
+# Import v2.0 data models
+from data.models.content import VideoContent
+from data.models.downloads import DownloadModel
 
 # Import adapter interfaces and components
 from .interfaces import (
     IDownloadedVideosTabAdapter, AdapterState, AdapterConfig, AdapterMetrics,
-    AdapterPriority
+    AdapterPriority, IRepository
 )
 from .event_proxy import (
     EventBridgeCoordinator, EventTranslator, LegacyEventHandler,
@@ -38,13 +40,14 @@ class DownloadedVideosTabAdapterError(Exception):
     pass
 
 
-class DownloadedVideosTabAdapter(QObject, IDownloadedVideosTabAdapter):
+class DownloadedVideosTabAdapter(QObject):
     """
     Adapter that bridges the legacy DownloadedVideosTab with v2.0 architecture systems.
     
-    This adapter maintains the existing DownloadedVideosTab UI and behavior while
-    connecting it to the Repository Layer and Event System for improved data management,
-    pagination, sorting, and filtering.
+    This adapter handles video history display, management operations, and
+    synchronization with the v2.0 repository and event systems.
+    
+    Implements IDownloadedVideosTabAdapter interface manually to avoid metaclass conflicts.
     """
     
     # Signals for adapter events
@@ -80,8 +83,8 @@ class DownloadedVideosTabAdapter(QObject, IDownloadedVideosTabAdapter):
         # Data mapping and caching
         self._video_mapper: VideoDataMapper = get_video_mapper()
         self._download_mapper: DownloadDataMapper = get_download_mapper()
-        self._videos_cache: Dict[str, DownloadRecord] = {}
-        self._filtered_videos: List[DownloadRecord] = []
+        self._videos_cache: Dict[str, DownloadModel] = {}
+        self._filtered_videos: List[DownloadModel] = []
         self._original_methods: Dict[str, Callable] = {}
         self._proxy_connections: List[Any] = []
         
@@ -112,7 +115,7 @@ class DownloadedVideosTabAdapter(QObject, IDownloadedVideosTabAdapter):
         self._current_sort: Optional[Tuple[str, bool]] = None  # (column, ascending)
         
         # Video collection management
-        self._loaded_videos: List[DownloadRecord] = []
+        self._loaded_videos: List[DownloadModel] = []
         self._selected_video_ids: Set[str] = set()
         self._max_cache_size = 1000
         
@@ -274,7 +277,7 @@ class DownloadedVideosTabAdapter(QObject, IDownloadedVideosTabAdapter):
                 records = data["download_records"]
                 if isinstance(records, list):
                     self._update_video_list(records)
-                elif isinstance(records, DownloadRecord):
+                elif isinstance(records, DownloadModel):
                     self._add_or_update_video(records)
             
             # Update pagination settings if provided
@@ -655,7 +658,7 @@ class DownloadedVideosTabAdapter(QObject, IDownloadedVideosTabAdapter):
             self.handle_error(e, "refresh_videos")
             return False
     
-    def get_video_by_id(self, content_id: str) -> Optional[DownloadRecord]:
+    def get_video_by_id(self, content_id: str) -> Optional[DownloadModel]:
         """
         Get a video by its content ID.
         
@@ -663,7 +666,7 @@ class DownloadedVideosTabAdapter(QObject, IDownloadedVideosTabAdapter):
             content_id: ID of the video to retrieve
             
         Returns:
-            DownloadRecord if found, None otherwise
+            DownloadModel if found, None otherwise
         """
         try:
             # Check cache first
@@ -980,7 +983,7 @@ class DownloadedVideosTabAdapter(QObject, IDownloadedVideosTabAdapter):
             self.logger.error(f"Failed to get video ID from row: {e}")
             return None
     
-    def _add_or_update_video(self, video: DownloadRecord) -> None:
+    def _add_or_update_video(self, video: DownloadModel) -> None:
         """Add or update a video in the list"""
         try:
             # Update cache
@@ -1002,7 +1005,7 @@ class DownloadedVideosTabAdapter(QObject, IDownloadedVideosTabAdapter):
         except Exception as e:
             self.logger.error(f"Failed to add or update video: {e}")
     
-    def _update_video_list(self, videos: List[DownloadRecord]) -> None:
+    def _update_video_list(self, videos: List[DownloadModel]) -> None:
         """Update the entire video list"""
         try:
             self._loaded_videos = videos
@@ -1037,7 +1040,7 @@ class DownloadedVideosTabAdapter(QObject, IDownloadedVideosTabAdapter):
             self.logger.error(f"Failed to apply filter: {e}")
             return False
     
-    def _video_matches_filter(self, video: DownloadRecord, filter_criteria: Dict[str, Any]) -> bool:
+    def _video_matches_filter(self, video: DownloadModel, filter_criteria: Dict[str, Any]) -> bool:
         """Check if video matches filter criteria"""
         try:
             # Platform filter
@@ -1075,7 +1078,7 @@ class DownloadedVideosTabAdapter(QObject, IDownloadedVideosTabAdapter):
     def _apply_sort(self, column: str, ascending: bool) -> bool:
         """Apply sort to loaded videos (internal method)"""
         try:
-            def get_sort_key(video: DownloadRecord):
+            def get_sort_key(video: DownloadModel):
                 if column == 'title':
                     return video.video_content.metadata.title
                 elif column == 'creator':
@@ -1110,7 +1113,7 @@ class DownloadedVideosTabAdapter(QObject, IDownloadedVideosTabAdapter):
         try:
             if isinstance(event_data, dict) and "download_record" in event_data:
                 download_record = event_data["download_record"]
-                if isinstance(download_record, DownloadRecord):
+                if isinstance(download_record, DownloadModel):
                     self._add_or_update_video(download_record)
                     
         except Exception as e:
@@ -1131,7 +1134,7 @@ class DownloadedVideosTabAdapter(QObject, IDownloadedVideosTabAdapter):
         try:
             if isinstance(event_data, dict) and "download_record" in event_data:
                 download_record = event_data["download_record"]
-                if isinstance(download_record, DownloadRecord):
+                if isinstance(download_record, DownloadModel):
                     self._add_or_update_video(download_record)
                     
         except Exception as e:

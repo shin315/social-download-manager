@@ -104,3 +104,186 @@
 [2025-06-01 21:01:56.403971] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
 [2025-06-01 21:01:56.403971] Successfully saved config
 [2025-06-01 21:01:56.410480] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:24:45.096874] Saving config to: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:24:45.096874] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:24:45.096874] Key: last_output_folder, Value: I:/dev-work-space/project/app/test-zone/SDM
+[2025-06-03 11:24:45.096874] Config file exists, reading existing content
+[2025-06-03 11:24:45.096874] Existing config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:24:45.096874] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:24:45.096874] Successfully saved config
+[2025-06-03 11:24:45.097942] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:24:45.096288] Loading config from: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:24:45.096288] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:24:45.096288] Executable path: Not running as exe
+[2025-06-03 11:24:45.096288] Config file exists, reading content
+[2025-06-03 11:24:45.096288] Config content: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:24:45.096288] Read last_output_folder from config: 'I:/dev-work-space/project/app/test-zone/SDM'
+[2025-06-03 11:24:45.096288] Setting output_folder to: I:/dev-work-space/project/app/test-zone/SDM
+[2025-06-03 11:24:45.098502] Setting language to: english
+[2025-06-03 11:24:45.104387] Setting theme to: dark
+[2025-06-03 11:24:45.159822] Saving config to: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:24:45.159822] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:24:45.159822] Key: theme, Value: dark
+[2025-06-03 11:24:45.159822] Config file exists, reading existing content
+[2025-06-03 11:24:45.160829] Existing config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:24:45.160829] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:24:45.160829] Successfully saved config
+[2025-06-03 11:24:45.160829] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:24:45.162040] Theme changed to: dark
+[2025-06-03 11:25:02.816306] Saving config to: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:25:02.816306] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:25:02.816306] Key: last_output_folder, Value: I:/dev-work-space/project/app/test-zone/SDM
+[2025-06-03 11:25:02.816306] Config file exists, reading existing content
+[2025-06-03 11:25:02.817313] Existing config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:25:02.817313] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:25:02.817313] Successfully saved config
+[2025-06-03 11:25:02.818825] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:25:02.816306] Loading config from: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:25:02.816306] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:25:02.816306] Executable path: Not running as exe
+[2025-06-03 11:25:02.816306] Config file exists, reading content
+[2025-06-03 11:25:02.816306] Config content: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:25:02.816306] Read last_output_folder from config: 'I:/dev-work-space/project/app/test-zone/SDM'
+[2025-06-03 11:25:02.816306] Setting output_folder to: I:/dev-work-space/project/app/test-zone/SDM
+[2025-06-03 11:25:02.820324] Setting language to: english
+[2025-06-03 11:25:02.828637] Setting theme to: dark
+[2025-06-03 11:25:02.933205] Saving config to: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:25:02.933205] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:25:02.933205] Key: theme, Value: dark
+[2025-06-03 11:25:02.933205] Config file exists, reading existing content
+[2025-06-03 11:25:02.942974] Existing config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:25:02.942974] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:25:02.945546] Successfully saved config
+[2025-06-03 11:25:02.956447] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:25:02.956952] Theme changed to: dark
+[2025-06-03 11:25:26.595678] Saving config to: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:25:26.595678] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:25:26.595678] Key: last_output_folder, Value: I:/dev-work-space/project/app/test-zone/SDM
+[2025-06-03 11:25:26.595678] Config file exists, reading existing content
+[2025-06-03 11:25:26.595678] Existing config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:25:26.595678] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:25:26.596207] Successfully saved config
+[2025-06-03 11:25:26.596207] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:25:26.595172] Loading config from: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:25:26.595172] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:25:26.595172] Executable path: Not running as exe
+[2025-06-03 11:25:26.595172] Config file exists, reading content
+[2025-06-03 11:25:26.595172] Config content: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:25:26.595172] Read last_output_folder from config: 'I:/dev-work-space/project/app/test-zone/SDM'
+[2025-06-03 11:25:26.595172] Setting output_folder to: I:/dev-work-space/project/app/test-zone/SDM
+[2025-06-03 11:25:26.596207] Setting language to: english
+[2025-06-03 11:25:26.602237] Setting theme to: dark
+[2025-06-03 11:25:26.649242] Saving config to: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:25:26.649242] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:25:26.649242] Key: theme, Value: dark
+[2025-06-03 11:25:26.649242] Config file exists, reading existing content
+[2025-06-03 11:25:26.649822] Existing config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:25:26.650987] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:25:26.650987] Successfully saved config
+[2025-06-03 11:25:26.651994] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:25:26.651994] Theme changed to: dark
+[2025-06-03 11:27:01.223011] Saving config to: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:27:01.223011] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:27:01.223011] Key: last_output_folder, Value: I:/dev-work-space/project/app/test-zone/SDM
+[2025-06-03 11:27:01.223011] Config file exists, reading existing content
+[2025-06-03 11:27:01.223011] Existing config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:27:01.223011] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:27:01.223011] Successfully saved config
+[2025-06-03 11:27:01.224015] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:27:01.223011] Loading config from: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:27:01.223011] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:27:01.223011] Executable path: Not running as exe
+[2025-06-03 11:27:01.223011] Config file exists, reading content
+[2025-06-03 11:27:01.223011] Config content: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:27:01.223011] Read last_output_folder from config: 'I:/dev-work-space/project/app/test-zone/SDM'
+[2025-06-03 11:27:01.223011] Setting output_folder to: I:/dev-work-space/project/app/test-zone/SDM
+[2025-06-03 11:27:01.224015] Setting language to: english
+[2025-06-03 11:27:01.229811] Setting theme to: dark
+[2025-06-03 11:27:01.278200] Saving config to: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:27:01.278200] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:27:01.278200] Key: theme, Value: dark
+[2025-06-03 11:27:01.278200] Config file exists, reading existing content
+[2025-06-03 11:27:01.279261] Existing config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:27:01.279261] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:27:01.279777] Successfully saved config
+[2025-06-03 11:27:01.279777] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:27:01.279777] Theme changed to: dark
+[2025-06-03 11:27:30.531107] Saving config to: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:27:30.531107] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:27:30.531107] Key: last_output_folder, Value: I:/dev-work-space/project/app/test-zone/SDM
+[2025-06-03 11:27:30.531107] Config file exists, reading existing content
+[2025-06-03 11:27:30.531107] Existing config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:27:30.532111] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:27:30.532111] Successfully saved config
+[2025-06-03 11:27:30.533232] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:27:30.531107] Loading config from: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:27:30.531107] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:27:30.531107] Executable path: Not running as exe
+[2025-06-03 11:27:30.531107] Config file exists, reading content
+[2025-06-03 11:27:30.531107] Config content: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:27:30.531107] Read last_output_folder from config: 'I:/dev-work-space/project/app/test-zone/SDM'
+[2025-06-03 11:27:30.531107] Setting output_folder to: I:/dev-work-space/project/app/test-zone/SDM
+[2025-06-03 11:27:30.533821] Setting language to: english
+[2025-06-03 11:27:30.538937] Setting theme to: dark
+[2025-06-03 11:27:30.604068] Saving config to: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:27:30.604068] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:27:30.604068] Key: theme, Value: dark
+[2025-06-03 11:27:30.604068] Config file exists, reading existing content
+[2025-06-03 11:27:30.604607] Existing config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:27:30.604607] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:27:30.604607] Successfully saved config
+[2025-06-03 11:27:30.604607] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:27:30.604607] Theme changed to: dark
+[2025-06-03 11:28:08.903005] Saving config to: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:28:08.903005] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:28:08.903005] Key: last_output_folder, Value: I:/dev-work-space/project/app/test-zone/SDM
+[2025-06-03 11:28:08.903589] Config file exists, reading existing content
+[2025-06-03 11:28:08.903589] Existing config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:28:08.903589] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:28:08.903589] Successfully saved config
+[2025-06-03 11:28:08.904643] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:28:08.902502] Loading config from: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:28:08.902502] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:28:08.902502] Executable path: Not running as exe
+[2025-06-03 11:28:08.902502] Config file exists, reading content
+[2025-06-03 11:28:08.903005] Config content: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:28:08.903005] Read last_output_folder from config: 'I:/dev-work-space/project/app/test-zone/SDM'
+[2025-06-03 11:28:08.903005] Setting output_folder to: I:/dev-work-space/project/app/test-zone/SDM
+[2025-06-03 11:28:08.905187] Setting language to: english
+[2025-06-03 11:28:08.909953] Setting theme to: dark
+[2025-06-03 11:28:08.957820] Saving config to: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:28:08.957820] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:28:08.957820] Key: theme, Value: dark
+[2025-06-03 11:28:08.957820] Config file exists, reading existing content
+[2025-06-03 11:28:08.958826] Existing config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:28:08.958826] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:28:08.958826] Successfully saved config
+[2025-06-03 11:28:08.958826] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "dark"}
+[2025-06-03 11:28:08.960371] Theme changed to: dark
+[2025-06-03 11:30:50.142017] Saving config to: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:30:50.142017] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:30:50.142017] Key: theme, Value: light
+[2025-06-03 11:30:50.142017] Config file exists, reading existing content
+[2025-06-03 11:30:50.142017] Existing config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'dark'}
+[2025-06-03 11:30:50.142017] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'light'}
+[2025-06-03 11:30:50.142017] Successfully saved config
+[2025-06-03 11:30:50.148283] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "light"}
+[2025-06-03 11:30:50.148828] Theme changed to: light
+[2025-06-03 11:30:53.967985] Saving config to: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:30:53.967985] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:30:53.967985] Key: language, Value: vietnamese
+[2025-06-03 11:30:53.967985] Config file exists, reading existing content
+[2025-06-03 11:30:53.972802] Existing config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'vietnamese', 'theme': 'light'}
+[2025-06-03 11:30:53.974342] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'vietnamese', 'theme': 'light'}
+[2025-06-03 11:30:53.974342] Successfully saved config
+[2025-06-03 11:30:53.974888] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "vietnamese", "theme": "light"}
+[2025-06-03 11:30:53.974888] Language changed to: vietnamese
+[2025-06-03 11:31:40.727601] Saving config to: I:\dev-work-space\project\app\test-version\social-download-manager\config.json
+[2025-06-03 11:31:40.727601] App directory: I:\dev-work-space\project\app\test-version\social-download-manager
+[2025-06-03 11:31:40.727601] Key: language, Value: english
+[2025-06-03 11:31:40.727601] Config file exists, reading existing content
+[2025-06-03 11:31:40.729169] Existing config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'light'}
+[2025-06-03 11:31:40.729169] Updated config: {'last_output_folder': 'I:/dev-work-space/project/app/test-zone/SDM', 'language': 'english', 'theme': 'light'}
+[2025-06-03 11:31:40.729169] Successfully saved config
+[2025-06-03 11:31:40.729728] Verification - Config content after save: {"last_output_folder": "I:/dev-work-space/project/app/test-zone/SDM", "language": "english", "theme": "light"}
+[2025-06-03 11:31:40.729728] Language changed to: english

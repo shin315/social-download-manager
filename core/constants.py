@@ -24,6 +24,9 @@ class AppConstants:
     APP_WEBSITE: Final[str] = "https://github.com/social-download-manager"
     APP_DESCRIPTION: Final[str] = "Multi-platform social media content downloader"
     
+    # System requirements
+    MIN_PYTHON_VERSION: Final[Tuple[int, int]] = (3, 8)
+    
     # File and directory constants
     CONFIG_FILE: Final[str] = "config.json"
     DEFAULT_DOWNLOAD_DIR: Final[str] = "downloads"
@@ -388,8 +391,8 @@ def is_supported_platform(platform_id: str) -> bool:
 def get_error_message(error_code: str, default: str = None) -> str:
     """Get error message for error code"""
     if default is None:
-        default = ErrorConstants.DEFAULT_MESSAGES.get(ErrorConstants.ERROR_UNKNOWN)
-    return ErrorConstants.DEFAULT_MESSAGES.get(error_code, default)
+        default = ErrorConstants.MESSAGES.get('GENERIC_ERROR', 'An unexpected error occurred.')
+    return ErrorConstants.MESSAGES.get(error_code, default)
 
 
 def validate_download_status(status: str) -> bool:
@@ -430,8 +433,8 @@ def validate_constants() -> bool:
                 return False
         
         # Check error code uniqueness
-        error_codes = set(ErrorConstants.ERROR_CODES.values())
-        if len(error_codes) != len(ErrorConstants.ERROR_CODES):
+        error_codes = set(ErrorConstants.CODES.values())
+        if len(error_codes) != len(ErrorConstants.CODES):
             print("Warning: Duplicate error codes found")
             return False
         

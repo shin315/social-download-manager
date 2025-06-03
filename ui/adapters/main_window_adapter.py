@@ -17,7 +17,7 @@ from PyQt6.QtGui import QAction
 # Import v2.0 architecture components
 from core.app_controller import AppController
 from core.event_system import EventBus, EventType, Event
-from data.repositories.base_repository import IRepository
+# data.repositories doesn't exist - using core components directly
 
 # Import adapter interfaces and components
 from .interfaces import (
@@ -36,13 +36,15 @@ class MainWindowAdapterError(Exception):
     pass
 
 
-class MainWindowAdapter(QObject, IMainWindowAdapter):
+class MainWindowAdapter(QObject):
     """
     Adapter that bridges the legacy MainWindow with v2.0 architecture systems.
     
     This adapter maintains the existing MainWindow UI and behavior while
     connecting it to the App Controller, Event System, and Repository Layer
     for improved performance and maintainability.
+    
+    Implements IMainWindowAdapter interface manually to avoid metaclass conflicts.
     """
     
     # Signals for adapter events

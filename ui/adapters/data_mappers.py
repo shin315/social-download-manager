@@ -10,11 +10,13 @@ from typing import Any, Dict, List, Optional, Union
 from datetime import datetime
 from dataclasses import dataclass, asdict
 from enum import Enum
+import hashlib
+import re
 
 # Import v2.0 data models
-from data.models.video_content import VideoContent, VideoMetadata, ContentStatus
-from data.models.download_record import DownloadRecord, DownloadStatus
-from data.models.platform_data import PlatformData, PlatformType
+from data.models.content import VideoContent, ContentStatus, ContentType, PlatformType
+from data.models.downloads import DownloadModel, DownloadStatus
+from data.models.base import BaseEntity, EntityId
 
 # Import legacy data structures (v1.2.1 format simulation)
 from .interfaces import IDataMapperAdapter
@@ -105,31 +107,25 @@ class VideoDataMapper(IDataMapperAdapter):
             # Map platform type
             platform_type = self._map_platform_type(legacy_video.platform)
             
-            # Create VideoMetadata
-            metadata = VideoMetadata(
+            # Create VideoContent using ContentModel fields
+            video_content = VideoContent(
+                url=legacy_video.url,
+                platform=platform_type,
+                content_type=ContentType.VIDEO,
+                status=ContentStatus.PENDING,
                 title=legacy_video.title or "Unknown Title",
-                creator=legacy_video.creator or "Unknown Creator",
+                author=legacy_video.creator or "Unknown Creator",
                 duration=self._parse_duration(legacy_video.duration),
                 quality=legacy_video.quality or "unknown",
                 format=legacy_video.format or "unknown",
                 file_size=self._parse_size(legacy_video.size),
                 thumbnail_url=legacy_video.thumbnail_url,
                 hashtags=legacy_video.hashtags or [],
-                platform_specific={}  # Additional platform-specific metadata can be added
-            )
-            
-            # Create VideoContent
-            video_content = VideoContent(
-                content_id=self._generate_content_id(legacy_video.url),
-                url=legacy_video.url,
-                platform=platform_type,
-                metadata=metadata,
-                status=ContentStatus.DISCOVERED,
                 created_at=datetime.now(),
                 updated_at=datetime.now()
             )
             
-            self.logger.debug(f"Successfully mapped legacy video to v2.0: {video_content.content_id}")
+            self.logger.debug(f"Successfully mapped legacy video to v2.0: {video_content.url}")
             return video_content
             
         except Exception as e:
@@ -155,21 +151,21 @@ class VideoDataMapper(IDataMapperAdapter):
                 self.logger.error("v2.0 video data validation failed")
                 return None
             
-            # Map to legacy format
+            # Map to legacy format using ContentModel fields
             legacy_video = LegacyVideoInfo(
                 url=v2_data.url,
-                title=v2_data.metadata.title,
-                creator=v2_data.metadata.creator,
-                duration=self._format_duration(v2_data.metadata.duration),
-                quality=v2_data.metadata.quality,
-                format=v2_data.metadata.format,
-                size=self._format_size(v2_data.metadata.file_size),
-                hashtags=v2_data.metadata.hashtags.copy(),
-                thumbnail_url=v2_data.metadata.thumbnail_url or "",
+                title=v2_data.title or "",
+                creator=v2_data.author or "",
+                duration=self._format_duration(v2_data.duration),
+                quality=v2_data.quality or "",
+                format=v2_data.format or "",
+                size=self._format_size(v2_data.file_size),
+                hashtags=(v2_data.hashtags or []).copy(),
+                thumbnail_url=v2_data.thumbnail_url or "",
                 platform=v2_data.platform.value if v2_data.platform else "unknown"
             )
             
-            self.logger.debug(f"Successfully mapped v2.0 video to legacy: {v2_data.content_id}")
+            self.logger.debug(f"Successfully mapped v2.0 video to legacy: {v2_data.url}")
             return legacy_video
             
         except Exception as e:
@@ -269,7 +265,6 @@ class VideoDataMapper(IDataMapperAdapter):
     
     def _generate_content_id(self, url: str) -> str:
         """Generate content ID from URL"""
-        import hashlib
         return hashlib.md5(url.encode()).hexdigest()
 
 
@@ -282,15 +277,15 @@ class DownloadDataMapper(IDataMapperAdapter):
         self.logger = logging.getLogger(__name__)
         self._supported_types = ["download_info", "download_record", "download_history"]
     
-    def map_to_v2(self, legacy_data: Any) -> Optional[DownloadRecord]:
+    def map_to_v2(self, legacy_data: Any) -> Optional[DownloadModel]:
         """
-        Map legacy download information to v2.0 DownloadRecord format.
+        Map legacy download information to v2.0 DownloadModel format.
         
         Args:
             legacy_data: Legacy download data (dict or LegacyDownloadInfo)
             
         Returns:
-            DownloadRecord instance or None if mapping failed
+            DownloadModel instance or None if mapping failed
         """
         try:
             # Handle different input types
@@ -309,34 +304,28 @@ class DownloadDataMapper(IDataMapperAdapter):
             # Map download status
             download_status = self._map_download_status(legacy_download.status)
             
-            # Parse date
-            created_at = self._parse_date(legacy_download.date)
+            # Parse date and size
+            parsed_date = self._parse_date(legacy_download.date)
+            file_size = self._parse_size(legacy_download.size)
             
-            # Create DownloadRecord
-            download_record = DownloadRecord(
-                download_id=self._generate_download_id(legacy_download.video_url, legacy_download.date),
+            # Create DownloadModel using correct field names
+            download_record = DownloadModel(
                 content_id=self._generate_content_id(legacy_download.video_url),
-                video_url=legacy_download.video_url,
-                title=legacy_download.title,
-                creator=legacy_download.creator,
-                quality=legacy_download.quality,
-                format=legacy_download.format,
-                file_size=self._parse_size(legacy_download.size),
-                file_path=legacy_download.file_path,
+                url=legacy_download.video_url,
                 status=download_status,
-                platform=self._map_platform_type(legacy_download.platform),
-                created_at=created_at,
-                updated_at=created_at,
-                completed_at=created_at if download_status == DownloadStatus.COMPLETED else None,
-                progress_percentage=100 if download_status == DownloadStatus.COMPLETED else 0,
-                download_speed=0,  # Not available in legacy format
-                eta_seconds=None,
-                error_message=None,
-                retry_count=0,
-                metadata={"hashtags": legacy_download.hashtags or []}
+                quality=legacy_download.quality or "unknown",
+                format=legacy_download.format or "unknown",
+                filename=legacy_download.title or "unknown",
+                file_size=file_size,
+                file_path=legacy_download.file_path,
+                progress_percentage=100.0 if download_status == DownloadStatus.COMPLETED else 0.0,
+                queued_at=parsed_date,
+                completed_at=parsed_date if download_status == DownloadStatus.COMPLETED else None,
+                created_at=parsed_date or datetime.now(),
+                updated_at=datetime.now()
             )
             
-            self.logger.debug(f"Successfully mapped legacy download to v2.0: {download_record.download_id}")
+            self.logger.debug(f"Successfully mapped legacy download to v2.0: {download_record.url}")
             return download_record
             
         except Exception as e:
@@ -345,39 +334,39 @@ class DownloadDataMapper(IDataMapperAdapter):
     
     def map_to_legacy(self, v2_data: Any) -> Optional[LegacyDownloadInfo]:
         """
-        Map v2.0 DownloadRecord to legacy download information format.
+        Map v2.0 DownloadModel to legacy download information format.
         
         Args:
-            v2_data: DownloadRecord instance
+            v2_data: DownloadModel instance
             
         Returns:
             LegacyDownloadInfo instance or None if mapping failed
         """
         try:
-            if not isinstance(v2_data, DownloadRecord):
-                raise DataMappingError(f"Expected DownloadRecord, got {type(v2_data)}")
+            if not isinstance(v2_data, DownloadModel):
+                raise DataMappingError(f"Expected DownloadModel, got {type(v2_data)}")
             
             # Validate v2.0 data
             if not self.validate_v2_data(v2_data):
                 self.logger.error("v2.0 download data validation failed")
                 return None
             
-            # Map to legacy format
+            # Map to legacy format using DownloadModel fields
             legacy_download = LegacyDownloadInfo(
-                video_url=v2_data.video_url,
-                title=v2_data.title,
-                creator=v2_data.creator,
-                quality=v2_data.quality,
-                format=v2_data.format,
+                video_url=v2_data.url,
+                title=v2_data.filename or "Unknown",
+                creator="Unknown",  # Not available in DownloadModel
+                quality=v2_data.quality or "unknown",
+                format=v2_data.format or "unknown",
                 size=self._format_size(v2_data.file_size),
                 status=self._format_download_status(v2_data.status),
-                date=v2_data.created_at.strftime("%Y-%m-%d %H:%M:%S"),
+                date=v2_data.completed_at.strftime("%Y-%m-%d") if v2_data.completed_at else v2_data.created_at.strftime("%Y-%m-%d"),
                 file_path=v2_data.file_path or "",
-                hashtags=v2_data.metadata.get("hashtags", []) if v2_data.metadata else [],
-                platform=v2_data.platform.value if v2_data.platform else "unknown"
+                hashtags=[],  # Not available in DownloadModel
+                platform=""  # Not directly available in DownloadModel
             )
             
-            self.logger.debug(f"Successfully mapped v2.0 download to legacy: {v2_data.download_id}")
+            self.logger.debug(f"Successfully mapped v2.0 download to legacy: {v2_data.url}")
             return legacy_download
             
         except Exception as e:
@@ -400,9 +389,9 @@ class DownloadDataMapper(IDataMapperAdapter):
     def validate_v2_data(self, data: Any) -> bool:
         """Validate v2.0 download data"""
         try:
-            if not isinstance(data, DownloadRecord):
+            if not isinstance(data, DownloadModel):
                 return False
-            return bool(data.download_id and data.video_url and data.title)
+            return bool(data.content_id and data.url)
         except Exception as e:
             self.logger.error(f"v2.0 data validation error: {e}")
             return False
@@ -496,12 +485,10 @@ class DownloadDataMapper(IDataMapperAdapter):
     
     def _generate_download_id(self, url: str, date: str) -> str:
         """Generate download ID from URL and date"""
-        import hashlib
         return hashlib.md5(f"{url}_{date}".encode()).hexdigest()
     
     def _generate_content_id(self, url: str) -> str:
         """Generate content ID from URL"""
-        import hashlib
         return hashlib.md5(url.encode()).hexdigest()
 
 
