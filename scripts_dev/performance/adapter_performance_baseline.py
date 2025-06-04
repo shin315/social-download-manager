@@ -36,14 +36,35 @@ import weakref
 # Add project root to path for imports
 sys.path.insert(0, str(Path(__file__).parent.parent.parent))
 
-try:
-    from ui.adapters import (
-        MainWindowAdapter, VideoInfoTabAdapter, DownloadedVideosTabAdapter,
-        EventBridgeCoordinator, get_global_coordinator
-    )
-except ImportError as e:
-    print(f"Warning: Could not import adapter components: {e}")
-    print("Some functionality may be limited")
+# NOTE: Task 35 - Adapter framework removed after v2.0 migration completion
+# Performance baseline testing for adapters is no longer applicable
+# try:
+#     from ui.adapters import (
+#         MainWindowAdapter, VideoInfoTabAdapter, DownloadedVideosTabAdapter,
+#         EventBridgeCoordinator, get_global_coordinator
+#     )
+# except ImportError as e:
+#     print(f"Warning: Could not import adapter components: {e}")
+#     print("Some functionality may be limited")
+
+print("WARNING: Adapter performance baseline is disabled after Task 35")
+print("Adapter framework has been removed in v2.0 migration completion")
+
+# Placeholder implementations for compatibility
+class MainWindowAdapter:
+    pass
+
+class VideoInfoTabAdapter:
+    pass
+
+class DownloadedVideosTabAdapter:
+    pass
+
+class EventBridgeCoordinator:
+    pass
+
+def get_global_coordinator():
+    return None
 
 
 @dataclass
