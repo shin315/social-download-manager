@@ -1,0 +1,81 @@
+{
+  "components": {
+    "test_component": {
+      "id": "test_component",
+      "type": "test",
+      "name": "Test Component",
+      "version": "1.0",
+      "capabilities": [],
+      "subscriptions": "{'42b6d286-05d6-4538-aefe-92a5c1953d28'}",
+      "tab_id": null,
+      "status": "active",
+      "registered_at": "2025-06-04 12:12:18.864144",
+      "last_activity": "2025-06-04 12:12:18.864144",
+      "message_stats": {
+        "sent": 0,
+        "received": 1,
+        "failed": 0
+      }
+    },
+    "sender": {
+      "id": "sender",
+      "type": "sender",
+      "name": "Sender Component",
+      "version": "1.0",
+      "capabilities": [],
+      "subscriptions": "set()",
+      "tab_id": null,
+      "status": "active",
+      "registered_at": "2025-06-04 12:12:18.864144",
+      "last_activity": "2025-06-04 12:12:18.864144",
+      "message_stats": {
+        "sent": 1,
+        "received": 0,
+        "failed": 0
+      }
+    }
+  },
+  "subscriptions": {
+    "42b6d286-05d6-4538-aefe-92a5c1953d28": {
+      "id": "42b6d286-05d6-4538-aefe-92a5c1953d28",
+      "subscriber_id": "test_component",
+      "subscriber_type": "test",
+      "channel": "test_channel",
+      "message_type": null,
+      "sender_filter": null,
+      "payload_filter": {},
+      "delivery_mode": "DeliveryMode.IMMEDIATE",
+      "priority": "MessagePriority.NORMAL",
+      "active": true,
+      "created_at": "2025-06-04 12:12:18.864144",
+      "message_count": 1,
+      "last_message_time": "2025-06-04 12:12:18.864144"
+    }
+  },
+  "metrics": {
+    "total_messages": 1,
+    "messages_by_type": {
+      "event": 1
+    },
+    "messages_by_priority": {
+      "2": 1
+    },
+    "average_delivery_time": 0.0,
+    "failed_deliveries": 0,
+    "queued_messages": 0,
+    "active_subscriptions": 1,
+    "registered_components": 2,
+    "uptime_start": "2025-06-04 12:12:18.863145"
+  },
+  "channel_stats": {
+    "test_channel": {
+      "total_subscriptions": 1,
+      "active_subscriptions": 1,
+      "components": [
+        "test_component"
+      ]
+    }
+  },
+  "exported_at": "2025-06-04T12:12:18.864144",
+  "version": "1.0"
+}

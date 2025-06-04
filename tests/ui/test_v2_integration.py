@@ -1,28 +1,33 @@
 """
-Comprehensive Integration Tests for V2.0 UI Components
+Comprehensive Integration Tests for V2.0 UI System
+Task 36.10 - Testing and Documentation
 
-This test suite verifies that all 8 core V2.0 UI managers work correctly
-both individually and when integrated together in the AppController.
+Tests all core V2.0 UI components working together:
+- TabLifecycleManager with hibernation and state management
+- ComponentBus with cross-component messaging
+- ThemeManager with dynamic theme switching
+- AppController with service coordination
+- Performance benchmarks and error handling
 """
 
 import pytest
+import asyncio
 import tempfile
 import time
-import gc
 import os
 import sys
-from unittest.mock import Mock, patch, MagicMock
-from PyQt6.QtCore import QObject, QThread, QTimer, QCoreApplication
+from unittest.mock import Mock, patch
+from typing import Dict, Any, List
 from PyQt6.QtWidgets import QApplication
-from typing import Dict, List, Any
+from PyQt6.QtCore import QTimer
 
-# Add the UI components to the path
-sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..', 'ui', 'components', 'core'))
+# Fix import path
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), '..', '..'))
 
-from tab_lifecycle_manager import TabLifecycleManager, TabState, TabPriority
-from component_bus import ComponentBus, MessageType, Priority, DeliveryMode
-from theme_manager import ThemeManager, ThemeVariant
-from app_controller import AppController, ServiceScope
+from ui.components.core.tab_lifecycle_manager import TabLifecycleManager, TabState, TabPriority
+from ui.components.core.component_bus import ComponentBus, MessageType, MessagePriority, DeliveryMode
+from ui.components.core.theme_manager import ThemeManager, ThemeVariant
+from ui.components.core.app_controller import AppController, ServiceScope
 
 
 class TestV2UIIntegration:

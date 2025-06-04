@@ -23,8 +23,8 @@ from pathlib import Path
 from collections import defaultdict, deque
 import json
 import signal
-from PyQt6.QtCore import QObject, QTimer, pyqtSignal, QThread, QApplication
-from PyQt6.QtWidgets import QWidget, QSplashScreen, QProgressBar
+from PyQt6.QtCore import QObject, QTimer, pyqtSignal, QThread
+from PyQt6.QtWidgets import QWidget, QSplashScreen, QProgressBar, QApplication
 
 logger = logging.getLogger(__name__)
 
