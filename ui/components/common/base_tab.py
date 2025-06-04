@@ -80,10 +80,22 @@ class BaseTab(QWidget, TabInterface, metaclass=QWidgetABCMeta):
         
         # Initialize mixins
         if config.component_integration:
-            # Initialize mixins based on config
-            LanguageSupport.__init__(self, parent.lang_manager if parent and hasattr(parent, 'lang_manager') else None)
-            ThemeSupport.__init__(self, {})  # Will be set via apply_theme
-            TooltipSupport.__init__(self)
+            # NOTE: Mixins are currently disabled due to circular dependency issues
+            # TODO: Refactor to use composition pattern instead of multiple inheritance
+            try:
+                # Initialize mixins based on config - check if parent has required attributes
+                # if parent and hasattr(parent, 'lang_manager'):
+                #     LanguageSupport.__init__(self, parent.lang_manager)
+                # else:
+                #     LanguageSupport.__init__(self, None)
+                # 
+                # ThemeSupport.__init__(self, {})  # Will be set via apply_theme
+                # TooltipSupport.__init__(self)
+                pass  # Placeholder until mixins are properly implemented
+            except Exception as e:
+                # Ignore mixin initialization errors for now
+                print(f"Warning: Mixin initialization failed: {e}")
+                pass
         
         # Set up component bus subscriptions
         self._setup_component_subscriptions()
@@ -318,6 +330,20 @@ class BaseTab(QWidget, TabInterface, metaclass=QWidgetABCMeta):
         """Get language manager instance"""
         return self._lang_manager
     
+    def update_language(self) -> None:
+        """Update UI language - placeholder method"""
+        # NOTE: This is a placeholder for mixin functionality
+        # TODO: Implement proper language update when mixins are restored
+        pass
+    
+    def tr_(self, key: str) -> str:
+        """Translate text key - placeholder method"""
+        # NOTE: This is a placeholder for mixin functionality
+        # TODO: Implement proper translation when mixins are restored
+        if self._lang_manager and hasattr(self._lang_manager, 'tr_'):
+            return self._lang_manager.tr_(key)
+        return key  # Return key as fallback
+    
     def _handle_language_change(self, event) -> None:
         """Handle language change events from component bus"""
         self.update_language()
@@ -330,8 +356,9 @@ class BaseTab(QWidget, TabInterface, metaclass=QWidgetABCMeta):
     def apply_theme(self, theme_data: Dict[str, Any]) -> None:
         """Apply theme to the tab (ThemeSupport integration)"""
         try:
-            # Update theme data in ThemeSupport mixin
-            super().apply_theme(theme_data)
+            # NOTE: Mixins are currently disabled, so we skip super().apply_theme()
+            # TODO: Re-enable when mixins are properly implemented
+            # super().apply_theme(theme_data)  # Disabled due to missing mixins
             
             # Apply styling framework theme
             self._apply_styling_theme(theme_data)

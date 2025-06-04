@@ -93,11 +93,11 @@ class MainWindow(QMainWindow):
         self.tab_widget = QTabWidget()
         
         # Video Info Tab
-        self.video_info_tab = VideoInfoTab(self)
+        self.video_info_tab = VideoInfoTab(parent=self)
         self.tab_widget.addTab(self.video_info_tab, self.tr_("TAB_VIDEO_INFO"))
 
         # Downloaded Videos Tab
-        self.downloaded_videos_tab = DownloadedVideosTab(self)
+        self.downloaded_videos_tab = DownloadedVideosTab(parent=self)
         self.tab_widget.addTab(self.downloaded_videos_tab, self.tr_("TAB_DOWNLOADED_VIDEOS"))
 
         # Set tab widget as central widget

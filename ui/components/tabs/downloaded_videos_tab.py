@@ -109,10 +109,15 @@ class DownloadedVideosTab(BaseTab):
                 state_persistence=True
             )
         
-        # Initialize base tab
-        super().__init__(config, parent)
+        # Initialize performance monitor BEFORE super().__init__() 
+        # because setup_ui() will be called during BaseTab initialization
+        self.performance_monitor = TabPerformanceMonitor(None)  # Temporary placeholder
         
-        # Tab-specific state variables
+        # Add temporary logging methods before super().__init__()
+        self._temp_logs = []
+        
+        # Initialize tab-specific state variables BEFORE super().__init__()
+        # because load_data() is called during BaseTab initialization
         self.all_videos = []  # List of all downloaded videos
         self.filtered_videos = []  # List of filtered videos
         self.selected_video = None  # Currently selected video
@@ -134,16 +139,70 @@ class DownloadedVideosTab(BaseTab):
         # Filter storage variables
         self.active_filters = {}  # {column_index: [allowed_values]}
         
-        # Performance monitor
+        # Initialize base tab
+        super().__init__(config, parent)
+        
+        # Now set the correct tab reference for performance monitor
         self.performance_monitor = TabPerformanceMonitor(self)
+        
+        # Setup logging properly
+        setup_tab_logging(self, 'INFO')
+        
+        # Replay any temporary logs
+        for log_level, message in self._temp_logs:
+            if hasattr(self, f'log_{log_level}'):
+                getattr(self, f'log_{log_level}')(message)
+        del self._temp_logs
         
         # Event helper for inter-tab communication
         self.event_helper = TabEventHelper(self)
         
-        # Setup logging
-        setup_tab_logging(self, 'INFO')
-        
         print(f"DEBUG: Initial sort_column={self.sort_column}, sort_order={self.sort_order}")
+    
+    # Temporary logging methods for use during initialization
+    def log_info(self, message: str) -> None:
+        """Temporary log_info method"""
+        if hasattr(self, '_temp_logs'):
+            self._temp_logs.append(('info', message))
+        else:
+            # Real logging is set up, use it
+            if hasattr(self, '_logger'):
+                self._logger.info(message)
+            else:
+                print(f"INFO: {message}")
+    
+    def log_error(self, message: str) -> None:
+        """Temporary log_error method"""
+        if hasattr(self, '_temp_logs'):
+            self._temp_logs.append(('error', message))
+        else:
+            # Real logging is set up, use it
+            if hasattr(self, '_logger'):
+                self._logger.error(message)
+            else:
+                print(f"ERROR: {message}")
+    
+    def log_debug(self, message: str) -> None:
+        """Temporary log_debug method"""
+        if hasattr(self, '_temp_logs'):
+            self._temp_logs.append(('debug', message))
+        else:
+            # Real logging is set up, use it
+            if hasattr(self, '_logger'):
+                self._logger.debug(message)
+            else:
+                print(f"DEBUG: {message}")
+    
+    def log_warning(self, message: str) -> None:
+        """Temporary log_warning method"""
+        if hasattr(self, '_temp_logs'):
+            self._temp_logs.append(('warning', message))
+        else:
+            # Real logging is set up, use it
+            if hasattr(self, '_logger'):
+                self._logger.warning(message)
+            else:
+                print(f"WARNING: {message}")
     
     # =============================================================================
     # BaseTab Abstract Method Implementations

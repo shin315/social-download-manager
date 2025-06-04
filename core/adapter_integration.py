@@ -42,9 +42,15 @@ class AdapterState:
     """Placeholder for removed adapter state"""
     pass
 
+@dataclass
 class AdapterConfig:
-    """Placeholder for removed adapter config"""
-    pass
+    """Configuration for UI component adapters"""
+    adapter_id: str = ""
+    enable_performance_monitoring: bool = True
+    enable_error_recovery: bool = True
+    max_retry_attempts: int = 3
+    timeout_seconds: float = 5.0
+    debug_mode: bool = False
 
 class AdapterMetrics:
     """Placeholder for removed adapter metrics"""
@@ -825,21 +831,11 @@ def integration_context(config: Optional[IntegrationConfig] = None):
 def setup_standard_adapters(framework: AdapterIntegrationFramework) -> bool:
     """Set up the standard set of Task 29 adapters"""
     try:
-        # Create and register main window adapter
-        main_window_adapter = create_main_window_adapter()
-        if not framework.register_adapter("main_window", main_window_adapter):
-            return False
+        # NOTE: All adapter creation functions return None as placeholders
+        # Skip actual adapter registration since adapters have been removed
+        # This allows the framework to operate in fallback mode
         
-        # Create and register video info adapter
-        video_info_adapter = create_video_info_tab_adapter()
-        if not framework.register_adapter("video_info", video_info_adapter):
-            return False
-        
-        # Create and register downloaded videos adapter
-        downloaded_videos_adapter = create_downloaded_videos_tab_adapter()
-        if not framework.register_adapter("downloaded_videos", downloaded_videos_adapter):
-            return False
-        
+        framework.logger.info("Standard adapters setup skipped - operating in fallback mode")
         return True
         
     except Exception as e:
