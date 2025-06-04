@@ -337,12 +337,55 @@ class BaseTab(QWidget, TabInterface, metaclass=QWidgetABCMeta):
         pass
     
     def tr_(self, key: str) -> str:
-        """Translate text key - placeholder method"""
+        """Translate text key - placeholder method with English fallbacks"""
         # NOTE: This is a placeholder for mixin functionality
         # TODO: Implement proper translation when mixins are restored
         if self._lang_manager and hasattr(self._lang_manager, 'tr_'):
             return self._lang_manager.tr_(key)
-        return key  # Return key as fallback
+        
+        # English fallback translations
+        translations = {
+            # Video Info Tab
+            "LABEL_VIDEO_URL": "Video URL",
+            "PLACEHOLDER_VIDEO_URL": "Enter video URL here...",
+            "BUTTON_GET_INFO": "Get Info",
+            "LABEL_OUTPUT_FOLDER": "Output Folder",
+            "PLACEHOLDER_OUTPUT_FOLDER": "Choose output folder...",
+            "BUTTON_CHOOSE_FOLDER": "Choose Folder",
+            "BUTTON_SELECT_ALL": "Select All",
+            "BUTTON_UNSELECT_ALL": "Unselect All",
+            "BUTTON_DELETE_SELECTED": "Delete Selected",
+            "BUTTON_DELETE_ALL": "Delete All",
+            "BUTTON_DOWNLOAD": "Download",
+            "BUTTON_PROCESSING": "Processing...",
+            
+            # Downloaded Videos Tab
+            "TAB_VIDEO_INFO": "Video Info",
+            "TAB_DOWNLOADED_VIDEOS": "Downloaded Videos",
+            
+            # Messages and dialogs
+            "ERROR_NO_URL": "No URL",
+            "ERROR_NO_URL_MESSAGE": "Please enter a video URL",
+            "INFO_URL_EXISTS": "URL Already Added",
+            "INFO_URL_EXISTS_MESSAGE": "This URL is already in the list",
+            "ERROR_GET_INFO": "Error Getting Video Info",
+            "ERROR_GET_INFO_MESSAGE": "Failed to retrieve video information",
+            "DIALOG_API_ERROR_TITLE": "API Error",
+            "DIALOG_TIKTOK_API_CHANGED": "The TikTok API may have changed",
+            "DIALOG_UPDATE_NEEDED_MESSAGE": "Please update the application",
+            "DIALOG_YTDLP_OUTDATED": "yt-dlp may be outdated",
+            "MENU_CHOOSE_FOLDER": "Choose Output Folder",
+            
+            # Common UI elements
+            "OK": "OK",
+            "CANCEL": "Cancel",
+            "YES": "Yes",
+            "NO": "No",
+            "APPLY": "Apply",
+            "CLOSE": "Close",
+        }
+        
+        return translations.get(key, key)  # Return translation or key if not found
     
     def _handle_language_change(self, event) -> None:
         """Handle language change events from component bus"""

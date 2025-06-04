@@ -616,6 +616,18 @@ class VideoInfoTab(BaseTab):
     # Original Methods (Preserved with Enhancements)
     # =============================================================================
     
+    def update_output_folder(self, folder):
+        """Update output folder display with new folder path"""
+        try:
+            if hasattr(self, 'output_folder_display'):
+                self.output_folder_display.setText(folder)
+                self._set_data_dirty(True)
+                self.log_info(f"Output folder updated to: {folder}")
+            else:
+                self.log_warning("Output folder display not available during update")
+        except Exception as e:
+            self.log_error(f"Error updating output folder: {e}")
+    
     def format_tooltip_text(self, text):
         """Format tooltip text with line breaks for better readability"""
         if not text:
