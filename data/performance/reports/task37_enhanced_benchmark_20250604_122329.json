@@ -1,0 +1,106 @@
+{
+  "enhanced_summary": {
+    "total_metrics": 7,
+    "average_improvement_percent": 2118.2513369572657,
+    "overall_performance_score": 71.42857142857143,
+    "performance_rating_distribution": {
+      "excellent": 5,
+      "good": 0,
+      "acceptable": 0,
+      "poor": 0
+    },
+    "timestamp": "2025-06-04T12:23:29.787475"
+  },
+  "performance_targets": {
+    "startup_time_ms": 5000,
+    "memory_usage_mb": 500,
+    "tab_operations_ms": 100,
+    "component_registrations_ms": 50,
+    "theme_switch_ms": 50,
+    "messaging_throughput": 10000
+  },
+  "v1_baselines": {
+    "startup_time_ms": 8500,
+    "memory_usage_mb": 650,
+    "tab_operations_ms": 1200,
+    "component_registrations_ms": 500,
+    "theme_switch_ms": 400,
+    "messaging_throughput": 1000
+  },
+  "detailed_metrics": [
+    {
+      "name": "tab_lifecycle_10_operations",
+      "value": 2.587499999208376,
+      "unit": "ms",
+      "description": "Time to register 10 tabs",
+      "baseline_value": 1200,
+      "improvement_percent": 99.78437500006598,
+      "performance_rating": "excellent",
+      "category": "components"
+    },
+    {
+      "name": "component_bus_50_registrations",
+      "value": 2.2280999983195215,
+      "unit": "ms",
+      "description": "Time to register 50 components",
+      "baseline_value": 500,
+      "improvement_percent": 99.5543800003361,
+      "performance_rating": "excellent",
+      "category": "components"
+    },
+    {
+      "name": "theme_switch_2_operations",
+      "value": 1.2205999955767766,
+      "unit": "ms",
+      "description": "Time for 2 theme switches",
+      "baseline_value": 400,
+      "improvement_percent": 99.6948500011058,
+      "performance_rating": "excellent",
+      "category": "ui"
+    },
+    {
+      "name": "memory_peak_usage",
+      "value": 99.1171875,
+      "unit": "MB",
+      "description": "Peak memory usage during component creation",
+      "baseline_value": 650,
+      "improvement_percent": 84.75120192307692,
+      "performance_rating": "excellent",
+      "category": "memory"
+    },
+    {
+      "name": "memory_recovery_rate",
+      "value": 100,
+      "unit": "%",
+      "description": "Memory recovery after cleanup",
+      "baseline_value": null,
+      "improvement_percent": null,
+      "performance_rating": "unknown",
+      "category": "memory"
+    },
+    {
+      "name": "messaging_throughput",
+      "value": 103074.71877861743,
+      "unit": "msg/s",
+      "description": "Messages processed per second",
+      "baseline_value": 1000,
+      "improvement_percent": 10207.471877861744,
+      "performance_rating": "excellent",
+      "category": "messaging"
+    },
+    {
+      "name": "message_delivery_rate",
+      "value": 15.0,
+      "unit": "%",
+      "description": "Message delivery success rate",
+      "baseline_value": null,
+      "improvement_percent": null,
+      "performance_rating": "unknown",
+      "category": "messaging"
+    }
+  ],
+  "recommendations": [
+    "⚠️ ACCEPTABLE: V2.0 shows improvements but some areas need optimization",
+    "Showcase these excellent improvements: ['tab_lifecycle_10_operations', 'component_bus_50_registrations', 'theme_switch_2_operations', 'memory_peak_usage', 'messaging_throughput']"
+  ]
+}

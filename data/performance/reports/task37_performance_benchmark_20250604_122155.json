@@ -1,0 +1,267 @@
+{
+  "benchmark_summary": {
+    "total_tests": 4,
+    "total_execution_time_ms": 2071.502299993881,
+    "average_memory_usage_mb": 120.7216796875,
+    "success_rate_percent": 75.0,
+    "targets_met_percent": 100.0,
+    "average_improvement_percent": 0,
+    "overall_performance_score": 50.0,
+    "timestamp": "2025-06-04T12:21:55.833438"
+  },
+  "performance_targets": {
+    "startup_time_ms": 5000,
+    "memory_usage_mb": 500,
+    "ui_render_time_ms": 16,
+    "tab_switch_time_ms": 100,
+    "download_init_time_ms": 200,
+    "component_load_time_ms": 50,
+    "theme_switch_time_ms": 50,
+    "state_save_time_ms": 100,
+    "hibernation_time_ms": 200,
+    "recovery_time_ms": 300
+  },
+  "v1_baselines": {
+    "startup_time_ms": 8500,
+    "memory_usage_mb": 650,
+    "ui_render_time_ms": 25,
+    "tab_switch_time_ms": 180,
+    "download_init_time_ms": 350,
+    "component_load_time_ms": 120,
+    "theme_switch_time_ms": 200,
+    "state_save_time_ms": 250,
+    "hibernation_time_ms": 0,
+    "recovery_time_ms": 1500
+  },
+  "categories": {
+    "components": [
+      {
+        "name": "tab_lifecycle_10_operations_ms",
+        "value": 3.4635000047273934,
+        "unit": "ms",
+        "description": "Time to register 10 tabs",
+        "baseline_value": 1200,
+        "improvement_percent": null,
+        "category": "components"
+      },
+      {
+        "name": "component_bus_50_registrations_ms",
+        "value": 1.9444000063231215,
+        "unit": "ms",
+        "description": "Time to register 50 components",
+        "baseline_value": null,
+        "improvement_percent": null,
+        "category": "components"
+      }
+    ],
+    "ui": [
+      {
+        "name": "theme_switch_2_operations_ms",
+        "value": 2.5430999958189204,
+        "unit": "ms",
+        "description": "Time for 2 theme switches",
+        "baseline_value": 400,
+        "improvement_percent": null,
+        "category": "ui"
+      }
+    ],
+    "memory": [
+      {
+        "name": "memory_growth_5_components_mb",
+        "value": 0.0,
+        "unit": "MB",
+        "description": "Memory growth for 5 component instances",
+        "baseline_value": 325.0,
+        "improvement_percent": null,
+        "category": "memory"
+      },
+      {
+        "name": "memory_recovery_percent",
+        "value": 100,
+        "unit": "%",
+        "description": "Percentage of memory recovered after cleanup",
+        "baseline_value": null,
+        "improvement_percent": null,
+        "category": "memory"
+      }
+    ],
+    "targets": [
+      {
+        "name": "meets_memory_target",
+        "value": 1.0,
+        "unit": "bool",
+        "description": "Whether memory usage meets target",
+        "baseline_value": null,
+        "improvement_percent": null,
+        "category": "targets"
+      }
+    ],
+    "messaging": [
+      {
+        "name": "messages_1000_send_process_ms",
+        "value": 65.61900000087917,
+        "unit": "ms",
+        "description": "Time to send and process 1000 messages",
+        "baseline_value": null,
+        "improvement_percent": null,
+        "category": "messaging"
+      },
+      {
+        "name": "messages_per_second",
+        "value": 15239.488562559654,
+        "unit": "msg/s",
+        "description": "Messages processed per second",
+        "baseline_value": null,
+        "improvement_percent": null,
+        "category": "messaging"
+      },
+      {
+        "name": "message_delivery_success_rate",
+        "value": 5.0,
+        "unit": "%",
+        "description": "Percentage of messages successfully delivered",
+        "baseline_value": null,
+        "improvement_percent": null,
+        "category": "messaging"
+      }
+    ]
+  },
+  "detailed_results": [
+    {
+      "test_name": "Application Startup",
+      "version": "V2.0",
+      "metrics": [
+        {
+          "name": "tab_lifecycle_10_operations_ms",
+          "value": 3.4635000047273934,
+          "unit": "ms",
+          "description": "Time to register 10 tabs",
+          "baseline_value": 1200,
+          "improvement_percent": null,
+          "category": "components"
+        },
+        {
+          "name": "component_bus_50_registrations_ms",
+          "value": 1.9444000063231215,
+          "unit": "ms",
+          "description": "Time to register 50 components",
+          "baseline_value": null,
+          "improvement_percent": null,
+          "category": "components"
+        },
+        {
+          "name": "theme_switch_2_operations_ms",
+          "value": 2.5430999958189204,
+          "unit": "ms",
+          "description": "Time for 2 theme switches",
+          "baseline_value": 400,
+          "improvement_percent": null,
+          "category": "ui"
+        }
+      ],
+      "execution_time_ms": 1743.2018000108656,
+      "memory_peak_mb": 118.453125,
+      "memory_final_mb": 118.453125,
+      "cpu_usage_percent": 0.0,
+      "error_count": 1,
+      "success": false,
+      "timestamp": "2025-06-04T12:21:55.266248"
+    },
+    {
+      "test_name": "Component Performance",
+      "version": "V2.0",
+      "metrics": [
+        {
+          "name": "memory_growth_5_components_mb",
+          "value": 0.0,
+          "unit": "MB",
+          "description": "Memory growth for 5 component instances",
+          "baseline_value": 325.0,
+          "improvement_percent": null,
+          "category": "memory"
+        },
+        {
+          "name": "memory_recovery_percent",
+          "value": 100,
+          "unit": "%",
+          "description": "Percentage of memory recovered after cleanup",
+          "baseline_value": null,
+          "improvement_percent": null,
+          "category": "memory"
+        },
+        {
+          "name": "meets_memory_target",
+          "value": 1.0,
+          "unit": "bool",
+          "description": "Whether memory usage meets target",
+          "baseline_value": null,
+          "improvement_percent": null,
+          "category": "targets"
+        }
+      ],
+      "execution_time_ms": 85.84420000261161,
+      "memory_peak_mb": 121.01171875,
+      "memory_final_mb": 121.01171875,
+      "cpu_usage_percent": 0.0,
+      "error_count": 0,
+      "success": true,
+      "timestamp": "2025-06-04T12:21:55.428483"
+    },
+    {
+      "test_name": "Memory Efficiency",
+      "version": "V2.0",
+      "metrics": [
+        {
+          "name": "messages_1000_send_process_ms",
+          "value": 65.61900000087917,
+          "unit": "ms",
+          "description": "Time to send and process 1000 messages",
+          "baseline_value": null,
+          "improvement_percent": null,
+          "category": "messaging"
+        },
+        {
+          "name": "messages_per_second",
+          "value": 15239.488562559654,
+          "unit": "msg/s",
+          "description": "Messages processed per second",
+          "baseline_value": null,
+          "improvement_percent": null,
+          "category": "messaging"
+        },
+        {
+          "name": "message_delivery_success_rate",
+          "value": 5.0,
+          "unit": "%",
+          "description": "Percentage of messages successfully delivered",
+          "baseline_value": null,
+          "improvement_percent": null,
+          "category": "messaging"
+        }
+      ],
+      "execution_time_ms": 91.52389998780563,
+      "memory_peak_mb": 121.078125,
+      "memory_final_mb": 121.078125,
+      "cpu_usage_percent": 0.0,
+      "error_count": 0,
+      "success": true,
+      "timestamp": "2025-06-04T12:21:55.603675"
+    },
+    {
+      "test_name": "Messaging Performance",
+      "version": "V2.0",
+      "metrics": [],
+      "execution_time_ms": 150.93239999259822,
+      "memory_peak_mb": 122.34375,
+      "memory_final_mb": 122.34375,
+      "cpu_usage_percent": 0.0,
+      "error_count": 0,
+      "success": true,
+      "timestamp": "2025-06-04T12:21:55.831441"
+    }
+  ],
+  "recommendations": [
+    "Success rate (75.0%) is below 95%. Investigate and fix failing tests.",
+    "Overall performance score (50.0) is below 70. Focus on meeting more performance targets."
+  ]
+}

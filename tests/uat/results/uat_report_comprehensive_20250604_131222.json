@@ -1,0 +1,59 @@
+{
+  "uat_report": {
+    "generated_at": "2025-06-04T13:12:22.636277",
+    "report_scope": "All Sessions",
+    "summary": {
+      "total_sessions": 3,
+      "total_scenarios_executed": 7,
+      "scenarios_passed": 6,
+      "scenarios_failed": 0,
+      "scenarios_blocked": 0,
+      "success_rate_percent": 85.7,
+      "total_issues_found": 1
+    },
+    "detailed_sessions": [
+      {
+        "session_id": "UAT_20250604_131222_Alice_Johnson",
+        "session_name": "V2.0 Validation - end_user",
+        "tester_name": "Alice Johnson",
+        "tester_role": "end_user",
+        "start_time": "2025-06-04T13:12:22.531434",
+        "end_time": null,
+        "scenarios_executed": 3,
+        "scenarios_passed": 3,
+        "overall_feedback": null,
+        "approval_status": "pending"
+      },
+      {
+        "session_id": "UAT_20250604_131222_Bob_Smith",
+        "session_name": "V2.0 Validation - power_user",
+        "tester_name": "Bob Smith",
+        "tester_role": "power_user",
+        "start_time": "2025-06-04T13:12:22.571939",
+        "end_time": null,
+        "scenarios_executed": 3,
+        "scenarios_passed": 2,
+        "overall_feedback": null,
+        "approval_status": "pending"
+      },
+      {
+        "session_id": "UAT_20250604_131222_Carol_Davis",
+        "session_name": "V2.0 Validation - stakeholder",
+        "tester_name": "Carol Davis",
+        "tester_role": "stakeholder",
+        "start_time": "2025-06-04T13:12:22.611862",
+        "end_time": null,
+        "scenarios_executed": 1,
+        "scenarios_passed": 1,
+        "overall_feedback": null,
+        "approval_status": "pending"
+      }
+    ],
+    "critical_issues": [],
+    "recommendations": [
+      "✅ GOOD: V2.0 meets UAT requirements with strong performance",
+      "Review and prioritize 1 identified issues"
+    ],
+    "v2_approval_recommendation": "approved"
+  }
+}
