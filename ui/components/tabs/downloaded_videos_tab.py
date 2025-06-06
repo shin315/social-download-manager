@@ -17,7 +17,7 @@ from PyQt6.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel,
                              QTableWidgetItem, QMessageBox, QFrame, QScrollArea, QApplication, QDialog, QTextEdit, QCheckBox,
                              QMenu, QDialogButtonBox, QToolTip, QAbstractItemView,
                              QStyledItemDelegate, QSizePolicy, QListWidget, QListWidgetItem,
-                             QFileDialog, QComboBox)
+                             QFileDialog, QComboBox, QWidget)
 from PyQt6.QtCore import Qt, QSize, QTimer, QPoint, QEvent, pyqtSignal, QCoreApplication, QThread, QObject
 from PyQt6.QtGui import QPixmap, QCursor, QIcon, QColor, QPainter, QPen, QMouseEvent, QAction
 import os

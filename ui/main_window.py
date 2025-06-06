@@ -800,11 +800,14 @@ class MainWindow(QMainWindow):
             self.update_platform_icons("-bw")
             
         # Update colors for child tabs
+        # Convert string theme to dict format for new tab components
+        theme_dict = self._convert_theme_to_dict(theme)
+        
         if hasattr(self, 'downloaded_videos_tab') and hasattr(self.downloaded_videos_tab, 'apply_theme_colors'):
-            self.downloaded_videos_tab.apply_theme_colors(theme)
+            self.downloaded_videos_tab.apply_theme_colors(theme_dict)
             
         if hasattr(self, 'video_info_tab') and hasattr(self.video_info_tab, 'apply_theme_colors'):
-            self.video_info_tab.apply_theme_colors(theme)
+            self.video_info_tab.apply_theme_colors(theme_dict)
             
         # Update theme for donate dialog if already created
         if hasattr(self, 'donate_dialog') and self.donate_dialog:
@@ -827,6 +830,59 @@ class MainWindow(QMainWindow):
                 log.write(f"[{datetime.now()}] Theme changed to: {theme}\n")
         except:
             pass
+
+    def _convert_theme_to_dict(self, theme_name: str) -> dict:
+        """Convert string theme name to dict format for new tab components"""
+        if theme_name == "dark":
+            return {
+                'name': 'dark',
+                'background': '#2d2d2d',
+                'text': '#ffffff',
+                'text_primary': '#ffffff',
+                'text_secondary': '#cccccc',
+                'text_muted': '#999999',
+                'text_on_primary': '#ffffff',
+                'surface': '#3d3d3d',
+                'primary': '#0078d7',
+                'accent': '#0078d7',
+                'border': '#444444',
+                'border_focus': '#0078d7',
+                'header_background': '#3d3d3d',
+                'header_text': '#ffffff',
+                'input_background': '#3d3d3d',
+                'input_border': '#555555',
+                'hover': '#505050',
+                'selected': '#0078d7',
+                'error': '#ff6b6b',
+                'warning': '#ffa726',
+                'success': '#4caf50',
+                'info': '#29b6f6'
+            }
+        else:  # light theme
+            return {
+                'name': 'light',
+                'background': '#ffffff',
+                'text': '#333333',
+                'text_primary': '#333333',
+                'text_secondary': '#666666',
+                'text_muted': '#999999',
+                'text_on_primary': '#ffffff',
+                'surface': '#f5f5f5',
+                'primary': '#0078d7',
+                'accent': '#0078d7',
+                'border': '#cccccc',
+                'border_focus': '#0078d7',
+                'header_background': '#f5f5f5',
+                'header_text': '#333333',
+                'input_background': '#ffffff',
+                'input_border': '#cccccc',
+                'hover': '#f0f0f0',
+                'selected': '#0078d7',
+                'error': '#d32f2f',
+                'warning': '#f57c00',
+                'success': '#388e3c',
+                'info': '#1976d2'
+            }
 
     def update_platform_icons(self, suffix):
         """Update icons for platform menus based on theme"""
