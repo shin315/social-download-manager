@@ -70,6 +70,13 @@ class BaseTab(QWidget, TabInterface, metaclass=QWidgetABCMeta):
         elif parent and hasattr(parent, 'language_manager'):
             self._lang_manager = parent.language_manager
         
+        # Log language manager status (debug mode only)
+        if hasattr(self, '_config') and getattr(self._config, 'debug_mode', False):
+            if self._lang_manager:
+                print(f"DEBUG: BaseTab got language manager: {type(self._lang_manager)}")
+            else:
+                print(f"DEBUG: BaseTab NO language manager from parent: {parent}")
+        
         # Connect to global component bus if available
         self._component_bus = get_event_bus()
         
@@ -337,82 +344,14 @@ class BaseTab(QWidget, TabInterface, metaclass=QWidgetABCMeta):
         pass
     
     def tr_(self, key: str) -> str:
-        """Translate text key - placeholder method with English fallbacks"""
-        # NOTE: This is a placeholder for mixin functionality
-        # TODO: Implement proper translation when mixins are restored
-        if self._lang_manager and hasattr(self._lang_manager, 'tr_'):
-            return self._lang_manager.tr_(key)
-        
-        # English fallback translations
-        translations = {
-            # Video Info Tab
-            "LABEL_VIDEO_URL": "Video URL",
-            "PLACEHOLDER_VIDEO_URL": "Enter video URL here...",
-            "BUTTON_GET_INFO": "Get Info",
-            "LABEL_OUTPUT_FOLDER": "Output Folder",
-            "PLACEHOLDER_OUTPUT_FOLDER": "Choose output folder...",
-            "BUTTON_CHOOSE_FOLDER": "Choose Folder",
-            "BUTTON_SELECT_ALL": "Select All",
-            "BUTTON_UNSELECT_ALL": "Unselect All",
-            "BUTTON_DELETE_SELECTED": "Delete Selected",
-            "BUTTON_DELETE_ALL": "Delete All",
-            "BUTTON_DOWNLOAD": "Download",
-            "BUTTON_PROCESSING": "Processing...",
-            
-                         # Downloaded Videos Tab
-             "TAB_VIDEO_INFO": "Video Info",
-             "TAB_DOWNLOADED_VIDEOS": "Downloaded Videos",
-             "VIDEO_INFO_HEADER": "Video Information",
-             
-             # Downloaded Videos Tab Content
-             "LABEL_SEARCH": "Search:",
-             "PLACEHOLDER_SEARCH": "Search downloaded videos...",
-             "TABLE_TITLE": "Title",
-             "TABLE_CREATOR": "Creator", 
-             "TABLE_QUALITY": "Quality",
-             "TABLE_FORMAT": "Format",
-             "TABLE_SIZE": "Size",
-             "TABLE_STATUS": "Status",
-             "TABLE_DATE": "Date",
-             "TABLE_HASHTAGS": "Hashtags",
-             "TABLE_ACTIONS": "Actions",
-             "HEADER_TITLE": "Title",
-             "HEADER_CREATOR": "Creator",
-             "HEADER_QUALITY": "Quality", 
-             "HEADER_FORMAT": "Format",
-             "HEADER_SIZE": "Size",
-             "HEADER_STATUS": "Status",
-             "HEADER_DATE": "Date",
-             "HEADER_HASHTAGS": "Hashtags",
-             "HEADER_ACTIONS": "Actions",
-             "LABEL_TOTAL_VIDEOS": "Total videos",
-             "LABEL_TOTAL_SIZE": "Total size",
-             "LABEL_LAST_DOWNLOAD": "Last download",
-             "BUTTON_OPEN": "Open",
-            
-            # Messages and dialogs
-            "ERROR_NO_URL": "No URL",
-            "ERROR_NO_URL_MESSAGE": "Please enter a video URL",
-            "INFO_URL_EXISTS": "URL Already Added",
-            "INFO_URL_EXISTS_MESSAGE": "This URL is already in the list",
-            "ERROR_GET_INFO": "Error Getting Video Info",
-            "ERROR_GET_INFO_MESSAGE": "Failed to retrieve video information",
-            "DIALOG_API_ERROR_TITLE": "API Error",
-            "DIALOG_TIKTOK_API_CHANGED": "The TikTok API may have changed",
-            "DIALOG_UPDATE_NEEDED_MESSAGE": "Please update the application",
-            "DIALOG_YTDLP_OUTDATED": "yt-dlp may be outdated",
-            "MENU_CHOOSE_FOLDER": "Choose Output Folder",
-            
-            # Common UI elements
-            "OK": "OK",
-            "CANCEL": "Cancel",
-            "YES": "Yes",
-            "NO": "No",
-            "APPLY": "Apply",
-            "CLOSE": "Close",
-        }
-        
-        return translations.get(key, key)  # Return translation or key if not found
+        """Translate text key - now properly connected to language manager"""
+        if self._lang_manager:
+            # Try tr_ first (for compatibility), then tr
+            if hasattr(self._lang_manager, 'tr_'):
+                return self._lang_manager.tr_(key)
+            elif hasattr(self._lang_manager, 'tr'):
+                return self._lang_manager.tr(key)
+        return key  # Return key as fallback
     
     def _handle_language_change(self, event) -> None:
         """Handle language change events from component bus"""

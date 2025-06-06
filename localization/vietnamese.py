@@ -257,4 +257,42 @@ DIALOG_VIDEO_REGION_RESTRICTED = "Video này không khả dụng tại khu vực
 DIALOG_YTDLP_OUTDATED = "Công cụ tải video đã lỗi thời. Vui lòng cập nhật ứng dụng."
 DIALOG_API_ERROR_TITLE = "Lỗi API"
 DIALOG_UPDATE_NEEDED = "Yêu Cầu Cập Nhật"
-DIALOG_UPDATE_NEEDED_MESSAGE = "Một phiên bản mới của ứng dụng là cần thiết để tải xuống video. Phiên bản hiện tại không tương thích với những thay đổi gần đây của TikTok." 
+DIALOG_UPDATE_NEEDED_MESSAGE = "Một phiên bản mới của ứng dụng là cần thiết để tải xuống video. Phiên bản hiện tại không tương thích với những thay đổi gần đây của TikTok."
+
+# Missing UI labels - Phase 0 Translation Fix
+LABEL_SELECTED = "Đã chọn"
+LABEL_SELECTED_COUNT = "Đã chọn: {}"
+
+# Filter popup components
+SELECT_ALL = "Chọn Tất Cả"
+SELECT_NONE = "Bỏ Chọn Tất Cả"
+APPLY_FILTER = "Áp Dụng Bộ Lọc"
+CLEAR_FILTER = "Xóa Bộ Lọc"
+SEARCH_VALUES = "Tìm kiếm giá trị..."
+ENTER_SEARCH_TEXT = "Nhập từ khóa tìm kiếm..."
+
+# Filter types
+FILTER_TYPE = "Loại Bộ Lọc"
+FILTER_TYPE_IN = "Trong Danh Sách"
+FILTER_TYPE_CONTAINS = "Chứa"
+FILTER_TYPE_EQUALS = "Bằng"
+FILTER_TYPE_NOT_IN = "Không Trong Danh Sách"
+
+# Action buttons
+ACTION_SELECT_ALL = "Chọn Tất Cả"
+BUTTON_UNSELECT_ALL = "Bỏ Chọn Tất Cả"
+
+# Error messages for UI components
+ERROR_NO_URL = "Không Có URL"
+ERROR_NO_URL_MESSAGE = "Vui lòng nhập URL video"
+ERROR_GET_INFO = "Lỗi Lấy Thông Tin"
+ERROR_GET_INFO_MESSAGE = "Không thể lấy thông tin video"
+ERROR_LOAD_VIDEOS = "Lỗi Tải Video"
+ERROR_LOAD_VIDEOS_MESSAGE = "Không thể tải video từ cơ sở dữ liệu"
+
+# Info messages
+INFO_URL_EXISTS = "URL Đã Tồn Tại"
+INFO_URL_EXISTS_MESSAGE = "URL này đã có trong danh sách"
+
+# Button states
+BUTTON_PROCESSING = "Đang xử lý..." 

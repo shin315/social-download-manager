@@ -78,6 +78,10 @@ class LanguageManager:
         """Alias for get_text to translate key in current language"""
         return self.get_text(key)
     
+    def tr_(self, key):
+        """Alias for get_text to translate key in current language (compatibility with Qt naming)"""
+        return self.get_text(key)
+    
     def get_available_languages(self):
         """Get list of available languages"""
         return {code: module.LANGUAGE_NAME for code, module in self.languages.items()}

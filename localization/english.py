@@ -256,4 +256,42 @@ DIALOG_DOWNLOAD_ERROR = "Error downloading update"
 DIALOG_DOWNLOAD_COMPLETE = "Download Complete"
 DIALOG_DOWNLOAD_COMPLETE_MSG = "Update downloaded to:\n{}\n\nThe folder will open automatically."
 DIALOG_SELECT_DOWNLOAD_FOLDER = "Select Download Folder"
-DIALOG_DOWNLOADING = "Downloading update..." 
+DIALOG_DOWNLOADING = "Downloading update..."
+
+# Missing UI labels - Phase 0 Translation Fix
+LABEL_SELECTED = "Selected"
+LABEL_SELECTED_COUNT = "Selected: {}"
+
+# Filter popup components
+SELECT_ALL = "Select All"
+SELECT_NONE = "Select None"
+APPLY_FILTER = "Apply Filter"
+CLEAR_FILTER = "Clear Filter"
+SEARCH_VALUES = "Search values..."
+ENTER_SEARCH_TEXT = "Enter search text..."
+
+# Filter types
+FILTER_TYPE = "Filter Type"
+FILTER_TYPE_IN = "In"
+FILTER_TYPE_CONTAINS = "Contains"
+FILTER_TYPE_EQUALS = "Equals"
+FILTER_TYPE_NOT_IN = "Not In"
+
+# Action buttons
+ACTION_SELECT_ALL = "Select All"
+BUTTON_UNSELECT_ALL = "Unselect All"
+
+# Error messages for UI components
+ERROR_NO_URL = "No URL"
+ERROR_NO_URL_MESSAGE = "Please enter a video URL"
+ERROR_GET_INFO = "Get Info Error"
+ERROR_GET_INFO_MESSAGE = "Failed to get video information"
+ERROR_LOAD_VIDEOS = "Load Videos Error"
+ERROR_LOAD_VIDEOS_MESSAGE = "Failed to load videos from database"
+
+# Info messages
+INFO_URL_EXISTS = "URL Already Exists"
+INFO_URL_EXISTS_MESSAGE = "This URL is already in the list"
+
+# Button states
+BUTTON_PROCESSING = "Processing..." 
