@@ -359,9 +359,36 @@ class BaseTab(QWidget, TabInterface, metaclass=QWidgetABCMeta):
             "BUTTON_DOWNLOAD": "Download",
             "BUTTON_PROCESSING": "Processing...",
             
-            # Downloaded Videos Tab
-            "TAB_VIDEO_INFO": "Video Info",
-            "TAB_DOWNLOADED_VIDEOS": "Downloaded Videos",
+                         # Downloaded Videos Tab
+             "TAB_VIDEO_INFO": "Video Info",
+             "TAB_DOWNLOADED_VIDEOS": "Downloaded Videos",
+             "VIDEO_INFO_HEADER": "Video Information",
+             
+             # Downloaded Videos Tab Content
+             "LABEL_SEARCH": "Search:",
+             "PLACEHOLDER_SEARCH": "Search downloaded videos...",
+             "TABLE_TITLE": "Title",
+             "TABLE_CREATOR": "Creator", 
+             "TABLE_QUALITY": "Quality",
+             "TABLE_FORMAT": "Format",
+             "TABLE_SIZE": "Size",
+             "TABLE_STATUS": "Status",
+             "TABLE_DATE": "Date",
+             "TABLE_HASHTAGS": "Hashtags",
+             "TABLE_ACTIONS": "Actions",
+             "HEADER_TITLE": "Title",
+             "HEADER_CREATOR": "Creator",
+             "HEADER_QUALITY": "Quality", 
+             "HEADER_FORMAT": "Format",
+             "HEADER_SIZE": "Size",
+             "HEADER_STATUS": "Status",
+             "HEADER_DATE": "Date",
+             "HEADER_HASHTAGS": "Hashtags",
+             "HEADER_ACTIONS": "Actions",
+             "LABEL_TOTAL_VIDEOS": "Total videos",
+             "LABEL_TOTAL_SIZE": "Total size",
+             "LABEL_LAST_DOWNLOAD": "Last download",
+             "BUTTON_OPEN": "Open",
             
             # Messages and dialogs
             "ERROR_NO_URL": "No URL",

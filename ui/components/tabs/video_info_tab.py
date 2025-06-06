@@ -17,7 +17,7 @@ from PyQt6.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel,
                              QLineEdit, QPushButton, QTableWidget, QComboBox,
                              QFileDialog, QCheckBox, QHeaderView, QMessageBox,
                              QTableWidgetItem, QProgressBar, QApplication, QDialog, QTextEdit, QMenu, QInputDialog, QSpacerItem, QSizePolicy, QDialogButtonBox)
-from PyQt6.QtCore import Qt, pyqtSignal, QSize
+from PyQt6.QtCore import Qt, pyqtSignal, QSize, QTimer
 from PyQt6.QtNetwork import QNetworkRequest, QNetworkAccessManager, QNetworkReply
 from PyQt6.QtGui import QPixmap, QCursor, QAction
 import os
@@ -85,6 +85,7 @@ class VideoInfoTab(BaseTab):
         # Initialize tab-specific state variables BEFORE super().__init__()
         # because they might be needed in lifecycle methods
         self.video_info_dict = {}  # Dictionary with key as URL, value as VideoInfo
+        self.video_info_list = []  # List of retrieved video info for table display
         self.processing_count = 0   # Counter for videos being processed
         self.downloading_count = 0  # Counter for videos being downloaded
         self.all_selected = False   # Variable to track if all items are selected
@@ -179,116 +180,92 @@ class VideoInfoTab(BaseTab):
     
     def setup_ui(self) -> None:
         """Initialize the tab's UI components"""
-        self.performance_monitor.start_timing('ui_setup')
+        # Main layout
+        main_layout = QVBoxLayout()
+        self.setLayout(main_layout)
+
+        # URL input section
+        url_layout = QHBoxLayout()
         
-        try:
-            # Main layout
-            main_layout = QVBoxLayout()
-            self.setLayout(main_layout)
+        # URL label - fixed width for alignment
+        self.url_label = QLabel(self.tr_("Video URL:"))
+        self.url_label.setFixedWidth(80)  # Fixed width for consistent alignment
+        url_layout.addWidget(self.url_label)
+        
+        # URL input
+        self.url_input = QLineEdit()
+        self.url_input.setPlaceholderText(self.tr_("Enter video URL here..."))
+        url_layout.addWidget(self.url_input, 1)
+        
+        # Get Info button - fixed width
+        self.get_info_button = QPushButton(self.tr_("Get Info"))
+        self.get_info_button.setFixedWidth(120)  # Fixed width for consistency
+        self.get_info_button.clicked.connect(self.get_video_info)
+        url_layout.addWidget(self.get_info_button)
+        
+        main_layout.addLayout(url_layout)
 
-            # URL and Get Info section
-            url_layout = QHBoxLayout()
-            
-            # URL Label
-            self.url_label = QLabel(self.tr_("LABEL_VIDEO_URL"))
-            url_layout.addWidget(self.url_label)
-            
-            # Create spacing to align URL input with output folder
-            spacer_width = 18
-            url_layout.addSpacing(spacer_width)
-            
-            # URL Input
-            self.url_input = QLineEdit()
-            self.url_input.setFixedHeight(30)
-            self.url_input.setMinimumWidth(500)
-            self.url_input.setPlaceholderText(self.tr_("PLACEHOLDER_VIDEO_URL"))
-            self.url_input.returnPressed.connect(self.get_video_info)
-            url_layout.addWidget(self.url_input, 1)
-            
-            # Get Info Button
-            self.get_info_btn = QPushButton(self.tr_("BUTTON_GET_INFO"))
-            self.get_info_btn.setFixedWidth(120)
-            self.get_info_btn.clicked.connect(self.get_video_info)
-            url_layout.addWidget(self.get_info_btn)
-            
-            main_layout.addLayout(url_layout)
+        # Output folder section
+        folder_layout = QHBoxLayout()
+        
+        # Output folder label - same fixed width as URL label
+        self.folder_label = QLabel(self.tr_("Output Folder:"))
+        self.folder_label.setFixedWidth(80)  # Same width as URL label
+        folder_layout.addWidget(self.folder_label)
+        
+        # Output folder input
+        self.folder_input = QLineEdit()
+        self.folder_input.setPlaceholderText(self.tr_("Choose an output folder..."))
+        folder_layout.addWidget(self.folder_input, 1)
+        
+        # Choose folder button - same fixed width as Get Info button
+        self.choose_folder_button = QPushButton(self.tr_("Choose Folder"))
+        self.choose_folder_button.setFixedWidth(120)  # Same width as Get Info button
+        self.choose_folder_button.clicked.connect(self.choose_output_folder)
+        folder_layout.addWidget(self.choose_folder_button)
+        
+        main_layout.addLayout(folder_layout)
 
-            # Output Folder section
-            output_layout = QHBoxLayout()
-            
-            # Output Folder Label
-            self.output_label = QLabel(self.tr_("LABEL_OUTPUT_FOLDER"))
-            output_layout.addWidget(self.output_label)
-            
-            # Display folder path
-            self.output_folder_display = QLineEdit()
-            self.output_folder_display.setReadOnly(True)
-            self.output_folder_display.setFixedHeight(30)
-            self.output_folder_display.setMinimumWidth(500)
-            self.output_folder_display.setPlaceholderText(self.tr_("PLACEHOLDER_OUTPUT_FOLDER"))
-            output_layout.addWidget(self.output_folder_display, 1)
-            
-            # Choose folder button
-            self.choose_folder_btn = QPushButton(self.tr_("BUTTON_CHOOSE_FOLDER"))
-            self.choose_folder_btn.setFixedWidth(120)
-            self.choose_folder_btn.clicked.connect(self.choose_output_folder)
-            output_layout.addWidget(self.choose_folder_btn)
-            
-            main_layout.addLayout(output_layout)
+        # Video info table
+        self.create_video_info_table()
+        main_layout.addWidget(self.video_info_table)
 
-            # Video information table
-            self.create_video_table()
-            main_layout.addWidget(self.video_table)
-
-            # Options and Download button section
-            options_layout = QHBoxLayout()
-            
-            # Group Select/Delete buttons to the left
-            left_buttons_layout = QHBoxLayout()
-            
-            # Select all / Unselect all button
-            self.select_toggle_btn = QPushButton(self.tr_("BUTTON_SELECT_ALL"))
-            self.select_toggle_btn.setFixedWidth(150)
-            self.select_toggle_btn.clicked.connect(self.toggle_select_all)
-            left_buttons_layout.addWidget(self.select_toggle_btn)
-            
-            # Delete Selected button
-            self.delete_selected_btn = QPushButton(self.tr_("BUTTON_DELETE_SELECTED"))
-            self.delete_selected_btn.setFixedWidth(150)
-            self.delete_selected_btn.clicked.connect(self.delete_selected_videos)
-            left_buttons_layout.addWidget(self.delete_selected_btn)
-            
-            # Delete All button
-            self.delete_all_btn = QPushButton(self.tr_("BUTTON_DELETE_ALL"))
-            self.delete_all_btn.setFixedWidth(150)
-            self.delete_all_btn.clicked.connect(self.delete_all_videos)
-            left_buttons_layout.addWidget(self.delete_all_btn)
-            
-            options_layout.addLayout(left_buttons_layout)
-            options_layout.addStretch(1)
-            
-            # Download button on the right
-            self.download_btn = QPushButton(self.tr_("BUTTON_DOWNLOAD"))
-            self.download_btn.setFixedWidth(150)
-            self.download_btn.clicked.connect(self.download_videos)
-            options_layout.addWidget(self.download_btn)
-
-            main_layout.addLayout(options_layout)
-            
-            # Set up context menu for video_table
-            self.video_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
-            self.video_table.customContextMenuRequested.connect(self.show_context_menu)
-            
-            # Initialize downloader after UI setup
-            self.setup_downloader()
-            
-            self.log_info("UI setup completed successfully")
-            
-        except Exception as e:
-            self.log_error(f"Error in UI setup: {e}")
-            raise
-        finally:
-            self.performance_monitor.end_timing('ui_setup')
+        # Action buttons section
+        button_layout = QHBoxLayout()
+        
+        # Select All button
+        self.select_all_button = QPushButton(self.tr_("Select All"))
+        self.select_all_button.clicked.connect(self.toggle_select_all)
+        button_layout.addWidget(self.select_all_button)
+        
+        # Delete Selected button
+        self.delete_selected_button = QPushButton(self.tr_("Delete Selected"))
+        self.delete_selected_button.clicked.connect(self.delete_selected_videos)
+        button_layout.addWidget(self.delete_selected_button)
+        
+        # Delete All button
+        self.delete_all_button = QPushButton(self.tr_("Delete All"))
+        self.delete_all_button.clicked.connect(self.delete_all_videos)
+        button_layout.addWidget(self.delete_all_button)
+        
+        # Add stretch to push Download button to the right
+        button_layout.addStretch()
+        
+        # Download button
+        self.download_button = QPushButton(self.tr_("Download"))
+        self.download_button.clicked.connect(self.download_videos)
+        button_layout.addWidget(self.download_button)
+        
+        main_layout.addLayout(button_layout)
+        
+        # Set up context menu for video_table
+        self.video_info_table.setContextMenuPolicy(Qt.ContextMenuPolicy.CustomContextMenu)
+        self.video_info_table.customContextMenuRequested.connect(self.show_context_menu)
+        
+        # Initialize downloader after UI setup
+        self.setup_downloader()
+        
+        self.log_info("UI setup completed successfully")
     
     def setup_downloader(self):
         """Initialize downloader with signal connections"""
@@ -323,7 +300,7 @@ class VideoInfoTab(BaseTab):
         finally:
             self.performance_monitor.end_timing('data_load')
     
-    @auto_save_on_change(['video_info_dict', 'output_folder_display', 'all_selected'])
+    @auto_save_on_change(['video_info_dict', 'folder_input', 'all_selected'])
     def save_data(self) -> bool:
         """Save tab data, return success status"""
         self.performance_monitor.start_timing('data_save')
@@ -331,7 +308,7 @@ class VideoInfoTab(BaseTab):
         try:
             # Update tab state with current data
             self._tab_state.video_urls = list(self.video_info_dict.keys())
-            self._tab_state.output_folder = self.output_folder_display.text()
+            self._tab_state.output_folder = self.folder_input.text()
             self._tab_state.selection_state = self.all_selected
             
             # Save additional state data
@@ -342,13 +319,13 @@ class VideoInfoTab(BaseTab):
                 'video_count': len(self.video_info_dict),
                 'ui_state': {
                     'url_input_text': self.url_input.text(),
-                    'output_folder': self.output_folder_display.text()
+                    'output_folder': self.folder_input.text()
                 }
             }
             
             # Save output folder to config
-            if self.output_folder_display.text():
-                self.save_last_output_folder(self.output_folder_display.text())
+            if self.folder_input.text():
+                self.save_last_output_folder(self.folder_input.text())
             
             # Save to state manager if available
             if hasattr(self, '_state_manager'):
@@ -375,7 +352,7 @@ class VideoInfoTab(BaseTab):
             self.all_selected = False
             
             # Clear UI
-            self.video_table.setRowCount(0)
+            self.video_info_table.setRowCount(0)
             self.url_input.clear()
             
             # Reload saved data
@@ -401,7 +378,7 @@ class VideoInfoTab(BaseTab):
             errors.append("Video downloader not initialized")
         
         # Check output folder
-        output_folder = self.output_folder_display.text()
+        output_folder = self.folder_input.text()
         if output_folder and not os.path.exists(output_folder):
             errors.append(f"Output folder does not exist: {output_folder}")
         elif output_folder and not os.access(output_folder, os.W_OK):
@@ -449,7 +426,7 @@ class VideoInfoTab(BaseTab):
             'video_count': len(self.video_info_dict),
             'processing_count': self.processing_count,
             'downloading_count': self.downloading_count,
-            'has_output_folder': bool(self.output_folder_display.text())
+            'has_output_folder': bool(self.folder_input.text())
         })
         
         self.log_info("Tab activated")
@@ -485,7 +462,7 @@ class VideoInfoTab(BaseTab):
         """Get complete tab state"""
         # Update state with current data
         self._tab_state.video_urls = list(self.video_info_dict.keys())
-        self._tab_state.output_folder = self.output_folder_display.text()
+        self._tab_state.output_folder = self.folder_input.text()
         self._tab_state.selection_state = self.all_selected
         
         # Update processing state
@@ -509,7 +486,7 @@ class VideoInfoTab(BaseTab):
             pass
         
         if hasattr(state, 'output_folder') and state.output_folder:
-            self.output_folder_display.setText(state.output_folder)
+            self.folder_input.setText(state.output_folder)
         
         if hasattr(state, 'selection_state'):
             self.all_selected = state.selection_state
@@ -535,22 +512,22 @@ class VideoInfoTab(BaseTab):
     def update_language(self):
         """Update display language when language changes"""
         # Update labels and buttons
-        self.url_label.setText(self.tr_("LABEL_VIDEO_URL"))
-        self.url_input.setPlaceholderText(self.tr_("PLACEHOLDER_VIDEO_URL"))
-        self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
+        self.url_label.setText(self.tr_("Video URL:"))
+        self.url_input.setPlaceholderText(self.tr_("Enter video URL here..."))
+        self.get_info_button.setText(self.tr_("Get Info"))
         
-        self.output_label.setText(self.tr_("LABEL_OUTPUT_FOLDER"))
-        self.output_folder_display.setPlaceholderText(self.tr_("PLACEHOLDER_OUTPUT_FOLDER"))
-        self.choose_folder_btn.setText(self.tr_("BUTTON_CHOOSE_FOLDER"))
+        self.folder_label.setText(self.tr_("Output Folder:"))
+        self.folder_input.setPlaceholderText(self.tr_("Choose an output folder..."))
+        self.choose_folder_button.setText(self.tr_("Choose Folder"))
         
         # Update control buttons
-        self.select_toggle_btn.setText(
-            self.tr_("BUTTON_UNSELECT_ALL") if self.all_selected 
-            else self.tr_("BUTTON_SELECT_ALL")
+        self.select_all_button.setText(
+            self.tr_("Unselect All") if self.all_selected 
+            else self.tr_("Select All")
         )
-        self.delete_selected_btn.setText(self.tr_("BUTTON_DELETE_SELECTED"))
-        self.delete_all_btn.setText(self.tr_("BUTTON_DELETE_ALL"))
-        self.download_btn.setText(self.tr_("BUTTON_DOWNLOAD"))
+        self.delete_selected_button.setText(self.tr_("Delete Selected"))
+        self.delete_all_button.setText(self.tr_("Delete All"))
+        self.download_button.setText(self.tr_("Download"))
         
         # Update table headers
         self.update_table_headers()
@@ -568,7 +545,7 @@ class VideoInfoTab(BaseTab):
         
         try:
             # Apply theme to table
-            if hasattr(self, 'video_table'):
+            if hasattr(self, 'video_info_table'):
                 table_style = f"""
                 QTableWidget {{
                     background-color: {theme.get('background', '#ffffff')};
@@ -586,7 +563,7 @@ class VideoInfoTab(BaseTab):
                     padding: 4px;
                 }}
                 """
-                self.video_table.setStyleSheet(table_style)
+                self.video_info_table.setStyleSheet(table_style)
             
             # Apply theme to input fields
             input_style = f"""
@@ -604,8 +581,8 @@ class VideoInfoTab(BaseTab):
             
             if hasattr(self, 'url_input'):
                 self.url_input.setStyleSheet(input_style)
-            if hasattr(self, 'output_folder_display'):
-                self.output_folder_display.setStyleSheet(input_style)
+            if hasattr(self, 'folder_input'):
+                self.folder_input.setStyleSheet(input_style)
             
             self.log_info("Theme applied successfully")
             
@@ -619,8 +596,8 @@ class VideoInfoTab(BaseTab):
     def update_output_folder(self, folder):
         """Update output folder display with new folder path"""
         try:
-            if hasattr(self, 'output_folder_display'):
-                self.output_folder_display.setText(folder)
+            if hasattr(self, 'folder_input'):
+                self.folder_input.setText(folder)
                 self._set_data_dirty(True)
                 self.log_info(f"Output folder updated to: {folder}")
             else:
@@ -651,7 +628,7 @@ class VideoInfoTab(BaseTab):
                     config = json.load(f)
                     last_folder = config.get('last_output_folder', '')
                     if last_folder and os.path.exists(last_folder):
-                        self.output_folder_display.setText(last_folder)
+                        self.folder_input.setText(last_folder)
                         self.log_info(f"Loaded output folder: {last_folder}")
         except Exception as e:
             self.log_error(f"Error loading output folder: {e}")
@@ -702,51 +679,117 @@ class VideoInfoTab(BaseTab):
             self.log_error(f"Error checking clipboard: {e}")
     
     @validate_before_action()
-    def get_video_info(self):
+    def get_video_info(self, checked=False):
         """Get video information with enhanced validation and monitoring"""
-        self.performance_monitor.start_timing('video_info_fetch')
-        
         try:
             url = self.url_input.text().strip()
             if not url:
-                QMessageBox.warning(self, self.tr_("ERROR_NO_URL"), self.tr_("ERROR_NO_URL_MESSAGE"))
+                QMessageBox.warning(self, "Invalid URL", "Please enter a valid video URL")
                 return
             
-            # Check if URL is already in table
+            # Check if URL is already in the list
             if url in self.video_info_dict:
-                QMessageBox.information(self, self.tr_("INFO_URL_EXISTS"), self.tr_("INFO_URL_EXISTS_MESSAGE"))
+                QMessageBox.information(self, "Duplicate URL", "This video is already in the list.")
                 return
             
-            # Increment processing count
+            # Disable button and show loading state
+            self.get_info_button.setEnabled(False)
+            self.get_info_button.setText("Getting Info...")
             self.processing_count += 1
-            self._set_data_dirty(True)
             
-            # Update UI to show processing
-            self.get_info_btn.setEnabled(False)
-            self.get_info_btn.setText(self.tr_("BUTTON_PROCESSING"))
-            
-            # Start video info retrieval
+            # Use the real downloader to get video info
             if self.downloader:
-                self.downloader.get_video_info(url)
-                
-                # Emit event to other tabs
-                self.emit_tab_event('video_info_requested', {
-                    'url': url,
-                    'processing_count': self.processing_count
-                })
-                
-                self.log_info(f"Requested video info for: {url}")
+                try:
+                    # Get video info using the actual downloader
+                    video_info = self.downloader.get_video_info(url)
+                    
+                    if video_info:
+                        # Convert VideoInfo object to dictionary format for table
+                        info_dict = {
+                            'title': video_info.title or 'Unknown Title',
+                            'creator': video_info.creator or 'Unknown Creator',
+                            'quality': '1080p',  # Default quality
+                            'format': getattr(video_info, 'ext', 'mp4'),
+                            'duration': self.format_duration(video_info.duration) if video_info.duration else 'Unknown',
+                            'size': self.format_size(getattr(video_info, 'filesize', None)) if hasattr(video_info, 'filesize') else 'Unknown',
+                            'hashtags': ', '.join(video_info.hashtags) if video_info.hashtags else 'No tags',
+                            'url': url,
+                            'thumbnail': video_info.thumbnail,
+                            'description': getattr(video_info, 'description', getattr(video_info, 'caption', ''))
+                        }
+                        
+                        # Add to video lists
+                        self.video_info_dict[url] = video_info
+                        self.video_info_list.append(info_dict)
+                        
+                        # Update display
+                        self.display_video_info()
+                        self.update_button_states()
+                        
+                        # Clear URL input
+                        self.url_input.clear()
+                        
+                        self.log_info(f"Successfully retrieved video info: {video_info.title}")
+                        
+                    else:
+                        QMessageBox.warning(self, "Error", "Could not retrieve video information. Please check the URL and try again.")
+                        
+                except Exception as e:
+                    self.log_error(f"Error getting video info from downloader: {e}")
+                    QMessageBox.critical(self, "Error", f"Error getting video info: {e}")
+                    
             else:
-                raise Exception("Downloader not initialized")
+                # Fallback: create downloader if not available
+                self.setup_downloader()
+                if self.downloader:
+                    self.get_video_info(checked)  # Retry
+                else:
+                    QMessageBox.critical(self, "Error", "Downloader not available. Please restart the application.")
+            
+            # Re-enable button
+            self.get_info_button.setEnabled(True)
+            self.get_info_button.setText("Get Info")
+            self.processing_count = max(0, self.processing_count - 1)
                 
         except Exception as e:
+            self.get_info_button.setEnabled(True)
+            self.get_info_button.setText("Get Info")
             self.processing_count = max(0, self.processing_count - 1)
-            self.get_info_btn.setEnabled(True)
-            self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
             self.log_error(f"Error getting video info: {e}")
-            QMessageBox.critical(self, self.tr_("ERROR_GET_INFO"), f"{self.tr_('ERROR_GET_INFO_MESSAGE')}: {e}")
-        finally:
-            self.performance_monitor.end_timing('video_info_fetch')
+            QMessageBox.critical(self, "Error", f"Error getting video info: {e}")
+    
+    def format_duration(self, duration_seconds):
+        """Format duration from seconds to MM:SS or HH:MM:SS"""
+        if not duration_seconds:
+            return "Unknown"
+        
+        try:
+            duration = int(float(duration_seconds))
+            hours = duration // 3600
+            minutes = (duration % 3600) // 60
+            seconds = duration % 60
+            
+            if hours > 0:
+                return f"{hours}:{minutes:02d}:{seconds:02d}"
+            else:
+                return f"{minutes}:{seconds:02d}"
+        except:
+            return "Unknown"
+    
+    def format_size(self, size_bytes):
+        """Format file size from bytes to human readable format"""
+        if not size_bytes:
+            return "Unknown"
+        
+        try:
+            size = int(float(size_bytes))
+            for unit in ['B', 'KB', 'MB', 'GB']:
+                if size < 1024.0:
+                    return f"{size:.1f} {unit}"
+                size /= 1024.0
+            return f"{size:.1f} TB"
+        except:
+            return "Unknown"
     
     # =============================================================================
     # Component Integration Methods
@@ -765,8 +808,8 @@ class VideoInfoTab(BaseTab):
             self._set_data_dirty(True)
             
             # Update UI
-            self.get_info_btn.setEnabled(True)
-            self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
+            self.get_info_button.setEnabled(True)
+            self.get_info_button.setText(self.tr_("BUTTON_GET_INFO"))
             
             # Add to table (placeholder - would contain full original implementation)
             self.add_video_to_table(video_info)
@@ -814,8 +857,75 @@ class VideoInfoTab(BaseTab):
             # Mark data as dirty
             self._set_data_dirty(True)
             
-            # Update UI (placeholder)
-            # In full implementation, this would update the row status
+            if success:
+                # Save to database
+                try:
+                    from utils.db_manager import DatabaseManager
+                    
+                    # Get video info for this URL
+                    video_info = self.video_info_dict.get(url)
+                    
+                    if video_info:
+                        # Prepare download info for database
+                        download_info = {
+                            'url': url,
+                            'title': video_info.title if hasattr(video_info, 'title') else 'Unknown',
+                            'filepath': file_path,
+                            'quality': video_info.quality if hasattr(video_info, 'quality') else 'Unknown',
+                            'format': 'mp4',  # Default format
+                            'duration': video_info.duration if hasattr(video_info, 'duration') else 0,
+                            'filesize': self.get_file_size(file_path),
+                            'status': 'Success',
+                            'creator': video_info.author if hasattr(video_info, 'author') else 'Unknown',
+                            'hashtags': video_info.hashtags if hasattr(video_info, 'hashtags') else [],
+                            'description': video_info.description if hasattr(video_info, 'description') else '',
+                            'thumbnail': video_info.thumbnail if hasattr(video_info, 'thumbnail') else '',
+                            'caption': video_info.title if hasattr(video_info, 'title') else ''
+                        }
+                        
+                        # Save to database
+                        db_manager = DatabaseManager()
+                        db_manager.add_download(download_info)
+                        
+                        self.log_info(f"Video saved to database: {download_info['title']}")
+                        
+                        # Show success notification
+                        from PyQt6.QtWidgets import QMessageBox
+                        QMessageBox.information(
+                            self,
+                            "Download Complete",
+                            f"Successfully downloaded: {download_info['title']}"
+                        )
+                        
+                        # Update status bar
+                        if self.parent():
+                            self.parent().status_bar.showMessage(f"Downloaded: {download_info['title']}", 5000)
+                        
+                        # Refresh downloaded videos tab if it exists
+                        if hasattr(self.parent(), 'downloaded_videos_tab'):
+                            self.parent().downloaded_videos_tab.refresh_downloads()
+                        
+                    else:
+                        self.log_error(f"Video info not found for URL: {url}")
+                        
+                except Exception as db_error:
+                    self.log_error(f"Error saving to database: {db_error}")
+                    
+                self.log_info(f"Download completed successfully: {file_path}")
+            else:
+                # Show failure notification
+                from PyQt6.QtWidgets import QMessageBox
+                QMessageBox.warning(
+                    self,
+                    "Download Failed",
+                    f"Failed to download video from: {url}\nReason: {file_path}"
+                )
+                
+                # Update status bar
+                if self.parent():
+                    self.parent().status_bar.showMessage("Download failed", 3000)
+                    
+                self.log_error(f"Download failed for: {url}")
             
             # Emit completion event
             self.video_download_completed.emit(url, success, file_path)
@@ -825,15 +935,25 @@ class VideoInfoTab(BaseTab):
                 'file_path': file_path,
                 'downloading_count': self.downloading_count
             })
-            
-            if success:
-                self.log_info(f"Download completed successfully: {file_path}")
-            else:
-                self.log_error(f"Download failed for: {url}")
                 
         except Exception as e:
             self.downloading_count = max(0, self.downloading_count - 1)
             self.log_error(f"Error handling download completion: {e}")
+    
+    def get_file_size(self, file_path):
+        """Get file size in human readable format"""
+        try:
+            import os
+            if os.path.exists(file_path):
+                size = os.path.getsize(file_path)
+                # Convert to MB
+                size_mb = size / (1024 * 1024)
+                return f"{size_mb:.2f} MB"
+            else:
+                return "Unknown"
+        except Exception as e:
+            self.log_error(f"Error getting file size: {e}")
+            return "Unknown"
     
     def handle_api_error(self, url, error_message):
         """Handle API errors from the downloader"""
@@ -842,8 +962,8 @@ class VideoInfoTab(BaseTab):
             self.processing_count = max(0, self.processing_count - 1)
             
             # Update UI
-            self.get_info_btn.setEnabled(True)
-            self.get_info_btn.setText(self.tr_("BUTTON_GET_INFO"))
+            self.get_info_button.setEnabled(True)
+            self.get_info_button.setText(self.tr_("BUTTON_GET_INFO"))
             
             # Log error
             self.log_error(f"API Error for {url}: {error_message}")
@@ -873,17 +993,116 @@ class VideoInfoTab(BaseTab):
     # These would be implemented with the full original code but with
     # enhanced error handling, logging, and component integration
     
-    def create_video_table(self):
-        """Create the video information table widget - placeholder for original implementation"""
-        # This would contain the full original create_video_table method
-        # with enhancements for component integration
-        self.video_table = QTableWidget()
-        # ... rest of original implementation with enhancements
-        pass
+    def create_video_info_table(self):
+        """Create table for displaying video information"""
+        # Create table widget
+        self.video_info_table = QTableWidget()
+        self.video_info_table.setObjectName("video_info_table")
+        
+        # Configure table properties
+        self.video_info_table.setColumnCount(8)  # Include selection column
+        
+        # Set header labels
+        header_labels = [
+            "",  # Selection checkbox
+            "Video Title",
+            "Creator",
+            "Quality",
+            "Format",
+            "Duration",
+            "Size",
+            "Hashtags"
+        ]
+        self.video_info_table.setHorizontalHeaderLabels(header_labels)
+        
+        # Style header
+        header_font = self.video_info_table.horizontalHeader().font()
+        header_font.setBold(False)
+        self.video_info_table.horizontalHeader().setFont(header_font)
+        
+        # Set custom column widths
+        self.video_info_table.setColumnWidth(0, 30)      # Checkbox column
+        self.video_info_table.setColumnWidth(1, 250)     # Title column
+        self.video_info_table.setColumnWidth(2, 120)     # Creator column
+        self.video_info_table.setColumnWidth(3, 80)      # Quality column
+        self.video_info_table.setColumnWidth(4, 75)      # Format column
+        self.video_info_table.setColumnWidth(5, 80)      # Duration column
+        self.video_info_table.setColumnWidth(6, 75)      # Size column
+        self.video_info_table.setColumnWidth(7, 150)     # Hashtags column
+        
+        # Set row selection mode
+        self.video_info_table.setSelectionBehavior(QTableWidget.SelectionBehavior.SelectRows)
+        self.video_info_table.setSelectionMode(QTableWidget.SelectionMode.MultiSelection)
+        
+        # Set resize mode for columns
+        self.video_info_table.horizontalHeader().setSectionResizeMode(0, QHeaderView.ResizeMode.Fixed)  # Select
+        self.video_info_table.horizontalHeader().setSectionResizeMode(1, QHeaderView.ResizeMode.Stretch)  # Title - Stretch
+        self.video_info_table.horizontalHeader().setSectionResizeMode(2, QHeaderView.ResizeMode.Fixed)  # Creator
+        self.video_info_table.horizontalHeader().setSectionResizeMode(3, QHeaderView.ResizeMode.Fixed)  # Quality
+        self.video_info_table.horizontalHeader().setSectionResizeMode(4, QHeaderView.ResizeMode.Fixed)  # Format
+        self.video_info_table.horizontalHeader().setSectionResizeMode(5, QHeaderView.ResizeMode.Fixed)  # Duration
+        self.video_info_table.horizontalHeader().setSectionResizeMode(6, QHeaderView.ResizeMode.Fixed)  # Size
+        self.video_info_table.horizontalHeader().setSectionResizeMode(7, QHeaderView.ResizeMode.Fixed)  # Hashtags
+        
+        # Enable sorting
+        self.video_info_table.setSortingEnabled(True)
+        self.video_info_table.horizontalHeader().setSectionsClickable(True)
+        
+        # Connect selection events
+        self.video_info_table.cellClicked.connect(self.handle_cell_clicked)
+        
+        # Set style for table
+        self.video_info_table.setStyleSheet("""
+            QTableWidget {
+                gridline-color: #444444;
+                border: none;
+                background-color: #2a2a2a;
+                selection-background-color: #3D5A80;
+                selection-color: white;
+            }
+            QTableWidget::item:selected {
+                background-color: #0078d7;
+            }
+            QHeaderView::section {
+                background-color: #2D2D2D;
+                color: white;
+                border: 1px solid #444444;
+                padding: 4px;
+            }
+            QHeaderView::section:hover {
+                background-color: #3D5A80;
+                border: 1px solid #6F9CEB;
+            }
+        """)
+        
+        # Reset row count
+        self.video_info_table.setRowCount(0)
+
+    def handle_cell_clicked(self, row, column):
+        """Handle cell click events"""
+        pass  # Can be extended for specific cell click behavior
+
+    def display_video_info(self):
+        """Display video information in the table"""
+        self.video_info_table.setRowCount(len(self.video_info_list))
+        
+        for row, video_info in enumerate(self.video_info_list):
+            # Selection checkbox
+            checkbox = QCheckBox()
+            self.video_info_table.setCellWidget(row, 0, checkbox)
+            
+            # Video information columns
+            self.video_info_table.setItem(row, 1, QTableWidgetItem(video_info.get('title', '')))
+            self.video_info_table.setItem(row, 2, QTableWidgetItem(video_info.get('creator', '')))
+            self.video_info_table.setItem(row, 3, QTableWidgetItem(video_info.get('quality', '')))
+            self.video_info_table.setItem(row, 4, QTableWidgetItem(video_info.get('format', '')))
+            self.video_info_table.setItem(row, 5, QTableWidgetItem(video_info.get('duration', '')))
+            self.video_info_table.setItem(row, 6, QTableWidgetItem(video_info.get('size', '')))
+            self.video_info_table.setItem(row, 7, QTableWidgetItem(video_info.get('hashtags', '')))
     
     def add_video_to_table(self, video_info):
         """Add video to table - placeholder for original implementation"""
-        # This would contain the full original add video logic
+        # This would contain the full original add_video_to_table method
         # with performance monitoring and error handling
         pass
     
@@ -895,13 +1114,13 @@ class VideoInfoTab(BaseTab):
     def choose_output_folder(self):
         """Choose output folder with state persistence"""
         try:
-            start_folder = self.output_folder_display.text() if self.output_folder_display.text() else ""
+            start_folder = self.folder_input.text() if self.folder_input.text() else ""
             
             folder = QFileDialog.getExistingDirectory(
                 self, self.tr_("MENU_CHOOSE_FOLDER"), start_folder)
             
             if folder:
-                self.output_folder_display.setText(folder)
+                self.folder_input.setText(folder)
                 self.save_last_output_folder(folder)
                 self._set_data_dirty(True)
                 
@@ -911,58 +1130,212 @@ class VideoInfoTab(BaseTab):
             self.log_error(f"Error choosing output folder: {e}")
     
     @validate_before_action()
-    def download_videos(self):
+    def download_videos(self, checked=False):
         """Download selected videos with enhanced validation"""
-        # This would contain the full original download_videos method
-        # with better error handling and state management
-        self.downloading_count += 1  # Placeholder increment
-        self._set_data_dirty(True)
-        pass
+        try:
+            # Get selected videos from table
+            selected_videos = []
+            for row in range(self.video_info_table.rowCount()):
+                checkbox = self.video_info_table.cellWidget(row, 0)
+                if checkbox and checkbox.isChecked():
+                    if row < len(self.video_info_list):
+                        selected_videos.append(self.video_info_list[row])
+            
+            if not selected_videos:
+                QMessageBox.information(self, "No Selection", "Please select videos to download.")
+                return
+            
+            # Check output folder
+            output_folder = self.folder_input.text().strip()
+            if not output_folder:
+                QMessageBox.warning(self, "No Output Folder", "Please choose an output folder first.")
+                return
+            
+            # Start downloads
+            self.downloading_count += len(selected_videos)
+            self._set_data_dirty(True)
+            
+            # Show start notification
+            from PyQt6.QtWidgets import QMessageBox
+            QMessageBox.information(self, "Download Started", f"Starting download of {len(selected_videos)} video(s)...")
+            
+            # Update status bar
+            if self.parent():
+                if len(selected_videos) == 1:
+                    self.parent().status_bar.showMessage(f"Downloading: {selected_videos[0].get('title', 'Unknown')}", 0)
+                else:
+                    self.parent().status_bar.showMessage(f"Downloading {len(selected_videos)} videos...", 0)
+            
+            for video in selected_videos:
+                self.log_info(f"Starting download: {video.get('title', 'Unknown')} to {output_folder}")
+                
+                # Use real downloader
+                if self.downloader:
+                    try:
+                        # Set output directory
+                        self.downloader.set_output_dir(output_folder)
+                        
+                        # Get the URL and VideoInfo object for real download
+                        url = video.get('url', '')
+                        if url and url in self.video_info_dict:
+                            video_info_obj = self.video_info_dict[url]
+                            
+                            # Start real download using downloader
+                            self.downloader.download_video(
+                                url=url,
+                                format_id='best',  # Download best quality
+                                remove_watermark=True,
+                                force_overwrite=False
+                            )
+                            
+                            # Emit download started signal
+                            self.video_download_started.emit(url)
+                            
+                        else:
+                            self.log_error(f"Video info not found for URL: {url}")
+                            
+                    except Exception as e:
+                        self.log_error(f"Error starting download for {video.get('title', 'Unknown')}: {e}")
+                        # Simulate failure
+                        QTimer.singleShot(500, lambda v=video, err=str(e): self.handle_download_finished(
+                            v.get('url', ''), False, ""
+                        ))
+                else:
+                    self.log_error("Downloader not available")
+                    # Simulate failure
+                    QTimer.singleShot(500, lambda v=video: self.handle_download_finished(
+                        v.get('url', ''), False, ""
+                    ))
+            
+            self.log_info(f"Download started for {len(selected_videos)} videos")
+            
+        except Exception as e:
+            self.log_error(f"Error starting downloads: {e}")
+            QMessageBox.critical(self, "Download Error", f"Error starting downloads: {e}")
     
     def delete_selected_videos(self):
         """Delete selected videos with state tracking"""
-        # This would contain the full original delete_selected_videos method
-        self._set_data_dirty(True)
-        pass
+        try:
+            # Get selected video indices
+            selected_indices = []
+            for row in range(self.video_info_table.rowCount()):
+                checkbox = self.video_info_table.cellWidget(row, 0)
+                if checkbox and checkbox.isChecked():
+                    selected_indices.append(row)
+            
+            if not selected_indices:
+                QMessageBox.information(self, "No Selection", "Please select videos to delete.")
+                return
+            
+            # Confirm deletion
+            reply = QMessageBox.question(
+                self, 
+                "Confirm Deletion", 
+                f"Are you sure you want to delete {len(selected_indices)} selected video(s)?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            )
+            
+            if reply == QMessageBox.StandardButton.Yes:
+                # Remove from video_info_list (in reverse order to maintain indices)
+                for row in reversed(selected_indices):
+                    if row < len(self.video_info_list):
+                        video = self.video_info_list.pop(row)
+                        # Also remove from video_info_dict if URL exists
+                        url = video.get('url')
+                        if url and url in self.video_info_dict:
+                            del self.video_info_dict[url]
+                
+                # Update display
+                self.display_video_info()
+                self.update_button_states()
+                self._set_data_dirty(True)
+                
+                self.log_info(f"Deleted {len(selected_indices)} selected videos")
+                QMessageBox.information(self, "Deleted", f"Successfully deleted {len(selected_indices)} video(s).")
+            
+        except Exception as e:
+            self.log_error(f"Error deleting selected videos: {e}")
+            QMessageBox.critical(self, "Delete Error", f"Error deleting videos: {e}")
     
     def delete_all_videos(self):
         """Delete all videos with state tracking"""
-        self.video_info_dict.clear()
-        self.video_table.setRowCount(0)
-        self.processing_count = 0
-        self.downloading_count = 0
-        self._set_data_dirty(True)
-        self.update_button_states()
-        self.log_info("All videos deleted")
+        try:
+            if not self.video_info_list and not self.video_info_dict:
+                QMessageBox.information(self, "No Videos", "No videos to delete.")
+                return
+            
+            # Confirm deletion
+            reply = QMessageBox.question(
+                self, 
+                "Confirm Deletion", 
+                "Are you sure you want to delete ALL videos?",
+                QMessageBox.StandardButton.Yes | QMessageBox.StandardButton.No
+            )
+            
+            if reply == QMessageBox.StandardButton.Yes:
+                video_count = len(self.video_info_list)
+                
+                # Clear all data
+                self.video_info_dict.clear()
+                self.video_info_list.clear()
+                self.video_info_table.setRowCount(0)
+                self.processing_count = 0
+                self.downloading_count = 0
+                self._set_data_dirty(True)
+                self.update_button_states()
+                
+                self.log_info(f"All videos deleted ({video_count} videos)")
+                QMessageBox.information(self, "Deleted", f"Successfully deleted all {video_count} video(s).")
+                
+        except Exception as e:
+            self.log_error(f"Error deleting all videos: {e}")
+            QMessageBox.critical(self, "Delete Error", f"Error deleting videos: {e}")
     
     def toggle_select_all(self):
         """Toggle select all with state tracking"""
-        # This would contain the full original toggle_select_all method
-        self.all_selected = not self.all_selected
-        self._set_data_dirty(True)
-        self.update_select_toggle_button()
-        pass
+        try:
+            if self.video_info_table.rowCount() == 0:
+                QMessageBox.information(self, "No Videos", "No videos available to select.")
+                return
+            
+            # Toggle all checkboxes
+            self.all_selected = not self.all_selected
+            
+            for row in range(self.video_info_table.rowCount()):
+                checkbox = self.video_info_table.cellWidget(row, 0)
+                if checkbox:
+                    checkbox.setChecked(self.all_selected)
+            
+            self._set_data_dirty(True)
+            self.update_select_toggle_button()
+            
+            action = "Selected" if self.all_selected else "Unselected"
+            self.log_info(f"{action} all {self.video_info_table.rowCount()} videos")
+            
+        except Exception as e:
+            self.log_error(f"Error toggling select all: {e}")
+            QMessageBox.critical(self, "Selection Error", f"Error selecting videos: {e}")
     
     def update_select_toggle_button(self):
         """Update select toggle button state"""
-        if hasattr(self, 'select_toggle_btn'):
-            self.select_toggle_btn.setText(
-                self.tr_("BUTTON_UNSELECT_ALL") if self.all_selected 
-                else self.tr_("BUTTON_SELECT_ALL")
+        if hasattr(self, 'select_all_button'):
+            self.select_all_button.setText(
+                self.tr_("Unselect All") if self.all_selected 
+                else self.tr_("Select All")
             )
     
     def update_button_states(self):
         """Update button states based on video table content"""
         has_videos = len(self.video_info_dict) > 0
         
-        if hasattr(self, 'select_toggle_btn'):
-            self.select_toggle_btn.setEnabled(has_videos)
-        if hasattr(self, 'delete_selected_btn'):
-            self.delete_selected_btn.setEnabled(has_videos)
-        if hasattr(self, 'delete_all_btn'):
-            self.delete_all_btn.setEnabled(has_videos)
-        if hasattr(self, 'download_btn'):
-            self.download_btn.setEnabled(has_videos)
+        if hasattr(self, 'select_all_button'):
+            self.select_all_button.setEnabled(has_videos)
+        if hasattr(self, 'delete_selected_button'):
+            self.delete_selected_button.setEnabled(has_videos)
+        if hasattr(self, 'delete_all_button'):
+            self.delete_all_button.setEnabled(has_videos)
+        if hasattr(self, 'download_button'):
+            self.download_button.setEnabled(has_videos)
     
     def show_context_menu(self, position):
         """Show context menu - placeholder for original implementation"""
@@ -988,7 +1361,7 @@ class VideoInfoTab(BaseTab):
             'processing_count': self.processing_count,
             'downloading_count': self.downloading_count,
             'all_selected': self.all_selected,
-            'output_folder': self.output_folder_display.text() if hasattr(self, 'output_folder_display') else '',
+            'output_folder': self.folder_input.text() if hasattr(self, 'folder_input') else '',
             'downloader_available': self.downloader is not None,
             'performance_metrics': self.get_performance_metrics(),
             'validation_errors': self.validate_input()

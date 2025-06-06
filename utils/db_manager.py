@@ -283,6 +283,27 @@ class DatabaseManager:
         conn.close()
         return None
     
+    def get_all_videos(self):
+        """
+        Get all videos (alias for get_downloads for v2.0 compatibility)
+        
+        Returns:
+            List[Dict]: List of all download records
+        """
+        return self.get_downloads()
+    
+    def delete_video(self, video_id):
+        """
+        Delete a video record (alias for delete_download for v2.0 compatibility)
+        
+        Args:
+            video_id: ID of the video to delete
+            
+        Returns:
+            bool: True if successful, False otherwise
+        """
+        return self.delete_download(video_id)
+    
     def update_download_filesize(self, identifier, new_filesize):
         """
         Update the file size for a download record
