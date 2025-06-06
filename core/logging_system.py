@@ -20,6 +20,22 @@ from datetime import datetime, timedelta
 from enum import Enum, auto
 from contextlib import contextmanager
 
+# Import Unicode-safe logging components
+from .unicode_logging import (
+    UnicodeLoggingConfigurator, 
+    UnicodeFormatter, 
+    UnicodeFileHandler, 
+    UnicodeStreamHandler
+)
+
+# Import advanced Unicode error handling
+from .unicode_error_handling import (
+    RobustUnicodeFormatter,
+    FallbackLoggingHandler,
+    error_tracker,
+    get_unicode_error_stats
+)
+
 try:
     import colorama
     from colorama import Fore, Back, Style
@@ -252,7 +268,7 @@ class LoggingSystem:
     and integration with the error management system.
     """
     
-    def __init__(self, log_directory: str = "logs"):
+    def __init__(self, log_directory: str = "logs", enable_unicode: bool = True, enable_error_handling: bool = True):
         self.log_directory = Path(log_directory)
         self.log_directory.mkdir(exist_ok=True)
         
@@ -266,6 +282,8 @@ class LoggingSystem:
         self.file_enabled = True
         self.json_enabled = False
         self.colored_console = True
+        self.unicode_enabled = enable_unicode
+        self.error_handling_enabled = enable_error_handling
         
         # File rotation settings
         self.max_file_size = 10 * 1024 * 1024  # 10MB
@@ -274,11 +292,19 @@ class LoggingSystem:
         # Performance tracking
         self.performance_logger: Optional[PerformanceLogger] = None
         
+        # Initialize Unicode support first if enabled
+        if self.unicode_enabled:
+            UnicodeLoggingConfigurator.configure_system_encoding()
+        
         # Setup custom log levels
         self._setup_custom_levels()
         
         # Setup default configuration
         self._setup_default_configuration()
+        
+        # Add emergency fallback handler if error handling enabled
+        if self.error_handling_enabled:
+            self._setup_emergency_handler()
     
     def _setup_custom_levels(self):
         """Setup custom log levels"""
@@ -309,18 +335,40 @@ class LoggingSystem:
         self.performance_logger = PerformanceLogger(self.get_logger("performance"))
     
     def _setup_console_handler(self):
-        """Setup colored console handler"""
-        console_handler = logging.StreamHandler(sys.stdout)
+        """Setup colored console handler with Unicode support"""
+        if self.unicode_enabled:
+            console_handler = UnicodeStreamHandler(sys.stdout)
+        else:
+            console_handler = logging.StreamHandler(sys.stdout)
+        
         console_handler.setLevel(self.default_level.value)
         
         if self.colored_console and COLORAMA_AVAILABLE:
-            formatter = ColoredFormatter(
-                '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-            )
+            if self.unicode_enabled and self.error_handling_enabled:
+                formatter = RobustUnicodeFormatter(
+                    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+                )
+            elif self.unicode_enabled:
+                formatter = UnicodeFormatter(
+                    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+                )
+            else:
+                formatter = ColoredFormatter(
+                    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+                )
         else:
-            formatter = logging.Formatter(
-                '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-            )
+            if self.unicode_enabled and self.error_handling_enabled:
+                formatter = RobustUnicodeFormatter(
+                    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+                )
+            elif self.unicode_enabled:
+                formatter = UnicodeFormatter(
+                    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+                )
+            else:
+                formatter = logging.Formatter(
+                    '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+                )
         
         console_handler.setFormatter(formatter)
         
@@ -329,46 +377,93 @@ class LoggingSystem:
         self._handlers['console'] = console_handler
     
     def _setup_file_handlers(self):
-        """Setup rotating file handlers"""
+        """Setup rotating file handlers with Unicode support"""
         # Main application log
-        main_handler = logging.handlers.RotatingFileHandler(
-            self.log_directory / "app.log",
-            maxBytes=self.max_file_size,
-            backupCount=self.backup_count
-        )
-        main_handler.setLevel(self.default_level.value)
-        main_handler.setFormatter(logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'
-        ))
+        if self.unicode_enabled:
+            main_handler = UnicodeFileHandler(
+                filename=self.log_directory / "app.log",
+                maxBytes=self.max_file_size,
+                backupCount=self.backup_count,
+                encoding='utf-8',
+                errors='backslashreplace'
+            )
+            if self.error_handling_enabled:
+                main_handler.setFormatter(RobustUnicodeFormatter(
+                    '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'
+                ))
+            else:
+                main_handler.setFormatter(UnicodeFormatter(
+                    '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'
+                ))
+        else:
+            main_handler = logging.handlers.RotatingFileHandler(
+                self.log_directory / "app.log",
+                maxBytes=self.max_file_size,
+                backupCount=self.backup_count
+            )
+            main_handler.setFormatter(logging.Formatter(
+                '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'
+            ))
         
+        main_handler.setLevel(self.default_level.value)
         logging.getLogger().addHandler(main_handler)
         self._handlers['main_file'] = main_handler
         
         # Error log (ERROR and above only)
-        error_handler = logging.handlers.RotatingFileHandler(
-            self.log_directory / "error.log",
-            maxBytes=self.max_file_size,
-            backupCount=self.backup_count
-        )
-        error_handler.setLevel(logging.ERROR)
-        error_handler.setFormatter(logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'
-        ))
+        if self.unicode_enabled:
+            error_handler = UnicodeFileHandler(
+                filename=self.log_directory / "error.log",
+                maxBytes=self.max_file_size,
+                backupCount=self.backup_count,
+                encoding='utf-8',
+                errors='backslashreplace'
+            )
+            if self.error_handling_enabled:
+                error_handler.setFormatter(RobustUnicodeFormatter(
+                    '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'
+                ))
+            else:
+                error_handler.setFormatter(UnicodeFormatter(
+                    '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'
+                ))
+        else:
+            error_handler = logging.handlers.RotatingFileHandler(
+                self.log_directory / "error.log",
+                maxBytes=self.max_file_size,
+                backupCount=self.backup_count
+            )
+            error_handler.setFormatter(logging.Formatter(
+                '%(asctime)s - %(name)s - %(levelname)s - [%(filename)s:%(lineno)d] - %(message)s'
+            ))
         
+        error_handler.setLevel(logging.ERROR)
         logging.getLogger().addHandler(error_handler)
         self._handlers['error_file'] = error_handler
         
         # Performance log
-        performance_handler = logging.handlers.RotatingFileHandler(
-            self.log_directory / "performance.log",
-            maxBytes=self.max_file_size,
-            backupCount=self.backup_count
-        )
+        if self.unicode_enabled:
+            performance_handler = UnicodeFileHandler(
+                filename=self.log_directory / "performance.log",
+                maxBytes=self.max_file_size,
+                backupCount=self.backup_count,
+                encoding='utf-8',
+                errors='backslashreplace'
+            )
+            performance_handler.setFormatter(UnicodeFormatter(
+                '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+            ))
+        else:
+            performance_handler = logging.handlers.RotatingFileHandler(
+                self.log_directory / "performance.log",
+                maxBytes=self.max_file_size,
+                backupCount=self.backup_count
+            )
+            performance_handler.setFormatter(logging.Formatter(
+                '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
+            ))
+        
         performance_handler.setLevel(LogLevel.PERFORMANCE.value)
         performance_handler.addFilter(CategoryFilter([LogCategory.PERFORMANCE]))
-        performance_handler.setFormatter(logging.Formatter(
-            '%(asctime)s - %(name)s - %(levelname)s - %(message)s'
-        ))
         
         logging.getLogger().addHandler(performance_handler)
         self._handlers['performance_file'] = performance_handler
@@ -385,6 +480,16 @@ class LoggingSystem:
             
             logging.getLogger().addHandler(json_handler)
             self._handlers['json_file'] = json_handler
+    
+    def _setup_emergency_handler(self):
+        """Setup emergency fallback handler for critical Unicode errors"""
+        emergency_handler = FallbackLoggingHandler(
+            emergency_file=self.log_directory / "emergency.log"
+        )
+        emergency_handler.setLevel(logging.ERROR)
+        
+        logging.getLogger().addHandler(emergency_handler)
+        self._handlers['emergency'] = emergency_handler
     
     def get_logger(self, name: str) -> logging.Logger:
         """Get a logger with the specified name"""
@@ -525,13 +630,19 @@ class LoggingSystem:
         logger.log(level, message, extra=extra)
     
     def get_log_statistics(self) -> Dict[str, Any]:
-        """Get logging statistics"""
+        """Get comprehensive logging statistics including Unicode error stats"""
         stats = {
             'handlers': len(self._handlers),
             'loggers': len(self._loggers),
             'log_directory': str(self.log_directory),
-            'levels': {level.name: level.value for level in LogLevel}
+            'levels': {level.name: level.value for level in LogLevel},
+            'unicode_enabled': getattr(self, 'unicode_enabled', False),
+            'error_handling_enabled': getattr(self, 'error_handling_enabled', False)
         }
+        
+        # Add Unicode error statistics if error handling is enabled
+        if getattr(self, 'error_handling_enabled', False):
+            stats['unicode_error_stats'] = get_unicode_error_stats()
         
         # File sizes
         for log_file in self.log_directory.glob("*.log"):
