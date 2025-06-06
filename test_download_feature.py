@@ -28,7 +28,7 @@ class DownloadTester(QThread):
             self.log_signal.emit("🔍 Testing Database Connection...")
             
             # Test database connection
-            videos = self.db_manager.get_all_videos()
+            videos = self.db_manager.get_downloads()
             self.log_signal.emit(f"✅ Database connected. Found {len(videos)} existing videos")
             
             # Display existing videos

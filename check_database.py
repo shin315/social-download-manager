@@ -20,7 +20,7 @@ def main():
         db_manager = DatabaseManager()
         
         # Check database connection
-        videos = db_manager.get_all_videos()
+        videos = db_manager.get_downloads()
         print(f"✅ Database connected successfully!")
         print(f"📊 Found {len(videos)} videos in database")
         

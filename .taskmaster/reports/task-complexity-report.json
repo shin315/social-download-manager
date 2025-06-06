@@ -1,12 +1,12 @@
 {
   "meta": {
-    "generatedAt": "2025-06-03T06:43:24.738Z",
-    "tasksAnalyzed": 6,
-    "totalTasks": 37,
-    "analysisCount": 9,
+    "generatedAt": "2025-06-06T17:32:35.034Z",
+    "tasksAnalyzed": 18,
+    "totalTasks": 18,
+    "analysisCount": 27,
     "thresholdScore": 5,
     "projectName": "Taskmaster",
-    "usedResearch": true
+    "usedResearch": false
   },
   "complexityAnalysis": [
     {
@@ -80,6 +80,150 @@
       "recommendedSubtasks": 9,
       "expansionPrompt": "Expand this task into subtasks for: comprehensive testing, performance benchmarking, user acceptance testing, user documentation creation, developer documentation, migration guide development, security audit, rollback procedures, and final deliverables compilation.",
       "reasoning": "Final validation and documentation is a multifaceted task requiring thorough testing, benchmarking, user and developer documentation, security review, and rollback planning. Each area is critical for production readiness and risk mitigation, justifying a high complexity score and at least 9 subtasks."
+    },
+    {
+      "taskId": 1,
+      "taskTitle": "Critical Database Method Name Fixes",
+      "complexityScore": 4,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Break down the database method fixes into: 1) Method name corrections in downloaded_videos_tab.py, 2) Database validation attribute fixes, 3) Testing with existing database",
+      "reasoning": "Straightforward method name changes with clear error messages, but requires careful testing with existing data"
+    },
+    {
+      "taskId": 2,
+      "taskTitle": "Database Parameter Signature Corrections",
+      "complexityScore": 5,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide into: 1) Analyze DatabaseManager expected signature, 2) Update all add_download calls, 3) Data format preparation updates, 4) CRUD operations validation",
+      "reasoning": "Moderate complexity due to multiple call sites and need to understand data structure requirements"
+    },
+    {
+      "taskId": 3,
+      "taskTitle": "Video Info Tab Table Implementation Restoration",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Split into: 1) Port basic QTableWidget setup, 2) Implement column structure and headers, 3) Add sorting capabilities, 4) Implement selection system, 5) Adapt to BaseTab architecture",
+      "reasoning": "High complexity due to large codebase port (2434 lines) and architecture adaptation requirements"
+    },
+    {
+      "taskId": 4,
+      "taskTitle": "Video Info Tab Data Population Methods",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Break down into: 1) Port add_video_to_table method, 2) Implement video data handling logic, 3) Quality/format selection integration, 4) Translation system adaptation",
+      "reasoning": "Moderate-high complexity due to backend integration and translation system changes"
+    },
+    {
+      "taskId": 5,
+      "taskTitle": "Downloaded Videos Tab Table Implementation Restoration",
+      "complexityScore": 8,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Divide into: 1) Port basic 10-column table structure, 2) Implement sorting and filtering, 3) Add context menus and tooltips, 4) Mouse tracking implementation, 5) Theme system integration, 6) BaseTab architecture adaptation",
+      "reasoning": "High complexity due to very large codebase (3456 lines) and extensive feature set with multiple integrations"
+    },
+    {
+      "taskId": 6,
+      "taskTitle": "Downloaded Videos Tab Video Details Panel Restoration",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Split into: 1) Thumbnail display with Play overlay, 2) Metadata panel implementation, 3) File management controls, 4) Performance monitoring integration",
+      "reasoning": "Moderate-high complexity due to multimedia handling and file system operations"
+    },
+    {
+      "taskId": 7,
+      "taskTitle": "Downloaded Videos Tab Data Display Methods",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Break down into: 1) display_videos database integration, 2) filter_videos with popup menus, 3) update_statistics calculations, 4) Performance optimization for large datasets",
+      "reasoning": "Moderate-high complexity due to database integration and performance considerations"
+    },
+    {
+      "taskId": 8,
+      "taskTitle": "BaseTab Architecture Integration",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Divide into: 1) Component bus integration, 2) State persistence adaptation, 3) Performance monitoring integration, 4) Translation system updates, 5) Theme system compatibility",
+      "reasoning": "High complexity due to multiple system integrations and architecture adaptation requirements"
+    },
+    {
+      "taskId": 9,
+      "taskTitle": "Theme System Error Resolution",
+      "complexityScore": 5,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Split into: 1) Debug theme loading mechanism, 2) Fix JSON parsing and object structure, 3) Validate theme application with ported components",
+      "reasoning": "Moderate complexity - debugging issue with clear error symptoms but requires investigation"
+    },
+    {
+      "taskId": 10,
+      "taskTitle": "Unicode Logging System Fix",
+      "complexityScore": 4,
+      "recommendedSubtasks": 3,
+      "expansionPrompt": "Break down into: 1) Update logging configuration for UTF-8, 2) Implement Unicode fallback system, 3) Cross-platform testing and validation",
+      "reasoning": "Moderate complexity - well-defined Unicode issue with standard solutions available"
+    },
+    {
+      "taskId": 11,
+      "taskTitle": "Complete Get Info Workflow Testing",
+      "complexityScore": 5,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide into: 1) URL processing and validation testing, 2) TikTokHandler API integration testing, 3) Video info extraction and display testing, 4) Error handling validation",
+      "reasoning": "Moderate complexity - comprehensive testing task with multiple integration points"
+    },
+    {
+      "taskId": 12,
+      "taskTitle": "Complete Download Workflow Integration",
+      "complexityScore": 6,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Split into: 1) Download initiation and progress tracking, 2) File storage and metadata saving, 3) Thumbnail generation, 4) Statistics updates, 5) Cross-tab communication testing",
+      "reasoning": "Moderate-high complexity due to end-to-end workflow with multiple system interactions"
+    },
+    {
+      "taskId": 13,
+      "taskTitle": "Advanced Filtering and Search Implementation",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Break down into: 1) Search box with debouncing, 2) Column-specific filter popups, 3) Date and quality filtering, 4) Performance optimization for large collections",
+      "reasoning": "Moderate-high complexity due to multiple filter types and performance requirements"
+    },
+    {
+      "taskId": 14,
+      "taskTitle": "Video File Management Operations",
+      "complexityScore": 5,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Divide into: 1) Open folder system integration, 2) Delete operations with confirmation, 3) Play functionality implementation, 4) Error handling for file operations",
+      "reasoning": "Moderate complexity due to cross-platform file system operations and error handling"
+    },
+    {
+      "taskId": 15,
+      "taskTitle": "Performance Optimization for Large Collections",
+      "complexityScore": 8,
+      "recommendedSubtasks": 6,
+      "expansionPrompt": "Split into: 1) Lazy loading implementation, 2) Thumbnail caching system, 3) Database pagination, 4) Memory management, 5) Background processing, 6) Virtual table mode",
+      "reasoning": "High complexity due to multiple optimization techniques and performance engineering requirements"
+    },
+    {
+      "taskId": 16,
+      "taskTitle": "Cross-Tab Communication and State Management",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Break down into: 1) Component bus event implementation, 2) Download completion notifications, 3) Statistics synchronization, 4) State persistence management",
+      "reasoning": "Moderate-high complexity due to inter-component communication and state management"
+    },
+    {
+      "taskId": 17,
+      "taskTitle": "Comprehensive Feature Parity Validation",
+      "complexityScore": 7,
+      "recommendedSubtasks": 5,
+      "expansionPrompt": "Divide into: 1) Feature checklist creation and validation, 2) UI behavior comparison testing, 3) Performance benchmarking, 4) Functionality verification, 5) Documentation of differences",
+      "reasoning": "High complexity due to comprehensive comparison requirements and systematic validation needs"
+    },
+    {
+      "taskId": 18,
+      "taskTitle": "Final Integration Testing and Documentation",
+      "complexityScore": 6,
+      "recommendedSubtasks": 4,
+      "expansionPrompt": "Split into: 1) Stress testing and extended usage, 2) Error scenario validation, 3) Documentation updates and migration report, 4) Release preparation and validation",
+      "reasoning": "Moderate-high complexity due to comprehensive testing scope and documentation requirements"
     }
   ]
 }

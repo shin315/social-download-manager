@@ -59,7 +59,7 @@ class MVPValidator:
             self.log_result("Database Connection", True, "Connected successfully")
             
             # Test get all videos
-            videos = db.get_all_videos()
+            videos = db.get_downloads()
             self.log_result("Get All Videos", True, f"Retrieved {len(videos)} videos")
             
             # Test search functionality

@@ -91,6 +91,21 @@ class DownloadedVideosTab(BaseTab):
     - Performance monitoring and validation
     """
     
+    # Column index constants (PEP 8 ALL_CAPS format)
+    SELECT_COL = 0
+    TITLE_COL = 1
+    CREATOR_COL = 2
+    QUALITY_COL = 3
+    FORMAT_COL = 4
+    SIZE_COL = 5
+    STATUS_COL = 6
+    DATE_COL = 7
+    HASHTAGS_COL = 8
+    ACTIONS_COL = 9
+    
+    # Validation constants
+    REQUIRED_FIELDS = ['id', 'title', 'creator', 'download_path']
+    
     # Tab-specific signals (in addition to BaseTab signals)
     video_selected = pyqtSignal(dict)  # Emitted when a video is selected
     video_deleted = pyqtSignal(str)    # Emitted when a video is deleted
@@ -124,17 +139,7 @@ class DownloadedVideosTab(BaseTab):
         self.sort_column = 7  # Default sort by download date (descending)
         self.sort_order = Qt.SortOrder.DescendingOrder  # Default sort order is descending
         
-        # Column indices
-        self.select_col = 0
-        self.title_col = 1
-        self.creator_col = 2
-        self.quality_col = 3
-        self.format_col = 4
-        self.size_col = 5
-        self.status_col = 6
-        self.date_col = 7
-        self.hashtags_col = 8
-        self.actions_col = 9
+        # Note: Column indices are now class constants (SELECT_COL, TITLE_COL, etc.)
         
         # Filter storage variables
         self.active_filters = {}  # {column_index: [allowed_values]}
@@ -387,8 +392,7 @@ class DownloadedVideosTab(BaseTab):
                     continue
                 
                 # Check required fields
-                required_fields = ['id', 'title', 'creator', 'download_path']
-                for field in required_fields:
+                for field in self.REQUIRED_FIELDS:
                     if field not in video:
                         errors.append(f"Video {i} missing required field: {field}")
         
@@ -604,7 +608,7 @@ class DownloadedVideosTab(BaseTab):
         """Update buttons in the table"""
         for row in range(self.downloads_table.rowCount()):
             # Get widget in the Action column
-            action_widget = self.downloads_table.cellWidget(row, 9)
+            action_widget = self.downloads_table.cellWidget(row, self.ACTIONS_COL)
             if action_widget:
                 # Find buttons in the widget
                 for child in action_widget.findChildren(QPushButton):
@@ -626,7 +630,7 @@ class DownloadedVideosTab(BaseTab):
             
             # Load from database
             db_manager = DatabaseManager()
-            videos = db_manager.get_all_videos()
+            videos = db_manager.get_downloads()
             
             if videos:
                 self.all_videos = videos
