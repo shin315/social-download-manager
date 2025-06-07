@@ -61,10 +61,11 @@ class SortConfig:
 
 @dataclass
 class FilterConfig:
-    """Filter configuration"""
-    column: int
+    """Advanced filter configuration (Enhanced for Task 13.2)"""
+    filter_type: str  # "in", "not_in", "equals", "contains", "range"
     values: List[Any]
-    operator: str = "in"  # "in", "equals", "contains", etc.
+    operator: str = "AND"  # "AND", "OR" for combining filters
+    column: Optional[int] = None  # For backward compatibility
 
 class TabState:
     """State management for tab components"""

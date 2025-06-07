@@ -18,6 +18,7 @@ from .platform_selector import (
     create_auto_detect_platform_selector_config
 )
 from .filter_popup import FilterPopup
+from .quality_filter_widget import QualityFilterWidget
 
 __all__ = [
     'ActionButtonGroup',
@@ -28,6 +29,7 @@ __all__ = [
     'ButtonType',
     'PlatformSelector',
     'FilterPopup',
+    'QualityFilterWidget',
     'create_combo_platform_selector_config',
     'create_button_platform_selector_config',
     'create_auto_detect_platform_selector_config',

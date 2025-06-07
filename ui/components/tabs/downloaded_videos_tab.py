@@ -17,7 +17,7 @@ from PyQt6.QtWidgets import (QVBoxLayout, QHBoxLayout, QLabel,
                              QTableWidgetItem, QMessageBox, QFrame, QScrollArea, QApplication, QDialog, QTextEdit, QCheckBox,
                              QMenu, QDialogButtonBox, QToolTip, QAbstractItemView,
                              QStyledItemDelegate, QSizePolicy, QListWidget, QListWidgetItem,
-                             QFileDialog, QComboBox, QWidget)
+                             QFileDialog, QComboBox, QWidget, QProgressBar)
 from PyQt6.QtCore import Qt, QSize, QTimer, QPoint, QEvent, pyqtSignal, QCoreApplication, QThread, QObject
 from PyQt6.QtGui import QPixmap, QCursor, QIcon, QColor, QPainter, QPen, QMouseEvent, QAction
 import os
@@ -41,8 +41,14 @@ from ..common import (
     create_standard_tab_config, setup_tab_logging, connect_tab_to_state_manager
 )
 from ..tables.video_table import VideoTable
+from ..widgets.filter_popup import FilterPopup as AdvancedFilterPopup
+from ..widgets.quality_filter_widget import QualityFilterWidget
+from ..dialogs.date_range_filter_dialog import DateRangeFilterDialog
+from ..managers.filter_manager import FilterManager
+from ..common.models import FilterConfig
 # from ..widgets.video_details import VideoDetailsWidget  # TODO: Create this widget
 from utils.db_manager import DatabaseManager
+from utils.database_optimizer import get_database_optimizer
 
 
 class FilterPopup(QMenu):
@@ -143,8 +149,12 @@ class DownloadedVideosTab(BaseTab):
         
         # Note: Column indices are now class constants (SELECT_COL, TITLE_COL, etc.)
         
-        # Filter storage variables
+        # Filter storage variables (legacy - will be replaced by FilterManager)
         self.active_filters = {}  # {column_index: [allowed_values]}
+        
+        # Initialize enhanced filter manager (Task 13.2)
+        self.filter_manager = FilterManager(self)
+        self._setup_column_mappings()
         
         # Performance optimization variables
         self.page_size = 100  # Number of items to display per page (configurable)
@@ -178,6 +188,15 @@ class DownloadedVideosTab(BaseTab):
         # Now set the correct tab reference for performance monitor
         self.performance_monitor = TabPerformanceMonitor(self)
         
+        # Initialize database optimizer (Task 13.4)
+        self.db_manager = DatabaseManager()
+        self.db_optimizer = get_database_optimizer(self.db_manager.db_path)
+        
+        # Connect optimizer signals for performance monitoring
+        if self.db_optimizer:
+            self.db_optimizer.query_completed.connect(self._on_optimized_query_completed)
+            self.db_optimizer.cache_statistics_updated.connect(self._on_cache_stats_updated)
+        
         # Setup logging properly
         setup_tab_logging(self, 'INFO')
         
@@ -194,6 +213,81 @@ class DownloadedVideosTab(BaseTab):
         self.connect_tab_signals()
         
         print(f"DEBUG: Initial sort_column={self.sort_column}, sort_order={self.sort_order}")
+    
+    def _setup_column_mappings(self):
+        """Setup column mappings for FilterManager (Task 13.2)"""
+        try:
+            # Map display names to database field names
+            column_mappings = {
+                "Title": ("title", "TEXT"),
+                "Creator": ("creator", "TEXT"), 
+                "Quality": ("quality", "TEXT"),
+                "Format": ("format", "TEXT"),
+                "Size": ("size", "TEXT"),
+                "Status": ("status", "TEXT"),
+                "Date": ("date_added", "DATE"),
+                "Hashtags": ("hashtags", "TEXT")
+            }
+            
+            for display_name, (field_name, data_type) in column_mappings.items():
+                self.filter_manager.set_column_mapping(display_name, field_name, data_type)
+            
+            # Connect filter manager signals for real-time updates
+            self.filter_manager.filters_changed.connect(self._on_filters_changed)
+            self.filter_manager.sql_generated.connect(self._on_sql_generated)
+            
+            self.log_info("Enhanced filter manager initialized with column mappings")
+            
+        except Exception as e:
+            self.log_error(f"Error setting up column mappings: {e}")
+    
+    def _on_filters_changed(self, filters_dict):
+        """Handle filter changes from FilterManager (Task 13.2)"""
+        try:
+            # Update legacy active_filters for backward compatibility
+            self.active_filters.clear()
+            
+            # Convert FilterManager filters to legacy format
+            for field_name, filter_config in filters_dict.items():
+                # Find column index for this field
+                column_index = self._get_column_index_for_field(field_name)
+                if column_index is not None:
+                    self.active_filters[column_index] = filter_config.values[0] if filter_config.values else None
+            
+            # Trigger filter update
+            self.filter_videos()
+            
+            self.log_debug(f"Applied {len(filters_dict)} filters")
+            
+        except Exception as e:
+            self.log_error(f"Error handling filter changes: {e}")
+    
+    def _on_sql_generated(self, where_clause, parameters):
+        """Handle SQL generation from FilterManager (Task 13.2)"""
+        try:
+            if where_clause:
+                self.log_debug(f"Generated SQL WHERE clause: {where_clause}")
+                self.log_debug(f"Parameters: {parameters}")
+                
+                # TODO: Integrate with database queries in Task 13.4
+                # For now, we continue using the existing filter_videos() method
+                
+        except Exception as e:
+            self.log_error(f"Error handling SQL generation: {e}")
+    
+    def _get_column_index_for_field(self, field_name):
+        """Get column index for database field name"""
+        field_to_column = {
+            'title': self.TITLE_COL,
+            'creator': self.CREATOR_COL, 
+            'quality': self.QUALITY_COL,
+            'format': self.FORMAT_COL,
+            'size': self.SIZE_COL,
+            'status': self.STATUS_COL,
+            'date_added': self.DATE_COL,
+            'hashtags': self.HASHTAGS_COL
+        }
+        return field_to_column.get(field_name)
     
     # Temporary logging methods for use during initialization
     def log_info(self, message: str) -> None:
@@ -257,20 +351,119 @@ class DownloadedVideosTab(BaseTab):
             main_layout = QVBoxLayout()
             self.setLayout(main_layout)
     
-            # Search section
+            # Enhanced search and filter section (Task 13.3)
+            search_filter_frame = QFrame()
+            search_filter_layout = QVBoxLayout(search_filter_frame)
+            search_filter_layout.setContentsMargins(5, 5, 5, 5)
+            
+            # Search row
             search_layout = QHBoxLayout()
             
             # Search label
             self.search_label = QLabel(self.tr_("LABEL_SEARCH"))
             search_layout.addWidget(self.search_label)
             
-            # Search input
+            # Search input with debounced filtering
             self.search_input = QLineEdit()
             self.search_input.setPlaceholderText(self.tr_("PLACEHOLDER_SEARCH"))
-            self.search_input.textChanged.connect(self.filter_videos)
+            
+            # Initialize debounce timer for search (400ms delay)
+            self.search_timer = QTimer()
+            self.search_timer.setSingleShot(True)
+            self.search_timer.timeout.connect(self.debounced_search_filter)
+            
+            # Connect search input to debounced timer instead of direct filtering
+            self.search_input.textChanged.connect(self.start_search_timer)
+            
             search_layout.addWidget(self.search_input)
             
-            main_layout.addLayout(search_layout)
+            # Add search loading indicator
+            self.search_progress = QProgressBar()
+            self.search_progress.setMaximumHeight(4)  # Thin progress bar
+            self.search_progress.setTextVisible(False)
+            self.search_progress.setVisible(False)  # Hidden by default
+            search_layout.addWidget(self.search_progress)
+            
+            search_filter_layout.addLayout(search_layout)
+            
+            # Advanced filters row (Task 13.3)
+            filters_layout = QHBoxLayout()
+            
+            # Date range filter button
+            self.date_filter_btn = QPushButton("📅 Date Range")
+            self.date_filter_btn.setToolTip("Filter videos by download date range")
+            self.date_filter_btn.clicked.connect(self._show_date_range_filter)
+            self.date_filter_btn.setStyleSheet("""
+                QPushButton {
+                    padding: 6px 12px;
+                    border: 2px solid #2196F3;
+                    border-radius: 6px;
+                    background-color: white;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #E3F2FD;
+                }
+                QPushButton:pressed {
+                    background-color: #BBDEFB;
+                }
+            """)
+            filters_layout.addWidget(self.date_filter_btn)
+            
+            # Quality filter button
+            self.quality_filter_btn = QPushButton("🎬 Quality")
+            self.quality_filter_btn.setToolTip("Filter videos by quality tiers")
+            self.quality_filter_btn.clicked.connect(self._show_quality_filter)
+            self.quality_filter_btn.setStyleSheet("""
+                QPushButton {
+                    padding: 6px 12px;
+                    border: 2px solid #4CAF50;
+                    border-radius: 6px;
+                    background-color: white;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #E8F5E8;
+                }
+                QPushButton:pressed {
+                    background-color: #C8E6C9;
+                }
+            """)
+            filters_layout.addWidget(self.quality_filter_btn)
+            
+            # Active filters display
+            self.active_filters_label = QLabel("No filters active")
+            self.active_filters_label.setStyleSheet("color: #666666; font-style: italic;")
+            filters_layout.addWidget(self.active_filters_label)
+            
+            # Clear all filters button
+            self.clear_all_filters_btn = QPushButton("🗑️ Clear All")
+            self.clear_all_filters_btn.setToolTip("Clear all active filters")
+            self.clear_all_filters_btn.clicked.connect(self._clear_all_filters)
+            self.clear_all_filters_btn.setEnabled(False)
+            self.clear_all_filters_btn.setStyleSheet("""
+                QPushButton {
+                    padding: 6px 12px;
+                    border: 2px solid #f44336;
+                    border-radius: 6px;
+                    background-color: white;
+                }
+                QPushButton:hover {
+                    background-color: #ffebee;
+                }
+                QPushButton:disabled {
+                    color: #cccccc;
+                    border-color: #cccccc;
+                }
+            """)
+            filters_layout.addWidget(self.clear_all_filters_btn)
+            
+            # Spacer
+            filters_layout.addStretch()
+            
+            search_filter_layout.addLayout(filters_layout)
+            
+            main_layout.addWidget(search_filter_frame)
             
             # Statistics and controls section
             stats_layout = QHBoxLayout()
@@ -1056,6 +1249,21 @@ class DownloadedVideosTab(BaseTab):
             if hasattr(self, 'event_helper'):
                 self.event_helper.cleanup()
             
+            # Clean up search timer to prevent memory leaks
+            if hasattr(self, 'search_timer'):
+                if self.search_timer.isActive():
+                    self.search_timer.stop()
+                self.search_timer.deleteLater()
+            
+            # Clean up filter manager (Task 13.2)
+            if hasattr(self, 'filter_manager'):
+                self.filter_manager.clear_all_filters()
+                self.filter_manager.deleteLater()
+            
+            # Clean up database optimizer (Task 13.4)
+            if hasattr(self, 'db_optimizer') and self.db_optimizer:
+                self.db_optimizer.cleanup()
+                
             # Clear data
             self.all_videos.clear()
             self.filtered_videos.clear()
@@ -1959,14 +2167,14 @@ class DownloadedVideosTab(BaseTab):
             QToolTip.hideText()
     
     def show_header_context_menu(self, pos):
-        """Show context menu for table header with filter options"""
+        """Enhanced header context menu with advanced filter popup (Task 13.2)"""
         # Get the logical index from header position
         logical_index = self.downloads_table.horizontalHeader().logicalIndexAt(pos)
         
         if logical_index < 0 or logical_index >= self.downloads_table.columnCount():
             return
             
-        self.log_debug(f"Show header context menu for column {logical_index}")
+        self.log_debug(f"Show enhanced header context menu for column {logical_index}")
         
         # Only show context menu for filterable columns (Title, Creator, Quality, Format, Status, Hashtags)
         filterable_columns = [1, 2, 3, 4, 6, 8]  # Title, Creator, Quality, Format, Status, Hashtags
@@ -1974,49 +2182,439 @@ class DownloadedVideosTab(BaseTab):
         if logical_index not in filterable_columns:
             return
             
-        # Create context menu
-        context_menu = QMenu(self)
-        context_menu.setObjectName("header_context_menu")
-        
-        # Get column header text
+        # Get column header text and display name
         header_text = self.downloads_table.horizontalHeaderItem(logical_index).text()
+        
+        # Create context menu with enhanced options
+        context_menu = QMenu(self)
+        context_menu.setObjectName("enhanced_header_context_menu")
+        
+        # Add advanced filter option (Task 13.2)
+        advanced_filter_action = QAction("🔍 Advanced Filter...", self)
+        advanced_filter_action.triggered.connect(
+            lambda: self._show_advanced_filter_popup(logical_index, header_text, pos)
+        )
+        context_menu.addAction(advanced_filter_action)
+        
+        # Add separator
+        context_menu.addSeparator()
         
         # Get unique values for this column from current data
         unique_values = self.get_unique_column_values(logical_index)
         
-        if not unique_values:
-            return
+        if unique_values:
+            # Create quick filter submenu (legacy support)
+            filter_menu = context_menu.addMenu("⚡ Quick Filter")
+            filter_menu.setObjectName("quick_filter_submenu")
             
-        # Create filter submenu
-        filter_menu = context_menu.addMenu(self.tr_("Filter"))
-        filter_menu.setObjectName("filter_submenu")
+            # Add "Show All" option
+            show_all_action = QAction(self.tr_("Show All"), self)
+            show_all_action.triggered.connect(lambda: self.apply_column_filter(logical_index, ""))
+            filter_menu.addAction(show_all_action)
+            
+            # Add separator
+            filter_menu.addSeparator()
+            
+            # Add unique values as filter options (limited for quick access)
+            for value in unique_values[:10]:  # Limit to 10 items for quick filter
+                if value and str(value).strip():  # Only add non-empty values
+                    display_value = str(value)[:30]  # Shorter truncation for quick filter
+                    if len(str(value)) > 30:
+                        display_value += "..."
+                        
+                    filter_action = QAction(display_value, self)
+                    filter_action.triggered.connect(
+                        lambda checked=False, v=value: self.apply_column_filter(logical_index, v)
+                    )
+                    filter_menu.addAction(filter_action)
         
-        # Add "Show All" option
-        show_all_action = QAction(self.tr_("Show All"), self)
-        show_all_action.triggered.connect(lambda: self.apply_column_filter(logical_index, ""))
-        filter_menu.addAction(show_all_action)
+        # Add filter management options
+        context_menu.addSeparator()
         
-        # Add separator
-        filter_menu.addSeparator()
+        # Clear filter for this column
+        clear_filter_action = QAction("🗑️ Clear Filter", self)
+        clear_filter_action.triggered.connect(
+            lambda: self._clear_column_filter(header_text)
+        )
+        context_menu.addAction(clear_filter_action)
         
-        # Add unique values as filter options
-        for value in unique_values[:20]:  # Limit to 20 items for performance
-            if value and str(value).strip():  # Only add non-empty values
-                display_value = str(value)[:50]  # Truncate long values
-                if len(str(value)) > 50:
-                    display_value += "..."
-                    
-                filter_action = QAction(display_value, self)
-                filter_action.triggered.connect(
-                    lambda checked=False, v=value: self.apply_column_filter(logical_index, v)
-                )
-                filter_menu.addAction(filter_action)
+        # Clear all filters
+        clear_all_action = QAction("🗑️ Clear All Filters", self)
+        clear_all_action.triggered.connect(self.filter_manager.clear_all_filters)
+        clear_all_action.setEnabled(self.filter_manager.has_filters())
+        context_menu.addAction(clear_all_action)
         
         # Apply theme to context menu
         self._apply_context_menu_theme(context_menu)
         
         # Show menu
         context_menu.exec(self.downloads_table.horizontalHeader().mapToGlobal(pos))
+    
+    def _show_advanced_filter_popup(self, logical_index, header_text, pos):
+        """Show advanced filter popup for column (Task 13.2)"""
+        try:
+            # Get unique values for this column
+            unique_values = self.get_unique_column_values(logical_index)
+            
+            if not unique_values:
+                self.log_warning(f"No values available for filtering column: {header_text}")
+                return
+            
+            # Create advanced filter popup
+            filter_popup = AdvancedFilterPopup(
+                column_name=self._get_field_name_for_column(logical_index),
+                display_name=header_text,
+                unique_values=unique_values,
+                parent=self
+            )
+            
+            # Connect signals
+            filter_popup.filter_applied.connect(
+                lambda config: self._on_advanced_filter_applied(header_text, config)
+            )
+            filter_popup.filter_cleared.connect(
+                lambda: self._clear_column_filter(header_text)
+            )
+            
+            # Position popup near the header
+            global_pos = self.downloads_table.horizontalHeader().mapToGlobal(pos)
+            popup_pos = QPoint(global_pos.x(), global_pos.y() + 30)
+            filter_popup.show_at_position(popup_pos)
+            
+            self.log_debug(f"Showing advanced filter popup for {header_text}")
+            
+        except Exception as e:
+            self.log_error(f"Error showing advanced filter popup: {e}")
+    
+    def _on_advanced_filter_applied(self, column_display_name, filter_config):
+        """Handle advanced filter application (Task 13.2)"""
+        try:
+            # Apply filter through FilterManager
+            self.filter_manager.apply_filter(column_display_name, filter_config)
+            
+            self.log_info(f"Applied advanced filter to {column_display_name}: "
+                         f"{filter_config.filter_type} with {len(filter_config.values)} values")
+            
+        except Exception as e:
+            self.log_error(f"Error applying advanced filter: {e}")
+    
+    def _clear_column_filter(self, column_display_name):
+        """Clear filter for specific column (Task 13.2)"""
+        try:
+            self.filter_manager.remove_filter(column_display_name)
+            self.log_debug(f"Cleared filter for column: {column_display_name}")
+        except Exception as e:
+            self.log_error(f"Error clearing column filter: {e}")
+    
+    def _get_field_name_for_column(self, logical_index):
+        """Get database field name for column index"""
+        column_to_field = {
+            self.TITLE_COL: 'title',
+            self.CREATOR_COL: 'creator',
+            self.QUALITY_COL: 'quality', 
+            self.FORMAT_COL: 'format',
+            self.SIZE_COL: 'size',
+            self.STATUS_COL: 'status',
+            self.DATE_COL: 'date_added',
+            self.HASHTAGS_COL: 'hashtags'
+        }
+        return column_to_field.get(logical_index, 'unknown')
+    
+    def _show_date_range_filter(self):
+        """Show date range filter dialog (Task 13.3)"""
+        try:
+            # Create date range dialog
+            dialog = DateRangeFilterDialog(self)
+            
+            # Set current date range if any
+            current_filter = self.filter_manager.get_active_filters().get('date_added')
+            if current_filter and current_filter.filter_type == 'range' and len(current_filter.values) >= 2:
+                from PyQt6.QtCore import QDate
+                start_date = QDate.fromString(str(current_filter.values[0]), "yyyy-MM-dd")
+                end_date = QDate.fromString(str(current_filter.values[1]), "yyyy-MM-dd")
+                if start_date.isValid() and end_date.isValid():
+                    dialog.set_date_range(start_date, end_date)
+            
+            # Connect signals
+            dialog.date_range_applied.connect(self._on_date_range_applied)
+            dialog.filter_cleared.connect(self._on_date_range_cleared)
+            
+            # Show dialog
+            dialog.exec()
+            
+        except Exception as e:
+            self.log_error(f"Error showing date range filter: {e}")
+    
+    def _on_date_range_applied(self, start_date, end_date):
+        """Handle date range filter application (Task 13.3)"""
+        try:
+            # Convert QDate to string format
+            start_str = start_date.toString("yyyy-MM-dd")
+            end_str = end_date.toString("yyyy-MM-dd")
+            
+            # Create filter config
+            filter_config = FilterConfig(
+                filter_type="range",
+                values=[start_str, end_str],
+                operator="AND"
+            )
+            
+            # Apply through filter manager
+            self.filter_manager.apply_filter("Date", filter_config)
+            
+            # Update button appearance
+            days_diff = start_date.daysTo(end_date) + 1
+            self.date_filter_btn.setText(f"📅 {start_str} to {end_str} ({days_diff} days)")
+            self.date_filter_btn.setStyleSheet("""
+                QPushButton {
+                    padding: 6px 12px;
+                    border: 2px solid #2196F3;
+                    border-radius: 6px;
+                    background-color: #E3F2FD;
+                    font-weight: bold;
+                    color: #1976D2;
+                }
+                QPushButton:hover {
+                    background-color: #BBDEFB;
+                }
+            """)
+            
+            self._update_active_filters_display()
+            
+            self.log_info(f"Applied date range filter: {start_str} to {end_str}")
+            
+        except Exception as e:
+            self.log_error(f"Error applying date range filter: {e}")
+    
+    def _on_date_range_cleared(self):
+        """Handle date range filter clearing (Task 13.3)"""
+        try:
+            self.filter_manager.remove_filter("Date")
+            
+            # Reset button appearance
+            self.date_filter_btn.setText("📅 Date Range")
+            self.date_filter_btn.setStyleSheet("""
+                QPushButton {
+                    padding: 6px 12px;
+                    border: 2px solid #2196F3;
+                    border-radius: 6px;
+                    background-color: white;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #E3F2FD;
+                }
+                QPushButton:pressed {
+                    background-color: #BBDEFB;
+                }
+            """)
+            
+            self._update_active_filters_display()
+            
+            self.log_info("Cleared date range filter")
+            
+        except Exception as e:
+            self.log_error(f"Error clearing date range filter: {e}")
+    
+    def _show_quality_filter(self):
+        """Show quality filter widget (Task 13.3)"""
+        try:
+            # Create quality filter dialog
+            from PyQt6.QtWidgets import QDialog, QVBoxLayout, QDialogButtonBox
+            
+            dialog = QDialog(self)
+            dialog.setWindowTitle("Quality Filter")
+            dialog.setModal(True)
+            dialog.setFixedSize(400, 600)
+            
+            layout = QVBoxLayout(dialog)
+            
+            # Create quality filter widget
+            quality_widget = QualityFilterWidget()
+            
+            # Get available qualities from current videos
+            available_qualities = set()
+            quality_counts = {}
+            
+            for video in self.all_videos:
+                if isinstance(video, dict):
+                    quality = video.get('quality', 'Unknown')
+                elif isinstance(video, list) and len(video) > 2:
+                    quality = video[2] if video[2] else 'Unknown'
+                else:
+                    quality = 'Unknown'
+                
+                available_qualities.add(quality)
+                quality_counts[quality] = quality_counts.get(quality, 0) + 1
+            
+            # Set available qualities
+            quality_widget.set_available_qualities(list(available_qualities), quality_counts)
+            
+            # Set current selection if any
+            current_filter = self.filter_manager.get_active_filters().get('quality')
+            if current_filter and current_filter.filter_type == 'in':
+                quality_widget.set_selected_qualities(current_filter.values)
+            
+            layout.addWidget(quality_widget)
+            
+            # Connect signals
+            quality_widget.filter_applied.connect(
+                lambda config: self._on_quality_filter_applied(config, dialog)
+            )
+            quality_widget.filter_cleared.connect(
+                lambda: self._on_quality_filter_cleared(dialog)
+            )
+            
+            # Show dialog
+            dialog.exec()
+            
+        except Exception as e:
+            self.log_error(f"Error showing quality filter: {e}")
+    
+    def _on_quality_filter_applied(self, filter_config, dialog):
+        """Handle quality filter application (Task 13.3)"""
+        try:
+            # Apply through filter manager
+            self.filter_manager.apply_filter("Quality", filter_config)
+            
+            # Update button appearance
+            selected_count = len(filter_config.values)
+            if selected_count == 1:
+                self.quality_filter_btn.setText(f"🎬 {filter_config.values[0]}")
+            elif selected_count <= 3:
+                self.quality_filter_btn.setText(f"🎬 {', '.join(filter_config.values[:3])}")
+            else:
+                self.quality_filter_btn.setText(f"🎬 {selected_count} qualities")
+            
+            self.quality_filter_btn.setStyleSheet("""
+                QPushButton {
+                    padding: 6px 12px;
+                    border: 2px solid #4CAF50;
+                    border-radius: 6px;
+                    background-color: #E8F5E8;
+                    font-weight: bold;
+                    color: #388E3C;
+                }
+                QPushButton:hover {
+                    background-color: #C8E6C9;
+                }
+            """)
+            
+            self._update_active_filters_display()
+            
+            self.log_info(f"Applied quality filter: {filter_config.values}")
+            
+            # Close dialog
+            dialog.accept()
+            
+        except Exception as e:
+            self.log_error(f"Error applying quality filter: {e}")
+    
+    def _on_quality_filter_cleared(self, dialog):
+        """Handle quality filter clearing (Task 13.3)"""
+        try:
+            self.filter_manager.remove_filter("Quality")
+            
+            # Reset button appearance
+            self.quality_filter_btn.setText("🎬 Quality")
+            self.quality_filter_btn.setStyleSheet("""
+                QPushButton {
+                    padding: 6px 12px;
+                    border: 2px solid #4CAF50;
+                    border-radius: 6px;
+                    background-color: white;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #E8F5E8;
+                }
+                QPushButton:pressed {
+                    background-color: #C8E6C9;
+                }
+            """)
+            
+            self._update_active_filters_display()
+            
+            self.log_info("Cleared quality filter")
+            
+            # Close dialog
+            dialog.accept()
+            
+        except Exception as e:
+            self.log_error(f"Error clearing quality filter: {e}")
+    
+    def _clear_all_filters(self):
+        """Clear all active filters (Task 13.3)"""
+        try:
+            self.filter_manager.clear_all_filters()
+            
+            # Reset button appearances
+            self.date_filter_btn.setText("📅 Date Range")
+            self.quality_filter_btn.setText("🎬 Quality")
+            
+            # Reset button styles
+            self.date_filter_btn.setStyleSheet("""
+                QPushButton {
+                    padding: 6px 12px;
+                    border: 2px solid #2196F3;
+                    border-radius: 6px;
+                    background-color: white;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #E3F2FD;
+                }
+                QPushButton:pressed {
+                    background-color: #BBDEFB;
+                }
+            """)
+            
+            self.quality_filter_btn.setStyleSheet("""
+                QPushButton {
+                    padding: 6px 12px;
+                    border: 2px solid #4CAF50;
+                    border-radius: 6px;
+                    background-color: white;
+                    font-weight: bold;
+                }
+                QPushButton:hover {
+                    background-color: #E8F5E8;
+                }
+                QPushButton:pressed {
+                    background-color: #C8E6C9;
+                }
+            """)
+            
+            self._update_active_filters_display()
+            
+            self.log_info("Cleared all filters")
+            
+        except Exception as e:
+            self.log_error(f"Error clearing all filters: {e}")
+    
+    def _update_active_filters_display(self):
+        """Update active filters display label (Task 13.3)"""
+        try:
+            filter_summary = self.filter_manager.get_filter_summary()
+            
+            if not filter_summary:
+                self.active_filters_label.setText("No filters active")
+                self.clear_all_filters_btn.setEnabled(False)
+            else:
+                # Create summary text
+                summaries = []
+                for display_name, summary in filter_summary.items():
+                    summaries.append(f"{display_name}: {summary}")
+                
+                if len(summaries) == 1:
+                    self.active_filters_label.setText(f"1 filter: {summaries[0]}")
+                else:
+                    self.active_filters_label.setText(f"{len(summaries)} filters active")
+                
+                self.clear_all_filters_btn.setEnabled(True)
+            
+        except Exception as e:
+            self.log_error(f"Error updating active filters display: {e}")
     
     def check_and_update_thumbnails(self):
         """Check and update video thumbnails - placeholder"""
@@ -2815,99 +3413,234 @@ class DownloadedVideosTab(BaseTab):
             self.performance_monitor.end_timing('display_videos')
     
     def filter_videos(self):
-        """Filter videos based on search text and active column filters"""
+        """
+        Filter videos with database optimization (Task 13.4)
+        
+        Uses DatabaseOptimizer for efficient filtering with caching and SQL-level optimization
+        """
         if not hasattr(self, 'all_videos') or not self.all_videos:
             return
             
         self.performance_monitor.start_timing('filter_videos')
         
         try:
-            # Start with all videos
-            filtered_videos = self.all_videos.copy()
+            # Check if we can use database-level filtering for better performance
+            filter_conditions = self._build_database_filter_conditions()
             
-            # Apply search text filtering
-            search_text = self.search_input.text().strip().lower()
-            if search_text:
-                search_text_no_accent = self.remove_vietnamese_accents(search_text).lower()
-                
-                # Filter videos by search keyword (supports accented text)
-                matching_videos = []
-                for video in filtered_videos:
-                    match_found = False
-                    
-                    # Check each field in the video dictionary
-                    for field_value in video.values():
-                        if isinstance(field_value, (str, int, float)):
-                            str_value = str(field_value).lower()
-                            str_value_no_accent = self.remove_vietnamese_accents(str_value).lower()
-                            
-                            # Check both accented and non-accented versions
-                            if (search_text in str_value or 
-                                search_text_no_accent in str_value_no_accent):
-                                match_found = True
-                                break
-                    
-                    if match_found:
-                        matching_videos.append(video)
-                
-                filtered_videos = matching_videos
-            
-            # Apply column-specific filters
-            for column_index, filter_value in self.active_filters.items():
-                # Get field name from column index
-                field_name = self.get_field_name_from_column(column_index)
-                if not field_name:
-                    continue
-                
-                # Handle date range filters (special case)
-                if (field_name == 'date_added' and 
-                    isinstance(filter_value, tuple) and len(filter_value) == 3):
-                    start_date, end_date, filter_name = filter_value
-                    
-                    filtered_videos = [
-                        video for video in filtered_videos
-                        if self.is_date_in_range(video.get(field_name, ''), start_date, end_date)
-                    ]
-                else:
-                    # Regular field filtering
-                    filter_value_lower = str(filter_value).lower()
-                    filter_value_no_accent = self.remove_vietnamese_accents(filter_value_lower)
-                    
-                    filtered_videos = [
-                        video for video in filtered_videos
-                        if (str(video.get(field_name, '')).lower() == filter_value_lower or
-                            self.remove_vietnamese_accents(str(video.get(field_name, ''))).lower() == filter_value_no_accent)
-                    ]
-            
-            # Save filtered results
-            self.filtered_videos = filtered_videos
-            
-            # Sort if needed
-            if hasattr(self, 'sort_column') and self.sort_column:
-                sort_field = self.get_field_name_from_column(self.sort_column)
-                if sort_field:
-                    self.sort_videos(sort_field)
-            
-            # Update display
-            self.display_videos()
-            self.update_statistics()
-            
-            # Mark data as potentially changed
-            self._set_data_dirty(True)
-            
-            # Emit filter changed signal
-            self.filter_changed.emit({
-                'search_text': search_text,
-                'active_filters': self.active_filters.copy(),
-                'result_count': len(filtered_videos)
-            })
-            
-            self.log_info(f"Filtered to {len(filtered_videos)} videos from {len(self.all_videos)} total")
+            if filter_conditions and self.db_optimizer:
+                # Use optimized database filtering for large datasets
+                self._filter_videos_with_database_optimizer(filter_conditions)
+            else:
+                # Fall back to in-memory filtering for small datasets or when optimizer unavailable
+                self._filter_videos_in_memory()
             
         except Exception as e:
             self.log_error(f"Error filtering videos: {e}")
+            # Fallback to basic in-memory filtering
+            self._filter_videos_in_memory()
         finally:
             self.performance_monitor.end_timing('filter_videos')
+    
+    def _build_database_filter_conditions(self):
+        """
+        Build filter conditions that can be optimized at database level (Task 13.4)
+        
+        Returns:
+            dict: Filter conditions compatible with DatabaseOptimizer
+        """
+        conditions = {}
+        search_text = self.search_input.text().strip()
+        
+        # Add search text condition  
+        if search_text:
+            conditions['title'] = search_text
+        
+        # Add column-specific filters
+        for column_index, filter_value in self.active_filters.items():
+            field_name = self.get_field_name_from_column(column_index)
+            if not field_name:
+                continue
+                
+            # Handle date range filters
+            if (field_name == 'date_added' and 
+                isinstance(filter_value, tuple) and len(filter_value) == 3):
+                start_date, end_date, filter_name = filter_value
+                conditions['date_range'] = (start_date.strftime('%Y-%m-%d'), end_date.strftime('%Y-%m-%d'))
+            elif field_name in ['quality', 'format', 'status']:
+                # For discrete fields, use list for potential multi-select
+                if isinstance(filter_value, list):
+                    conditions[field_name] = filter_value
+                else:
+                    conditions[field_name] = [filter_value]
+        
+        return conditions if conditions else None
+    
+    def _filter_videos_with_database_optimizer(self, filter_conditions):
+        """
+        Use DatabaseOptimizer for filtering (Task 13.4)
+        
+        Args:
+            filter_conditions: Dictionary of filter conditions
+        """
+        try:
+            # Calculate pagination parameters
+            offset = self.current_page * self.page_size
+            
+            # Use optimized database query with caching
+            filtered_videos = self.db_optimizer.get_downloads_optimized(
+                filters=filter_conditions,
+                limit=self.page_size,
+                offset=offset
+            )
+            
+            if filtered_videos is not None:
+                # Store results and update UI
+                self.filtered_videos = filtered_videos
+                self.display_videos(filtered_videos)
+                self.update_statistics()
+                
+                # Emit filter changed signal
+                self.filter_changed.emit({
+                    'search_text': self.search_input.text().strip(),
+                    'active_filters': self.active_filters.copy(),
+                    'result_count': len(filtered_videos),
+                    'optimized': True  # Flag indicating database optimization was used
+                })
+                
+                self.log_info(f"Database-optimized filtering: {len(filtered_videos)} videos (page {self.current_page + 1})")
+            else:
+                # Fallback to in-memory filtering
+                self._filter_videos_in_memory()
+                
+        except Exception as e:
+            self.log_error(f"Error in database-optimized filtering: {e}")
+            # Fallback to in-memory filtering
+            self._filter_videos_in_memory()
+    
+    def _filter_videos_in_memory(self):
+        """
+        In-memory filtering fallback (maintains original behavior)
+        """
+        # Start with all videos
+        filtered_videos = self.all_videos.copy()
+        
+        # Apply search text filtering
+        search_text = self.search_input.text().strip().lower()
+        if search_text:
+            search_text_no_accent = self.remove_vietnamese_accents(search_text).lower()
+            
+            # Filter videos by search keyword (supports accented text)
+            matching_videos = []
+            for video in filtered_videos:
+                match_found = False
+                
+                # Check each field in the video dictionary
+                for field_value in video.values():
+                    if isinstance(field_value, (str, int, float)):
+                        str_value = str(field_value).lower()
+                        str_value_no_accent = self.remove_vietnamese_accents(str_value).lower()
+                        
+                        # Check both accented and non-accented versions
+                        if (search_text in str_value or 
+                            search_text_no_accent in str_value_no_accent):
+                            match_found = True
+                            break
+                
+                if match_found:
+                    matching_videos.append(video)
+            
+            filtered_videos = matching_videos
+        
+        # Apply column-specific filters
+        for column_index, filter_value in self.active_filters.items():
+            # Get field name from column index
+            field_name = self.get_field_name_from_column(column_index)
+            if not field_name:
+                continue
+            
+            # Handle date range filters (special case)
+            if (field_name == 'date_added' and 
+                isinstance(filter_value, tuple) and len(filter_value) == 3):
+                start_date, end_date, filter_name = filter_value
+                
+                filtered_videos = [
+                    video for video in filtered_videos
+                    if self.is_date_in_range(video.get(field_name, ''), start_date, end_date)
+                ]
+            else:
+                # Regular field filtering
+                filter_value_lower = str(filter_value).lower()
+                filter_value_no_accent = self.remove_vietnamese_accents(filter_value_lower)
+                
+                filtered_videos = [
+                    video for video in filtered_videos
+                    if (str(video.get(field_name, '')).lower() == filter_value_lower or
+                        self.remove_vietnamese_accents(str(video.get(field_name, ''))).lower() == filter_value_no_accent)
+                ]
+        
+        # Save filtered results
+        self.filtered_videos = filtered_videos
+        
+        # Sort if needed
+        if hasattr(self, 'sort_column') and self.sort_column:
+            sort_field = self.get_field_name_from_column(self.sort_column)
+            if sort_field:
+                self.sort_videos(sort_field)
+        
+        # Update display
+        self.display_videos()
+        self.update_statistics()
+        
+        # Mark data as potentially changed
+        self._set_data_dirty(True)
+        
+        # Emit filter changed signal
+        self.filter_changed.emit({
+            'search_text': search_text,
+            'active_filters': self.active_filters.copy(),
+            'result_count': len(filtered_videos),
+            'optimized': False  # Flag indicating in-memory filtering was used
+        })
+        
+        self.log_info(f"In-memory filtering: {len(filtered_videos)} videos from {len(self.all_videos)} total")
+    
+    def start_search_timer(self):
+        """Start/restart the search debounce timer"""
+        try:
+            # Stop any existing timer
+            if self.search_timer.isActive():
+                self.search_timer.stop()
+            
+            # Show loading indicator for user feedback
+            self.search_progress.setVisible(True)
+            self.search_progress.setRange(0, 0)  # Indeterminate progress
+            
+            # Start the debounce timer (400ms delay)
+            self.search_timer.start(400)
+            
+        except Exception as e:
+            self.log_error(f"Error starting search timer: {e}")
+    
+    def debounced_search_filter(self):
+        """Execute the actual search filtering after debounce delay"""
+        try:
+            # Hide loading indicator
+            self.search_progress.setVisible(False)
+            self.search_progress.setRange(0, 1)  # Reset progress bar
+            
+            # Execute the actual filtering
+            self.filter_videos()
+            
+            # Log search performance for monitoring
+            search_text = self.search_input.text().strip()
+            if search_text:
+                self.log_debug(f"Debounced search executed for: '{search_text}' - "
+                             f"Found {len(self.filtered_videos)} results")
+            
+        except Exception as e:
+            self.log_error(f"Error in debounced search filter: {e}")
+            # Always hide progress indicator on error
+            self.search_progress.setVisible(False)
     
     def get_field_name_from_column(self, column_index):
         """Get field name from column index"""
@@ -3890,6 +4623,11 @@ class DownloadedVideosTab(BaseTab):
             total_requests = self.interaction_analytics['cache_hits'] + self.interaction_analytics['cache_misses']
             hit_rate = (self.interaction_analytics['cache_hits'] / total_requests * 100) if total_requests > 0 else 0
             
+            # Get database optimizer statistics (Task 13.4)
+            db_stats = {}
+            if self.db_optimizer:
+                db_stats = self.db_optimizer.get_cache_statistics()
+            
             return {
                 'cache_size': len(self.video_cache),
                 'cache_limit': self.cache_size_limit,
@@ -3897,11 +4635,26 @@ class DownloadedVideosTab(BaseTab):
                 'cache_hits': self.interaction_analytics['cache_hits'],
                 'cache_misses': self.interaction_analytics['cache_misses'],
                 'hit_rate_percent': hit_rate,
-                'expiry_time': self.cache_expiry_time
+                'expiry_time': self.cache_expiry_time,
+                'database_optimizer': db_stats  # Database-level cache statistics
             }
         except Exception as e:
             self.log_error(f"Error getting cache statistics: {e}")
             return {}
+    
+    def _on_optimized_query_completed(self, result, error):
+        """Handle completion of optimized database queries (Task 13.4)"""
+        if error:
+            self.log_error(f"Database query error: {error}")
+            return
+            
+        # Update UI with query results if needed
+        if result is not None:
+            self.log_debug(f"Optimized query completed with {len(result) if isinstance(result, list) else 1} results")
+    
+    def _on_cache_stats_updated(self, stats):
+        """Handle database cache statistics updates (Task 13.4)"""
+        self.log_debug(f"Database cache stats: {stats.get('cache_hit_rate', 0)}% hit rate, {stats.get('cache_size', 0)} entries")
     
     def optimize_database_loading_with_background_thread(self):
         """Load videos in background thread to prevent UI blocking"""
