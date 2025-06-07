@@ -40,6 +40,19 @@ from ..common import (
     tab_lifecycle_handler, auto_save_on_change, validate_before_action,
     create_standard_tab_config, setup_tab_logging, connect_tab_to_state_manager
 )
+
+# Import realtime progress manager for cross-tab progress tracking
+try:
+    from ..common.realtime_progress_manager import realtime_progress_manager
+except ImportError:
+    realtime_progress_manager = None
+
+# Import error coordination system for cross-tab error handling
+try:
+    from ..common.error_coordination_system import error_coordination_manager, ErrorSeverity
+except ImportError:
+    error_coordination_manager = None
+    ErrorSeverity = None
 from ..tables.video_table import VideoTable
 from ..widgets.filter_popup import FilterPopup as AdvancedFilterPopup
 from ..widgets.quality_filter_widget import QualityFilterWidget
@@ -153,8 +166,9 @@ class DownloadedVideosTab(BaseTab):
         self.active_filters = {}  # {column_index: [allowed_values]}
         
         # Initialize enhanced filter manager (Task 13.2)
-        self.filter_manager = FilterManager(self)
-        self._setup_column_mappings()
+        # TODO: Temporarily commented out FilterManager to fix startup issue
+        # self.filter_manager = FilterManager(self)
+        # self._setup_column_mappings()
         
         # Performance optimization variables
         self.page_size = 100  # Number of items to display per page (configurable)
@@ -197,6 +211,26 @@ class DownloadedVideosTab(BaseTab):
             self.db_optimizer.query_completed.connect(self._on_optimized_query_completed)
             self.db_optimizer.cache_statistics_updated.connect(self._on_cache_stats_updated)
         
+        # Register with realtime progress manager for cross-tab progress tracking
+        if realtime_progress_manager:
+            try:
+                realtime_progress_manager.register_tab(self.get_tab_id(), self)
+                self.log_info("Registered with realtime progress manager")
+            except Exception as e:
+                self.log_error(f"Error registering with progress manager: {e}")
+        else:
+            self.log_warning("Realtime progress manager not available")
+        
+        # Register with error coordination manager for cross-tab error handling
+        if error_coordination_manager:
+            try:
+                error_coordination_manager.register_tab(self.get_tab_id(), self)
+                self.log_info("Registered with error coordination manager")
+            except Exception as e:
+                self.log_error(f"Error registering with error coordination manager: {e}")
+        else:
+            self.log_warning("Error coordination manager not available")
+        
         # Setup logging properly
         setup_tab_logging(self, 'INFO')
         
@@ -216,30 +250,32 @@ class DownloadedVideosTab(BaseTab):
     
     def _setup_column_mappings(self):
         """Setup column mappings for FilterManager (Task 13.2)"""
-        try:
-            # Map display names to database field names
-            column_mappings = {
-                "Title": ("title", "TEXT"),
-                "Creator": ("creator", "TEXT"), 
-                "Quality": ("quality", "TEXT"),
-                "Format": ("format", "TEXT"),
-                "Size": ("size", "TEXT"),
-                "Status": ("status", "TEXT"),
-                "Date": ("date_added", "DATE"),
-                "Hashtags": ("hashtags", "TEXT")
-            }
-            
-            for display_name, (field_name, data_type) in column_mappings.items():
-                self.filter_manager.set_column_mapping(display_name, field_name, data_type)
-            
-            # Connect filter manager signals for real-time updates
-            self.filter_manager.filters_changed.connect(self._on_filters_changed)
-            self.filter_manager.sql_generated.connect(self._on_sql_generated)
-            
-            self.log_info("Enhanced filter manager initialized with column mappings")
-            
-        except Exception as e:
-            self.log_error(f"Error setting up column mappings: {e}")
+        # TODO: Temporarily commented out to fix startup issue
+        pass
+        # try:
+        #     # Map display names to database field names
+        #     column_mappings = {
+        #         "Title": ("title", "TEXT"),
+        #         "Creator": ("creator", "TEXT"), 
+        #         "Quality": ("quality", "TEXT"),
+        #         "Format": ("format", "TEXT"),
+        #         "Size": ("size", "TEXT"),
+        #         "Status": ("status", "TEXT"),
+        #         "Date": ("date_added", "DATE"),
+        #         "Hashtags": ("hashtags", "TEXT")
+        #     }
+        #     
+        #     for display_name, (field_name, data_type) in column_mappings.items():
+        #         self.filter_manager.set_column_mapping(display_name, field_name, data_type)
+        #     
+        #     # Connect filter manager signals for real-time updates
+        #     self.filter_manager.filters_changed.connect(self._on_filters_changed)
+        #     self.filter_manager.sql_generated.connect(self._on_sql_generated)
+        #     
+        #     self.log_info("Enhanced filter manager initialized with column mappings")
+        #     
+        # except Exception as e:
+        #     self.log_error(f"Error setting up column mappings: {e}")
     
     def _on_filters_changed(self, filters_dict):
         """Handle filter changes from FilterManager (Task 13.2)"""
@@ -664,14 +700,316 @@ class DownloadedVideosTab(BaseTab):
         self.log_info("Tab deactivated")
     
     def on_external_tab_event(self, event):
-        """Handle events from other tabs"""
-        if event.event_type.value == 'video_download_completed':
-            # A video was downloaded in another tab, refresh our list
-            self.refresh_data()
-        elif event.event_type.value == 'theme_changed':
-            # Theme changed, update our appearance
-            if 'theme' in event.data:
-                self.apply_theme_colors(event.data['theme'])
+        """Enhanced event handler for cross-tab communication with statistics sync"""
+        try:
+            event_type = event.event_type.value
+            event_data = getattr(event, 'data', {})
+            
+            if event_type == 'video_download_completed':
+                # Handle download completion with enhanced data
+                self._handle_download_completion_event(event_data)
+                
+            elif event_type == 'download_started':
+                # Handle download start event
+                self._handle_download_started_event(event_data)
+                
+            elif event_type == 'download_statistics_updated':
+                # Handle statistics updates from Video Info Tab
+                self._handle_statistics_update_event(event_data)
+                
+            elif event_type == 'theme_changed':
+                # Theme changed, update our appearance
+                if 'theme' in event_data:
+                    self.apply_theme_colors(event_data['theme'])
+                    
+            elif event_type == 'download_progress':
+                # Handle download progress updates
+                self._handle_download_progress_event(event_data)
+                
+            elif event_type == 'api_error_occurred':
+                # Handle API errors for better user awareness
+                self._handle_api_error_event(event_data)
+                
+            elif event_type == 'progress_update':
+                # Handle realtime progress manager events
+                self._handle_progress_update_event(event_data)
+                
+            elif event_type == 'api_error':
+                # Handle error coordination events
+                self._handle_error_coordination_event(event_data)
+            
+            # Log event for debugging
+            self.log_debug(f"Processed external tab event: {event_type}")
+            
+        except Exception as e:
+            self.log_error(f"Error handling external tab event: {e}")
+    
+    def _handle_download_completion_event(self, event_data: dict):
+        """Handle video download completion event with enhanced processing"""
+        try:
+            success = event_data.get('success', False)
+            url = event_data.get('url', '')
+            file_path = event_data.get('file_path', '')
+            video_info = event_data.get('video_info', {})
+            
+            if success:
+                # Refresh our list to show the new download
+                self.refresh_data()
+                
+                # Show completion toast if not already shown
+                self._show_completion_acknowledgment_toast(video_info.get('title', 'Unknown'))
+                
+                # Update statistics display
+                self.update_statistics()
+                
+                self.log_info(f"Acknowledged download completion: {video_info.get('title', url)}")
+            else:
+                self.log_warning(f"Acknowledged failed download: {url}")
+                
+        except Exception as e:
+            self.log_error(f"Error handling download completion event: {e}")
+    
+    def _handle_download_started_event(self, event_data: dict):
+        """Handle download started event"""
+        try:
+            title = event_data.get('title', 'Unknown')
+            downloading_count = event_data.get('downloading_count', 0)
+            
+            # Could update UI to show active downloads count
+            # For now just log the event
+            self.log_info(f"Download started: {title} (Active downloads: {downloading_count})")
+            
+        except Exception as e:
+            self.log_error(f"Error handling download started event: {e}")
+    
+    def _handle_statistics_update_event(self, event_data: dict):
+        """Handle statistics update from other tabs"""
+        try:
+            # Store statistics for potential display
+            self._external_statistics = {
+                'total_downloads': event_data.get('total_downloads', 0),
+                'successful_downloads': event_data.get('successful_downloads', 0),
+                'failed_downloads': event_data.get('failed_downloads', 0),
+                'current_downloading': event_data.get('current_downloading', 0),
+                'last_updated': self.performance_monitor.current_time()
+            }
+            
+            # Update our statistics display with cross-tab data
+            self.update_statistics()
+            
+            self.log_debug("Updated statistics from cross-tab event")
+            
+        except Exception as e:
+            self.log_error(f"Error handling statistics update event: {e}")
+    
+    def _handle_download_progress_event(self, event_data: dict):
+        """Enhanced download progress handling with real-time cross-tab updates"""
+        try:
+            url = event_data.get('url', '')
+            progress = event_data.get('progress', 0)
+            speed = event_data.get('speed', '')
+            file_name = event_data.get('file_name', '')
+            eta = event_data.get('eta', '')
+            
+            # Update status bar with progress info if available
+            if hasattr(self, 'parent') and self.parent():
+                main_window = self.parent()
+                if hasattr(main_window, 'status_bar'):
+                    status_message = f"Downloading: {file_name[:30]}... {progress}%"
+                    if speed:
+                        status_message += f" ({speed})"
+                    if eta:
+                        status_message += f" ETA: {eta}"
+                    main_window.status_bar.showMessage(status_message, 2000)
+            
+            # Log significant progress milestones
+            if progress % 25 == 0:  # Log every 25% progress
+                self.log_debug(f"Download progress: {progress}% ({speed}) for {file_name}")
+            
+            # Update realtime progress display in statistics area if available
+            self._update_realtime_download_status(url, progress, file_name, speed, eta)
+                
+        except Exception as e:
+            self.log_error(f"Error handling download progress event: {e}")
+    
+    def _update_realtime_download_status(self, url: str, progress: int, file_name: str, speed: str, eta: str):
+        """Update realtime download status display"""
+        try:
+            # Update download count display if we have downloading status
+            if hasattr(self, '_external_statistics') and self._external_statistics:
+                current_downloading = self._external_statistics.get('current_downloading', 0)
+                if current_downloading > 0:
+                    # Update statistics display with download progress info
+                    self.update_statistics()
+            
+            # Could add a progress overlay or widget here in future implementation
+            # For now, just ensure the UI reflects that downloads are happening
+            
+        except Exception as e:
+            self.log_error(f"Error updating realtime download status: {e}")
+    
+    def _handle_progress_update_event(self, event_data: dict):
+        """Handle realtime progress manager events"""
+        try:
+            operation_id = event_data.get('operation_id', '')
+            operation_type = event_data.get('operation_type', '')
+            progress_percent = event_data.get('progress_percent', 0)
+            speed = event_data.get('speed', '')
+            eta = event_data.get('eta', '')
+            file_name = event_data.get('file_name', '')
+            update_type = event_data.get('update_type', '')
+            source_tab = event_data.get('source_tab', '')
+            
+            # Only handle download operations from other tabs (avoid self-echoes)
+            if operation_type == 'download' and source_tab != self.get_tab_id():
+                
+                if update_type == 'start':
+                    self.log_info(f"Download started: {file_name}")
+                    # Could add a visual indicator that downloads are happening
+                
+                elif update_type == 'progress':
+                    # Update progress display
+                    self._update_realtime_download_status(operation_id, progress_percent, file_name, speed, eta)
+                
+                elif update_type == 'completion':
+                    success = event_data.get('status') == 'completed'
+                    if success:
+                        self.log_info(f"Download completed: {file_name}")
+                        # Refresh downloads list to include the new video
+                        QTimer.singleShot(1000, self.refresh_downloads)  # Small delay to ensure DB write is complete
+                    else:
+                        self.log_warning(f"Download failed: {file_name}")
+                
+                elif update_type == 'cancellation':
+                    self.log_info(f"Download cancelled: {file_name}")
+                
+            elif operation_type != 'download':
+                # Handle other operation types (future expansion)
+                self.log_debug(f"Progress update for {operation_type}: {progress_percent}%")
+                
+        except Exception as e:
+            self.log_error(f"Error handling progress update event: {e}")
+    
+    def _handle_error_coordination_event(self, event_data: dict):
+        """Handle error coordination events from other tabs"""
+        try:
+            error_id = event_data.get('error_id', '')
+            error_message = event_data.get('error_message', '')
+            error_category = event_data.get('error_category', '')
+            severity = event_data.get('severity', '')
+            source_tab = event_data.get('source_tab', '')
+            source_component = event_data.get('source_component', '')
+            url = event_data.get('url', '')
+            resolution_status = event_data.get('resolution_status', '')
+            
+            # Handle different types of error coordination events
+            if resolution_status == 'resolved':
+                self.log_info(f"Error resolved in {source_tab}: {error_id}")
+                # Could update UI to reflect error resolution
+                
+            elif resolution_status == 'escalated':
+                escalation_reason = event_data.get('escalation_reason', '')
+                self.log_warning(f"Error escalated in {source_tab}: {error_id} - {escalation_reason}")
+                # Could show escalation notification
+                
+            else:
+                # New error reported
+                self.log_warning(f"Error reported from {source_tab}: {error_category} - {error_message[:100]}...")
+                
+                # Update UI to reflect error state if relevant
+                if error_category == 'download_error' and url:
+                    # Could mark related downloads as having issues
+                    self._mark_url_with_error(url, error_message)
+                
+                elif error_category == 'api_error':
+                    # Could show API status indicator
+                    self._update_api_status_indicator(False, error_message)
+                
+                # Show acknowledgment for critical errors
+                if severity == 'critical':
+                    self._show_error_acknowledgment_toast(error_message, source_tab)
+            
+        except Exception as e:
+            self.log_error(f"Error handling error coordination event: {e}")
+    
+    def _mark_url_with_error(self, url: str, error_message: str):
+        """Mark videos with the given URL as having errors"""
+        try:
+            # Could implement visual indicators in the table for error states
+            # For now, just log the error association
+            self.log_debug(f"URL marked with error: {url} - {error_message[:50]}...")
+        except Exception as e:
+            self.log_error(f"Error marking URL with error: {e}")
+    
+    def _update_api_status_indicator(self, is_healthy: bool, error_message: str = ""):
+        """Update API status indicator in the UI"""
+        try:
+            # Could implement a status indicator widget
+            # For now, just update internal state
+            if hasattr(self, '_api_status'):
+                self._api_status = 'healthy' if is_healthy else 'error'
+                self._api_error_message = error_message
+            
+            self.log_debug(f"API status updated: {'healthy' if is_healthy else 'error'}")
+        except Exception as e:
+            self.log_error(f"Error updating API status indicator: {e}")
+    
+    def _show_error_acknowledgment_toast(self, error_message: str, source_tab: str):
+        """Show acknowledgment toast for critical errors from other tabs"""
+        try:
+            from ui.components.common.toast_notification import show_toast, ToastType
+            
+            # Get main window as parent for toast
+            main_window = self.window()
+            if not main_window:
+                return
+            
+            # Show acknowledgment toast for critical errors
+            show_toast(
+                main_window,
+                f"Critical Error in {source_tab}\n{error_message[:50]}{'...' if len(error_message) > 50 else ''}",
+                ToastType.ERROR,
+                5000  # 5 seconds for critical errors
+            )
+                
+        except Exception as e:
+            self.log_error(f"Error showing error acknowledgment toast: {e}")
+    
+    def _handle_api_error_event(self, event_data: dict):
+        """Handle API error events from other tabs"""
+        try:
+            url = event_data.get('url', '')
+            error_message = event_data.get('error_message', '')
+            error_category = event_data.get('error_category', {})
+            
+            # Log the error for awareness
+            self.log_warning(f"API error in Video Info Tab: {error_message} for {url}")
+            
+            # Could show notification or update UI to reflect error state
+            
+        except Exception as e:
+            self.log_error(f"Error handling API error event: {e}")
+    
+    def _show_completion_acknowledgment_toast(self, title: str):
+        """Show acknowledgment toast for completed download"""
+        try:
+            from ui.components.common.toast_notification import show_toast, ToastType
+            
+            # Get main window as parent for toast
+            main_window = self.window()
+            if not main_window:
+                return
+            
+            # Show acknowledgment toast (shorter duration to avoid collision)
+            show_toast(
+                main_window,
+                f"Added to Downloads\n{title[:35]}{'...' if len(title) > 35 else ''}",
+                ToastType.INFO,
+                2000  # Shorter duration
+            )
+                
+        except Exception as e:
+            self.log_error(f"Error showing acknowledgment toast: {e}")
     
     # =============================================================================
     # State Management Integration
@@ -715,6 +1053,207 @@ class DownloadedVideosTab(BaseTab):
         self.update_statistics()
         
         self.log_info("Tab state restored")
+    
+    # =============================================================================
+    # Enhanced State Persistence Implementation (Subtask 16.1)
+    # =============================================================================
+    
+    def save_tab_state(self) -> None:
+        """Enhanced tab state persistence for filters, search, selection, and UI state"""
+        try:
+            # Import the practical state manager
+            from ..common.tab_state_persistence import practical_state_manager
+            
+            # Register this tab if not already registered
+            if self.get_tab_id() not in practical_state_manager.tab_registry:
+                practical_state_manager.register_tab(
+                    self.get_tab_id(), 
+                    self, 
+                    self._capture_downloaded_videos_state,
+                    self._restore_downloaded_videos_state
+                )
+            
+            # Save state using practical state manager
+            success = practical_state_manager.save_tab_state(self.get_tab_id())
+            
+            if success:
+                self.log_info("DownloadedVideosTab state saved successfully")
+            else:
+                self.log_warning("DownloadedVideosTab state save failed")
+                
+        except Exception as e:
+            self.log_error(f"Error saving DownloadedVideosTab state: {e}")
+    
+    def restore_tab_state(self) -> None:
+        """Enhanced tab state restoration for filters, search, selection, and UI state"""
+        try:
+            # Import the practical state manager
+            from ..common.tab_state_persistence import practical_state_manager
+            
+            # Register this tab if not already registered
+            if self.get_tab_id() not in practical_state_manager.tab_registry:
+                practical_state_manager.register_tab(
+                    self.get_tab_id(), 
+                    self, 
+                    self._capture_downloaded_videos_state,
+                    self._restore_downloaded_videos_state
+                )
+            
+            # Restore state using practical state manager
+            success = practical_state_manager.restore_tab_state(self.get_tab_id())
+            
+            if success:
+                self.log_info("DownloadedVideosTab state restored successfully")
+                # Update UI after restoration
+                self.update_statistics()
+                self.display_videos()
+            else:
+                self.log_debug("No previous DownloadedVideosTab state found or restoration failed")
+                
+        except Exception as e:
+            self.log_error(f"Error restoring DownloadedVideosTab state: {e}")
+    
+    def _capture_downloaded_videos_state(self, tab_instance) -> Dict[str, Any]:
+        """Capture DownloadedVideosTab-specific state including filters, search, and selection"""
+        try:
+            state = {}
+            
+            # Capture search state
+            if hasattr(self, 'search_input'):
+                state['search_input'] = {
+                    'text': self.search_input.text(),
+                    'cursor_position': self.search_input.cursorPosition(),
+                    'placeholder': self.search_input.placeholderText()
+                }
+            
+            # Capture active filters
+            if hasattr(self, 'active_filters'):
+                state['active_filters'] = self.active_filters.copy()
+            
+            # Capture table state (selection, sort, column widths)
+            if hasattr(self, 'videos_table'):
+                selected_rows = []
+                for row in range(self.videos_table.rowCount()):
+                    checkbox_cell = self.videos_table.cellWidget(row, self.SELECT_COL)
+                    if checkbox_cell:
+                        checkbox = checkbox_cell.findChild(QCheckBox)
+                        if checkbox and checkbox.isChecked():
+                            selected_rows.append(row)
+                
+                state['videos_table'] = {
+                    'selected_rows': selected_rows,
+                    'sort_column': self.sort_column,
+                    'sort_order': self.sort_order.value if hasattr(self.sort_order, 'value') else int(self.sort_order),
+                    'column_widths': [self.videos_table.columnWidth(i) for i in range(self.videos_table.columnCount())],
+                    'row_count': self.videos_table.rowCount()
+                }
+            
+            # Capture pagination state
+            if hasattr(self, 'current_page'):
+                state['pagination'] = {
+                    'current_page': self.current_page,
+                    'page_size': getattr(self, 'page_size', 100)
+                }
+            
+            # Capture selected video state
+            state['selected_video'] = {
+                'video_id': self.selected_video.get('id') if self.selected_video else None,
+                'details_visible': getattr(self, 'video_details_frame', None) and 
+                                 self.video_details_frame.isVisible() if hasattr(self, 'video_details_frame') else False
+            }
+            
+            # Capture filtering state
+            state['filter_state'] = {
+                'filtered_video_count': len(self.filtered_videos),
+                'total_video_count': len(self.all_videos)
+            }
+            
+            self.log_debug(f"Captured DownloadedVideosTab state: {len(state)} elements")
+            return state
+            
+        except Exception as e:
+            self.log_error(f"Error capturing DownloadedVideosTab state: {e}")
+            return {}
+    
+    def _restore_downloaded_videos_state(self, tab_instance, state: Dict[str, Any]) -> bool:
+        """Restore DownloadedVideosTab-specific state including filters, search, and selection"""
+        try:
+            # Restore search input
+            if 'search_input' in state and hasattr(self, 'search_input'):
+                search_state = state['search_input']
+                self.search_input.setText(search_state.get('text', ''))
+                if 'cursor_position' in search_state:
+                    self.search_input.setCursorPosition(search_state['cursor_position'])
+            
+            # Restore active filters
+            if 'active_filters' in state and hasattr(self, 'active_filters'):
+                self.active_filters = state['active_filters'].copy()
+                # Apply filters after data is loaded
+                if self.all_videos:
+                    self.filter_videos()
+            
+            # Restore table sort state
+            if 'videos_table' in state:
+                table_state = state['videos_table']
+                self.sort_column = table_state.get('sort_column', 7)  # Default: Date column
+                # Handle sort_order conversion
+                sort_order_value = table_state.get('sort_order', 1)  # Default: Descending
+                if isinstance(sort_order_value, int):
+                    self.sort_order = Qt.SortOrder(sort_order_value)
+                else:
+                    self.sort_order = sort_order_value
+                
+                # Apply sorting if table has data
+                if (hasattr(self, 'videos_table') and self.videos_table.rowCount() > 0 and 
+                    self.sort_column >= 0):
+                    self.videos_table.sortByColumn(self.sort_column, self.sort_order)
+                
+                # Restore column widths
+                if 'column_widths' in table_state and hasattr(self, 'videos_table'):
+                    widths = table_state['column_widths']
+                    for i, width in enumerate(widths):
+                        if i < self.videos_table.columnCount() and width > 0:
+                            self.videos_table.setColumnWidth(i, width)
+            
+            # Restore pagination state
+            if 'pagination' in state:
+                pagination_state = state['pagination']
+                self.current_page = pagination_state.get('current_page', 0)
+                self.page_size = pagination_state.get('page_size', 100)
+                # Update pagination display if available
+                if hasattr(self, 'update_pagination_info'):
+                    self.update_pagination_info()
+            
+            # Restore selected video state
+            if 'selected_video' in state:
+                selected_state = state['selected_video']
+                video_id = selected_state.get('video_id')
+                if video_id:
+                    # Find and select the video if it exists
+                    for video in self.all_videos:
+                        if video.get('id') == video_id:
+                            self.selected_video = video
+                            if hasattr(self, 'update_selected_video_details'):
+                                self.update_selected_video_details(video)
+                            break
+                
+                # Restore details visibility
+                details_visible = selected_state.get('details_visible', False)
+                if hasattr(self, 'video_details_frame'):
+                    self.video_details_frame.setVisible(details_visible)
+            
+            # Log filter state restoration
+            if 'filter_state' in state:
+                filter_state = state['filter_state']
+                self.log_info(f"Restored filters: {len(self.active_filters)} active filters, "
+                            f"{filter_state.get('filtered_video_count', 0)} filtered videos")
+            
+            self.log_debug("DownloadedVideosTab state restored successfully")
+            return True
+            
+        except Exception as e:
+            self.log_error(f"Error restoring DownloadedVideosTab state: {e}")
+            return False
     
     # =============================================================================
     # Language and Theme Support (Enhanced from BaseTab)
@@ -3694,16 +4233,39 @@ class DownloadedVideosTab(BaseTab):
             self.log_error(f"Error parsing date: {e}")
             return False
     
-    def update_statistics(self):
-        """Update statistics information with BaseTab integration"""
+    def update_statistics(self, use_external_stats=True):
+        """Enhanced statistics update with cross-tab synchronization"""
         self.performance_monitor.start_timing('update_statistics')
         
         try:
-            # Update total number of videos
-            count = len(self.all_videos) if hasattr(self, 'all_videos') else 0
-            self.total_videos_label.setText(f"Total Videos: {count}")
+            # Local statistics from displayed videos
+            local_count = len(self.all_videos) if hasattr(self, 'all_videos') else 0
             
-            # Update other statistics
+            # Use external statistics if available and requested
+            if use_external_stats and hasattr(self, '_external_statistics'):
+                ext_stats = self._external_statistics
+                
+                # Display enhanced statistics with cross-tab data
+                self.total_videos_label.setText(
+                    f"Total Videos: {local_count} (Global: {ext_stats.get('total_downloads', 0)})"
+                )
+                
+                # Add success rate info if available
+                if ext_stats.get('total_downloads', 0) > 0:
+                    success_rate = (ext_stats.get('successful_downloads', 0) / 
+                                  ext_stats.get('total_downloads', 1)) * 100
+                    self.total_videos_label.setToolTip(
+                        f"Local: {local_count} videos\n"
+                        f"Global: {ext_stats.get('total_downloads', 0)} downloads\n"
+                        f"Success Rate: {success_rate:.1f}%\n"
+                        f"Currently Downloading: {ext_stats.get('current_downloading', 0)}"
+                    )
+                
+            else:
+                # Fallback to local statistics only
+                self.total_videos_label.setText(f"Total Videos: {local_count}")
+            
+            # Calculate local statistics
             if hasattr(self, 'all_videos') and self.all_videos:
                 # Calculate total size
                 try:
@@ -3729,7 +4291,7 @@ class DownloadedVideosTab(BaseTab):
                     self.log_warning(f"Error calculating total size: {e}")
                     self.total_size_label.setText("Total Size: 0 MB")
                 
-                # Update selected count
+                # Update selected count with cross-tab awareness
                 selected_count = 0
                 if hasattr(self, 'downloads_table'):
                     for row in range(self.downloads_table.rowCount()):
@@ -3739,15 +4301,29 @@ class DownloadedVideosTab(BaseTab):
                             if checkbox and checkbox.isChecked():
                                 selected_count += 1
                 
-                self.selected_count_label.setText(f"Selected: {selected_count}")
+                # Enhanced selected count display
+                selected_text = f"Selected: {selected_count}"
+                if (use_external_stats and hasattr(self, '_external_statistics') and 
+                    self._external_statistics.get('current_downloading', 0) > 0):
+                    downloading = self._external_statistics['current_downloading']
+                    selected_text += f" (Downloading: {downloading})"
+                
+                self.selected_count_label.setText(selected_text)
                 
             else:
                 # Update information when there are no videos
                 self.total_size_label.setText("Total Size: 0 MB")
                 self.selected_count_label.setText("Selected: 0")
             
-            # Log statistics update for monitoring
-            self.log_debug(f"Statistics updated: {count} total videos, {selected_count} selected")
+            # Log enhanced statistics update
+            log_msg = f"Statistics updated: {local_count} local videos"
+            if use_external_stats and hasattr(self, '_external_statistics'):
+                ext_stats = self._external_statistics
+                log_msg += f", {ext_stats.get('total_downloads', 0)} global downloads"
+                if ext_stats.get('current_downloading', 0) > 0:
+                    log_msg += f", {ext_stats['current_downloading']} downloading"
+            
+            self.log_debug(log_msg)
             
         except Exception as e:
             self.log_error(f"Error updating statistics: {e}")
@@ -4673,7 +5249,7 @@ class DownloadedVideosTab(BaseTab):
                     try:
                         # Load from database in background
                         db_manager = DatabaseManager()
-                        videos = db_manager.get_downloaded_videos()
+                        videos = db_manager.get_downloads()
                         self.data_loaded.emit(videos or [])
                     except Exception as e:
                         self.error_occurred.emit(str(e))

@@ -43,6 +43,28 @@ from utils.db_manager import DatabaseManager
 # Path to configuration file
 CONFIG_FILE = os.path.join(os.path.dirname(os.path.dirname(os.path.abspath(__file__))), 'config.json')
 
+# Import realtime progress manager for cross-tab progress tracking
+try:
+    from ..common.realtime_progress_manager import realtime_progress_manager
+except ImportError:
+    realtime_progress_manager = None
+
+# Import error coordination system for cross-tab error handling
+try:
+    from ..common.error_coordination_system import (
+        error_coordination_manager, 
+        report_api_error, 
+        report_download_error, 
+        report_validation_error,
+        ErrorSeverity
+    )
+except ImportError:
+    error_coordination_manager = None
+    report_api_error = None
+    report_download_error = None
+    report_validation_error = None
+    ErrorSeverity = None
+
 
 class VideoInfoTab(BaseTab):
     """
@@ -127,6 +149,26 @@ class VideoInfoTab(BaseTab):
                 self.last_clipboard_text = clipboard.text()
         except Exception as e:
             self.log_error(f"Error initializing clipboard: {e}")
+        
+        # Register with realtime progress manager for cross-tab progress tracking
+        if realtime_progress_manager:
+            try:
+                realtime_progress_manager.register_tab(self.get_tab_id(), self)
+                self.log_info("Registered with realtime progress manager")
+            except Exception as e:
+                self.log_error(f"Error registering with progress manager: {e}")
+        else:
+            self.log_warning("Realtime progress manager not available")
+        
+        # Register with error coordination manager for cross-tab error handling
+        if error_coordination_manager:
+            try:
+                error_coordination_manager.register_tab(self.get_tab_id(), self)
+                self.log_info("Registered with error coordination manager")
+            except Exception as e:
+                self.log_error(f"Error registering with error coordination manager: {e}")
+        else:
+            self.log_warning("Error coordination manager not available")
     
     # Temporary logging methods for use during initialization
     def log_info(self, message: str) -> None:
@@ -546,6 +588,210 @@ class VideoInfoTab(BaseTab):
         self.log_info("Tab state restored")
     
     # =============================================================================
+    # Enhanced State Persistence Implementation (Subtask 16.1)
+    # =============================================================================
+    
+    def save_tab_state(self) -> None:
+        """Enhanced tab state persistence for URL inputs, video data, and UI state"""
+        try:
+            # Import the practical state manager
+            from ..common.tab_state_persistence import practical_state_manager
+            
+            # Register this tab if not already registered
+            if self.get_tab_id() not in practical_state_manager.tab_registry:
+                practical_state_manager.register_tab(
+                    self.get_tab_id(), 
+                    self, 
+                    self._capture_video_info_state,
+                    self._restore_video_info_state
+                )
+            
+            # Save state using practical state manager
+            success = practical_state_manager.save_tab_state(self.get_tab_id())
+            
+            if success:
+                self.log_info("VideoInfoTab state saved successfully")
+            else:
+                self.log_warning("VideoInfoTab state save failed")
+                
+        except Exception as e:
+            self.log_error(f"Error saving VideoInfoTab state: {e}")
+    
+    def restore_tab_state(self) -> None:
+        """Enhanced tab state restoration for URL inputs, video data, and UI state"""
+        try:
+            # Import the practical state manager
+            from ..common.tab_state_persistence import practical_state_manager
+            
+            # Register this tab if not already registered
+            if self.get_tab_id() not in practical_state_manager.tab_registry:
+                practical_state_manager.register_tab(
+                    self.get_tab_id(), 
+                    self, 
+                    self._capture_video_info_state,
+                    self._restore_video_info_state
+                )
+            
+            # Restore state using practical state manager
+            success = practical_state_manager.restore_tab_state(self.get_tab_id())
+            
+            if success:
+                self.log_info("VideoInfoTab state restored successfully")
+                # Update UI after restoration
+                self.update_button_states()
+                self.update_select_toggle_button()
+            else:
+                self.log_debug("No previous VideoInfoTab state found or restoration failed")
+                
+        except Exception as e:
+            self.log_error(f"Error restoring VideoInfoTab state: {e}")
+    
+    def _capture_video_info_state(self, tab_instance) -> Dict[str, Any]:
+        """Capture VideoInfoTab-specific state including video data and UI elements"""
+        try:
+            state = {}
+            
+            # Capture URL input state
+            if hasattr(self, 'url_input'):
+                state['url_input'] = {
+                    'text': self.url_input.text(),
+                    'cursor_position': self.url_input.cursorPosition(),
+                    'placeholder': self.url_input.placeholderText()
+                }
+            
+            # Capture output folder state
+            if hasattr(self, 'output_folder_display'):
+                state['output_folder'] = {
+                    'text': self.output_folder_display.text(),
+                    'placeholder': self.output_folder_display.placeholderText()
+                }
+            
+            # Capture video table state (selection, sort, column widths)
+            if hasattr(self, 'video_table'):
+                selected_rows = []
+                for row in range(self.video_table.rowCount()):
+                    checkbox_cell = self.video_table.cellWidget(row, 0)
+                    if checkbox_cell:
+                        checkbox = checkbox_cell.findChild(QCheckBox)
+                        if checkbox and checkbox.isChecked():
+                            selected_rows.append(row)
+                
+                state['video_table'] = {
+                    'selected_rows': selected_rows,
+                    'sort_column': self.sort_column,
+                    'sort_order': self.sort_order.value if hasattr(self.sort_order, 'value') else int(self.sort_order),
+                    'column_widths': [self.video_table.columnWidth(i) for i in range(self.video_table.columnCount())],
+                    'row_count': self.video_table.rowCount()
+                }
+            
+            # Capture video URLs for restoration (without full VideoInfo to keep file size small)
+            if hasattr(self, 'video_info_dict'):
+                state['video_urls'] = list(self.video_info_dict.keys())
+            
+            # Capture processing state
+            state['processing_state'] = {
+                'processing_count': getattr(self, 'processing_count', 0),
+                'downloading_count': getattr(self, 'downloading_count', 0),
+                'all_selected': getattr(self, 'all_selected', False)
+            }
+            
+            # Capture combo box states for format/quality selections
+            if hasattr(self, 'video_table'):
+                combo_states = {}
+                for row in range(self.video_table.rowCount()):
+                    # Format combo
+                    format_cell = self.video_table.cellWidget(row, 5)  # Format column
+                    if format_cell:
+                        format_combo = format_cell.findChild(QComboBox)
+                        if format_combo:
+                            combo_states[f'format_row_{row}'] = {
+                                'current_index': format_combo.currentIndex(),
+                                'current_text': format_combo.currentText()
+                            }
+                    
+                    # Quality combo
+                    quality_cell = self.video_table.cellWidget(row, 6)  # Quality column
+                    if quality_cell:
+                        quality_combo = quality_cell.findChild(QComboBox)
+                        if quality_combo:
+                            combo_states[f'quality_row_{row}'] = {
+                                'current_index': quality_combo.currentIndex(),
+                                'current_text': quality_combo.currentText()
+                            }
+                
+                state['combo_selections'] = combo_states
+            
+            self.log_debug(f"Captured VideoInfoTab state: {len(state)} elements")
+            return state
+            
+        except Exception as e:
+            self.log_error(f"Error capturing VideoInfoTab state: {e}")
+            return {}
+    
+    def _restore_video_info_state(self, tab_instance, state: Dict[str, Any]) -> bool:
+        """Restore VideoInfoTab-specific state including video data and UI elements"""
+        try:
+            # Restore URL input
+            if 'url_input' in state and hasattr(self, 'url_input'):
+                url_state = state['url_input']
+                self.url_input.setText(url_state.get('text', ''))
+                if 'cursor_position' in url_state:
+                    self.url_input.setCursorPosition(url_state['cursor_position'])
+            
+            # Restore output folder
+            if 'output_folder' in state and hasattr(self, 'output_folder_display'):
+                folder_state = state['output_folder']
+                self.output_folder_display.setText(folder_state.get('text', ''))
+            
+            # Restore processing state
+            if 'processing_state' in state:
+                proc_state = state['processing_state']
+                self.processing_count = proc_state.get('processing_count', 0)
+                self.downloading_count = proc_state.get('downloading_count', 0)
+                self.all_selected = proc_state.get('all_selected', False)
+            
+            # Restore table sort state (will be applied when table has data)
+            if 'video_table' in state:
+                table_state = state['video_table']
+                self.sort_column = table_state.get('sort_column', -1)
+                # Handle sort_order conversion
+                sort_order_value = table_state.get('sort_order', 0)
+                if isinstance(sort_order_value, int):
+                    self.sort_order = Qt.SortOrder(sort_order_value)
+                else:
+                    self.sort_order = sort_order_value
+                
+                # Apply sorting if table has data
+                if (hasattr(self, 'video_table') and self.video_table.rowCount() > 0 and 
+                    self.sort_column >= 0):
+                    self.video_table.sortByColumn(self.sort_column, self.sort_order)
+                
+                # Restore column widths
+                if 'column_widths' in table_state and hasattr(self, 'video_table'):
+                    widths = table_state['column_widths']
+                    for i, width in enumerate(widths):
+                        if i < self.video_table.columnCount() and width > 0:
+                            self.video_table.setColumnWidth(i, width)
+            
+            # Store combo states for restoration after video data is loaded
+            if 'combo_selections' in state:
+                self._pending_combo_states = state['combo_selections']
+            
+            # Store video URLs for display (user needs to re-fetch video info)
+            if 'video_urls' in state and state['video_urls']:
+                urls_text = '\n'.join(state['video_urls'])
+                if hasattr(self, 'url_input') and not self.url_input.text():
+                    self.url_input.setText(urls_text)
+                self.log_info(f"Found {len(state['video_urls'])} previous URLs. Use 'Get Info' to reload video data.")
+            
+            self.log_debug("VideoInfoTab state restored successfully")
+            return True
+            
+        except Exception as e:
+            self.log_error(f"Error restoring VideoInfoTab state: {e}")
+            return False
+    
+    # =============================================================================
     # Language and Theme Support (Enhanced from BaseTab)
     # =============================================================================
     
@@ -802,30 +1048,157 @@ class VideoInfoTab(BaseTab):
             self.performance_monitor.end_timing('handle_video_info')
     
     def handle_progress(self, url, progress, speed):
-        """Handle download progress updates"""
+        """Enhanced download progress handler with real-time cross-tab updates"""
         try:
-            # Update progress in table (placeholder)
-            # In full implementation, this would update the progress bar for the specific URL row
+            # Get video info for additional context
+            video_info = self.video_info_dict.get(url, {})
+            file_name = video_info.get('title', 'Unknown')
             
-            # Emit progress event
+            # Update progress via realtime progress manager for cross-tab synchronization
+            if realtime_progress_manager:
+                try:
+                    # Calculate ETA based on speed and remaining progress
+                    eta = self._calculate_eta(progress, speed)
+                    file_size = self._estimate_file_size(video_info)
+                    
+                    realtime_progress_manager.update_progress(
+                        operation_id=url,
+                        current_value=progress,
+                        speed=speed,
+                        eta=eta,
+                        file_size=file_size,
+                        additional_data={
+                            'file_name': file_name,
+                            'video_info': video_info,
+                            'tab_source': self.get_tab_id()
+                        }
+                    )
+                except Exception as e:
+                    self.log_error(f"Error updating realtime progress: {e}")
+            
+            # Update progress in table (if table exists and row is found)
+            self._update_progress_in_table(url, progress, speed)
+            
+            # Emit enhanced progress event with additional context
             self.download_progress_updated.emit(url, progress, speed)
             self.emit_tab_event('download_progress', {
                 'url': url,
                 'progress': progress,
-                'speed': speed
+                'speed': speed,
+                'file_name': file_name,
+                'eta': self._calculate_eta(progress, speed),
+                'timestamp': self.performance_monitor.current_time(),
+                'downloading_count': self.downloading_count
             })
+            
+            self.log_debug(f"Progress updated: {file_name} - {progress}% at {speed}")
             
         except Exception as e:
             self.log_error(f"Error handling progress: {e}")
     
+    def _calculate_eta(self, progress: int, speed: str) -> str:
+        """Calculate estimated time of arrival based on progress and speed"""
+        try:
+            if not speed or progress >= 100:
+                return ""
+            
+            # Extract numeric speed value (e.g., "2.5 MB/s" -> 2.5)
+            import re
+            speed_match = re.search(r'(\d+\.?\d*)', speed)
+            if not speed_match:
+                return ""
+            
+            speed_value = float(speed_match.group(1))
+            if speed_value <= 0:
+                return ""
+            
+            # Estimate remaining time based on speed (very rough calculation)
+            remaining_percent = 100 - progress
+            if remaining_percent <= 0:
+                return "0:00"
+            
+            # Rough ETA calculation (this would need refinement in production)
+            estimated_seconds = int((remaining_percent / progress) * 10)  # Rough estimate
+            estimated_seconds = min(estimated_seconds, 3600)  # Cap at 1 hour
+            
+            minutes = estimated_seconds // 60
+            seconds = estimated_seconds % 60
+            return f"{minutes}:{seconds:02d}"
+            
+        except Exception:
+            return ""
+    
+    def _estimate_file_size(self, video_info: dict) -> str:
+        """Estimate file size from video info"""
+        try:
+            duration = video_info.get('duration', 0)
+            quality = video_info.get('quality', '')
+            
+            # Rough file size estimation based on duration and quality
+            if duration and isinstance(duration, (int, float)):
+                # Very rough estimation (would need refinement)
+                if '1080' in quality:
+                    mb_per_minute = 25
+                elif '720' in quality:
+                    mb_per_minute = 15
+                else:
+                    mb_per_minute = 10
+                
+                estimated_mb = (duration / 60) * mb_per_minute
+                if estimated_mb >= 1024:
+                    return f"{estimated_mb/1024:.1f} GB"
+                else:
+                    return f"{estimated_mb:.1f} MB"
+            
+            return ""
+        except Exception:
+            return ""
+    
+    def _update_progress_in_table(self, url: str, progress: int, speed: str):
+        """Update progress display in the video table"""
+        try:
+            if not hasattr(self, 'video_table') or not self.video_table:
+                return
+            
+            # Find the row with matching URL
+            for row in range(self.video_table.rowCount()):
+                row_url = getattr(self.video_table.item(row, 1), 'url', None)
+                if row_url == url:
+                    # Update progress column if it exists (placeholder for future implementation)
+                    # For now, just update tooltip to show progress
+                    for col in range(self.video_table.columnCount()):
+                        item = self.video_table.item(row, col)
+                        if item:
+                            current_tooltip = item.toolTip()
+                            progress_info = f"Progress: {progress}% ({speed})"
+                            
+                            # Update or add progress info to tooltip
+                            if "Progress:" in current_tooltip:
+                                # Replace existing progress info
+                                import re
+                                updated_tooltip = re.sub(r'Progress: \d+%[^)]*\)', progress_info, current_tooltip)
+                            else:
+                                # Add progress info
+                                updated_tooltip = f"{current_tooltip}\n{progress_info}" if current_tooltip else progress_info
+                            
+                            item.setToolTip(updated_tooltip)
+                    break
+                    
+        except Exception as e:
+            self.log_error(f"Error updating progress in table: {e}")
+    
     def handle_download_finished(self, url, success, file_path):
-        """Handle download completion"""
+        """Enhanced download completion handler with toast notifications and improved event data"""
         try:
             # Decrement downloading count
             self.downloading_count = max(0, self.downloading_count - 1)
             
             # Mark data as dirty
             self._set_data_dirty(True)
+            
+            # Get video info for this URL if available
+            video_info = self.video_info_dict.get(url, {})
+            video_title = video_info.get('title', 'Unknown')
             
             # Save to database if download was successful
             if success:
@@ -834,13 +1207,10 @@ class VideoInfoTab(BaseTab):
                     import os
                     from datetime import datetime
                     
-                    # Get video info for this URL if available
-                    video_info = self.video_info_dict.get(url, {})
-                    
                     # Prepare download_info dictionary for DatabaseManager
                     download_info = {
                         'url': url,
-                        'title': video_info.get('title', 'Unknown'),
+                        'title': video_title,
                         'filepath': file_path,
                         'quality': video_info.get('quality', ''),
                         'format': video_info.get('format', ''),
@@ -861,17 +1231,35 @@ class VideoInfoTab(BaseTab):
                     
                 except Exception as db_error:
                     self.log_error(f"Error saving download to database: {db_error}")
+                    success = False  # Mark as failed if database save fails
             
-            # Update UI (placeholder)
-            # In full implementation, this would update the row status
+            # Show toast notification
+            self._show_download_completion_toast(video_title, success, file_path)
             
-            # Emit completion event
-            self.video_download_completed.emit(url, success, file_path)
-            self.emit_tab_event('video_download_completed', {
+            # Update UI row status if table exists
+            self._update_download_row_status(url, success)
+            
+            # Enhanced event data for cross-tab communication
+            enhanced_event_data = {
                 'url': url,
                 'success': success,
                 'file_path': file_path,
-                'downloading_count': self.downloading_count
+                'downloading_count': self.downloading_count,
+                'video_info': video_info,
+                'timestamp': self.performance_monitor.current_time(),
+                'completion_stats': self._get_completion_statistics()
+            }
+            
+            # Emit completion events with sequenced acknowledgment
+            self.video_download_completed.emit(url, success, file_path)
+            self.emit_tab_event('video_download_completed', enhanced_event_data)
+            
+            # Emit statistics update event for cross-tab sync
+            self.emit_tab_event('download_statistics_updated', {
+                'total_downloads': self._get_total_downloads(),
+                'successful_downloads': self._get_successful_downloads(),
+                'failed_downloads': self._get_failed_downloads(),
+                'current_downloading': self.downloading_count
             })
             
             if success:
@@ -882,6 +1270,145 @@ class VideoInfoTab(BaseTab):
         except Exception as e:
             self.downloading_count = max(0, self.downloading_count - 1)
             self.log_error(f"Error handling download completion: {e}")
+            
+            # Report download error to coordination system
+            if report_download_error and ErrorSeverity:
+                error_id = report_download_error(
+                    message=f"Download completion handling failed: {str(e)}",
+                    source_tab=self.get_tab_id(),
+                    source_component="video_info_download_handler",
+                    url=url,
+                    severity=ErrorSeverity.MEDIUM
+                )
+                
+                if error_id:
+                    self.log_info(f"Download error reported to coordination system: {error_id}")
+    
+    def _show_download_completion_toast(self, title: str, success: bool, file_path: str):
+        """Show toast notification for download completion"""
+        try:
+            from ui.components.common.toast_notification import show_download_complete_toast, show_toast, ToastType
+            
+            # Get main window as parent for toast
+            main_window = self.window()
+            if not main_window:
+                return
+            
+            if success:
+                # Show success toast
+                show_download_complete_toast(main_window, title, file_path)
+            else:
+                # Show error toast
+                show_toast(
+                    main_window,
+                    f"Download Failed\n{title[:40]}{'...' if len(title) > 40 else ''}",
+                    ToastType.ERROR,
+                    4000
+                )
+                
+        except Exception as e:
+            self.log_error(f"Error showing toast notification: {e}")
+    
+    def _show_download_started_toast(self, title: str):
+        """Show toast notification for download start"""
+        try:
+            from ui.components.common.toast_notification import show_download_started_toast
+            
+            # Get main window as parent for toast
+            main_window = self.window()
+            if not main_window:
+                return
+            
+            # Show download started toast
+            show_download_started_toast(main_window, title)
+                
+        except Exception as e:
+            self.log_error(f"Error showing download started toast: {e}")
+    
+    def _update_download_row_status(self, url: str, success: bool):
+        """Update the table row status for completed download"""
+        try:
+            if not hasattr(self, 'video_table') or not self.video_table:
+                return
+            
+            # Find the row with matching URL
+            for row in range(self.video_table.rowCount()):
+                row_url = getattr(self.video_table.item(row, 1), 'url', None)  
+                if row_url == url:
+                    # Update row styling to indicate completion
+                    for col in range(self.video_table.columnCount()):
+                        item = self.video_table.item(row, col)
+                        if item:
+                            if success:
+                                item.setBackground(Qt.GlobalColor.lightGreen)
+                                item.setToolTip("Download completed successfully")
+                            else:
+                                item.setBackground(Qt.GlobalColor.lightYellow)  
+                                item.setToolTip("Download failed")
+                    break
+                    
+        except Exception as e:
+            self.log_error(f"Error updating row status: {e}")
+    
+    def _get_completion_statistics(self) -> dict:
+        """Get current completion statistics"""
+        try:
+            return {
+                'total_processed': len(self.video_info_dict),
+                'currently_downloading': self.downloading_count,
+                'session_start_time': getattr(self, 'session_start_time', None)
+            }
+        except Exception:
+            return {}
+    
+    def _get_total_downloads(self) -> int:
+        """Get total download count for statistics"""
+        try:
+            from utils.db_manager import DatabaseManager
+            db_manager = DatabaseManager()
+            return db_manager.get_total_download_count()
+        except Exception as e:
+            self.log_error(f"Error getting total downloads: {e}")
+            return 0
+    
+    def _get_successful_downloads(self) -> int:
+        """Get successful download count for statistics"""
+        try:
+            from utils.db_manager import DatabaseManager
+            db_manager = DatabaseManager()
+            return db_manager.get_successful_download_count()
+        except Exception as e:
+            self.log_error(f"Error getting successful downloads: {e}")
+            return 0
+    
+    def _get_failed_downloads(self) -> int:
+        """Get failed download count for statistics"""
+        try:
+            from utils.db_manager import DatabaseManager
+            db_manager = DatabaseManager()
+            return db_manager.get_failed_download_count()
+        except Exception as e:
+            self.log_error(f"Error getting failed downloads: {e}")
+            return 0
+    
+    def _get_comprehensive_statistics(self) -> dict:
+        """Get comprehensive download statistics for enhanced cross-tab sync"""
+        try:
+            from utils.db_manager import DatabaseManager
+            db_manager = DatabaseManager()
+            return db_manager.get_download_statistics()
+        except Exception as e:
+            self.log_error(f"Error getting comprehensive statistics: {e}")
+            return {
+                'total_downloads': 0,
+                'successful_downloads': 0,
+                'failed_downloads': 0,
+                'success_rate': 0,
+                'recent_downloads_24h': 0,
+                'total_size_mb': 0,
+                'most_common_quality': 'Unknown',
+                'most_common_format': 'Unknown'
+            }
     
     def _calculate_file_size(self, file_path: str) -> str:
         """Calculate file size in human readable format"""
@@ -930,6 +1457,22 @@ class VideoInfoTab(BaseTab):
             
             # Update error statistics for analytics
             self._update_error_statistics(error_category['type'])
+            
+            # Report error to coordination system for cross-tab handling
+            if report_api_error and ErrorSeverity:
+                # Determine severity based on error category
+                severity = ErrorSeverity.HIGH if not error_category['recoverable'] else ErrorSeverity.MEDIUM
+                
+                error_id = report_api_error(
+                    message=error_message,
+                    source_tab=self.get_tab_id(),
+                    source_component="video_info_downloader",
+                    url=url,
+                    severity=severity
+                )
+                
+                if error_id:
+                    self.log_info(f"Error reported to coordination system: {error_id}")
             
             # Emit enhanced error event for cross-component coordination
             self.emit_tab_event('api_error_occurred', {
@@ -2637,6 +3180,30 @@ class VideoInfoTab(BaseTab):
                     # Update job status
                     job['status'] = 'starting'
                     
+                    # Show download started toast notification
+                    self._show_download_started_toast(job['metadata']['title'])
+                    
+                    # Start operation in realtime progress manager
+                    if realtime_progress_manager:
+                        try:
+                            progress_data = realtime_progress_manager.start_operation(
+                                operation_id=job['url'],
+                                operation_type="download",
+                                tab_id=self.get_tab_id(),
+                                total_value=100,  # Progress percentage
+                                file_name=job['metadata']['title'],
+                                url=job['url'],
+                                additional_data={
+                                    'job_id': job['id'],
+                                    'format': job['format'],
+                                    'quality': job['quality'],
+                                    'video_info': job['metadata']
+                                }
+                            )
+                            self.log_debug(f"Started progress tracking for {job['metadata']['title']}")
+                        except Exception as e:
+                            self.log_error(f"Error starting progress tracking: {e}")
+                    
                     # Emit download started event
                     self.video_download_started.emit(job['url'])
                     self.emit_tab_event('download_started', {
@@ -2644,7 +3211,9 @@ class VideoInfoTab(BaseTab):
                         'url': job['url'],
                         'title': job['metadata']['title'],
                         'format': job['format'],
-                        'quality': job['quality']
+                        'quality': job['quality'],
+                        'timestamp': self.performance_monitor.current_time(),
+                        'downloading_count': self.downloading_count + 1
                     })
                     
                     # Initiate download through TikTokDownloader

@@ -1,0 +1,235 @@
+{
+  "active_errors": {
+    "unexpected_error_https://test.com/video123_1749273650": {
+      "id": "unexpected_error_https://test.com/video123_1749273650",
+      "title": "Unexpected Error During Download",
+      "message": "An unexpected error occurred: wrapped C/C++ object of type ComponentBus has been deleted",
+      "category": "system",
+      "severity": "critical",
+      "tab_id": "video_info",
+      "component": "video_info_tab",
+      "timestamp": 1749273650.3996856,
+      "url": "https://test.com/video123",
+      "stack_trace": "",
+      "context": {
+        "error_message": "wrapped C/C++ object of type ComponentBus has been deleted"
+      },
+      "retry_count": 0,
+      "max_retries": 3,
+      "auto_retry": false,
+      "resolved": false,
+      "acknowledged": false,
+      "persistent": true
+    },
+    "unexpected_error_https://test.com/video123_1749273720": {
+      "id": "unexpected_error_https://test.com/video123_1749273720",
+      "title": "Unexpected Error During Download",
+      "message": "An unexpected error occurred: wrapped C/C++ object of type ComponentBus has been deleted",
+      "category": "system",
+      "severity": "critical",
+      "tab_id": "video_info",
+      "component": "video_info_tab",
+      "timestamp": 1749273720.5641868,
+      "url": "https://test.com/video123",
+      "stack_trace": "",
+      "context": {
+        "error_message": "wrapped C/C++ object of type ComponentBus has been deleted"
+      },
+      "retry_count": 0,
+      "max_retries": 3,
+      "auto_retry": false,
+      "resolved": false,
+      "acknowledged": false,
+      "persistent": true
+    },
+    "unexpected_error_https://test.com/video123_1749274029": {
+      "id": "unexpected_error_https://test.com/video123_1749274029",
+      "title": "Unexpected Error During Download",
+      "message": "An unexpected error occurred: wrapped C/C++ object of type ComponentBus has been deleted",
+      "category": "system",
+      "severity": "critical",
+      "tab_id": "video_info",
+      "component": "video_info_tab",
+      "timestamp": 1749274029.221936,
+      "url": "https://test.com/video123",
+      "stack_trace": "",
+      "context": {
+        "error_message": "wrapped C/C++ object of type ComponentBus has been deleted"
+      },
+      "retry_count": 0,
+      "max_retries": 3,
+      "auto_retry": false,
+      "resolved": false,
+      "acknowledged": false,
+      "persistent": true
+    },
+    "unexpected_error_https://test.com/video123_1749274089": {
+      "id": "unexpected_error_https://test.com/video123_1749274089",
+      "title": "Unexpected Error During Download",
+      "message": "An unexpected error occurred: wrapped C/C++ object of type ComponentBus has been deleted",
+      "category": "system",
+      "severity": "critical",
+      "tab_id": "video_info",
+      "component": "video_info_tab",
+      "timestamp": 1749274089.7960055,
+      "url": "https://test.com/video123",
+      "stack_trace": "",
+      "context": {
+        "error_message": "wrapped C/C++ object of type ComponentBus has been deleted"
+      },
+      "retry_count": 0,
+      "max_retries": 3,
+      "auto_retry": false,
+      "resolved": false,
+      "acknowledged": false,
+      "persistent": true
+    },
+    "unexpected_error_https://test.com/video123_1749274134": {
+      "id": "unexpected_error_https://test.com/video123_1749274134",
+      "title": "Unexpected Error During Download",
+      "message": "An unexpected error occurred: wrapped C/C++ object of type ComponentBus has been deleted",
+      "category": "system",
+      "severity": "critical",
+      "tab_id": "video_info",
+      "component": "video_info_tab",
+      "timestamp": 1749274134.406879,
+      "url": "https://test.com/video123",
+      "stack_trace": "",
+      "context": {
+        "error_message": "wrapped C/C++ object of type ComponentBus has been deleted"
+      },
+      "retry_count": 0,
+      "max_retries": 3,
+      "auto_retry": false,
+      "resolved": false,
+      "acknowledged": false,
+      "persistent": true
+    },
+    "download_failed_https://test.com/video123_1749274134": {
+      "id": "download_failed_https://test.com/video123_1749274134",
+      "title": "Download Failed: Test Video",
+      "message": "Failed to download video: Test Video\nURL: https://test.com/video123",
+      "category": "download",
+      "severity": "error",
+      "tab_id": "video_info",
+      "component": "video_info_tab",
+      "timestamp": 1749274134.402951,
+      "url": "https://test.com/video123",
+      "stack_trace": "",
+      "context": {
+        "video_title": "Test Video",
+        "file_path": "",
+        "downloading_count": 0
+      },
+      "retry_count": 0,
+      "max_retries": 2,
+      "auto_retry": true,
+      "resolved": false,
+      "acknowledged": false,
+      "persistent": true
+    }
+  },
+  "resolved_errors": {
+    "download_failed_https://test.com/video123_1749273650": {
+      "id": "download_failed_https://test.com/video123_1749273650",
+      "title": "Download Failed: Test Video",
+      "message": "Failed to download video: Test Video\nURL: https://test.com/video123",
+      "category": "download",
+      "severity": "error",
+      "tab_id": "video_info",
+      "component": "video_info_tab",
+      "timestamp": 1749273650.3976848,
+      "url": "https://test.com/video123",
+      "stack_trace": "",
+      "context": {
+        "video_title": "Test Video",
+        "file_path": "",
+        "downloading_count": 0,
+        "resolution_note": "Download completed successfully",
+        "resolved_at": 1749273720.5566587
+      },
+      "retry_count": 0,
+      "max_retries": 2,
+      "auto_retry": true,
+      "resolved": true,
+      "acknowledged": false,
+      "persistent": true
+    },
+    "download_failed_https://test.com/video123_1749273720": {
+      "id": "download_failed_https://test.com/video123_1749273720",
+      "title": "Download Failed: Test Video",
+      "message": "Failed to download video: Test Video\nURL: https://test.com/video123",
+      "category": "download",
+      "severity": "error",
+      "tab_id": "video_info",
+      "component": "video_info_tab",
+      "timestamp": 1749273720.5621874,
+      "url": "https://test.com/video123",
+      "stack_trace": "",
+      "context": {
+        "video_title": "Test Video",
+        "file_path": "",
+        "downloading_count": 0,
+        "resolution_note": "Download completed successfully",
+        "resolved_at": 1749274029.2138913
+      },
+      "retry_count": 0,
+      "max_retries": 2,
+      "auto_retry": true,
+      "resolved": true,
+      "acknowledged": false,
+      "persistent": true
+    },
+    "download_failed_https://test.com/video123_1749274029": {
+      "id": "download_failed_https://test.com/video123_1749274029",
+      "title": "Download Failed: Test Video",
+      "message": "Failed to download video: Test Video\nURL: https://test.com/video123",
+      "category": "download",
+      "severity": "error",
+      "tab_id": "video_info",
+      "component": "video_info_tab",
+      "timestamp": 1749274029.220939,
+      "url": "https://test.com/video123",
+      "stack_trace": "",
+      "context": {
+        "video_title": "Test Video",
+        "file_path": "",
+        "downloading_count": 0,
+        "resolution_note": "Download completed successfully",
+        "resolved_at": 1749274089.7880027
+      },
+      "retry_count": 0,
+      "max_retries": 2,
+      "auto_retry": true,
+      "resolved": true,
+      "acknowledged": false,
+      "persistent": true
+    },
+    "download_failed_https://test.com/video123_1749274089": {
+      "id": "download_failed_https://test.com/video123_1749274089",
+      "title": "Download Failed: Test Video",
+      "message": "Failed to download video: Test Video\nURL: https://test.com/video123",
+      "category": "download",
+      "severity": "error",
+      "tab_id": "video_info",
+      "component": "video_info_tab",
+      "timestamp": 1749274089.7930143,
+      "url": "https://test.com/video123",
+      "stack_trace": "",
+      "context": {
+        "video_title": "Test Video",
+        "file_path": "",
+        "downloading_count": 0,
+        "resolution_note": "Download completed successfully",
+        "resolved_at": 1749274134.3979504
+      },
+      "retry_count": 0,
+      "max_retries": 2,
+      "auto_retry": true,
+      "resolved": true,
+      "acknowledged": false,
+      "persistent": true
+    }
+  },
+  "last_save": 1749274134.406879
+}

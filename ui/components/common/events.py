@@ -44,6 +44,16 @@ class EventType(Enum):
     PROGRESS_UPDATED = "progress_updated"
     PROGRESS_COMPLETED = "progress_completed"
     PROGRESS_FAILED = "progress_failed"
+    PROGRESS_UPDATE = "progress_update"  # For realtime progress manager
+    
+    # Download-specific progress events
+    DOWNLOAD_PROGRESS = "download_progress"
+    DOWNLOAD_STARTED = "download_started"
+    DOWNLOAD_COMPLETED = "download_completed"
+    DOWNLOAD_FAILED = "download_failed"
+    
+    # API events
+    API_ERROR = "api_error"
     
     # Component lifecycle events
     COMPONENT_INITIALIZED = "component_initialized"
