@@ -244,7 +244,7 @@ class QualityFilterWidget(QWidget, LanguageSupport):
         
         # Apply button
         
-        self.apply_btn = QPushButton(self.tr_("APPLY_FILTER")
+        self.apply_btn = QPushButton(self.tr_("APPLY_FILTER"))
         self.apply_btn.setStyleSheet("""
             QPushButton {
                 background-color: #0078d7;
@@ -259,7 +259,7 @@ class QualityFilterWidget(QWidget, LanguageSupport):
             QPushButton:pressed {
                 background-color: #0078d7;
             }
-        """))
+        """)
         self.apply_btn.setStyleSheet("""
             QPushButton {
                 background-color: #0078d7;
@@ -282,7 +282,7 @@ class QualityFilterWidget(QWidget, LanguageSupport):
         
         # Clear button
         
-        self.clear_btn = QPushButton(self.tr_("CLEAR_FILTER")
+        self.clear_btn = QPushButton(self.tr_("CLEAR_FILTER"))
         self.clear_btn.setStyleSheet("""
             QPushButton {
                 background-color: #0078d7;
@@ -297,7 +297,7 @@ class QualityFilterWidget(QWidget, LanguageSupport):
             QPushButton:pressed {
                 background-color: #0078d7;
             }
-        """))
+        """)
         self.clear_btn.setStyleSheet("""
             QPushButton {
                 background-color: #f44336;

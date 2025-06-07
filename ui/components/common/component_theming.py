@@ -69,7 +69,7 @@ class ResponsiveBreakpoint(Enum):
 class ComponentColorPalette:
     """Extended color palette for component theming"""
     # Base colors (inherited from TabColorScheme)
-    primary: str = "#0078d4"
+    primary: str = "#0078d7"
     secondary: str = "#6c757d"
     background: str = "#ffffff"
     surface: str = "#f8f9fa"
@@ -82,7 +82,7 @@ class ComponentColorPalette:
     table_row_selected: str = "#e3f2fd"
     table_border: str = "#e0e0e0"
     
-    button_primary: str = "#0078d4"
+    button_primary: str = "#0078d7"
     button_primary_hover: str = "#106ebe"
     button_primary_active: str = "#005a9e"
     button_secondary: str = "#6c757d"
@@ -238,7 +238,7 @@ class ComponentThemeManager:
         
         # Dark theme
         dark_colors = ComponentColorPalette(
-            primary="#0d7377",
+            primary="#0078d7",
             background="#1e1e1e",
             surface="#2d2d30",
             text_primary="#ffffff",
@@ -249,13 +249,13 @@ class ComponentThemeManager:
             table_row_selected="#1a4754",
             table_border="#404040",
             
-            button_primary="#0d7377",
-            button_primary_hover="#14a085",
+            button_primary="#0078d7",
+            button_primary_hover="#106ebe",
             button_secondary="#5a6268",
             
             input_bg="#2d2d30",
             input_border="#404040",
-            input_border_focus="#0d7377",
+            input_border_focus="#0078d7",
             
             popup_bg="#2d2d30",
             popup_shadow="rgba(0, 0, 0, 0.3)",

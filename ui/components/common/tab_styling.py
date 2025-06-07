@@ -88,9 +88,9 @@ class TabStyleManager:
     def _create_dark_scheme(self) -> TabColorScheme:
         """Create dark theme color scheme"""
         return TabColorScheme(
-            primary="#0d7377",
-            primary_hover="#14a085",
-            primary_pressed="#0a525a",
+            primary="#0078d7",
+            primary_hover="#106ebe",
+            primary_pressed="#005a9e",
             
             background="#1e1e1e",
             surface="#2d2d30",
@@ -101,7 +101,7 @@ class TabStyleManager:
             text_muted="#969696",
             
             border="#404040",
-            border_focus="#0d7377",
+            border_focus="#0078d7",
             
             input_background="#2d2d30",
             input_border="#404040",

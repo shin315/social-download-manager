@@ -163,8 +163,8 @@ class ThemeManager(QObject):
             # Light theme
             self._theme_variants[ThemeVariant.LIGHT] = {
                 'colors': {
-                    'primary': '#2563eb',
-                    'primary-hover': '#1d4ed8',
+                    'primary': '#0078d7',
+                    'primary-hover': '#106ebe',
                     'secondary': '#64748b',
                     'success': '#10b981',
                     'warning': '#f59e0b',
@@ -176,7 +176,7 @@ class ThemeManager(QObject):
                     'text-secondary': '#64748b',
                     'text-muted': '#94a3b8',
                     'border': '#e2e8f0',
-                    'border-focus': '#3b82f6',
+                    'border-focus': '#0078d7',
                     'shadow': 'rgba(0, 0, 0, 0.1)',
                     'overlay': 'rgba(0, 0, 0, 0.5)'
                 },
@@ -230,20 +230,20 @@ class ThemeManager(QObject):
             # Dark theme
             self._theme_variants[ThemeVariant.DARK] = {
                 'colors': {
-                    'primary': '#3b82f6',
-                    'primary-hover': '#2563eb',
+                    'primary': '#0078d7',
+                    'primary-hover': '#106ebe',
                     'secondary': '#6b7280',
                     'success': '#10b981',
                     'warning': '#f59e0b',
                     'error': '#ef4444',
-                    'background': '#0f172a',
-                    'surface': '#1e293b',
-                    'surface-elevated': '#334155',
+                    'background': '#2d2d2d',
+                    'surface': '#3d3d3d',
+                    'surface-elevated': '#505050',
                     'text-primary': '#f1f5f9',
                     'text-secondary': '#cbd5e1',
                     'text-muted': '#94a3b8',
-                    'border': '#334155',
-                    'border-focus': '#3b82f6',
+                    'border': '#444444',
+                    'border-focus': '#0078d7',
                     'shadow': 'rgba(0, 0, 0, 0.3)',
                     'overlay': 'rgba(0, 0, 0, 0.7)'
                 },

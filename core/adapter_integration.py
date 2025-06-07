@@ -23,70 +23,16 @@ from .app_controller import AppController, get_app_controller
 from .event_system import EventBus, Event, EventType, EventHandler, get_event_bus
 from .config_manager import ConfigManager, get_config_manager
 
-# NOTE: Task 35 - Adapter framework has been removed after v2.0 migration completion
-# The following imports are commented out as adapters are no longer needed:
-# from ui.adapters import (
-#     IUIComponentAdapter, AdapterState, AdapterConfig, AdapterMetrics,
-#     MainWindowAdapter, VideoInfoTabAdapter, DownloadedVideosTabAdapter,
-#     EventBridgeCoordinator, get_global_coordinator,
-#     create_main_window_adapter, create_video_info_tab_adapter, 
-#     create_downloaded_videos_tab_adapter
-# )
+# Import adapter components (using placeholder implementations for v2.0)
+from ui.adapters import (
+    IUIComponentAdapter, AdapterState, AdapterConfig, AdapterMetrics,
+    MainWindowAdapter, VideoInfoTabAdapter, DownloadedVideosTabAdapter,
+    EventBridgeCoordinator, get_global_coordinator,
+    create_main_window_adapter, create_video_info_tab_adapter, 
+    create_downloaded_videos_tab_adapter
+)
 
-# Placeholder classes for removed adapter types (compatibility)
-class IUIComponentAdapter:
-    """Placeholder for removed adapter interface"""
-    pass
-
-class AdapterState:
-    """Placeholder for removed adapter state"""
-    pass
-
-@dataclass
-class AdapterConfig:
-    """Configuration for UI component adapters"""
-    adapter_id: str = ""
-    enable_performance_monitoring: bool = True
-    enable_error_recovery: bool = True
-    max_retry_attempts: int = 3
-    timeout_seconds: float = 5.0
-    debug_mode: bool = False
-
-class AdapterMetrics:
-    """Placeholder for removed adapter metrics"""
-    pass
-
-class MainWindowAdapter:
-    """Placeholder for removed main window adapter"""
-    pass
-
-class VideoInfoTabAdapter:
-    """Placeholder for removed video info tab adapter"""
-    pass
-
-class DownloadedVideosTabAdapter:
-    """Placeholder for removed downloaded videos tab adapter"""
-    pass
-
-class EventBridgeCoordinator:
-    """Placeholder for removed event bridge coordinator"""
-    pass
-
-def get_global_coordinator():
-    """Placeholder for removed global coordinator"""
-    return None
-
-def create_main_window_adapter():
-    """Placeholder for removed main window adapter factory"""
-    return None
-
-def create_video_info_tab_adapter():
-    """Placeholder for removed video info tab adapter factory"""
-    return None
-
-def create_downloaded_videos_tab_adapter():
-    """Placeholder for removed downloaded videos tab adapter factory"""
-    return None
+# Adapter components are now imported from ui.adapters module
 
 
 class IntegrationState(Enum):

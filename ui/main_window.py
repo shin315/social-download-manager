@@ -46,7 +46,7 @@ class MainWindow(QMainWindow):
     def __init__(self):
         super().__init__()
         self.output_folder = ""
-        self.current_theme = "dark"  # Store current theme
+        self.current_theme = "light"  # Store current theme
         
         # Initialize language manager
         self.lang_manager = get_language_manager()
@@ -403,13 +403,13 @@ class MainWindow(QMainWindow):
         if theme == "dark":
             self.setStyleSheet("""
                 QMainWindow, QWidget {
-                    background-color: #0078d7;
+                    background-color: #2d2d2d;
                     color: #ffffff;
                     font-family: 'Inter';
                 }
                 QTabWidget::pane {
                     border: 1px solid #444444;
-                    background-color: #0078d7;
+                    background-color: #2d2d2d;
                 }
                 QTabBar::tab {
                     background-color: #3d3d3d;
@@ -425,7 +425,7 @@ class MainWindow(QMainWindow):
                     background-color: #505050;
                 }
                 QTableWidget {
-                    background-color: #0078d7;
+                    background-color: #2d2d2d;
                     color: #ffffff;
                     gridline-color: #444444;
                     border: 1px solid #444444;
@@ -508,7 +508,7 @@ class MainWindow(QMainWindow):
                     border-radius: 2px;
                 }
                 QMenuBar {
-                    background-color: #0078d7;
+                    background-color: #2d2d2d;
                     color: #ffffff;
                 }
                 QMenuBar::item:selected {
@@ -518,7 +518,7 @@ class MainWindow(QMainWindow):
                     background-color: #3d3d3d;
                 }
                 QMenu {
-                    background-color: #0078d7;
+                    background-color: #2d2d2d;
                     color: #ffffff;
                     border: 1px solid #444444;
                 }
@@ -529,11 +529,11 @@ class MainWindow(QMainWindow):
                     background-color: #3d3d3d;
                 }
                 QStatusBar {
-                    background-color: #0078d7;
+                    background-color: #2d2d2d;
                     color: #ffffff;
                 }
                 QDialog {
-                    background-color: #0078d7;
+                    background-color: #2d2d2d;
                     color: #ffffff;
                     border-radius: 8px;
                 }
@@ -565,15 +565,15 @@ class MainWindow(QMainWindow):
                 }
                 /* Title bar */
                 QDockWidget::title {
-                    background-color: #0078d7;
+                    background-color: #2d2d2d;
                     color: #ffffff;
                 }
                 QMainWindow::title {
-                    background-color: #0078d7;
+                    background-color: #2d2d2d;
                     color: #ffffff;
                 }
                 QWidget#titleBar {
-                    background-color: #0078d7;
+                    background-color: #2d2d2d;
                     color: #ffffff;
                 }
                 QToolTip {
@@ -858,30 +858,30 @@ class MainWindow(QMainWindow):
                 'success': '#4caf50',
                 'info': '#29b6f6'
             }
-        else:  # light theme
+        else:  # dark theme (v1.2.1 style)
             return {
-                'name': 'light',
-                'background': '#ffffff',
-                'text': '#333333',
-                'text_primary': '#333333',
-                'text_secondary': '#666666',
+                'name': 'dark',
+                'background': '#2d2d2d',
+                'text': '#ffffff',
+                'text_primary': '#ffffff',
+                'text_secondary': '#cccccc',
                 'text_muted': '#999999',
                 'text_on_primary': '#ffffff',
-                'surface': '#f5f5f5',
+                'surface': '#3d3d3d',
                 'primary': '#0078d7',
                 'accent': '#0078d7',
-                'border': '#cccccc',
+                'border': '#444444',
                 'border_focus': '#0078d7',
-                'header_background': '#f5f5f5',
-                'header_text': '#333333',
-                'input_background': '#ffffff',
-                'input_border': '#cccccc',
-                'hover': '#f0f0f0',
+                'header_background': '#3d3d3d',
+                'header_text': '#ffffff',
+                'input_background': '#3d3d3d',
+                'input_border': '#555555',
+                'hover': '#505050',
                 'selected': '#0078d7',
-                'error': '#d32f2f',
-                'warning': '#f57c00',
-                'success': '#388e3c',
-                'info': '#1976d2'
+                'error': '#ff6b6b',
+                'warning': '#ffa726',
+                'success': '#66bb6a',
+                'info': '#42a5f5'
             }
 
     def update_platform_icons(self, suffix):

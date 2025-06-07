@@ -53,7 +53,7 @@ class DatabaseConfig:
 @dataclass
 class UIConfig:
     """User interface configuration"""
-    theme: str = "light"
+    theme: str = "dark"
     language: str = "en"
     window_width: int = 1200
     window_height: int = 800
