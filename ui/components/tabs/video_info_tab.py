@@ -830,45 +830,65 @@ class VideoInfoTab(BaseTab):
             return
         
         try:
-            # Apply theme to table
+            # Apply v1.2.1 dark theme to table
             if hasattr(self, 'video_table'):
-                table_style = f"""
-                QTableWidget {{
-                    background-color: {theme.get('background', '#ffffff')};
+                if theme.get('name') == 'dark':
+                    # Apply v1.2.1 dark styling with hover effects
+                    from ui.components.tabs.tab_styling import TabStyleHelper
+                    TabStyleHelper.apply_table_dark_styling(self.video_table)
+                else:
+                    # Default table styling for light theme
+                    table_style = f"""
+                    QTableWidget {{
+                        background-color: {theme.get('background', '#ffffff')};
+                        color: {theme.get('text', '#000000')};
+                        gridline-color: {theme.get('border', '#cccccc')};
+                    }}
+                    QTableWidget::item:selected {{
+                        background-color: {theme.get('accent', '#0078d4')};
+                        color: {theme.get('accent_text', '#ffffff')};
+                    }}
+                    QHeaderView::section {{
+                        background-color: {theme.get('header_background', '#f5f5f5')};
+                        color: {theme.get('header_text', '#000000')};
+                        border: 1px solid {theme.get('border', '#cccccc')};
+                        padding: 4px;
+                    }}
+                    """
+                    self.video_table.setStyleSheet(table_style)
+            
+            # Apply v1.2.1 dark theme to input fields
+            from ui.components.tabs.tab_styling import TabStyleHelper
+            
+            if theme.get('name') == 'dark':
+                # Apply v1.2.1 dark styling for inputs
+                if hasattr(self, 'url_input'):
+                    TabStyleHelper.apply_input_dark_styling(self.url_input)
+                if hasattr(self, 'output_folder_display'):
+                    TabStyleHelper.apply_input_dark_styling(self.output_folder_display)
+                if hasattr(self, 'get_info_btn'):
+                    TabStyleHelper.apply_button_dark_styling(self.get_info_btn)
+                if hasattr(self, 'choose_folder_btn'):
+                    TabStyleHelper.apply_button_dark_styling(self.choose_folder_btn)
+            else:
+                # Default input styling for light theme
+                input_style = f"""
+                QLineEdit {{
+                    background-color: {theme.get('input_background', '#ffffff')};
                     color: {theme.get('text', '#000000')};
-                    gridline-color: {theme.get('border', '#cccccc')};
-                }}
-                QTableWidget::item:selected {{
-                    background-color: {theme.get('accent', '#0078d4')};
-                    color: {theme.get('accent_text', '#ffffff')};
-                }}
-                QHeaderView::section {{
-                    background-color: {theme.get('header_background', '#f5f5f5')};
-                    color: {theme.get('header_text', '#000000')};
                     border: 1px solid {theme.get('border', '#cccccc')};
+                    border-radius: 4px;
                     padding: 4px;
                 }}
+                QLineEdit:focus {{
+                    border-color: {theme.get('accent', '#0078d4')};
+                }}
                 """
-                self.video_table.setStyleSheet(table_style)
-            
-            # Apply theme to input fields
-            input_style = f"""
-            QLineEdit {{
-                background-color: {theme.get('input_background', '#ffffff')};
-                color: {theme.get('text', '#000000')};
-                border: 1px solid {theme.get('border', '#cccccc')};
-                border-radius: 4px;
-                padding: 4px;
-            }}
-            QLineEdit:focus {{
-                border-color: {theme.get('accent', '#0078d4')};
-            }}
-            """
-            
-            if hasattr(self, 'url_input'):
-                self.url_input.setStyleSheet(input_style)
-            if hasattr(self, 'output_folder_display'):
-                self.output_folder_display.setStyleSheet(input_style)
+                
+                if hasattr(self, 'url_input'):
+                    self.url_input.setStyleSheet(input_style)
+                if hasattr(self, 'output_folder_display'):
+                    self.output_folder_display.setStyleSheet(input_style)
             
             self.log_info("Theme applied successfully")
             

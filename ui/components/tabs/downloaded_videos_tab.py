@@ -1309,7 +1309,7 @@ class DownloadedVideosTab(BaseTab):
                 self._style_manager.set_theme(theme_name)
                 
                 # Apply tab-wide styling using BaseTab framework
-                from .tab_styling import TabStyleVariant
+                from ui.components.common.tab_styling import TabStyleVariant
                 self._style_helper.apply_tab_style(
                     self, 
                     variant=TabStyleVariant.DATA_MANAGEMENT,  # Downloads tab is data management
