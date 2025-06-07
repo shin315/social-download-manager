@@ -403,13 +403,13 @@ class MainWindow(QMainWindow):
         if theme == "dark":
             self.setStyleSheet("""
                 QMainWindow, QWidget {
-                    background-color: #2d2d2d;
+                    background-color: #0078d7;
                     color: #ffffff;
                     font-family: 'Inter';
                 }
                 QTabWidget::pane {
                     border: 1px solid #444444;
-                    background-color: #2d2d2d;
+                    background-color: #0078d7;
                 }
                 QTabBar::tab {
                     background-color: #3d3d3d;
@@ -425,7 +425,7 @@ class MainWindow(QMainWindow):
                     background-color: #505050;
                 }
                 QTableWidget {
-                    background-color: #2d2d2d;
+                    background-color: #0078d7;
                     color: #ffffff;
                     gridline-color: #444444;
                     border: 1px solid #444444;
@@ -470,10 +470,10 @@ class MainWindow(QMainWindow):
                     border-radius: 4px;
                 }
                 QPushButton:hover {
-                    background-color: #0086f0;
+                    background-color: #0078d7;
                 }
                 QPushButton:pressed {
-                    background-color: #0067b8;
+                    background-color: #0078d7;
                 }
                 QPushButton:disabled {
                     background-color: #444444 !important;
@@ -508,7 +508,7 @@ class MainWindow(QMainWindow):
                     border-radius: 2px;
                 }
                 QMenuBar {
-                    background-color: #2d2d2d;
+                    background-color: #0078d7;
                     color: #ffffff;
                 }
                 QMenuBar::item:selected {
@@ -518,7 +518,7 @@ class MainWindow(QMainWindow):
                     background-color: #3d3d3d;
                 }
                 QMenu {
-                    background-color: #2d2d2d;
+                    background-color: #0078d7;
                     color: #ffffff;
                     border: 1px solid #444444;
                 }
@@ -529,11 +529,11 @@ class MainWindow(QMainWindow):
                     background-color: #3d3d3d;
                 }
                 QStatusBar {
-                    background-color: #2d2d2d;
+                    background-color: #0078d7;
                     color: #ffffff;
                 }
                 QDialog {
-                    background-color: #2d2d2d;
+                    background-color: #0078d7;
                     color: #ffffff;
                     border-radius: 8px;
                 }
@@ -565,15 +565,15 @@ class MainWindow(QMainWindow):
                 }
                 /* Title bar */
                 QDockWidget::title {
-                    background-color: #2d2d2d;
+                    background-color: #0078d7;
                     color: #ffffff;
                 }
                 QMainWindow::title {
-                    background-color: #2d2d2d;
+                    background-color: #0078d7;
                     color: #ffffff;
                 }
                 QWidget#titleBar {
-                    background-color: #2d2d2d;
+                    background-color: #0078d7;
                     color: #ffffff;
                 }
                 QToolTip {
@@ -673,10 +673,10 @@ class MainWindow(QMainWindow):
                     border-radius: 4px;
                 }
                 QPushButton:hover {
-                    background-color: #0086f0;
+                    background-color: #0078d7;
                 }
                 QPushButton:pressed {
-                    background-color: #0067b8;
+                    background-color: #0078d7;
                 }
                 QPushButton:disabled {
                     background-color: #e5e5e5 !important;
@@ -813,7 +813,7 @@ class MainWindow(QMainWindow):
         if hasattr(self, 'donate_dialog') and self.donate_dialog:
             # Update dialog style
             if theme == "dark":
-                self.donate_dialog.setStyleSheet("background-color: #2d2d2d; color: #ffffff;")
+                self.donate_dialog.setStyleSheet("background-color: #0078d7; color: #ffffff;")
             else:
                 self.donate_dialog.setStyleSheet("background-color: #f5f5f5; color: #333333;")
             
@@ -907,7 +907,7 @@ class MainWindow(QMainWindow):
             
             # Set style directly based on current theme
             if self.current_theme == "dark":
-                self.donate_dialog.setStyleSheet("background-color: #2d2d2d; color: #ffffff;")
+                self.donate_dialog.setStyleSheet("background-color: #0078d7; color: #ffffff;")
             else:
                 self.donate_dialog.setStyleSheet("background-color: #f5f5f5; color: #333333;")
             
@@ -931,7 +931,7 @@ class MainWindow(QMainWindow):
             
             # Update dialog style based on current theme
             if self.current_theme == "dark":
-                self.donate_dialog.setStyleSheet("background-color: #2d2d2d; color: #ffffff;")
+                self.donate_dialog.setStyleSheet("background-color: #0078d7; color: #ffffff;")
             else:
                 self.donate_dialog.setStyleSheet("background-color: #f5f5f5; color: #333333;")
             

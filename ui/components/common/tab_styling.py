@@ -32,9 +32,9 @@ class TabStyleVariant(Enum):
 @dataclass
 class TabColorScheme:
     """Color scheme for tab styling"""
-    primary: str = "#0078d4"           # Primary accent color
+    primary: str = "#0078d7"           # Primary accent color
     primary_hover: str = "#106ebe"     # Primary hover state
-    primary_pressed: str = "#005a9e"   # Primary pressed state
+    primary_pressed: str = "#0078d7"   # Primary pressed state
     
     secondary: str = "#6c757d"         # Secondary color
     secondary_hover: str = "#5a6268"   # Secondary hover state
@@ -49,12 +49,12 @@ class TabColorScheme:
     text_on_primary: str = "#ffffff"   # Text on primary color
     
     border: str = "#dee2e6"            # Border color
-    border_focus: str = "#0078d4"      # Focus border color
+    border_focus: str = "#0078d7"      # Focus border color
     
     success: str = "#28a745"           # Success color
     warning: str = "#ffc107"           # Warning color
     error: str = "#dc3545"             # Error color
-    info: str = "#17a2b8"              # Info color
+    info: str = "#0078d7"              # Info color
     
     input_background: str = "#ffffff"  # Input field background
     input_border: str = "#ced4da"      # Input field border
@@ -62,10 +62,10 @@ class TabColorScheme:
     
     table_header: str = "#f8f9fa"      # Table header background
     table_row_alt: str = "#f8f9fa"     # Alternate table row color
-    table_selection: str = "#007bff"   # Table selection color
+    table_selection: str = "#0078d7"   # Table selection color
     
     progress_background: str = "#e9ecef"  # Progress bar background
-    progress_fill: str = "#007bff"        # Progress bar fill
+    progress_fill: str = "#0078d7"        # Progress bar fill
 
 
 class TabStyleManager:
@@ -115,23 +115,23 @@ class TabStyleManager:
     def _create_high_contrast_scheme(self) -> TabColorScheme:
         """Create high contrast theme color scheme"""
         return TabColorScheme(
-            primary="#0000ff",
-            primary_hover="#0000cc",
-            primary_pressed="#000099",
+            primary="#0078d7",
+            primary_hover="#0078d7",
+            primary_pressed="#0078d7",
             
             background="#ffffff",
             surface="#ffffff",
             surface_hover="#f0f0f0",
             
-            text_primary="#000000",
-            text_secondary="#000000",
-            text_muted="#000000",
+            text_primary="#0078d7",
+            text_secondary="#0078d7",
+            text_muted="#0078d7",
             
-            border="#000000",
-            border_focus="#0000ff",
+            border="#0078d7",
+            border_focus="#0078d7",
             
             input_background="#ffffff",
-            input_border="#000000"
+            input_border="#0078d7"
         )
     
     def _setup_variant_styles(self):
@@ -498,7 +498,7 @@ class TabStyleManager:
         }}
         
         QPushButton[role="download"]:hover {{
-            background-color: #218838;
+            background-color: #0078d7;
         }}
         
         QLabel[role="status"] {{
@@ -536,7 +536,7 @@ class TabStyleManager:
         }}
         
         QPushButton[role="data-action"]:hover {{
-            background-color: #138496;
+            background-color: #0078d7;
         }}
         
         QPushButton[role="delete"] {{
@@ -649,9 +649,9 @@ class TabStyleHelper:
         # This would map the existing theme data structure to our color scheme
         # For now, create a basic mapping
         return TabColorScheme(
-            primary=theme_data.get('accent', '#0078d4'),
+            primary=theme_data.get('accent', '#0078d7'),
             background=theme_data.get('background', '#ffffff'),
-            text_primary=theme_data.get('text', '#000000'),
+            text_primary=theme_data.get('text', '#0078d7'),
             border=theme_data.get('border', '#cccccc'),
             # ... add more mappings as needed
         )

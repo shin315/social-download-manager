@@ -40,13 +40,13 @@ def test_download_fix():
         download_folder = "./test_downloads"
         if not os.path.exists(download_folder):
             os.makedirs(download_folder)
-        video_tab.folder_input.setText(download_folder)
+        video_tab.output_folder_display.setText(download_folder)
         print("✅ Download folder set")
         
         # Get video info
         video_tab.get_video_info()
         
-        if len(video_tab.video_info_list) > 0:
+        if len(video_tab.video_info_dict) > 0:
             print("✅ Video info retrieved")
             
             # Select all videos

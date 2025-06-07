@@ -98,7 +98,7 @@ class QualityFilterWidget(QWidget, LanguageSupport):
             '8K': {'icon': '🎦', 'color': '#FF6B35', 'order': 0},
             '4K': {'icon': '📺', 'color': '#FF8E35', 'order': 1},
             '2K': {'icon': '🖥️', 'color': '#FFB135', 'order': 2},
-            '1080p': {'icon': '💻', 'color': '#4CAF50', 'order': 3},
+            '1080p': {'icon': '💻', 'color': '#0078d7', 'order': 3},
             '720p': {'icon': '📱', 'color': '#81C784', 'order': 4},
             '480p': {'icon': '📞', 'color': '#FFC107', 'order': 5},
             '360p': {'icon': '📱', 'color': '#FF9800', 'order': 6},
@@ -243,10 +243,26 @@ class QualityFilterWidget(QWidget, LanguageSupport):
         actions_layout = QHBoxLayout()
         
         # Apply button
-        self.apply_btn = QPushButton(self.tr_("APPLY_FILTER"))
+        
+        self.apply_btn = QPushButton(self.tr_("APPLY_FILTER")
         self.apply_btn.setStyleSheet("""
             QPushButton {
-                background-color: #4CAF50;
+                background-color: #0078d7;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 8px 15px;
+            }
+            QPushButton:hover {
+                background-color: #0078d7;
+            }
+            QPushButton:pressed {
+                background-color: #0078d7;
+            }
+        """))
+        self.apply_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #0078d7;
                 color: white;
                 border: none;
                 border-radius: 4px;
@@ -254,7 +270,7 @@ class QualityFilterWidget(QWidget, LanguageSupport):
                 font-weight: bold;
             }
             QPushButton:hover {
-                background-color: #45a049;
+                background-color: #0078d7;
             }
             QPushButton:disabled {
                 background-color: #cccccc;
@@ -265,7 +281,23 @@ class QualityFilterWidget(QWidget, LanguageSupport):
         self.apply_btn.setEnabled(False)
         
         # Clear button
-        self.clear_btn = QPushButton(self.tr_("CLEAR_FILTER"))
+        
+        self.clear_btn = QPushButton(self.tr_("CLEAR_FILTER")
+        self.clear_btn.setStyleSheet("""
+            QPushButton {
+                background-color: #0078d7;
+                color: white;
+                border: none;
+                border-radius: 4px;
+                padding: 8px 15px;
+            }
+            QPushButton:hover {
+                background-color: #0078d7;
+            }
+            QPushButton:pressed {
+                background-color: #0078d7;
+            }
+        """))
         self.clear_btn.setStyleSheet("""
             QPushButton {
                 background-color: #f44336;

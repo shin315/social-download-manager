@@ -432,7 +432,7 @@ class DownloadedVideosTab(BaseTab):
             self.date_filter_btn.setStyleSheet("""
                 QPushButton {
                     padding: 6px 12px;
-                    border: 2px solid #2196F3;
+                    border: 2px solid #0078d7;
                     border-radius: 6px;
                     background-color: white;
                     font-weight: bold;
@@ -453,7 +453,7 @@ class DownloadedVideosTab(BaseTab):
             self.quality_filter_btn.setStyleSheet("""
                 QPushButton {
                     padding: 6px 12px;
-                    border: 2px solid #4CAF50;
+                    border: 2px solid #0078d7;
                     border-radius: 6px;
                     background-color: white;
                     font-weight: bold;
@@ -2907,11 +2907,11 @@ class DownloadedVideosTab(BaseTab):
             self.date_filter_btn.setStyleSheet("""
                 QPushButton {
                     padding: 6px 12px;
-                    border: 2px solid #2196F3;
+                    border: 2px solid #0078d7;
                     border-radius: 6px;
                     background-color: #E3F2FD;
                     font-weight: bold;
-                    color: #1976D2;
+                    color: #0078d7;
                 }
                 QPushButton:hover {
                     background-color: #BBDEFB;
@@ -2935,7 +2935,7 @@ class DownloadedVideosTab(BaseTab):
             self.date_filter_btn.setStyleSheet("""
                 QPushButton {
                     padding: 6px 12px;
-                    border: 2px solid #2196F3;
+                    border: 2px solid #0078d7;
                     border-radius: 6px;
                     background-color: white;
                     font-weight: bold;
@@ -3028,7 +3028,7 @@ class DownloadedVideosTab(BaseTab):
             self.quality_filter_btn.setStyleSheet("""
                 QPushButton {
                     padding: 6px 12px;
-                    border: 2px solid #4CAF50;
+                    border: 2px solid #0078d7;
                     border-radius: 6px;
                     background-color: #E8F5E8;
                     font-weight: bold;
@@ -3059,7 +3059,7 @@ class DownloadedVideosTab(BaseTab):
             self.quality_filter_btn.setStyleSheet("""
                 QPushButton {
                     padding: 6px 12px;
-                    border: 2px solid #4CAF50;
+                    border: 2px solid #0078d7;
                     border-radius: 6px;
                     background-color: white;
                     font-weight: bold;
@@ -3095,7 +3095,7 @@ class DownloadedVideosTab(BaseTab):
             self.date_filter_btn.setStyleSheet("""
                 QPushButton {
                     padding: 6px 12px;
-                    border: 2px solid #2196F3;
+                    border: 2px solid #0078d7;
                     border-radius: 6px;
                     background-color: white;
                     font-weight: bold;
@@ -3111,7 +3111,7 @@ class DownloadedVideosTab(BaseTab):
             self.quality_filter_btn.setStyleSheet("""
                 QPushButton {
                     padding: 6px 12px;
-                    border: 2px solid #4CAF50;
+                    border: 2px solid #0078d7;
                     border-radius: 6px;
                     background-color: white;
                     font-weight: bold;
@@ -3454,7 +3454,7 @@ class DownloadedVideosTab(BaseTab):
             self.open_folder_btn = QPushButton("📁 Open Folder")
             self.open_folder_btn.setStyleSheet("""
                 QPushButton {
-                    background-color: #2d7d2d;
+                    background-color: #0078d7;
                     color: white;
                     border: none;
                     border-radius: 4px;

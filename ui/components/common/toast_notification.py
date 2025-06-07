@@ -200,7 +200,7 @@ class ToastNotification(QWidget):
                 'icon': '⚠'
             },
             ToastType.INFO: {
-                'bg_color': '#2196F3',
+                'bg_color': '#0078d7',
                 'text_color': 'white',
                 'icon': 'ℹ'
             },
@@ -210,7 +210,7 @@ class ToastNotification(QWidget):
                 'icon': '⬇'
             },
             ToastType.DOWNLOAD_STARTED: {
-                'bg_color': '#2196F3',
+                'bg_color': '#0078d7',
                 'text_color': 'white', 
                 'icon': '⬇'
             }

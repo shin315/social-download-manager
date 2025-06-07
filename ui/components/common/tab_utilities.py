@@ -103,7 +103,16 @@ def validate_before_action(validation_func: Optional[Callable] = None):
                         self.show_validation_errors(errors)
                     return False  # or raise ValidationError
             
-            return func(self, *args, **kwargs)
+            # FIXED: Check function signature and only pass expected arguments
+            import inspect
+            sig = inspect.signature(func)
+            params = list(sig.parameters.keys())
+            
+            # If function only expects 'self', don't pass args/kwargs
+            if len(params) == 1:  # Only 'self' parameter
+                return func(self)
+            else:
+                return func(self, *args, **kwargs)
         return wrapper
     return decorator
 
